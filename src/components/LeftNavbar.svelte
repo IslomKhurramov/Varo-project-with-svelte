@@ -34,6 +34,7 @@
         <i class="fa fa-laptop" aria-hidden="true"></i>
         자산관리
       </a>
+      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => selectPage(Page3, '취약점관리')}"
@@ -42,6 +43,7 @@
         <i class="fa fa-clone" aria-hidden="true"></i>
         취약점관리
       </a>
+      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => selectPage(Page2, '점검항목관리')}"
@@ -50,6 +52,7 @@
         <i class="fa fa-star-o" aria-hidden="true"></i>
         점검항목관리
       </a>
+      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => selectPage(Page2, '환경설정')}"
@@ -79,11 +82,11 @@
 <style>
   aside {
     color: #fff;
-    width: 250px;
+    width: 200px;
     padding-left: 20px;
     height: 100vh;
     background-image: linear-gradient(30deg, #0048bd, #44a7fd);
-    border-top-right-radius: 80px;
+    /* border-top-right-radius: 80px; */
     border: 1px solid black;
   }
 
@@ -147,13 +150,6 @@
   aside p {
     margin: 0;
     padding: 40px 0;
-  }
-
-  body {
-    font-family: "Roboto";
-    width: 100%;
-    height: 100vh;
-    margin: 0;
   }
 
   .social {

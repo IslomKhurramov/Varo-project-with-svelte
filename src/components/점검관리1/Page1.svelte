@@ -1,12 +1,24 @@
 <script>
   import RightContainer from "./RightContainer.svelte";
-
+  import AddPorject from "../AddPorject.svelte";
   let currentPage = null;
   let activeMenu = null;
+  let projects = ["프로젝트 1"];
 
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
+  };
+
+  const addProject = () => {
+    const newProjectNumber = projects.length + 1;
+    projects = [...projects, `프로젝트 ${newProjectNumber}`];
+  };
+
+  const deleteProject = () => {
+    if (projects.length > 0) {
+      projects = projects.slice(0, -1); // Remove the last project
+    }
   };
 </script>
 
@@ -15,51 +27,24 @@
     <div class="container_aside">
       <aside>
         <div class="add_delete_container">
-          <div>New Inspection</div>
-          <div>Delete history</div>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <button on:click="{() => selectPage(AddPorject, 'add')}"
+            >신규점검</button
+          >
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <button>이력삭제</button>
         </div>
 
-        <a
-          href="javascript:void(0)"
-          on:click="{() => selectPage(RightContainer, '프로젝트1')}"
-          class="{activeMenu === '프로젝트1' ? 'active' : ''}"
-        >
-          <i class="fa fa-user-o" aria-hidden="true"></i>
-          프로젝트 1
-        </a>
-        <!-- svelte-ignore a11y-invalid-attribute -->
-        <a
-          href="javascript:void(0)"
-          on:click="{() => selectPage(Page2, '자산관리')}"
-          class="{activeMenu === '자산관리' ? 'active' : ''}"
-        >
-          <i class="fa fa-laptop" aria-hidden="true"></i>
-          프로젝트 1
-        </a>
-        <a
-          href="javascript:void(0)"
-          on:click="{() => selectPage(Page3, '취약점관리')}"
-          class="{activeMenu === '취약점관리' ? 'active' : ''}"
-        >
-          <i class="fa fa-clone" aria-hidden="true"></i>
-          프로젝트 1
-        </a>
-        <a
-          href="javascript:void(0)"
-          on:click="{() => selectPage(Page2, '점검항목관리')}"
-          class="{activeMenu === '점검항목관리' ? 'active' : ''}"
-        >
-          <i class="fa fa-star-o" aria-hidden="true"></i>
-          프로젝트 1
-        </a>
-        <a
-          href="javascript:void(0)"
-          on:click="{() => selectPage(Page2, '환경설정')}"
-          class="{activeMenu === '환경설정' ? 'active' : ''}"
-        >
-          <i class="fa fa-trash-o" aria-hidden="true"></i>
-          프로젝트 1
-        </a>
+        {#each projects as project, index}
+          <a
+            href="javascript:void(0)"
+            on:click="{() => selectPage(RightContainer, project)}"
+            class="{activeMenu === project ? 'active' : ''}"
+          >
+            <i class="fa fa-user-o" aria-hidden="true"></i>
+            {project}
+          </a>
+        {/each}
       </aside>
 
       <div class="social">
@@ -94,8 +79,7 @@
   aside {
     color: #fff;
     width: 120px;
-    padding-left: 5px;
-    padding-right: 5px;
+
     height: 100vh;
     background-image: linear-gradient(30deg, #0048bd, #44a7fd);
 
@@ -160,5 +144,26 @@
   .right_menu {
     width: 100%;
     padding-right: 50px;
+  }
+
+  .add_delete_container {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-around;
+    width: 100%;
+  }
+  .add_delete_container button {
+    width: auto;
+    font-size: 12px;
+    width: 70px;
+
+    cursor: pointer;
+    background-color: #44a7fd;
+    color: #fff;
+    border: none;
+  }
+  .add_delete_container button:hover {
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
 </style>

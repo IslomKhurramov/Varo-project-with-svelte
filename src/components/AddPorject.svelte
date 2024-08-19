@@ -164,7 +164,7 @@
   }
 
   .blue-button {
-    background-color: #0048bd;
+    background-color: #003366;
     color: #fff;
   }
 
@@ -197,7 +197,7 @@
   }
 
   .blue-label {
-    background-color: #0048bd;
+    background-color: #003366;
     color: #fff;
   }
 
@@ -214,13 +214,6 @@
   .dropdown {
     appearance: none;
     background-color: #fff;
-  }
-
-  .sub-button {
-    padding: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    border: 1px solid #000;
   }
 
   .checkbox-label {

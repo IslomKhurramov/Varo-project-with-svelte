@@ -1,6 +1,7 @@
 <script>
-  import RightContainer from "./RightContainer.svelte";
+  import RightContainerMenu from "./RightContainerMenu.svelte";
   import AddPorject from "../AddPorject.svelte";
+  import RightConainer from "./RightConainer.svelte";
   let currentPage = null;
   let activeMenu = null;
   let projects = ["프로젝트 1"];
@@ -23,7 +24,7 @@
 </script>
 
 <div div class="container">
-  <div>
+  <div class="MainPage">
     <div class="container_aside">
       <aside>
         <div class="add_delete_container">
@@ -36,9 +37,11 @@
         </div>
 
         {#each projects as project, index}
+          <!-- svelte-ignore a11y-invalid-attribute -->
           <a
-            href="javascript:void(0)"
-            on:click="{() => selectPage(RightContainer, project)}"
+            href="#"
+            tabindex="0"
+            on:click="{() => selectPage(RightContainerMenu, project)}"
             class="{activeMenu === project ? 'active' : ''}"
           >
             <i class="fa fa-user-o" aria-hidden="true"></i>
@@ -56,6 +59,7 @@
         </a>
       </div>
     </div>
+    <RightConainer />
   </div>
 
   {#if currentPage}
@@ -69,13 +73,7 @@
   .container_aside {
     padding-left: 10px;
   }
-  .header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding-left: 40px;
-    width: 100%;
-  }
+
   aside {
     color: #fff;
     width: 120px;
@@ -165,5 +163,9 @@
   }
   .add_delete_container button:hover {
     box-shadow: 0.5px 1px 0.5px 1px #161515;
+  }
+  .MainPage {
+    display: flex;
+    flex-direction: row;
   }
 </style>

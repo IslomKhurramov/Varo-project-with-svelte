@@ -135,11 +135,12 @@
             <select id="">
               <option value="양호">양호</option>
               <option value="해당">해당</option>
-              <option></option>
+              <option value="empty"></option>
             </select>
             <select id="">
               <option value="양호">양호</option>
               <option value="해당">해당</option>
+              <option value="empty"></option>
             </select>
             <button>변경</button>
           </td>

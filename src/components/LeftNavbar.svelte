@@ -85,7 +85,7 @@
     color: #fff;
     width: 200px;
     padding-left: 20px;
-    height: 100vh;
+    height: 130vh;
     background-image: linear-gradient(30deg, #0048bd, #44a7fd);
     /* border-top-right-radius: 80px; */
     border: 1px solid black;

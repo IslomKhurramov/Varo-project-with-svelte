@@ -156,7 +156,8 @@
   .secondLine {
     display: flex;
     flex-direction: row;
-    margin-left: 90px;
+    margin-left: 20px;
+    justify-content: center;
   }
   .span_at {
     width: 260px;

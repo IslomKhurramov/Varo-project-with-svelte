@@ -2,6 +2,7 @@
   import Page1 from "./점검관리1/Page1.svelte";
   import Page2 from "./자산관리2/Page2.svelte";
   import Page3 from "./취약점관리3/Page3.svelte";
+  import RightContainer from "./RightConainer.svelte";
 
   let currentPage = null;
   let activeMenu = null;
@@ -16,11 +17,9 @@
   <div class="container_aside">
     <aside>
       <p></p>
-
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        href="#"
-        tabindex="0"
+        href="javascript:void(0)"
         on:click="{() => selectPage(Page1, '점검관리')}"
         class="{activeMenu === '점검관리' ? 'active' : ''}"
       >
@@ -29,8 +28,7 @@
       </a>
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        href="#"
-        tabindex="0"
+        href="javascript:void(0)"
         on:click="{() => selectPage(Page2, '자산관리')}"
         class="{activeMenu === '자산관리' ? 'active' : ''}"
       >
@@ -39,8 +37,7 @@
       </a>
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        href="#"
-        tabindex="0"
+        href="javascript:void(0)"
         on:click="{() => selectPage(Page3, '취약점관리')}"
         class="{activeMenu === '취약점관리' ? 'active' : ''}"
       >
@@ -49,8 +46,7 @@
       </a>
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        href="#"
-        tabindex="0"
+        href="javascript:void(0)"
         on:click="{() => selectPage(Page2, '점검항목관리')}"
         class="{activeMenu === '점검항목관리' ? 'active' : ''}"
       >
@@ -59,8 +55,7 @@
       </a>
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        href="#"
-        tabindex="0"
+        href="javascript:void(0)"
         on:click="{() => selectPage(Page2, '환경설정')}"
         class="{activeMenu === '환경설정' ? 'active' : ''}"
       >
@@ -184,5 +179,7 @@
   .right_menu {
     width: 100%;
     padding-right: 50px;
+    display: flex;
+    flex-direction: row;
   }
 </style>

@@ -1,7 +1,7 @@
 <script>
   import RightContainerMenu from "./RightContainerMenu.svelte";
   import AddPorject from "../AddPorject.svelte";
-  import RightConainer from "./RightConainer.svelte";
+  import RightConainer from "../RightConainer.svelte";
   let currentPage = null;
   let activeMenu = null;
   let projects = ["프로젝트 1"];
@@ -35,12 +35,15 @@
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <button>이력삭제</button>
         </div>
+        <div>
+          <button on:click="{() => selectPage(RightConainer, 'RightConainer')}"
+            >info</button
+          >
+        </div>
 
         {#each projects as project, index}
-          <!-- svelte-ignore a11y-invalid-attribute -->
           <a
-            href="#"
-            tabindex="0"
+            href="javascript:void(0)"
             on:click="{() => selectPage(RightContainerMenu, project)}"
             class="{activeMenu === project ? 'active' : ''}"
           >
@@ -59,7 +62,6 @@
         </a>
       </div>
     </div>
-    <RightConainer />
   </div>
 
   {#if currentPage}
@@ -141,7 +143,6 @@
 
   .right_menu {
     width: 100%;
-    padding-right: 50px;
   }
 
   .add_delete_container {

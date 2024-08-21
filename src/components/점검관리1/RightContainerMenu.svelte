@@ -3,6 +3,7 @@
   import SecondMenu from "./HeaderMenu/SecondMenu.svelte";
   import ThirdMenu from "./HeaderMenu/ThirdMenu.svelte";
   import FourthMenu from "./HeaderMenu/FourthMenu.svelte";
+  import FifthMenu from "./HeaderMenu/FifthMenu.svelte";
 
   let currentPage = null;
   let activeMenu = null;
@@ -46,7 +47,10 @@
       </h3>
     </div>
     <div style="width: 200px;" class="header">
-      <h3>프로그램다운로드</h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3 on:click="{() => selectPage(FifthMenu, '프로그램다운로드')}">
+        프로그램다운로드
+      </h3>
     </div>
   </div>
 

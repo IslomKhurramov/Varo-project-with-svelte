@@ -166,7 +166,7 @@
   .projectInfo {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    gap: 100px;
     margin-left: 20px;
     padding: 10px 10px;
     background-color: #dedede;
@@ -200,5 +200,8 @@
     width: 80px;
     padding: 4px;
     cursor: pointer;
+  }
+  .firstCol {
+    margin-left: 100px;
   }
 </style>

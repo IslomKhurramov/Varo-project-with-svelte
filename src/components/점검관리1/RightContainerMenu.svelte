@@ -74,19 +74,20 @@
     gap: 50px;
     padding-left: 40px;
     width: 100%;
+    color: #fff;
   }
   .header h3 {
     font-weight: 600;
     font-size: 16px;
   }
   .header h3:hover {
-    color: #0048bd;
+    color: #65a0ff;
     text-decoration: underline;
     cursor: pointer;
   }
   .header h3:hover,
   .header h3.active {
-    color: #0048bd;
+    color: #65a0ff;
     text-decoration: underline;
   }
 </style>

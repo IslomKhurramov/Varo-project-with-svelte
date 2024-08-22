@@ -1,19 +1,23 @@
 <script>
   import AssetCardsPage from "./AssetCardsPage.svelte";
-  import Modal from "../Modal.svelte";
+  import Modal from "../../shared/Modal.svelte";
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
   import Swiper from "./Swiper.svelte";
 
+  let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
   let assets = ["자산그룹 1"];
   let showModal = false;
-  let showModalSecond = false;
 
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
   };
+
+  function toggleView() {
+    currentView = currentView === "default" ? "newView" : "default";
+  }
 </script>
 
 <main class="container">
@@ -54,7 +58,7 @@
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button on:click="{() => (showModalSecond = true)}">down</button>
+        <button on:click="{toggleView}">down</button>
         <form action="/action_page.php" class="form_select">
           <select name="cars" id="cars">
             <option value="등록승인여부"> 등록승인여부 </option>
@@ -85,15 +89,15 @@
       <button>상세보고서출력</button>
       <button>목록엑셀저장</button>
     </div>
-
-    <AssetCardsPage />
+    {#if currentView === "default"}
+      <AssetCardsPage />
+    {:else}
+      <Swiper /> <!-- Render the new component based on state -->
+    {/if}
   </div>
 
   <Modal bind:showModal>
     <ModalChasanGroup />
-  </Modal>
-  <Modal bind:showModalSecond>
-    <Swiper />
   </Modal>
 </main>
 
@@ -246,7 +250,7 @@
   .second_line button {
     background-color: #003366; /* Darker Blue */
     color: #ffffff;
-    border: 1px solid #003366;
+    border: 1px solid #ffffff;
     border-radius: 5px;
     height: 40px;
 

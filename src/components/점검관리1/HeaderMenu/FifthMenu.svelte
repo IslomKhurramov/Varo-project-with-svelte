@@ -70,7 +70,9 @@
   td {
     font-size: 12px;
   }
-
+  tr {
+    background-color: #fff;
+  }
   tr:nth-child(even) {
     background-color: #dddddd;
   }

@@ -1,5 +1,5 @@
 <script>
-  import Modal from "../../Modal.svelte";
+  import Modal from "../../../shared/Modal.svelte";
   import ModalPage from "../ModalPage.svelte";
 
   let showModal = false;
@@ -167,9 +167,10 @@
     flex-direction: column;
     gap: 5px;
     background-color: #dedede;
-    border: 1px solid rgb(179, 179, 179);
     height: 600px;
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;
+
+    box-shadow: 0 4px 8px rgb(255, 255, 255);
     overflow-y: auto;
     font-size: 12px;
     margin-left: 20px;

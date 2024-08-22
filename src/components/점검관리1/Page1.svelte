@@ -73,24 +73,18 @@
 </div>
 
 <style>
-  .container_aside {
-    padding-left: 10px;
-  }
-
   aside {
     color: #fff;
-    width: 120px;
-
-    height: 100vh;
-    background-image: linear-gradient(30deg, #0048bd, #44a7fd);
-
-    border: 1px solid black;
+    width: 130px;
+    font-size: 16px;
+    height: 130vh;
+    background-image: linear-gradient(30deg, #a2c5fe, #44a7fd);
   }
   .add_delete_container {
     padding-bottom: 10px;
   }
   aside a {
-    font-size: 12px;
+    font-size: 16px;
     color: #fff;
     display: block;
     padding: 12px 10px;

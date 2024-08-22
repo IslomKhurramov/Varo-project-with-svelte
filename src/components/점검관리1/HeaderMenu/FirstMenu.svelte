@@ -86,12 +86,10 @@
     margin-top: 50px;
     padding-bottom: 50px;
     width: 100%;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
+    background-color: #fff;
+    border: 1px solid #000000;
 
-    box-shadow:
-      10px 10px 20px #babecc,
-      -10px -10px 20px #ffffff;
+    box-shadow: 0 4px 8px rgb(255, 255, 255);
   }
   .first_line {
     display: flex;
@@ -104,7 +102,7 @@
   .button2 {
     background-color: #5f9ea0; /* Light Blue */
     color: #ffffff;
-    border: 1px solid #5f9ea0;
+    border: 2px solid #000000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -136,7 +134,7 @@
   .save_button {
     background-color: #003366; /* Darker Blue */
     color: #ffffff;
-    border: 1px solid #003366;
+    border: 1px solid #ffffff;
     border-radius: 5px;
     height: 40px;
     margin-top: 13.5px;

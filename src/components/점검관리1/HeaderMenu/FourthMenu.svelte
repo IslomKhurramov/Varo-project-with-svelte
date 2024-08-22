@@ -50,13 +50,15 @@
     height: 600px;
     overflow-y: auto;
     overflow-x: hidden;
+    margin-top: 40px;
+    border: 1px solid #000000;
+    margin-left: 20px;
+    box-shadow: 0 4px 8px rgb(255, 255, 255);
   }
   table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
-    margin-left: 20px;
-    margin-top: 40px;
   }
   .first_line {
     background-color: #0d47a1;
@@ -70,6 +72,9 @@
   }
   td {
     font-size: 12px;
+  }
+  tr {
+    background-color: #fff;
   }
 
   tr:nth-child(even) {

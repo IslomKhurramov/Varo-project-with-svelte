@@ -136,9 +136,17 @@
     margin-top: 20px;
   }
   .headerButton button {
-    text-decoration: underline;
+    background-color: #003366; /* Darker Blue */
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    height: 40px;
+    margin-top: 13.5px;
+    width: 150px;
     cursor: pointer;
-    margin-right: 10px;
+  }
+  .headerButton button:hover {
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
   .projectContainer {
     width: 100%;
@@ -149,6 +157,9 @@
     align-items: center;
     margin: 20px 20px;
     margin-top: 50px;
+    border: 1px solid #000000;
+    background: #fff;
+    box-shadow: 0 4px 8px rgb(255, 255, 255);
     overflow-y: auto; /* Enable scrolling with proper content visibility */
     padding-top: 10px; /* Optional: Add padding if the content is still too close to the top */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */

@@ -122,8 +122,11 @@
     flex-direction: column;
     font-size: 12px;
     font-weight: 700;
-    max-width: 120px;
+    width: 140px;
     gap: 5px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 5px;
   }
   .colors {
     display: flex;
@@ -179,11 +182,13 @@
     gap: 10px;
     row-gap: 30px;
     margin-top: 10px;
-    border: 1px solid #161515;
+    border: 1px solid #000000;
+    box-shadow: 0 4px 8px rgb(255, 255, 255);
     margin-left: 20px;
     padding: 20px;
     overflow-y: auto;
     height: 500px;
+    background: #fff;
   }
   .card {
     background-color: #e4e4e4;

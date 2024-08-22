@@ -13,6 +13,7 @@
     display: flex;
     flex-direction: row;
     height: 120px;
+    background-color: #fff;
     width: 100%;
     justify-content: space-around;
     box-shadow: 5px 10px 18px #888888;

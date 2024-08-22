@@ -28,40 +28,6 @@
 </script>
 
 <main>
-  <header class="header">
-    <div class="header_option">
-      <button>down</button>
-      <form action="/action_page.php" class="form_select">
-        <select name="cars" id="cars">
-          <option value="등록승인여부"> 등록승인여부 </option>
-        </select>
-        <select name="cars" id="자산그룹명">
-          <option value="volvo">자산그룹명</option>
-        </select>
-        <select name="cars" id="운영체제">
-          <option value="volvo">운영체제</option>
-        </select>
-        <select name="cars" id="에이전트여부">
-          <option value="volvo">에이전트여부</option>
-        </select>
-      </form>
-    </div>
-    <div class="header_button">
-      <p>자산명</p>
-      <p>엑셀다운로드</p>
-    </div>
-  </header>
-  <div class="second_line">
-    <button>자산상세검색</button>
-    <button>정보수집</button>
-  </div>
-  <div class="second_line">
-    <button>자산그룹별등록추세</button>
-    <button>요약보고서출력</button>
-    <button>상세보고서출력</button>
-    <button>목록엑셀저장</button>
-  </div>
-
   <div>
     <div class="allselect">
       <input type="checkbox" on:click="{toggleAll}" checked="{allSelected}" />
@@ -138,75 +104,7 @@
   main {
     width: 100%;
   }
-  .header {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
-    margin-left: 5px;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  .form_select {
-    max-width: 900px;
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    margin-left: 40px;
-  }
-  .form_select option {
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .header_option {
-    display: flex;
-    flex-direction: row;
-  }
-  .header_option button {
-    cursor: pointer;
-    background-color: #003366; /* Darker Blue */
-    color: #ffffff;
-    border: 1px solid #003366;
-  }
-  .header_option button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-  .header_button {
-    display: flex;
-    flex-direction: row;
-    width: 30%;
-    gap: 40px;
-  }
-  .header_button p {
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .header_button p:hover {
-    text-decoration: underline;
-    color: #003366;
-  }
-  .second_line {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 20px;
-    margin-top: 5px;
-  }
-  .second_line button {
-    background-color: #003366; /* Darker Blue */
-    color: #ffffff;
-    border: 1px solid #003366;
-    border-radius: 5px;
-    height: 40px;
 
-    width: 150px;
-    cursor: pointer;
-  }
-  .second_line button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
   .first_col {
     display: flex;
     flex-direction: column;

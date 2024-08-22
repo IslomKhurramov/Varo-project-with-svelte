@@ -30,8 +30,24 @@
 <main>
   <div>
     <div class="allselect">
-      <input type="checkbox" on:click="{toggleAll}" checked="{allSelected}" />
-      <strong class="selectButton">전체선택</strong>
+      <div class="allSelectDiv">
+        <input type="checkbox" on:click="{toggleAll}" checked="{allSelected}" />
+        <strong class="selectButton">전체선택</strong>
+      </div>
+      <div class="color_group">
+        <div class="colors">
+          <div class="blue_button"></div>
+          <span>편집</span>
+        </div>
+        <div class="colors">
+          <div class="red_button"></div>
+          <span>삭제</span>
+        </div>
+        <div class="colors">
+          <div class="yellow_button"></div>
+          <span>이전(다른그룹으로) </span>
+        </div>
+      </div>
     </div>
     <div class="card_container">
       {#each assetData as asset}
@@ -101,6 +117,36 @@
 </main>
 
 <style>
+  .color_group {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    font-weight: 700;
+    max-width: 120px;
+    gap: 5px;
+  }
+  .colors {
+    display: flex;
+    flex-direction: row;
+  }
+  .blue_button {
+    background-color: blue;
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+  }
+  .red_button {
+    background-color: red;
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+  }
+  .yellow_button {
+    background-color: yellow;
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+  }
   main {
     width: 100%;
   }
@@ -212,8 +258,14 @@
   }
   .allselect {
     margin-left: 20px;
+    display: flex;
+    justify-content: space-between;
   }
   .allselect input {
     cursor: pointer;
+  }
+  .allselect div input {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
   }
 </style>

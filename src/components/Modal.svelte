@@ -1,9 +1,11 @@
 <script>
   export let showModal; // boolean
+  export let showModalSecond;
 
   let dialog; // HTMLDialogElement
-
+  let dialogSecond; // HTMLDialogElement for the second modal
   $: if (dialog && showModal) dialog.showModal();
+  $: if (dialogSecond && showModalSecond) dialogSecond.showModal();
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -20,6 +22,23 @@
     <hr />
     <!-- svelte-ignore a11y-autofocus -->
     <button autofocus on:click="{() => dialog.close()}">Close</button>
+  </div>
+</dialog>
+
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<dialog
+  bind:this="{dialogSecond}"
+  on:close="{() => (showModalSecond = false)}"
+  on:click|self="{() => dialogSecond.close()}"
+>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div on:click|stopPropagation>
+    <slot name="headerSecond" />
+    <hr />
+    <slot name="contentSecond" />
+    <hr />
+    <!-- svelte-ignore a11y-autofocus -->
+    <button autofocus on:click="{() => dialogSecond.close()}">Close</button>
   </div>
 </dialog>
 

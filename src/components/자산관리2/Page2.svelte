@@ -2,11 +2,13 @@
   import AssetCardsPage from "./AssetCardsPage.svelte";
   import Modal from "../Modal.svelte";
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
+  import Swiper from "./Swiper.svelte";
 
   let currentPage = null;
   let activeMenu = null;
   let assets = ["자산그룹 1"];
   let showModal = false;
+  let showModalSecond = false;
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -27,6 +29,7 @@
 
         {#each assets as asset, index}
           <!-- svelte-ignore a11y-invalid-attribute -->
+          <!-- svelte-ignore missing-declaration -->
           <a
             href="javascript:void(0)"
             on:click="{() => selectPage(AssetPage, asset)}"
@@ -51,7 +54,7 @@
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button>down</button>
+        <button on:click="{() => (showModalSecond = true)}">down</button>
         <form action="/action_page.php" class="form_select">
           <select name="cars" id="cars">
             <option value="등록승인여부"> 등록승인여부 </option>
@@ -88,6 +91,9 @@
 
   <Modal bind:showModal>
     <ModalChasanGroup />
+  </Modal>
+  <Modal bind:showModalSecond>
+    <Swiper />
   </Modal>
 </main>
 

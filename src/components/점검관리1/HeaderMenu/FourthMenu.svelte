@@ -66,7 +66,7 @@
   }
   td,
   th {
-    border: 1px solid #94b8ff;
+    border: 1px solid #000000;
     text-align: left;
     padding: 8px;
   }

@@ -20,7 +20,7 @@
 
   for (let i = 1; i <= 30; i++) {
     // Start at 1 for better readability
-    slides.push(`chasanGroup${i}`);
+    slides.push(`자산${i}`);
   }
 
   let swiperContainer;

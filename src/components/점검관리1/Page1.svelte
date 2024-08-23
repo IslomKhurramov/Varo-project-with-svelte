@@ -97,7 +97,7 @@
     width: 130px;
     font-size: 16px;
     height: 130vh;
-    background-color: #2c3e50;
+    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
     /* background-image: linear-gradient(30deg, #a2c5fe, #2c3e50); */
   }
   .add_delete_container {

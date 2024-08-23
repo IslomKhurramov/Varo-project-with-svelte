@@ -2,9 +2,21 @@
   import { onMount } from "svelte";
   import Swiper from "swiper";
   import "swiper/swiper-bundle.min.css"; // Ensure CSS is loaded
+  import FirstMenu from "./SwiperMenu/FirstMenu.svelte";
+  import SecondMenu from "./SwiperMenu/SecondMenu.svelte";
+  import ThirdMenu from "./SwiperMenu/ThirdMenu.svelte";
+  import FourthMenu from "./SwiperMenu/FourthMenu.svelte";
+  import FifthMenu from "./SwiperMenu/FifthMenu.svelte";
 
+  let currentPage = null;
+  let activeMenu = null;
   let swiperInstance;
   let slides = [];
+
+  const selectPage = (page, menu) => {
+    currentPage = page;
+    activeMenu = menu;
+  };
 
   for (let i = 1; i <= 30; i++) {
     // Start at 1 for better readability
@@ -17,7 +29,7 @@
     swiperInstance = new Swiper(swiperContainer, {
       loop: false, // Ensure no looping
       slidesPerView: 8,
-      spaceBetween: 10,
+      spaceBetween: 15,
       pagination: {
         el: ".swiper-pagination",
         clickable: true,
@@ -47,6 +59,50 @@
     <div class="swiper-button-prev"></div>
     <div class="swiper-button-next"></div>
   </div>
+
+  <div class="header">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <h3
+      on:click="{() => selectPage(FirstMenu, '자산개요')}"
+      class="{activeMenu === '자산개요' ? 'active' : ''}"
+    >
+      자산개요
+    </h3>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <h3
+      on:click="{() => selectPage(SecondMenu, 'CVE/CPE')}"
+      class="{activeMenu === 'CVE/CPE' ? 'active' : ''}"
+    >
+      CVE/CPE
+    </h3>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <h3
+      on:click="{() => selectPage(ThirdMenu, '보안감사')}"
+      class="{activeMenu === '보안감사' ? 'active' : ''}"
+    >
+      보안감사
+    </h3>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <h3
+      on:click="{() => selectPage(FourthMenu, 'CCE점검이력')}"
+      class="{activeMenu === 'CCE점검이력' ? 'active' : ''}"
+    >
+      CCE점검이력
+    </h3>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <h3
+      on:click="{() => selectPage(FifthMenu, '자산현황보고서')}"
+      class="{activeMenu === '자산현황보고서' ? 'active' : ''}"
+    >
+      자산현황보고서
+    </h3>
+  </div>
+
+  {#if currentPage}
+    <div class="right_menu">
+      <svelte:component this="{currentPage}" />
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -64,5 +120,34 @@
     font-size: 14px;
     background: #ccc;
     text-align: center;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  .swiper-slide:hover {
+    transform: scale(1.2);
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    padding-left: 40px;
+    width: 100%;
+    color: #fff;
+  }
+  .header h3 {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .header h3:hover {
+    color: #65a0ff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .header h3:hover,
+  .header h3.active {
+    color: #65a0ff;
+    text-decoration: underline;
   }
 </style>

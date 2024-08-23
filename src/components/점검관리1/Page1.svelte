@@ -36,8 +36,10 @@
           <button>이력삭제</button>
         </div>
         <div>
-          <button on:click="{() => selectPage(RightConainer, 'RightConainer')}"
-            >info</button
+          <button
+            class="mainMenuButton"
+            on:click="{() => selectPage(RightConainer, 'RightConainer')}"
+            >점검관리</button
           >
         </div>
 
@@ -73,12 +75,30 @@
 </div>
 
 <style>
+  .mainMenuButton {
+    width: auto;
+    font-size: 12px;
+    width: 130px;
+
+    cursor: pointer;
+    background-color: #2c3e50;
+    color: #fff;
+    border: none;
+  }
+  .mainMenuButton:hover {
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
+  }
+  .container_aside {
+    margin-left: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
   aside {
     color: #fff;
     width: 130px;
     font-size: 16px;
     height: 130vh;
-    background-image: linear-gradient(30deg, #a2c5fe, #44a7fd);
+    background-color: #2c3e50;
+    /* background-image: linear-gradient(30deg, #a2c5fe, #2c3e50); */
   }
   .add_delete_container {
     padding-bottom: 10px;
@@ -153,7 +173,7 @@
     width: 70px;
 
     cursor: pointer;
-    background-color: #44a7fd;
+    background-color: #2c3e50;
     color: #fff;
     border: none;
   }

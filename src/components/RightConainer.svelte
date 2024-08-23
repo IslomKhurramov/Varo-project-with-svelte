@@ -61,19 +61,23 @@
 
 <header>
   <div>
-    <form action="/action_page.php">
+    <form action="/action_page.php" class="form_select">
       <select name="cars" id="cars" class="select">
         <option value="volvo" class="option">프로젝트명</option>
       </select>
+      <span class="arrow">&#9662;</span>
       <select name="cars" id="cars">
         <option value="volvo">일정범위</option>
       </select>
+      <span class="arrow">&#9662;</span>
       <select name="cars" id="cars">
         <option value="volvo">생성자</option>
       </select>
+      <span class="arrow">&#9662;</span>
       <select name="cars" id="cars">
         <option value="volvo">결과등록상태</option>
       </select>
+      <span class="arrow">&#9662;</span>
     </form>
   </div>
   <div class="headerButton">
@@ -114,17 +118,33 @@
 </main>
 
 <style>
-  form {
-    margin-left: 20px;
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    flex-wrap: wrap;
-    width: 100%;
+  .arrow {
+    color: #fff;
   }
-  form select {
-    width: 150px;
+  .form_select select {
+    appearance: none; /* Removes default dropdown styling in modern browsers */
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none; /* Firefox */
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 16px;
+    color: inherit; /* Inherits the color of the surrounding text */
     cursor: pointer;
+    color: #fff;
+  }
+
+  .form_select select::-ms-expand {
+    display: none; /* Removes the dropdown arrow in Internet Explorer */
+  }
+
+  .form_select {
+    display: flex;
+    gap: 10px; /* Adds spacing between select elements */
+  }
+
+  .form_select select option {
+    padding: 5px 0;
   }
 
   header {

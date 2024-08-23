@@ -141,9 +141,7 @@
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     margin-top: 50px;
-    box-shadow:
-      10px 10px 20px #babecc,
-      -10px -10px 20px #ffffff;
+    box-shadow: 0 4px 8px rgb(255, 255, 255);
   }
 
   .header {

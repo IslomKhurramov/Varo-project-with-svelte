@@ -58,7 +58,7 @@
     margin-top: 40px;
   }
   .first_line {
-    background-color: #0d47a1;
+    background-color: #003366;
     color: #fff;
   }
   td,

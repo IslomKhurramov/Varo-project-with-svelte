@@ -58,20 +58,26 @@
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button on:click="{toggleView}">down</button>
+        <button on:click="{toggleView}">
+          <span class="arrow">&#9662;</span></button
+        >
         <form action="/action_page.php" class="form_select">
           <select name="cars" id="cars">
             <option value="등록승인여부"> 등록승인여부 </option>
           </select>
+          <span class="arrow">&#9662;</span>
           <select name="cars" id="자산그룹명">
             <option value="volvo">자산그룹명</option>
           </select>
+          <span class="arrow">&#9662;</span>
           <select name="cars" id="운영체제">
             <option value="volvo">운영체제</option>
           </select>
+          <span class="arrow">&#9662;</span>
           <select name="cars" id="에이전트여부">
             <option value="volvo">에이전트여부</option>
           </select>
+          <span class="arrow">&#9662;</span>
         </form>
       </div>
       <div class="header_button">
@@ -103,15 +109,16 @@
 
 <style>
   .container_aside {
-    padding-left: 10px;
+    margin-left: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   }
-
   aside {
     color: #fff;
-    width: 120px;
+    width: 130px;
+    font-size: 16px;
     height: 130vh;
-    background-image: linear-gradient(30deg, #0048bd, #44a7fd);
-    border: 1px solid black;
+    background-color: #2c3e50;
+    /* background-image: linear-gradient(30deg, #a2c5fe, #2c3e50); */
   }
   .add_delete_container {
     padding-bottom: 10px;
@@ -181,7 +188,7 @@
     width: 70px;
 
     cursor: pointer;
-    background-color: #44a7fd;
+    background-color: #2c3e50;
     color: #fff;
     border: none;
   }
@@ -201,16 +208,34 @@
     margin-top: 10px;
     font-weight: bold;
   }
-  .form_select {
-    max-width: 900px;
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    margin-left: 40px;
-  }
-  .form_select option {
-    font-weight: bold;
+  .form_select select {
+    appearance: none; /* Removes default dropdown styling in modern browsers */
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none; /* Firefox */
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 16px;
+    margin-left: 10px;
+    color: inherit; /* Inherits the color of the surrounding text */
     cursor: pointer;
+    color: #fff;
+  }
+  .arrow {
+    color: #fff;
+  }
+
+  .form_select select::-ms-expand {
+    display: none; /* Removes the dropdown arrow in Internet Explorer */
+  }
+
+  .form_select {
+    display: flex;
+    gap: 10px; /* Adds spacing between select elements */
+  }
+
+  .form_select select option {
+    padding: 5px 0;
   }
   .header_option {
     display: flex;
@@ -232,8 +257,13 @@
     gap: 40px;
   }
   .header_button p {
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+
+    font-weight: normal;
+    border: none;
   }
   .header_button p:hover {
     text-decoration: underline;

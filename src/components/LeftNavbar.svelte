@@ -86,9 +86,10 @@
     width: 200px;
     padding-left: 20px;
     height: 130vh;
-    background-image: linear-gradient(30deg, #0048bd, #44a7fd);
+    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
     /* border-top-right-radius: 80px; */
-    border: 1px solid black;
+    border: 1px black;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   }
 
   aside a {

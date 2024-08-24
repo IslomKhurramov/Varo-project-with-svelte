@@ -28,7 +28,7 @@
 </script>
 
 <main>
-  <div>
+  <div class="container">
     <div class="allselect">
       <div class="allSelectDiv">
         <input type="checkbox" on:click="{toggleAll}" checked="{allSelected}" />
@@ -117,6 +117,15 @@
 </main>
 
 <style>
+  .container {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;
+    background-color: #e0e0e0;
+    margin-left: 10px;
+    margin-right: -20px;
+  }
+
   .color_group {
     display: flex;
     flex-direction: column;
@@ -133,19 +142,19 @@
     flex-direction: row;
   }
   .blue_button {
-    background-color: blue;
+    background-color: #4682b4;
     width: 10px;
     height: 10px;
     border: 1px solid black;
   }
   .red_button {
-    background-color: red;
+    background-color: #d9534f;
     width: 10px;
     height: 10px;
     border: 1px solid black;
   }
   .yellow_button {
-    background-color: yellow;
+    background-color: #f0ad4e;
     width: 10px;
     height: 10px;
     border: 1px solid black;
@@ -176,6 +185,7 @@
     margin-bottom: 0;
     padding-bottom: 0;
   }
+
   .card_container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -183,15 +193,17 @@
     row-gap: 30px;
     margin-top: 10px;
     border: 1px solid #000000;
-    box-shadow: 0 4px 8px rgb(255, 255, 255);
-    margin-left: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 10px;
+    margin-right: 10px;
     padding: 20px;
     overflow-y: auto;
     height: 500px;
-    background: #fff;
+    background: #f0f0f0; /* Very Light Gray */
   }
+
   .card {
-    background-color: #e4e4e4;
+    background-color: #d6d6d6; /* Muted Gray */
     max-width: 400px;
     height: 190px;
     font-size: 12px;
@@ -201,9 +213,9 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-
-    box-shadow: inset rgb(0, 0, 0) 0px 0px 20px -8px;
-    border: 1px solid black;
+    box-shadow: inset 0 0 20px -8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
   }
   .checkbox {
     position: absolute;
@@ -212,14 +224,16 @@
     cursor: pointer;
   }
   .box_number {
-    background-color: #ffc267;
+    background-color: #007bff; /* Medium blue */
+    color: #ffffff; /* White text for contrast */
     width: 70px;
     height: 50px;
     align-content: center;
     text-align: center;
     font-weight: 400;
     font-size: 18px;
-    border: 1px solid black;
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Slight rounding of corners */
   }
   .card_buttons {
     position: absolute;
@@ -230,21 +244,33 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
+    border: 1px solid #000000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
+
   .blue {
-    background-color: blue;
-    border: 1px solid black;
-    cursor: pointer;
+    background-color: #4682b4; /* Steel Blue */
   }
+
+  .blue:hover {
+    background-color: #3a76a8; /* Darker Steel Blue */
+  }
+
   .red {
-    background-color: red;
-    border: 1px solid black;
-    cursor: pointer;
+    background-color: #d9534f; /* Muted Red */
   }
+
+  .red:hover {
+    background-color: #b52a26; /* Darker Muted Red */
+  }
+
   .yellow {
-    background-color: yellow;
-    border: 1px solid black;
-    cursor: pointer;
+    background-color: #f0ad4e; /* Muted Yellow */
+  }
+
+  .yellow:hover {
+    background-color: #e6a045; /* Darker Golden Yellow */
   }
   .selectButton {
     color: #000000;
@@ -256,10 +282,21 @@
     position: absolute;
     bottom: -6px;
     right: 0px;
-    border: 1px solid black;
-    width: 50px;
-    background-color: #f49f20;
-    color: #fff;
+    border: 1px solid #ff5722; /* Deep orange border */
+    width: 80px;
+    height: 30px; /* Adjusted height for better proportion */
+    background-color: #ff5722; /* Deep orange */
+    color: #ffffff; /* White text for contrast */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .modal_button:hover {
+    background-color: #e64a19; /* Slightly darker shade on hover */
+    transform: translateY(-2px); /* Slight raise on hover */
   }
   .allselect {
     margin-left: 20px;

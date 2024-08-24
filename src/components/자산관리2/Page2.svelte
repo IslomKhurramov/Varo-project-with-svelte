@@ -21,29 +21,27 @@
 </script>
 
 <main class="container">
-  <div class="MainPage">
-    <div class="container_aside">
-      <aside>
-        <div class="add_delete_container">
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <button>신규점검</button>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <button>이력삭제</button>
-        </div>
+  <div class="container_aside">
+    <aside>
+      <div class="add_delete_container">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <button>신규점검</button>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <button>이력삭제</button>
+      </div>
 
-        {#each assets as asset, index}
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          <!-- svelte-ignore missing-declaration -->
-          <a
-            href="javascript:void(0)"
-            on:click="{() => selectPage(AssetPage, asset)}"
-            class="{activeMenu === asset ? 'active' : ''}"
-          >
-            <i class="fa fa-user-o" aria-hidden="true"></i>
-            {asset}
-          </a>
-        {/each}
-      </aside>
+      {#each assets as asset, index}
+        <!-- svelte-ignore a11y-invalid-attribute -->
+        <!-- svelte-ignore missing-declaration -->
+        <a
+          href="javascript:void(0)"
+          on:click="{() => selectPage(AssetPage, asset)}"
+          class="{activeMenu === asset ? 'active' : ''}"
+        >
+          <i class="fa fa-user-o" aria-hidden="true"></i>
+          {asset}
+        </a>
+      {/each}
 
       <div class="social">
         <a
@@ -53,12 +51,12 @@
           <i class="fa fa-linkedin"></i>
         </a>
       </div>
-    </div>
+    </aside>
   </div>
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button on:click="{toggleView}">
+        <button on:click="{toggleView}" style="width:30px">
           <span class="arrow">&#9662;</span></button
         >
         <form action="/action_page.php" class="form_select">
@@ -98,7 +96,10 @@
     {#if currentView === "default"}
       <AssetCardsPage />
     {:else}
-      <Swiper /> <!-- Render the new component based on state -->
+      <div class="swiper-container">
+        <Swiper />
+        <!-- Render the new component based on state -->
+      </div>
     {/if}
   </div>
 
@@ -108,23 +109,22 @@
 </main>
 
 <style>
-  .container_aside {
-    margin-left: 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  }
   aside {
     color: #fff;
     width: 130px;
     font-size: 16px;
     height: 130vh;
     background-image: linear-gradient(30deg, #0048bd, #2c3e50);
-    /* background-image: linear-gradient(30deg, #a2c5fe, #2c3e50); */
+  }
+  .container_aside {
+    min-height: 100hv;
+    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
   }
   .add_delete_container {
     padding-bottom: 10px;
   }
   aside a {
-    font-size: 12px;
+    font-size: 16px;
     color: #fff;
     display: block;
     padding: 12px 10px;
@@ -174,11 +174,17 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    margin-left: 20px;
   }
+
+  .right_menu {
+    width: 100%;
+  }
+
   .add_delete_container {
     display: flex;
     flex-direction: row;
-
+    z-index: 1000;
     justify-content: space-around;
     width: 100%;
   }
@@ -197,6 +203,16 @@
   }
   .right_menu {
     width: 100%;
+    min-height: 500px; /* Set a min-height for the right menu */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Make sure content starts from the top */
+    box-sizing: border-box;
+  }
+  .swiper-container {
+    flex-grow: 1; /* Make the Swiper take up the remaining space */
+    min-height: inherit; /* Inherit the min-height from the parent */
+    box-sizing: border-box; /* Include padding/border in height/width calculations */
   }
   .header {
     display: flex;
@@ -257,17 +273,19 @@
     gap: 40px;
   }
   .header_button p {
-    font-size: 16px;
     cursor: pointer;
-    color: #fff;
+    color: #ffffff; /* Primary Header Color */
+    font-weight: 600;
     font-size: 16px;
+    transition: color 0.3s ease;
 
     font-weight: normal;
     border: none;
   }
   .header_button p:hover {
+    color: #002244; /* Hover state for primary header */
     text-decoration: underline;
-    color: #003366;
+    cursor: pointer;
   }
   .second_line {
     width: 100%;
@@ -280,12 +298,17 @@
   .second_line button {
     background-color: #003366; /* Darker Blue */
     color: #ffffff;
-    border: 1px solid #ffffff;
+
     border-radius: 5px;
     height: 40px;
 
     width: 150px;
     cursor: pointer;
+  }
+  .second_line button:hover {
+    background-color: #002244;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
   .second_line button:hover {
     box-shadow: 0.5px 1px 0.5px 1px #161515;

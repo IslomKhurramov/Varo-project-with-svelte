@@ -16,7 +16,9 @@
     background-color: #fff;
     width: 100%;
     justify-content: space-around;
-    box-shadow: 5px 10px 18px #888888;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    z-index: 1000;
   }
   img {
     width: auto;

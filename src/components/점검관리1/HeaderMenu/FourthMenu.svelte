@@ -51,14 +51,18 @@
     overflow-y: auto;
     overflow-x: hidden;
     margin-top: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
     margin-left: 20px;
-    box-shadow: 0 4px 8px rgb(255, 255, 255);
   }
   table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;
   }
   .first_line {
     background-color: #003366;

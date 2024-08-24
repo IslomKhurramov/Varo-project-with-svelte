@@ -24,46 +24,44 @@
 </script>
 
 <div div class="container">
-  <div class="MainPage">
-    <div class="container_aside">
-      <aside>
-        <div class="add_delete_container">
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <button on:click="{() => selectPage(AddPorject, 'add')}"
-            >신규점검</button
-          >
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <button>이력삭제</button>
-        </div>
-        <div>
-          <button
-            class="mainMenuButton"
-            on:click="{() => selectPage(RightConainer, 'RightConainer')}"
-            >점검관리</button
-          >
-        </div>
-
-        {#each projects as project, index}
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          <a
-            href="javascript:void(0)"
-            on:click="{() => selectPage(RightContainerMenu, project)}"
-            class="{activeMenu === project ? 'active' : ''}"
-          >
-            <i class="fa fa-user-o" aria-hidden="true"></i>
-            {project}
-          </a>
-        {/each}
-      </aside>
-
-      <div class="social">
-        <a
-          href="https://www.linkedin.com/in/florin-cornea-b5118057/"
-          target="_blank"
+  <div class="container_aside">
+    <aside>
+      <div class="add_delete_container">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <button on:click="{() => selectPage(AddPorject, 'add')}"
+          >신규점검</button
         >
-          <i class="fa fa-linkedin"></i>
-        </a>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <button>이력삭제</button>
       </div>
+      <div>
+        <button
+          class="mainMenuButton"
+          on:click="{() => selectPage(RightConainer, 'RightConainer')}"
+          >점검관리</button
+        >
+      </div>
+
+      {#each projects as project, index}
+        <!-- svelte-ignore a11y-invalid-attribute -->
+        <a
+          href="javascript:void(0)"
+          on:click="{() => selectPage(RightContainerMenu, project)}"
+          class="{activeMenu === project ? 'active' : ''}"
+        >
+          <i class="fa fa-user-o" aria-hidden="true"></i>
+          {project}
+        </a>
+      {/each}
+    </aside>
+
+    <div class="social">
+      <a
+        href="https://www.linkedin.com/in/florin-cornea-b5118057/"
+        target="_blank"
+      >
+        <i class="fa fa-linkedin"></i>
+      </a>
     </div>
   </div>
 
@@ -78,7 +76,7 @@
   .mainMenuButton {
     width: auto;
     font-size: 12px;
-    width: 130px;
+    width: 70px;
 
     cursor: pointer;
     background-color: #2c3e50;
@@ -88,17 +86,17 @@
   .mainMenuButton:hover {
     box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
-  .container_aside {
-    margin-left: 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  }
+
   aside {
     color: #fff;
     width: 130px;
     font-size: 16px;
     height: 130vh;
     background-image: linear-gradient(30deg, #0048bd, #2c3e50);
-    /* background-image: linear-gradient(30deg, #a2c5fe, #2c3e50); */
+  }
+  .container_aside {
+    min-height: 100hv;
+    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
   }
   .add_delete_container {
     padding-bottom: 10px;
@@ -154,6 +152,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    margin-left: 20px;
   }
 
   .right_menu {
@@ -163,7 +162,7 @@
   .add_delete_container {
     display: flex;
     flex-direction: row;
-
+    z-index: 1000;
     justify-content: space-around;
     width: 100%;
   }
@@ -179,9 +178,5 @@
   }
   .add_delete_container button:hover {
     box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-  .MainPage {
-    display: flex;
-    flex-direction: row;
   }
 </style>

@@ -56,6 +56,9 @@
     width: 100%;
     margin-left: 20px;
     margin-top: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;
   }
   .first_line {
     background-color: #003366;
@@ -63,7 +66,7 @@
   }
   td,
   th {
-    border: 1px solid #94b8ff;
+    border: 1px solid #000000;
     text-align: left;
     padding: 8px;
   }

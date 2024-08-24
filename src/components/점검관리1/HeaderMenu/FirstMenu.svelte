@@ -87,9 +87,9 @@
     padding-bottom: 50px;
     width: 100%;
     background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
-
-    box-shadow: 0 4px 8px rgb(255, 255, 255);
   }
   .first_line {
     display: flex;

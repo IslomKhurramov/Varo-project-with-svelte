@@ -109,12 +109,12 @@
       </tr>
       {#each hostInfo as host}
         <tr>
-          <td>{hostInfo[0].number}</td>
+          <td>{host.number}</td>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
-            >{hostInfo[0].name}</td
+            >{host.name}</td
           >
-          <td>{hostInfo[0].item}</td>
+          <td>{host.item}</td>
           <td>
             <div style="display: flex; flex-direction:column">
               {#if host.checklist && host.checklist.vulnerability}
@@ -129,8 +129,8 @@
               {/if}
             </div>
           </td>
-          <td>{hostInfo[0].system}</td>
-          <td>{hostInfo[0].instectionResult}</td>
+          <td>{host.system}</td>
+          <td>{host.instectionResult}</td>
           <td>
             <select id="">
               <option value="양호">양호</option>
@@ -168,9 +168,9 @@
     gap: 5px;
     background-color: #dedede;
     height: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
-
-    box-shadow: 0 4px 8px rgb(255, 255, 255);
     overflow-y: auto;
     font-size: 12px;
     margin-left: 20px;
@@ -183,6 +183,9 @@
     width: 100%;
     background-color: #fff;
     margin-right: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;
   }
 
   td,

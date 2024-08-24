@@ -1,4 +1,12 @@
 <script>
+  let currentData = null;
+  let activeData = null;
+
+  const selectData = (page, menu) => {
+    currentData = page;
+    activeData = menu;
+  };
+
   let data = [];
   for (let i = 1; i <= 100; i++) {
     data.push({
@@ -16,6 +24,18 @@
       note: "길동이",
     });
   }
+
+  const pageData = [
+    {
+      data1: "This is data for Second Menu",
+      data2: "This is data for Third Menu",
+      data3: "This is data for Fourth Menu",
+      data4: "This is data for Second Menu",
+      data5: "This is data for Third Menu",
+      data6: "This is data for Fourth Menu",
+      data7: "This is data for Second Menu",
+    },
+  ];
 </script>
 
 <main>
@@ -67,6 +87,64 @@
       <button style="background: #28a745;">활성하기</button>
     </div>
   </div>
+  <div>
+    <div class="header">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data1, '운영체제정보')}"
+        class="{activeData === '운영체제정보' ? 'active' : ''}"
+      >
+        운영체제정보
+      </h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data2, '  설치된')}"
+        class="{activeData === '  설치된' ? 'active' : ''}"
+      >
+        설치된 프로그램 목록
+      </h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data3, '프로세스목록')}"
+        class="{activeData === '프로세스목록' ? 'active' : ''}"
+      >
+        프로세스목록
+      </h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data4, '네트워크')}"
+        class="{activeData === '네트워크' ? 'active' : ''}"
+      >
+        네트워크 정보
+      </h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data5, 'DLL')}"
+        class="{activeData === 'DLL' ? 'active' : ''}"
+      >
+        DLL 정보
+      </h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data6, '파일해시')}"
+        class="{activeData === '파일해시' ? 'active' : ''}"
+      >
+        파일해시
+      </h3>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <h3
+        on:click="{() => selectData(pageData[0].data7, '패치내역')}"
+        class="{activeData === '패치내역' ? 'active' : ''}"
+      >
+        패치내역/대상
+      </h3>
+    </div>
+    {#if currentData}
+      <div class="last_container">
+        <p>{currentData}</p>
+      </div>
+    {/if}
+  </div>
 </main>
 
 <style>
@@ -105,11 +183,13 @@
   .table_container {
     display: flex;
     justify-content: center;
-    width: 100%;
-    margin: 0 auto;
+    width: 94%;
+    margin: 0;
     overflow-y: auto;
     overflow-x: hidden;
     height: 300px;
+
+    margin: 20px;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -153,9 +233,9 @@
   .input_container {
     display: flex;
     flex-direction: column;
-    width: 96%;
-    margin: 20px auto;
-    padding: 20px;
+    width: 90%;
+    margin: 20px;
+    padding: 25px;
     background: #f8f9fa;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -206,5 +286,42 @@
   .input input:focus {
     border-color: #007bff;
     outline: none;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    padding-left: 40px;
+    width: 100%;
+    color: #fff;
+  }
+  .header h3 {
+    color: #ffffff; /* Primary Header Color */
+    font-weight: 600;
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+  .header h3:hover {
+    color: #002244; /* Hover state for primary header */
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .header h3:hover,
+  .header h3.active {
+    color: #001a33;
+    text-decoration: underline;
+  }
+  .last_container {
+    width: 100%;
+    height: auto;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000000;
+    margin-bottom: 40px;
+    width: 90%;
+    margin: 20px;
+    padding: 25px;
   }
 </style>

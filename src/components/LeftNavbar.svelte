@@ -85,7 +85,7 @@
     color: #fff;
     width: 200px;
     padding-left: 20px;
-    height: 130vh;
+    height: 100vh;
     background-image: linear-gradient(30deg, #0048bd, #2c3e50);
     /* border-top-right-radius: 80px; */
     border: 1px black;
@@ -171,16 +171,29 @@
     right: 5px;
   }
 
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+  .container_aside {
+    position: fixed;
+    top: 120px;
+    left: 0;
+    width: 200px; /* Adjust width as needed */
+    height: 100vh; /* Full height of the viewport */
+    background-color: #0048bd; /* Background color or other styling */
+    z-index: 1000; /* Ensure it stays above other content */
   }
 
+  .container {
+    display: flex;
+    margin-left: 200px; /* Offset the content to make space for the sidebar */
+    flex-direction: row;
+    width: calc(
+      100% - 200px
+    ); /* Adjust the width according to the sidebar width */
+  }
   .right_menu {
     width: 100%;
     padding-right: 50px;
     display: flex;
     flex-direction: row;
+    margin-top: 120px;
   }
 </style>

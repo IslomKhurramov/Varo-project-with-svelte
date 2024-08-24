@@ -20,7 +20,9 @@
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
-        on:click="{() => selectPage(Page1, '점검관리')}"
+        on:click="{() => {
+          selectPage(Page1, '점검관리'); // Then select the page
+        }}"
         class="{activeMenu === '점검관리' ? 'active' : ''}"
       >
         <i class="fa fa-user-o" aria-hidden="true"></i>
@@ -83,7 +85,7 @@
 <style>
   aside {
     color: #fff;
-    width: 200px;
+    width: 160px;
     padding-left: 20px;
     height: 100vh;
     background-image: linear-gradient(30deg, #0048bd, #2c3e50);
@@ -175,7 +177,7 @@
     position: fixed;
     top: 120px;
     left: 0;
-    width: 200px; /* Adjust width as needed */
+    width: 160px; /* Adjust width as needed */
     height: 100vh; /* Full height of the viewport */
     background-color: #0048bd; /* Background color or other styling */
     z-index: 1000; /* Ensure it stays above other content */
@@ -183,15 +185,15 @@
 
   .container {
     display: flex;
-    margin-left: 200px; /* Offset the content to make space for the sidebar */
+    margin-left: 160px; /* Offset the content to make space for the sidebar */
     flex-direction: row;
     width: calc(
-      100% - 200px
+      100% - 160px
     ); /* Adjust the width according to the sidebar width */
   }
   .right_menu {
     width: 100%;
-    padding-right: 50px;
+    padding-right: 30px;
     display: flex;
     flex-direction: row;
     margin-top: 120px;

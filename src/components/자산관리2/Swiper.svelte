@@ -118,7 +118,7 @@
     justify-content: center;
     align-items: center;
     font-size: 14px;
-    background: #ccc;
+    background: #f9f9f9;
     text-align: center;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
@@ -137,17 +137,19 @@
     color: #fff;
   }
   .header h3 {
+    color: #ffffff; /* Primary Header Color */
     font-weight: 600;
     font-size: 16px;
+    transition: color 0.3s ease;
   }
   .header h3:hover {
-    color: #65a0ff;
+    color: #002244; /* Hover state for primary header */
     text-decoration: underline;
     cursor: pointer;
   }
   .header h3:hover,
   .header h3.active {
-    color: #65a0ff;
+    color: #001a33;
     text-decoration: underline;
   }
 </style>

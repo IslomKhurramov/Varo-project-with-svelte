@@ -25,22 +25,25 @@
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button>신규점검</button>
+        <button class="menu_button">신규점검</button>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button>이력삭제</button>
+        <button class="menu_button">이력삭제</button>
       </div>
 
       {#each assets as asset, index}
-        <!-- svelte-ignore a11y-invalid-attribute -->
-        <!-- svelte-ignore missing-declaration -->
-        <a
-          href="javascript:void(0)"
-          on:click="{() => selectPage(AssetPage, asset)}"
-          class="{activeMenu === asset ? 'active' : ''}"
-        >
-          <i class="fa fa-user-o" aria-hidden="true"></i>
-          {asset}
-        </a>
+        <div class="chasanGroup_button">
+          <!-- svelte-ignore a11y-invalid-attribute -->
+          <!-- svelte-ignore missing-declaration -->
+          <a
+            href="javascript:void(0)"
+            on:click="{() => selectPage(AssetPage, asset)}"
+            class="{activeMenu === asset ? 'active' : ''}"
+          >
+            <i class="fa fa-user-o" aria-hidden="true"></i>
+            {asset}
+          </a>
+          <button class="asset_button">자산관리</button>
+        </div>
       {/each}
 
       <div class="social">
@@ -109,19 +112,89 @@
 </main>
 
 <style>
+  .container_aside {
+    min-height: 100vh;
+    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
+    padding: 10px;
+  }
+
   aside {
     color: #fff;
-    width: 130px;
+    width: 170px;
     font-size: 16px;
-    height: 130vh;
-    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
   }
-  .container_aside {
-    min-height: 100hv;
-    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
-  }
+
   .add_delete_container {
-    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .menu_button {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+
+  .menu_button:hover {
+    background-color: #003366;
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
+  }
+
+  .chasanGroup_button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .chasanGroup_button a {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .chasanGroup_button .asset_button {
+    background-color: #d9534f;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  .chasanGroup_button .asset_button:hover {
+    background-color: #003366;
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
+  }
+
+  .social {
+    margin-top: 20px;
+  }
+
+  .social a {
+    display: inline-block;
+    color: #fff;
+    font-size: 18px;
+    margin-right: 10px;
+    transition: color 0.3s ease;
+  }
+
+  .social a:hover {
+    color: #0077b5;
   }
   aside a {
     font-size: 16px;
@@ -203,6 +276,7 @@
   }
   .right_menu {
     width: 100%;
+    margin-left: 20px;
     min-height: 500px; /* Set a min-height for the right menu */
     display: flex;
     flex-direction: column;

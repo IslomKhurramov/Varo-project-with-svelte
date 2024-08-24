@@ -160,7 +160,7 @@
             </div>
           </td>
           <td>{host.system}</td>
-          <td>{hostInfo.instectionResult}</td>
+          <td>{host.instectionResult}</td>
           <td>
             <select id="">
               <option value="양호">양호</option>

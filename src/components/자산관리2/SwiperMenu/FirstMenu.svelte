@@ -153,17 +153,19 @@
     margin-right: -25px;
   }
   .button_container {
-    width: 100%;
+    width: 96%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     gap: 10px;
     margin-bottom: 15px;
+    margin-right: 25px;
   }
 
   .button_container button {
     background-color: #003366; /* Darker Blue */
     color: #ffffff;
+
     width: 130px;
     height: 35px;
     cursor: pointer;

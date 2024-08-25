@@ -62,22 +62,43 @@
 <header>
   <div>
     <form action="/action_page.php" class="form_select">
-      <select name="cars" id="cars" class="select">
-        <option value="volvo" class="option">프로젝트명</option>
-      </select>
-      <span class="arrow">&#9662;</span>
-      <select name="cars" id="cars">
-        <option value="volvo">일정범위</option>
-      </select>
-      <span class="arrow">&#9662;</span>
-      <select name="cars" id="cars">
-        <option value="volvo">생성자</option>
-      </select>
-      <span class="arrow">&#9662;</span>
-      <select name="cars" id="cars">
-        <option value="volvo">결과등록상태</option>
-      </select>
-      <span class="arrow">&#9662;</span>
+      <div class="select_container">
+        <select
+          name="approval_status"
+          id="approval_status"
+          class="select_input"
+        >
+          <option value="pending">프로젝트명</option>
+          <option value="approved">운영체제</option>
+          <option value="rejected">에이전트여부</option>
+          <option value="rejected">등록승인여부</option>
+        </select>
+      </div>
+      <div class="select_container">
+        <select name="asset_group" id="asset_group" class="select_input">
+          <option value="network">일정범위</option>
+          <option value="endpoint">Endpoint Security</option>
+          <option value="cloud">Cloud Security</option>
+        </select>
+      </div>
+      <div class="select_container">
+        <select
+          name="operating_system"
+          id="operating_system"
+          class="select_input"
+        >
+          <option value="windows">생성자</option>
+          <option value="linux">Linux</option>
+          <option value="macos">macOS</option>
+        </select>
+      </div>
+      <div class="select_container">
+        <select name="agent_status" id="agent_status" class="select_input">
+          <option value="active">결과등록상태</option>
+          <option value="inactive">Inactive</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
     </form>
   </div>
   <div class="headerButton">
@@ -118,33 +139,29 @@
 </main>
 
 <style>
-  .arrow {
-    color: #fff;
-  }
-  .form_select select {
-    appearance: none; /* Removes default dropdown styling in modern browsers */
-    -webkit-appearance: none; /* Safari */
-    -moz-appearance: none; /* Firefox */
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 16px;
-    color: inherit; /* Inherits the color of the surrounding text */
-    cursor: pointer;
-    color: #fff;
-  }
-
-  .form_select select::-ms-expand {
-    display: none; /* Removes the dropdown arrow in Internet Explorer */
-  }
-
   .form_select {
     display: flex;
-    gap: 10px; /* Adds spacing between select elements */
+    gap: 20px;
   }
 
-  .form_select select option {
-    padding: 5px 0;
+  .select_container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .select_input {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .select_input:hover {
+    background-color: #3a3a3a;
   }
 
   header {
@@ -161,7 +178,6 @@
     border: 1px solid #ffffff;
     border-radius: 5px;
     height: 40px;
-    margin-top: 13.5px;
     width: 150px;
     cursor: pointer;
   }

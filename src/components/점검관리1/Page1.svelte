@@ -93,7 +93,6 @@
     background-image: linear-gradient(30deg, #0048bd, #2c3e50);
     padding: 10px;
   }
-
   aside {
     color: #fff;
     width: 170px;
@@ -107,23 +106,6 @@
     margin-bottom: 20px;
   }
 
-  .menu_button {
-    background-color: #2c3e50;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-  }
-
-  .menu_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-
   .chasanGroup_button {
     display: flex;
     justify-content: space-between;
@@ -131,13 +113,53 @@
     margin-bottom: 15px;
   }
 
-  .chasanGroup_button a {
-    flex-grow: 1;
+  /* Sidebar Links */
+  aside a {
     font-size: 14px;
     color: #fff;
-    text-decoration: none;
+    display: block;
+    padding: 12px 10px;
     font-weight: 600;
+    text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  aside a:hover,
+  aside a.active {
+    margin-top: 3px;
+    text-decoration: underline;
+  }
+
+  aside a i {
+    margin-right: 5px;
+  }
+
+  /* Sidebar Hover Effects */
+  aside a:hover::after,
+  aside a:hover::before {
+    content: "";
+    position: absolute;
+    background-color: transparent;
+    height: 35px;
+    width: 35px;
+  }
+
+  /* Buttons */
+  .menu_button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    background-color: #2c3e50;
+    color: #fff;
+  }
+
+  .menu_button:hover {
+    background-color: #003366;
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
 
   .social {
@@ -211,26 +233,5 @@
 
   .right_menu {
     width: 100%;
-  }
-
-  .add_delete_container {
-    display: flex;
-    flex-direction: row;
-    z-index: 1000;
-    justify-content: space-around;
-    width: 100%;
-  }
-  .add_delete_container button {
-    width: auto;
-    font-size: 12px;
-    width: 70px;
-
-    cursor: pointer;
-    background-color: #2c3e50;
-    color: #fff;
-    border: none;
-  }
-  .add_delete_container button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
 </style>

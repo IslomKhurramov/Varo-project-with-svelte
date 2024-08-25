@@ -4,6 +4,7 @@
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
   import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
+  import Jongbusujin from "./Jongbusujin.svelte";
 
   let currentView = "default";
   let currentPage = null;
@@ -126,14 +127,16 @@
         </form>
       </div>
       <div class="header_button">
-        <p>자산명e</p>
+        <p>자산명</p>
         <p>엑셀다운로드</p>
       </div>
     </header>
 
     <div class="second_line">
       <button>자산상세검색</button>
-      <button>정보수집</button>
+      <button on:click="{() => selectPage(Jongbusujin, '정보수집')}"
+        >정보수집</button
+      >
     </div>
     <div class="second_line">
       <button on:click="{() => (showModal = true)}">자산그룹별등록추세</button>

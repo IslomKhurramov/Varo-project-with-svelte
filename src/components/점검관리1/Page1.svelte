@@ -13,10 +13,7 @@
     activeMenu = menu;
     currentView = "pageView"; // Switch the view to indicate a specific page is selected
   };
-  export function goToDefault() {
-    currentPage = null;
-    activeMenu = null; // Optionally reset the active menu as well
-  }
+
   const addProject = () => {
     const newProjectNumber = projects.length + 1;
     projects = [...projects, `프로젝트 ${newProjectNumber}`];

@@ -5,11 +5,14 @@
 
   let currentPage = null;
   let activeMenu = null;
+  let isSidebarOpen = false;
 
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
+    toggleSidebar(); // Close the sidebar after selecting a page
   };
+
   const togglePage = (page, menu) => {
     if (currentPage === page) {
       // If the same page is selected again, hide the page (toggle off)
@@ -20,25 +23,36 @@
       currentPage = page;
       activeMenu = menu;
     }
+    toggleSidebar(); // Close the sidebar after toggling the page
+  };
+
+  const toggleSidebar = () => {
+    isSidebarOpen = !isSidebarOpen;
   };
 </script>
 
 <div class="container">
-  <div class="container_aside">
+  <!-- Sidebar toggle button -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div class="toggle" on:click="{toggleSidebar}">
+    <span class="top_line common"></span>
+    <span class="middle_line common"></span>
+    <span class="bottom_line common"></span>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="container_aside {isSidebarOpen ? 'open' : ''}">
     <aside>
       <p></p>
-      <!-- svelte-ignore a11y-invalid-attribute -->
+      <!-- Navigation links -->
       <a
         href="javascript:void(0)"
-        on:click="{() => {
-          togglePage(Page1, '점검관리'); // Then select the page
-        }}"
+        on:click="{() => togglePage(Page1, '점검관리')}"
         class="{activeMenu === '점검관리' ? 'active' : ''}"
       >
         <i class="fa fa-user-o" aria-hidden="true"></i>
         점검관리
       </a>
-      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => togglePage(Page2, '자산관리')}"
@@ -47,7 +61,6 @@
         <i class="fa fa-laptop" aria-hidden="true"></i>
         자산관리
       </a>
-      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => togglePage(Page3, '취약점관리')}"
@@ -56,7 +69,6 @@
         <i class="fa fa-clone" aria-hidden="true"></i>
         취약점관리
       </a>
-      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => togglePage(Page2, '점검항목관리')}"
@@ -65,7 +77,6 @@
         <i class="fa fa-star-o" aria-hidden="true"></i>
         점검항목관리
       </a>
-      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href="javascript:void(0)"
         on:click="{() => togglePage(Page2, '환경설정')}"
@@ -76,6 +87,7 @@
       </a>
     </aside>
 
+    <!-- Social links -->
     <div class="social">
       <a
         href="https://www.linkedin.com/in/florin-cornea-b5118057/"
@@ -85,6 +97,8 @@
       </a>
     </div>
   </div>
+
+  <!-- Main content area -->
   {#if currentPage}
     <div class="right_menu">
       <svelte:component this="{currentPage}" />
@@ -93,19 +107,21 @@
 </div>
 
 <style>
+  /* Sidebar styles */
   aside {
-    color: #fff;
-    width: 160px;
+    color: #f2f3f4;
+    width: 180px;
     padding-left: 20px;
     height: 100vh;
-    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
-    /* border-top-right-radius: 80px; */
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #2c3e50;
     border: 1px black;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   }
 
   aside a {
-    font-size: 12px;
+    font-size: 16px;
     color: #fff;
     display: block;
     padding: 12px;
@@ -115,7 +131,7 @@
   }
 
   aside a:hover {
-    color: #3f5efb;
+    color: #2c3e50;
     background: #fff;
     outline: none;
     position: relative;
@@ -123,9 +139,10 @@
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
   }
+
   aside a:hover,
   aside a.active {
-    color: #3f5efb;
+    color: #2c3e50;
     background: #fff;
     outline: none;
     position: relative;
@@ -174,9 +191,8 @@
     width: 14px;
     height: 14px;
     font-size: 14px;
-    position: fixed;
     color: #fff;
-    background: #0077b5;
+    background: #2c3e50;
     padding: 10px;
     border-radius: 50%;
     top: 5px;
@@ -185,27 +201,94 @@
 
   .container_aside {
     position: fixed;
-    top: 120px;
+    top: 0px;
     left: 0;
-    width: 160px; /* Adjust width as needed */
-    height: 100vh; /* Full height of the viewport */
-    background-color: #0048bd; /* Background color or other styling */
-    z-index: 1000; /* Ensure it stays above other content */
+    width: 160px;
+    height: 100vh;
+    background-color: #2c3e50;
+    transform: translateX(-180px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .container_aside.open {
+    transform: translateX(0);
   }
 
   .container {
     display: flex;
-    margin-left: 160px; /* Offset the content to make space for the sidebar */
+    width: 100%;
+    padding: 50px;
+    align-items: center;
     flex-direction: row;
-    width: calc(
-      100% - 160px
-    ); /* Adjust the width according to the sidebar width */
+    width: calc(100% - 160px);
   }
+
   .right_menu {
     width: 100%;
-    padding-right: 30px;
     display: flex;
+    justify-content: center;
     flex-direction: row;
-    margin-top: 120px;
+    margin-top: 10px;
+  }
+
+  /* Toggle button styles */
+  .toggle {
+    position: fixed;
+    top: 20px;
+    left: 15px;
+    height: 30px;
+    width: 30px;
+    z-index: 1000;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .toggle .common {
+    position: absolute;
+    height: 2px;
+    width: 20px;
+    background-color: #2c3e50;
+    border-radius: 50px;
+    transition: 0.3s ease;
+  }
+
+  .toggle .top_line {
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .toggle .middle_line {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .toggle .bottom_line {
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .container_aside.open .toggle .top_line {
+    left: 2px;
+    top: 14px;
+    width: 25px;
+    transform: rotate(45deg);
+  }
+
+  .container_aside.open .toggle .bottom_line {
+    left: 2px;
+    top: 14px;
+    width: 25px;
+    transform: rotate(-45deg);
+  }
+
+  .container_aside.open .toggle .middle_line {
+    opacity: 0;
+    transform: translateX(20px);
   }
 </style>

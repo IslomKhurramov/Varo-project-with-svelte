@@ -163,80 +163,76 @@
 
 <style>
   /* Container and Layout Styles */
-  /* Container and Layout Styles */
   .container_aside {
     min-height: 100vh;
-    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
-    padding: 10px;
+    background-color: #1e1e2f; /* Darker background for the sidebar */
+    padding: 15px;
+    border-radius: 5px;
   }
 
   .container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-left: 20px;
   }
 
   .right_menu {
     width: 100%;
-    margin-left: 20px;
     min-height: 500px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     box-sizing: border-box;
+    /* padding: 20px; */
+    background-color: #f5f5f5; /* Light background for main content area */
   }
 
   /* Sidebar Styles */
   aside {
-    color: #fff;
-    width: 170px;
+    color: #ffffff;
+    width: 200px;
     font-size: 16px;
   }
 
   .add_delete_container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 30px;
   }
 
   .chasanGroup_button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
 
   /* Sidebar Links */
   aside a {
     font-size: 14px;
-    color: #fff;
+    color: #ffffff;
     display: block;
-    padding: 12px 10px;
+    padding: 12px 15px;
     font-weight: 600;
     text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+    background-color: #1e1e2f; /* Matching sidebar color */
+    border-radius: 5px;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+    margin-bottom: 10px;
   }
 
   aside a:hover,
   aside a.active {
-    margin-top: 3px;
+    color: #1e1e2f;
+    background-color: #ffffff;
     text-decoration: underline;
   }
 
   aside a i {
-    margin-right: 5px;
-  }
-
-  /* Sidebar Hover Effects */
-  aside a:hover::after,
-  aside a:hover::before {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    height: 35px;
-    width: 35px;
+    margin-right: 10px;
   }
 
   /* Buttons */
@@ -248,15 +244,17 @@
     cursor: pointer;
     font-size: 14px;
     text-align: center;
-    transition: background-color 0.3s ease;
-    background-color: #2c3e50;
-    color: #fff;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+    background-color: #007acc;
+    color: #ffffff;
   }
 
   .menu_button:hover,
   .asset_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
+    background-color: #005fa3;
+    transform: translateY(-2px);
   }
 
   .asset_button {
@@ -268,13 +266,13 @@
 
   /* Social Links */
   .social {
-    margin-top: 20px;
+    margin-top: 30px;
   }
 
   .social a {
     display: inline-block;
-    color: #fff;
-    font-size: 18px;
+    color: #ffffff;
+    font-size: 20px;
     margin-right: 10px;
     transition: color 0.3s ease;
   }
@@ -289,9 +287,10 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    /* background-color: #1a1a1a; */
     padding: 20px;
-    font-family: "Arial", sans-serif;
+    background-color: #2c3e50; /* Blue background for the header */
+    color: #ffffff;
+    border-radius: 5px;
   }
 
   .header_option {
@@ -303,7 +302,6 @@
   .header_button {
     display: flex;
     flex-direction: row;
-    width: 30%;
     align-items: center;
     gap: 40px;
   }
@@ -320,7 +318,7 @@
   }
 
   .select_input {
-    background-color: #2e2e2e;
+    background-color: #1e1e2f;
     color: #ffffff;
     padding: 10px;
     border: none;
@@ -331,7 +329,12 @@
   }
 
   .select_input:hover {
-    background-color: #3a3a3a;
+    background-color: #27293d;
+  }
+
+  .select_input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #007acc;
   }
 
   /* Header Buttons */
@@ -354,7 +357,7 @@
 
   /* Toggle Button */
   .toggle_button {
-    background-color: #003366;
+    background-color: #1e1e2f;
     color: #ffffff;
     padding: 10px;
     border: none;
@@ -366,7 +369,7 @@
   }
 
   .toggle_button:hover {
-    background-color: #005a99;
+    background-color: #27293d;
   }
 
   /* Second Line Styles */
@@ -376,11 +379,11 @@
     flex-direction: row;
     justify-content: flex-end;
     gap: 20px;
-    margin-top: 5px;
+    margin-top: 15px;
   }
 
   .second_line button {
-    background-color: #003366;
+    background-color: #007acc;
     color: #ffffff;
     border-radius: 5px;
     height: 40px;
@@ -392,17 +395,8 @@
   }
 
   .second_line button:hover {
-    background-color: #002244;
+    background-color: #005fa3;
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Specific Form Select Styles */
-  .form_select select::-ms-expand {
-    display: none;
-  }
-
-  .form_select select option {
-    padding: 5px 0;
   }
 </style>

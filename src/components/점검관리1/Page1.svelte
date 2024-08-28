@@ -90,7 +90,7 @@
 
   .container_aside {
     min-height: 100vh;
-    background-image: linear-gradient(30deg, #0048bd, #2c3e50);
+    background-color: #2c3e50;
     padding: 10px;
   }
   aside {
@@ -228,7 +228,6 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-left: 20px;
   }
 
   .right_menu {

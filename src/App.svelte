@@ -5,7 +5,7 @@
 
 <main>
   <Header />
-  <video
+  <!-- <video
     autoplay
     muted
     loop
@@ -13,9 +13,10 @@
     style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1; opacity: 0.7;"
   >
     <source src="./images/cyber2.mp4" type="video/mp4" />
-  </video>
+  </video> -->
 
   <LeftNavbar />
 </main>
 
-<style></style>
+<style>
+</style>

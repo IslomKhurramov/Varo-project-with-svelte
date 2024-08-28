@@ -118,12 +118,14 @@
 
 <style>
   .container {
+    width: 95%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
     background-color: #e0e0e0;
-    margin-left: 10px;
-    margin-right: -20px;
+    margin-left: 30px;
+    margin-right: 10px;
+    margin-bottom: 40px;
   }
 
   .color_group {
@@ -188,30 +190,31 @@
 
   .card_container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 10px;
     row-gap: 30px;
-    margin-top: 10px;
+    margin-top: 20px;
     border: 1px solid #000000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-left: 10px;
     margin-right: 10px;
-    padding: 20px;
+    padding: 10px;
     overflow-y: auto;
-    height: 500px;
+    height: 400px;
     background: #f0f0f0; /* Very Light Gray */
   }
 
   .card {
     background-color: #d6d6d6; /* Muted Gray */
-    max-width: 400px;
-    height: 190px;
-    font-size: 12px;
+    max-width: 300px;
+    height: 150px;
+    font-size: 10px;
     position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
     gap: 10px;
     box-shadow: inset 0 0 20px -8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000; /* Light gray border */
@@ -224,16 +227,20 @@
     cursor: pointer;
   }
   .box_number {
-    background-color: #007bff; /* Medium blue */
-    color: #ffffff; /* White text for contrast */
+    background-color: #ffffff; /* Medium blue */
+    color: #000000; /* White text for contrast */
     width: 70px;
     height: 50px;
     align-content: center;
     text-align: center;
     font-weight: 400;
     font-size: 18px;
-    border: 1px solid #ccc; /* Light border */
+    border: 1px solid #000000; /* Light border */
     border-radius: 5px; /* Slight rounding of corners */
+    box-shadow:
+      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
+      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
   }
   .card_buttons {
     position: absolute;
@@ -247,6 +254,28 @@
     border: 1px solid #000000;
     cursor: pointer;
     transition: background-color 0.3s ease;
+  }
+
+  .modal_button {
+    position: absolute;
+    bottom: -6px;
+    font-size: 8px;
+    right: 0px;
+    border: 1px solid #ff5722; /* Deep orange border */
+    width: 70px;
+    height: 20px; /* Adjusted height for better proportion */
+    background-color: #ff5722; /* Deep orange */
+    color: #ffffff; /* White text for contrast */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .modal_button:hover {
+    background-color: #e64a19; /* Slightly darker shade on hover */
+    transform: translateY(-2px); /* Slight raise on hover */
   }
 
   .blue {
@@ -276,27 +305,6 @@
     color: #000000;
     margin-top: 13.5px;
     cursor: pointer;
-  }
-
-  .modal_button {
-    position: absolute;
-    bottom: -6px;
-    right: 0px;
-    border: 1px solid #ff5722; /* Deep orange border */
-    width: 80px;
-    height: 30px; /* Adjusted height for better proportion */
-    background-color: #ff5722; /* Deep orange */
-    color: #ffffff; /* White text for contrast */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .modal_button:hover {
-    background-color: #e64a19; /* Slightly darker shade on hover */
-    transform: translateY(-2px); /* Slight raise on hover */
   }
   .allselect {
     margin-left: 20px;

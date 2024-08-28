@@ -60,47 +60,42 @@
 </script>
 
 <header>
-  <div>
-    <form action="/action_page.php" class="form_select">
-      <div class="select_container">
-        <select
-          name="approval_status"
-          id="approval_status"
-          class="select_input"
-        >
-          <option value="pending">프로젝트명</option>
-          <option value="approved">운영체제</option>
-          <option value="rejected">에이전트여부</option>
-          <option value="rejected">등록승인여부</option>
-        </select>
-      </div>
-      <div class="select_container">
-        <select name="asset_group" id="asset_group" class="select_input">
-          <option value="network">일정범위</option>
-          <option value="endpoint">Endpoint Security</option>
-          <option value="cloud">Cloud Security</option>
-        </select>
-      </div>
-      <div class="select_container">
-        <select
-          name="operating_system"
-          id="operating_system"
-          class="select_input"
-        >
-          <option value="windows">생성자</option>
-          <option value="linux">Linux</option>
-          <option value="macos">macOS</option>
-        </select>
-      </div>
-      <div class="select_container">
-        <select name="agent_status" id="agent_status" class="select_input">
-          <option value="active">결과등록상태</option>
-          <option value="inactive">Inactive</option>
-          <option value="pending">Pending</option>
-        </select>
-      </div>
-    </form>
-  </div>
+  <form action="/action_page.php" class="form_select">
+    <div class="select_container">
+      <select name="approval_status" id="approval_status" class="select_input">
+        <option value="pending">프로젝트명</option>
+        <option value="approved">운영체제</option>
+        <option value="rejected">에이전트여부</option>
+        <option value="rejected">등록승인여부</option>
+      </select>
+    </div>
+    <div class="select_container">
+      <select name="asset_group" id="asset_group" class="select_input">
+        <option value="network">일정범위</option>
+        <option value="endpoint">Endpoint Security</option>
+        <option value="cloud">Cloud Security</option>
+      </select>
+    </div>
+    <div class="select_container">
+      <select
+        name="operating_system"
+        id="operating_system"
+        class="select_input"
+      >
+        <option value="windows">생성자</option>
+        <option value="linux">Linux</option>
+        <option value="macos">macOS</option>
+      </select>
+    </div>
+    <div class="select_container">
+      <select name="agent_status" id="agent_status" class="select_input">
+        <option value="active">결과등록상태</option>
+        <option value="inactive">Inactive</option>
+        <option value="pending">Pending</option>
+      </select>
+    </div>
+  </form>
+
   <div class="headerButton">
     <button> 프로그램다운로드 </button>
     <button> 엑셀다운로드 </button>
@@ -139,6 +134,11 @@
 </main>
 
 <style>
+  main {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
   .form_select {
     display: flex;
     gap: 20px;
@@ -150,18 +150,22 @@
   }
 
   .select_input {
-    background-color: #2e2e2e;
-    color: #ffffff;
-    padding: 10px;
+    color: #000000;
+    padding: 5px;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    border: 1px solid black;
+    height: 30px;
+    font-size: 12px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-
   .select_input:hover {
-    background-color: #3a3a3a;
+    background-color: #b0b0b0;
+  }
+  .select_input option {
+    background-color: #fff;
+    color: #000000;
   }
 
   header {
@@ -177,31 +181,28 @@
     color: #ffffff;
     border: 1px solid #ffffff;
     border-radius: 5px;
-    height: 40px;
-    width: 150px;
+    height: 30px;
+    width: 120px;
     cursor: pointer;
   }
   .headerButton button:hover {
     box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
   .projectContainer {
-    width: 100%;
+    width: 70%;
     height: 500px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Ensure content starts at the top */
-    align-items: center;
     margin: 20px 20px;
-    margin-top: 50px;
     border: 1px solid #000000;
-    background: #fff;
+    background: lightgray;
     box-shadow: 0 4px 8px rgb(255, 255, 255);
-    overflow-y: auto; /* Enable scrolling with proper content visibility */
-    padding-top: 10px; /* Optional: Add padding if the content is still too close to the top */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    overflow-y: auto;
+    box-sizing: border-box;
+    border-radius: 10px;
   }
   .project {
-    background-color: #fff;
+    background-color: lightgray;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -216,7 +217,7 @@
     gap: 100px;
     margin-left: 20px;
     padding: 10px 10px;
-    background-color: #dedede;
+    background-color: #f2f3f4;
     border: 1px solid rgb(179, 179, 179);
     width: 100%;
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -225,22 +226,34 @@
     font-size: 12px;
   }
   .percentage {
-    width: 50px;
+    background-color: #ffffff; /* Medium blue */
+    color: #000000; /* White text for contrast */
+    width: 70px;
     height: 50px;
-    border: 1px solid black;
-    background-color: yellow;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    align-content: center;
+    text-align: center;
+    font-weight: 400;
+    font-size: 18px;
+    border: 1px solid #000000; /* Light border */
+    border-radius: 5px; /* Slight rounding of corners */
+    box-shadow:
+      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
+      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
+  }
+  .percentage p {
+    font-weight: bold;
   }
   .buttons {
     display: flex;
     flex-direction: column;
-    margin-left: 5px;
+    align-items: center;
+    height: 117px;
+    justify-content: space-between;
     margin-right: 20px;
-    height: 120px;
   }
   .buttons button {
+    font-size: 10px;
     background-color: #003366;
     color: #fff;
     font-weight: 500;
@@ -249,6 +262,6 @@
     cursor: pointer;
   }
   .firstCol {
-    margin-left: 100px;
+    margin-left: 20px;
   }
 </style>

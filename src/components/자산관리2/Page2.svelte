@@ -137,8 +137,7 @@
       <button on:click="{() => selectPage(Jongbusujin, '정보수집')}"
         >정보수집</button
       >
-    </div>
-    <div class="second_line">
+
       <button on:click="{() => (showModal = true)}">자산그룹별등록추세</button>
       <button>요약보고서출력</button>
       <button>상세보고서출력</button>
@@ -165,9 +164,8 @@
   /* Container and Layout Styles */
   .container_aside {
     min-height: 100vh;
-    background-color: #1e1e2f; /* Darker background for the sidebar */
-    padding: 15px;
-    border-radius: 5px;
+    background-color: #2c3e50;
+    padding: 10px;
   }
 
   .container {
@@ -184,13 +182,13 @@
     justify-content: flex-start;
     box-sizing: border-box;
     /* padding: 20px; */
-    background-color: #f5f5f5; /* Light background for main content area */
+    background-color: #f2f3f4; /* Light background for main content area */
   }
 
   /* Sidebar Styles */
   aside {
     color: #ffffff;
-    width: 200px;
+    width: 170px;
     font-size: 16px;
   }
 
@@ -205,29 +203,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   /* Sidebar Links */
   aside a {
     font-size: 14px;
-    color: #ffffff;
+    color: #fff;
     display: block;
-    padding: 12px 15px;
+    /* padding: 12px 10px; */
     font-weight: 600;
     text-decoration: none;
-    background-color: #1e1e2f; /* Matching sidebar color */
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-    margin-bottom: 10px;
+    -webkit-tap-highlight-color: transparent;
   }
 
   aside a:hover,
   aside a.active {
-    color: #1e1e2f;
-    background-color: #ffffff;
+    margin-top: 3px;
     text-decoration: underline;
   }
 
@@ -238,23 +230,20 @@
   /* Buttons */
   .menu_button,
   .asset_button {
-    padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     text-align: center;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-    background-color: #007acc;
-    color: #ffffff;
+    transition: background-color 0.3s ease;
+    background-color: #2c3e50;
+    color: #fff;
   }
 
   .menu_button:hover,
   .asset_button:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
+    background-color: #003366;
+    box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
 
   .asset_button {
@@ -288,8 +277,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #2c3e50; /* Blue background for the header */
-    color: #ffffff;
+
+    color: #000000;
     border-radius: 5px;
   }
 
@@ -318,18 +307,17 @@
   }
 
   .select_input {
-    background-color: #1e1e2f;
-    color: #ffffff;
+    color: #000000;
     padding: 10px;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
 
   .select_input:hover {
-    background-color: #27293d;
+    background-color: #b0b0b0;
   }
 
   .select_input:focus {
@@ -339,7 +327,7 @@
 
   /* Header Buttons */
   .header_button p {
-    color: #ffffff;
+    color: #000000;
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -357,13 +345,14 @@
 
   /* Toggle Button */
   .toggle_button {
-    background-color: #1e1e2f;
+    background-color: #003366;
     color: #ffffff;
     padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    height: 30px;
     font-weight: bold;
     transition: background-color 0.3s ease;
   }
@@ -378,16 +367,18 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    gap: 20px;
-    margin-top: 15px;
+    gap: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
   }
 
   .second_line button {
-    background-color: #007acc;
+    background-color: #003366;
     color: #ffffff;
     border-radius: 5px;
-    height: 40px;
-    width: 150px;
+    height: 30px;
+    width: 120px;
     cursor: pointer;
     transition:
       transform 0.3s ease,

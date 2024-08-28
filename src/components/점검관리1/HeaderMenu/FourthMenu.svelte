@@ -44,7 +44,7 @@
 
 <style>
   main {
-    width: 100%;
+    width: 96%;
     display: flex;
     justify-content: center;
     height: 600px;
@@ -55,6 +55,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
     margin-left: 20px;
+    margin-bottom: 40px;
   }
   table {
     font-family: "Arial", sans-serif;

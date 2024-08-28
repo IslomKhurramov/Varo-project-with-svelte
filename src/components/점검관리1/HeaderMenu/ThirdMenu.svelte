@@ -76,24 +76,14 @@
     display: flex;
     width: 100%;
     justify-content: center;
-    border: 1px solid black;
     align-items: center;
-    margin-left: 20px;
-    margin-top: 40px;
-    background-color: #fff;
-    border: 1px solid #000000;
-
-    box-shadow: 0 4px 8px rgb(255, 255, 255);
   }
   .container {
-    width: 80%; /* Adjust the width as needed */
+    margin-top: 20px;
+    width: 60%; /* Adjust the width as needed */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-top: 40px;
-    margin-bottom: 60px;
   }
   .buttons {
     display: flex;
@@ -105,8 +95,8 @@
     color: #ffffff;
     border: 1px solid #ffffff;
     border-radius: 5px;
-    height: 40px;
-    margin-top: 13.5px;
+    height: 30px;
+    font-size: 12px;
     width: 150px;
     cursor: pointer;
   }

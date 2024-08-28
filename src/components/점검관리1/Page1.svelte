@@ -118,7 +118,7 @@
     font-size: 14px;
     color: #fff;
     display: block;
-    padding: 12px 10px;
+    /* padding: 12px 10px; */
     font-weight: 600;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
@@ -146,7 +146,6 @@
 
   /* Buttons */
   .menu_button {
-    padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;

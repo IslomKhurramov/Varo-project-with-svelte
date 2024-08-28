@@ -59,7 +59,7 @@
       <div class="first_line_container">
         <input type="file" />
         <input type="file" />
-        <p>대용량업로드(엑셀파일)</p>
+        <p style="color: #fff;">대용량업로드(엑셀파일)</p>
       </div>
       <div class="second_line_container">
         <div class="group_container">
@@ -143,11 +143,9 @@
   .select_container {
     display: flex;
     align-items: center;
-    background-color: #2e2e2e; /* Slightly lighter than the main background */
-    border: 1px solid #3e3e3e;
     border-radius: 5px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Stronger shadow for a more solid feel */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Stronger shadow for a more solid feel */
   }
 
   .select_button {
@@ -156,7 +154,6 @@
     padding: 12px 24px;
     border: none;
     font-size: 14px;
-    margin-bottom: 0px;
     font-weight: bold;
     transition: background-color 0.3s ease;
     border-right: 1px solid #3e3e3e;
@@ -173,35 +170,37 @@
     padding: 12px;
     border: none;
     font-size: 14px;
-    background-color: #2e2e2e;
-    color: #e0e0e0; /* Light text for readability */
+    background-color: #fff;
+    color: #000000; /* Light text for readability */
     cursor: pointer;
     outline: none;
   }
 
   .select_input:hover,
   .select_input:focus {
-    background-color: #3a3a3a;
+    background-color: #cccccc;
   }
 
   .select_input option {
-    background-color: #2e2e2e;
-    color: #e0e0e0;
+    background-color: #fff;
+    color: #000000;
   }
 
   .second_container {
     display: flex;
     flex-direction: column;
-    width: 95%;
+    justify-content: center;
+    width: 100%;
     padding: 10px 10px;
-    margin-right: 20px;
-    padding-right: 20px;
+  }
+  .second_container p {
+    color: #000;
   }
 
   .inside_container {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 95%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
@@ -214,7 +213,7 @@
     flex-direction: row;
     padding: 20px;
     gap: 10px;
-    background-color: #003366;
+    background-color: #2c3e50;
     border-radius: 10px;
     color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -225,7 +224,7 @@
     flex-direction: row;
     padding: 20px;
     width: 100%;
-    gap: 10px;
+    gap: 35px;
     max-height: 500px;
   }
 

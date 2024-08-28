@@ -167,7 +167,7 @@
     color: #ffffff;
 
     width: 130px;
-    height: 35px;
+    height: 30px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
@@ -255,7 +255,7 @@
     background-color: #007bff; /* Primary button color */
     color: #ffffff;
     width: 100px;
-    height: 35px;
+    height: 30px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
@@ -296,22 +296,50 @@
     gap: 50px;
     padding-left: 40px;
     width: 100%;
-    color: #fff;
+    color: #000000;
   }
+
   .header h3 {
-    color: #ffffff; /* Primary Header Color */
-    font-weight: 600;
-    font-size: 16px;
-    transition: color 0.3s ease;
-  }
-  .header h3:hover {
-    color: #002244; /* Hover state for primary header */
-    text-decoration: underline;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
     cursor: pointer;
   }
-  .header h3:hover,
+  .header h3 {
+    background-image: linear-gradient(to right, #5486d6, #54b3d6 50%, #000 50%);
+    background-size: 200% 100%;
+    background-position: -100%;
+    display: inline-block;
+    padding: 5px 0;
+    position: relative;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .header h3:before {
+    content: "";
+    background: #54b3d6;
+    display: block;
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .header h3:hover {
+    background-position: 0;
+  }
+
+  .header h3:hover::before {
+    width: 100%;
+  }
   .header h3.active {
-    color: #001a33;
+    color: #3183a0; /* Ensures active text color is visible */
+    -webkit-text-fill-color: #3183a0; /* Override webkit text fill */
+    background-image: none; /* Remove the gradient on active */
     text-decoration: underline;
   }
   .last_container {

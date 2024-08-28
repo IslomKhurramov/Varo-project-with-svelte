@@ -163,10 +163,10 @@
   }
 
   .download {
-    background-color: #007bff; /* Primary button color */
+    background-color: #28a745; /* Primary button color */
     color: #ffffff;
     width: 100px;
-    height: 35px;
+    height: 30px;
     cursor: pointer;
     border: none;
     border-radius: 5px;

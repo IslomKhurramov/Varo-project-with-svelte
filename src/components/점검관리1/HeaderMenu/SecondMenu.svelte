@@ -159,7 +159,7 @@
   body {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: 98%;
   }
   .container {
     width: 100%;
@@ -188,7 +188,7 @@
   th,
   td {
     border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
+    padding: 5px 15px; /* Increased padding for better spacing */
     text-align: left;
     vertical-align: middle; /* Ensure content is vertically centered */
   }

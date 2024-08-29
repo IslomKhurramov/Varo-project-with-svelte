@@ -32,6 +32,8 @@
 
   function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
+    currentPage = null;
+    console.log("Current View:", currentView);
   }
 </script>
 
@@ -148,7 +150,9 @@
       {#if currentPage}
         <svelte:component this="{currentPage}" />
       {:else if currentView === "newView"}
-        <Swiper />
+        {#key currentView}
+          <Swiper />
+        {/key}
       {:else}
         <AssetCardsPage />
       {/if}

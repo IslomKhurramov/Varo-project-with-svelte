@@ -130,11 +130,12 @@
 
   .color_group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     font-size: 12px;
     font-weight: 700;
-    width: 140px;
-    gap: 5px;
+    width: auto;
+    gap: 25px;
     background-color: #fff;
     border-radius: 10px;
     padding: 5px;
@@ -142,6 +143,7 @@
   .colors {
     display: flex;
     flex-direction: row;
+    align-items: center;
   }
   .blue_button {
     background-color: #4682b4;

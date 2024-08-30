@@ -5,6 +5,7 @@
   import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
   import Jongbusujin from "./Jongbusujin.svelte";
+  import AssetManagementChasansangButton from "./AssetManagementChasansangButton.svelte";
 
   let currentView = "default";
   let currentPage = null;
@@ -135,7 +136,11 @@
     </header>
 
     <div class="second_line">
-      <button>자산상세검색</button>
+      <button
+        on:click="{() =>
+          selectPage(AssetManagementChasansangButton, '정보수집')}"
+        >자산상세검색</button
+      >
       <button on:click="{() => selectPage(Jongbusujin, '정보수집')}"
         >정보수집</button
       >

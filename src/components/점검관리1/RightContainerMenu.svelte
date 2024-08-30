@@ -4,6 +4,7 @@
   import ThirdMenu from "./HeaderMenu/ThirdMenu.svelte";
   import FourthMenu from "./HeaderMenu/FourthMenu.svelte";
   import FifthMenu from "./HeaderMenu/FifthMenu.svelte";
+  import ProjectDetail from "./ProjectDetail.svelte";
 
   let currentPage = null;
   let activeMenu = null;
@@ -54,11 +55,13 @@
     </div>
   </div>
 
-  {#if currentPage}
-    <div class="right_menu">
+  <div class="right_menu">
+    {#if currentPage}
       <svelte:component this="{currentPage}" />
-    </div>
-  {/if}
+    {:else}
+      <ProjectDetail />
+    {/if}
+  </div>
 </div>
 
 <style>

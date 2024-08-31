@@ -58,7 +58,7 @@
           <!-- svelte-ignore a11y-invalid-attribute -->
           <!-- svelte-ignore missing-declaration -->
           <a
-            href="javascript:void(0)"
+            href="http://localhost:3000/page2"
             on:click="{() => selectPage(AssetPage, asset)}"
             class="{activeMenu === asset ? 'active' : ''}"
           >

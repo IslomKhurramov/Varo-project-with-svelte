@@ -1,20 +1,26 @@
 <script>
   export let showModal; // boolean
   export let showModalSecond;
+  export let showModalRegisteredAdmin;
 
   let dialog; // HTMLDialogElement
   let dialogSecond; // HTMLDialogElement for the second modal
+  let dialogThird; // HTMLDialogElement for the third modal
+
   $: if (dialog && showModal) dialog.showModal();
   $: if (dialogSecond && showModalSecond) dialogSecond.showModal();
+  $: if (dialogThird && showModalRegisteredAdmin) dialogThird.showModal();
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
+<!-- First Modal -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <dialog
   bind:this="{dialog}"
   on:close="{() => (showModal = false)}"
   on:click|self="{() => dialog.close()}"
 >
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-autofocus -->
   <div on:click|stopPropagation>
     <slot name="header" />
     <hr />
@@ -24,14 +30,13 @@
     <button autofocus on:click="{() => dialog.close()}">Close</button>
   </div>
 </dialog>
-
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- Second Modal -->
 <dialog
   bind:this="{dialogSecond}"
   on:close="{() => (showModalSecond = false)}"
   on:click|self="{() => dialogSecond.close()}"
 >
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div on:click|stopPropagation>
     <slot name="headerSecond" />
     <hr />
@@ -39,6 +44,22 @@
     <hr />
     <!-- svelte-ignore a11y-autofocus -->
     <button autofocus on:click="{() => dialogSecond.close()}">Close</button>
+  </div>
+</dialog>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- Third Modal -->
+<dialog
+  bind:this="{dialogThird}"
+  on:close="{() => (showModalRegisteredAdmin = false)}"
+  on:click|self="{() => dialogThird.close()}"
+>
+  <div on:click|stopPropagation>
+    <slot name="headerThird" />
+    <hr />
+    <slot name="contentThird" />
+    <hr />
+    <!-- svelte-ignore a11y-autofocus -->
+    <button autofocus on:click="{() => dialogThird.close()}">Close</button>
   </div>
 </dialog>
 

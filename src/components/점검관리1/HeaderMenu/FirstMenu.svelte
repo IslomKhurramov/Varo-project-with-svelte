@@ -8,49 +8,39 @@
   <div class="table_center">
     <div class="table_container">
       <p class="word">점검결과등록</p>
-      <table style="width: 100%; ">
-        <div class="first_line">
-          <p class="button1 width">자동</p>
-          <p class="button2 width">에이전트결과</p>
-          <span
-            class="input"
-            placeholder="점검대상 200대중 180대 업로드 완료 (등록현황을 그래픽으로 표현)"
-          ></span>
-          <button class="save_button">등록내역확인</button>
-        </div>
-      </table>
+      <div class="first_line">
+        <p class="button1 width">자동</p>
+        <p class="button2 width">에이전트결과</p>
+        <input
+          class="input"
+          placeholder="점검대상 200대중 180대 업로드 완료 (등록현황을 그래픽으로 표현)"
+          readonly
+        />
+        <button class="save_button">등록내역확인</button>
+      </div>
       <p class="word">수동</p>
       <div class="secondLine">
         <div class="thirdCol">
-          <table style="width: 100%; ">
-            <div class="first_line" style="padding-left: 10px;">
-              <p class="button2">에이전트결과</p>
-              <span class="span_at"
-                >JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD….)
-              </span>
-
-              <input class="upload" type="file" />
-              <button class="save_button">등록내역확인</button>
-            </div>
-          </table>
-          <table style="width: 100%; ">
-            <div class="first_line" style="padding-left: 10px;">
-              <p class="button2">네트워크설정파일</p>
-              <span class="span_at">설정파일(TXT) 파일 업로드 </span>
-
-              <input class="upload" type="file" />
-              <button class="save_button">등록내역확인</button>
-            </div>
-          </table>
-          <table style="width: 100%; ">
-            <div class="first_line" style="padding-left: 10px;">
-              <p class="button2">정보보호시스템</p>
-              <span class="span_at">인터뷰파일(EXCEL) 파일 업로드 </span>
-
-              <input class="upload" type="file" />
-              <button class="save_button">등록내역확인</button>
-            </div>
-          </table>
+          <div class="first_line">
+            <p class="button2">에이전트결과</p>
+            <span class="span_at"
+              >JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)</span
+            >
+            <input class="upload" type="file" />
+            <button class="save_button">등록내역확인</button>
+          </div>
+          <div class="first_line">
+            <p class="button2">네트워크설정파일</p>
+            <span class="span_at">설정파일(TXT) 파일 업로드</span>
+            <input class="upload" type="file" />
+            <button class="save_button">등록내역확인</button>
+          </div>
+          <div class="first_line">
+            <p class="button2">정보보호시스템</p>
+            <span class="span_at">인터뷰파일(EXCEL) 파일 업로드</span>
+            <input class="upload" type="file" />
+            <button class="save_button">등록내역확인</button>
+          </div>
         </div>
       </div>
     </div>
@@ -58,6 +48,7 @@
 </div>
 
 <style>
+  /* Main Container */
   .container_page {
     display: flex;
     flex-direction: column;
@@ -67,29 +58,36 @@
     width: 100%;
   }
 
+  /* Header Buttons */
   .header {
     display: flex;
-    flex-direction: row;
     gap: 15px;
-    margin-right: 10px;
+    margin-bottom: 20px;
     width: 100%;
     justify-content: flex-end;
   }
 
   .header button {
-    background-color: #003366; /* Darker Blue */
+    background-color: #004080;
     color: #ffffff;
-    width: 120px;
-    font-size: 12px;
-    height: 30px;
-    cursor: pointer;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
     border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
   }
 
   .header button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
+    background-color: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 
+  /* Table Centering */
   .table_center {
     width: 82%;
     display: flex;
@@ -97,93 +95,109 @@
     align-items: center;
   }
 
+  /* Table Container Styling */
   .table_container {
-    width: 85%;
-    height: 400px;
+    width: 100%;
     padding: 20px;
-    background-color: #f2f3f4;
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dddddd;
     margin-bottom: 30px;
   }
 
-  .first_line {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+  .word {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 15px;
   }
 
+  /* Row Styling */
+  .first_line,
+  .secondLine {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  /* Button Styling */
   .button1,
   .button2 {
-    background-color: lightgray; /* Light Blue */
-    color: #000000;
+    background-color: #f0f0f0;
+    color: #333333;
     font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
+    font-size: 14px;
     border-radius: 5px;
+    padding: 8px 12px;
     width: 150px;
-    height: 30px;
+    text-align: center;
+    border: 1px solid #cccccc;
   }
 
-  .input,
-  .upload {
+  .button2 {
+    background-color: #e0e0e0;
+  }
+
+  /* Input Styling */
+  .input {
     flex-grow: 1;
-    color: #ffffff;
-    border: 1px solid black;
+    background-color: #f9f9f9;
+    border: 1px solid #cccccc;
     border-radius: 5px;
-    font-size: 12px;
-    height: 30px;
+    padding: 8px;
+    font-size: 14px;
+    color: #555555;
+  }
+
+  .input[readonly] {
+    color: #666666;
+  }
+
+  .upload {
+    border: none;
+    background-color: transparent;
+    font-size: 14px;
+    color: #333333;
     cursor: pointer;
   }
 
+  /* Save Button Styling */
   .save_button {
-    background-color: #003366; /* Darker Blue */
+    background-color: #004080;
     color: #ffffff;
-    border: 1px solid #ffffff;
+    border: none;
     border-radius: 5px;
-    font-size: 12px;
-    height: 30px;
-    width: 120px;
+    padding: 8px 16px;
+    font-size: 14px;
     cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
   }
 
   .save_button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-
-  .word {
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-  .secondLine {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
+    background-color: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 
   .span_at {
     width: 260px;
-    font-size: 12px;
-    color: #888888;
+    font-size: 14px;
+    color: #666666;
     display: flex;
     align-items: center;
-    height: 30px;
   }
-  .width {
-    width: 120px;
-  }
+
+  /* Column Layout */
   .thirdCol {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
   }
 </style>

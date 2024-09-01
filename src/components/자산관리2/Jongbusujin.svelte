@@ -12,7 +12,7 @@
   let fileExtensions = "all, exe, dll";
   let searchLocation = "데이터베이스";
   let assetGroup = [];
-  let showHistory = false; // State to control visibility of the history box
+  let showHistory = false;
   let historyBox;
 
   for (let i = 1; i <= 25; i++) {
@@ -24,14 +24,12 @@
   async function toggleHistory() {
     showHistory = !showHistory;
 
-    // Wait for the DOM to update
     if (showHistory) {
-      await tick(); // Wait for the DOM to update before scrolling
+      await tick();
       historyBox.scrollIntoView({ behavior: "smooth" });
     }
   }
 
-  //HISTORY DATA
   export let historyData = [];
 
   for (let i = 1; i <= 100; i++) {
@@ -69,7 +67,6 @@
           <td>
             <select bind:value="{commandType}">
               <option>에이전트 시스템 정보수집</option>
-              <!-- Other options can be added here -->
             </select>
           </td>
         </tr>
@@ -91,7 +88,6 @@
           <td>
             <select bind:value="{scheduleType}">
               <option>예약실행</option>
-              <!-- Other options can be added here -->
             </select>
           </td>
         </tr>
@@ -125,17 +121,7 @@
           <th>명령구분</th>
           <td>
             <select bind:value="{systemCommand}">
-              <option>임의 명령수량</option>
-              <!-- Other options can be added here -->
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>명령어</th>
-          <td>
-            <select bind:value="{systemCommand}">
               <option>윈도우 PowerShell</option>
-              <!-- Other options can be added here -->
             </select>
             <textarea rows="4" bind:value="{systemCommand}"></textarea>
           </td>
@@ -173,7 +159,6 @@
 
   {#if showHistory}
     <div class="history_box" bind:this="{historyBox}">
-      <!-- History content goes here -->
       <table>
         <tr class="first_line">
           <th>넘버</th>
@@ -203,214 +188,179 @@
 </main>
 
 <style>
+  /* General Layout */
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .container {
+    width: 80%;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
   .second_container {
     margin-top: 20px;
     border-radius: 10px;
+    background-color: #f9f9f9;
+    padding: 20px;
   }
+
+  /* Table Styling */
   table {
-    color: #000000;
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #f7f7f7; /* Subdued background color */
   }
-  table,
-  th,
-  td {
-    border: 1px solid black;
-  }
+
   th,
   td {
     padding: 10px;
+    border: 1px solid #cccccc; /* Light gray border */
     text-align: left;
   }
+
   th {
-    background-color: #4682b4;
-    color: #fff;
-    width: 120px;
+    background-color: #555555; /* Dark gray for a more muted header */
+    color: white;
     text-align: center;
   }
-  td {
-    font-size: 12px;
-  }
-  textarea,
-  select,
-  input[type="text"],
-  input[type="number"] {
-    width: 100%;
-    padding: 5px;
-    box-sizing: border-box;
-  }
-  select:hover,
-  select:focus {
-    background-color: #cccccc;
-  }
-  .checkbox-group {
-    display: flex;
-    flex-direction: column;
+
+  tr:nth-child(even) {
+    background-color: #eeeeee; /* Light gray for even rows */
   }
 
-  main {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    margin: 20px;
+  tr:hover {
+    background-color: #dddddd; /* Slightly darker gray for hover */
   }
-  .container {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 60%;
-    padding: 20px;
-    color: #cccccc;
+
+  /* Inputs and Selects */
+  input[type="text"],
+  input[type="number"],
+  input[type="datetime-local"],
+  select,
+  textarea {
+    width: calc(100% - 10px);
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    background-color: #e6f0f3;
+    outline: none;
+  }
+
+  /* Checkbox group */
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .checkbox-group label {
+    font-size: 14px;
+    color: #333333;
+  }
+
+  /* Command Selection Container */
   .select_container {
     display: flex;
     align-items: center;
+    justify-content: center;
     border-radius: 5px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Stronger shadow for a more solid feel */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background-color: #f7f7f7;
+    border: 1px solid #cccccc;
   }
 
   .select_button {
-    background-color: #4682b4; /* A strong, trustworthy blue */
+    background-color: #555555;
     color: #ffffff;
-    padding: 12px 24px;
+    font-weight: bold;
+    padding: 12px 20px;
+    margin-left: 20px;
     border: none;
     font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    border-right: 1px solid #3e3e3e;
-    flex-shrink: 0;
-    width: 140px;
-  }
-
-  .select_button:hover {
-    background-color: #005a99; /* Darker blue on hover */
+    cursor: pointer;
+    margin-top: 5px;
+    width: 120px;
   }
 
   .select_input {
-    width: 100%;
+    flex-grow: 1;
     padding: 12px;
     border: none;
+    margin-right: 20px;
     font-size: 14px;
-    background-color: #fff;
-    color: #000000; /* Light text for readability */
-    cursor: pointer;
+    background-color: #ffffff;
+    color: #333333;
     outline: none;
+    border: 1px solid #cccccc;
   }
 
   .select_input:hover,
   .select_input:focus {
-    background-color: #cccccc;
+    background-color: #bebebe;
   }
 
-  .select_input option {
-    background-color: #fff;
-    color: #000000;
-  }
-  main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center; /* Centers the content horizontally */
-    width: 100%;
-    margin: 20px 0; /* Optional: Adjust margin as needed */
-    position: relative;
-  }
-  .container_h3 {
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-    gap: 50px;
-    padding-left: 40px;
-    width: 120px;
-    color: #000000;
-    top: -80px;
-    left: 125px;
-    text-decoration: underline;
-  }
-  .container_h3 h3 {
-    color: black;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .container_h3 h3 {
-    background-image: linear-gradient(to right, #5486d6, #54b3d6 50%, #000 50%);
-    background-size: 200% 100%;
-    background-position: -100%;
-    display: inline-block;
-    padding: 5px 0;
-    position: relative;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .container_h3 h3:before {
-    content: "";
-    background: #54b3d6;
-    display: block;
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .container_h3 h3:hover {
-    background-position: 0;
-  }
-
-  .container_h3 h3:hover::before {
-    width: 100%;
-  }
-  /***************HISTORY CONTAINER*************/
+  /* History Box */
   .history_box {
-    width: 70%;
-    height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    border: 1px solid #000;
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  .history_box table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
     width: 100%;
-    background: #ffffff;
-    font-size: 12px;
+    height: 400px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
   }
 
-  .history_box th,
-  .history_box td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
-    text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
+  .history_box table {
+    background-color: #f9f9f9;
+    font-size: 14px;
   }
 
   .history_box th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
+    background-color: #555555;
+    color: #ffffff;
   }
 
-  .history_box tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+  .history_box td {
+    background-color: #f9f9f9;
+    color: #333333;
   }
 
-  .history_box tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
+  /* Header Styling */
+  .container_h3 {
+    position: absolute;
+    top: -60px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #555555;
+    color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .container_h3:hover {
+    background-color: #444444;
   }
 </style>

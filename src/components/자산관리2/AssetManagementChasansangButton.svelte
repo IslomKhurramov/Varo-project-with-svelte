@@ -61,7 +61,7 @@
 
     <div class="assets-container">
       {#each assets as asset}
-        <div class="asset-card" class:selected="{asset.selected}">
+        <div class="asset-card {asset.selected ? 'selected' : ''}">
           <p><strong>{asset.os}</strong></p>
           <p>DBMS: {asset.dbms}</p>
           <p>Name: {asset.name}</p>
@@ -96,7 +96,7 @@
 
     <div class="assets-container">
       {#each assets as asset}
-        <div class="asset-card" class:result="{asset.result}">
+        <div class="asset-card {asset.result ? 'result' : ''}">
           <p><strong>{asset.os}</strong></p>
           <p>DBMS: {asset.dbms}</p>
           <p>Name: {asset.name}</p>
@@ -108,10 +108,9 @@
 </main>
 
 <style>
-  /* Main container centered and reduced in size */
   .main-container {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
     background-color: #f7f7f7;
     border-radius: 10px;
@@ -132,6 +131,7 @@
 
   .filter label {
     font-weight: bold;
+    color: #333;
   }
 
   .assets-container {
@@ -141,29 +141,30 @@
   }
 
   .asset-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: white;
-    font-size: 12px;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 14px;
     text-align: center;
+    transition:
+      transform 0.3s,
+      box-shadow 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .asset-card.selected {
-    border: 2px solid #003366;
-    background-color: #e0f7ff;
+    border: 2px solid #007acc;
+    background-color: #e6f2ff;
   }
 
   .asset-card.result {
-    background-color: #fff3cd;
+    background-color: #fff5e6;
   }
 
   .asset-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .command-section,
@@ -173,42 +174,56 @@
     margin-bottom: 10px;
   }
 
+  .command-section label,
+  .keyword-section label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
   textarea {
     resize: none;
-    height: 50px;
+    height: 60px;
     margin-top: 5px;
-    border-radius: 5px;
-    padding: 8px;
-    font-size: 12px;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #fafafa;
   }
 
   input[type="text"] {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
     margin-bottom: 10px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #fafafa;
   }
 
   button {
-    padding: 8px 12px;
-    background-color: #003366;
+    padding: 10px 15px;
+    background-color: #007acc;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.2s;
+    font-size: 14px;
+    transition: background-color 0.3s;
   }
 
   button:hover {
-    background-color: #003366;
+    background-color: #005fa3;
   }
 
   select {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    background-color: #fafafa;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 </style>

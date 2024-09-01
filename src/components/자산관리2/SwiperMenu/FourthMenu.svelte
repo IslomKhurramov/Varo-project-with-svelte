@@ -64,7 +64,7 @@
       <div style="display: flex; flex-direction: row;">
         <div class="firstline">
           <p>프로젝트:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
@@ -72,7 +72,7 @@
         </div>
         <div class="firstline">
           <p>점검대상:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
@@ -80,7 +80,7 @@
         </div>
         <div class="firstline">
           <p>호스트:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
@@ -88,7 +88,7 @@
         </div>
         <div class="firstline">
           <p>점검결과:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
@@ -96,7 +96,7 @@
         </div>
         <div class="firstline">
           <p>보기옵션:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
@@ -140,10 +140,7 @@
       {#each hostInfo as host}
         <tr>
           <td>{host.number}</td>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
-            >{host.name}</td
-          >
+          <td style="cursor: pointer;">{host.name}</td>
           <td>{host.item}</td>
           <td>
             <div style="display: flex; flex-direction:column">
@@ -162,17 +159,17 @@
           <td>{host.system}</td>
           <td>{host.instectionResult}</td>
           <td>
-            <select id="">
+            <select>
               <option value="양호">양호</option>
               <option value="해당">해당</option>
               <option value="empty"></option>
             </select>
-            <select id="">
+            <select>
               <option value="양호">양호</option>
               <option value="해당">해당</option>
               <option value="empty"></option>
             </select>
-            <button>변경</button>
+            <button class="fisrtlineButton">변경</button>
           </td>
         </tr>
       {/each}
@@ -186,23 +183,26 @@
     flex-direction: column;
     margin-left: 20px;
     margin-bottom: 40px;
+    font-family: "Arial", sans-serif;
   }
 
   .container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    background-color: #dedede;
+    gap: 15px;
+    background-color: #f8f9fa;
     height: 600px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ced4da;
     overflow-y: auto;
-    font-size: 12px;
+    font-size: 13px;
     overflow-x: hidden;
     margin-top: 40px;
+    padding: 20px;
   }
+
   .table_container {
     display: flex;
     justify-content: center;
@@ -213,8 +213,9 @@
     height: 300px;
     background: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ced4da;
+    margin-bottom: 20px;
   }
 
   table {
@@ -222,115 +223,130 @@
     border-collapse: collapse;
     width: 100%;
     background: #ffffff;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   th,
   td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
+    border: 1px solid #ced4da;
+    padding: 10px 15px;
     text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
+    vertical-align: middle;
   }
 
   th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
+    background-color: #0068d7;
+    color: #ffffff;
     position: sticky;
     top: 0;
     z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
+    text-transform: uppercase;
+    font-size: 13px;
   }
 
   tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+    background-color: #f2f2f2;
   }
 
   tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
+    background-color: #e9ecef;
   }
 
   .firstLine {
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
+    margin-bottom: 10px;
   }
+
   .firstline {
     display: flex;
     flex-direction: row;
-    height: 20px;
+    height: 25px;
     align-items: center;
-    margin-top: 10px;
     gap: 10px;
   }
+
   .fisrtlineButton {
-    border: 1px solid black;
-    height: 20px;
-    font-size: 12px;
+    border: 1px solid #004080;
+    height: 25px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     display: flex;
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    padding: 0 10px; /* Optional: Add padding for horizontal spacing */
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
     margin-top: 10px;
     box-sizing: border-box;
+    background-color: #004080;
+    color: #ffffff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
+
+  .fisrtlineButton:hover {
+    background-color: #0056b3;
+  }
+
   .firstline p {
     font-weight: bold;
+    margin: 0;
   }
+
   .firstline select {
-    border: 1px solid black;
-    height: 20px;
-    font-size: 12px;
-    padding: 0px;
+    border: 1px solid #ced4da;
+    height: 25px;
+    font-size: 13px;
+    padding: 0 5px;
+    border-radius: 5px;
   }
-  .firstline select option {
-    font-size: inherit;
-  }
+
   .Button {
-    width: 180px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
   }
+
   .secondLine {
     display: flex;
     flex-direction: row;
     width: 100%;
-    padding-top: 0px;
+    padding-top: 10px;
     gap: 20px;
-    margin-left: 5px;
-    margin-top: 0px;
-    padding-top: 0px;
+    margin-top: 10px;
   }
+
   .secondLine div {
     display: flex;
     flex-direction: row;
     gap: 5px;
   }
+
   .secondLine div p {
-    padding-top: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
+    margin: 0;
   }
+
   .thirdLine {
     margin-left: 5px;
-    margin-bottom: 0; /* Ensure no margin at the bottom */
-    padding-bottom: 0; /* Ensure no padding at the bottom */
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
+
   .thirdLine p {
     font-weight: bold;
     padding-top: 0px;
     margin-top: 0px;
-    margin: 0; /* Remove all margins */
-    padding: 0; /* Remove all padding */
+    margin: 0;
+    padding: 0;
   }
+
   .thirdLine select {
-    border: 1px solid black;
+    border: 1px solid #ced4da;
+    padding: 5px;
+    border-radius: 5px;
   }
 </style>

@@ -17,53 +17,48 @@
     </div>
     <div class="second_container">
       {#if reportType === "summary"}
-        <div>
-          <p>요약 보고서생성</p>
+        <div class="report-section">
+          <h3>요약 보고서생성</h3>
           <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 요약보고서는 프로젝트에 대한 통계 위주의
-            요약 내용을 엑셀로 저장
+            <img src="./images/next.png" alt="Next Icon" />
+            요약보고서는 프로젝트에 대한 통계 위주의 요약 내용을 엑셀로 저장
           </p>
         </div>
-        <div>
-          <p>요약 보고서생성</p>
+        <div class="report-section">
+          <h3>요약 보고서생성</h3>
           <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 요약보고서는 프로젝트에 대한 통계 위주의
-            요약 내용을 엑셀로 저장
+            <img src="./images/next.png" alt="Next Icon" />
+            요약보고서는 프로젝트에 대한 통계 위주의 요약 내용을 엑셀로 저장
           </p>
         </div>
-        <div>
-          <p>요약 보고서생성</p>
+        <div class="report-section">
+          <h3>요약 보고서생성</h3>
           <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 요약보고서는 프로젝트에 대한 통계 위주의
-            요약 내용을 엑셀로 저장
+            <img src="./images/next.png" alt="Next Icon" />
+            요약보고서는 프로젝트에 대한 통계 위주의 요약 내용을 엑셀로 저장
           </p>
         </div>
       {:else if reportType === "detailed"}
-        <div>
-          <p>상세 보고서생성</p>
+        <div class="report-section">
+          <h3>상세 보고서생성</h3>
           <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" />상세보고서는 프로젝트에 대한 세부
-            내용을 포함하여 엑셀로 저장
+            <img src="./images/next.png" alt="Next Icon" />
+            상세보고서는 프로젝트에 대한 세부 내용을 포함하여 엑셀로 저장
           </p>
         </div>
-        <div>
-          <p>요약 보고서생성</p>
+        <div class="report-section">
+          <h3>요약 보고서생성</h3>
           <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" />요약보고서는 프로젝트에 대한 통계
-            위주의 요약 내용을 엑셀로 저장
+            <img src="./images/next.png" alt="Next Icon" />
+            요약보고서는 프로젝트에 대한 통계 위주의 요약 내용을 엑셀로 저장
           </p>
         </div>
       {:else if reportType === "target"}
-        <div>
-          <p>점검대상별 보고서 생성</p>
+        <div class="report-section">
+          <h3>점검대상별 보고서 생성</h3>
           <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 점검대상별로 구분된 보고서를 엑셀로 저장
+            <img src="./images/next.png" alt="Next Icon" />
+            점검대상별로 구분된 보고서를 엑셀로 저장
           </p>
         </div>
       {/if}
@@ -72,51 +67,91 @@
 </main>
 
 <style>
+  /* Main container styling */
   main {
     display: flex;
     width: 100%;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+    background-color: #f4f4f4;
   }
+
+  /* Container for the entire content */
   .container {
     margin-top: 20px;
-    width: 60%; /* Adjust the width as needed */
+    width: 70%; /* Slightly larger for better readability */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
+
+  /* Buttons styling */
   .buttons {
     display: flex;
-    flex-direction: row;
-    gap: 20px;
+    gap: 15px;
   }
+
   .buttons button {
-    background-color: #003366; /* Darker Blue */
+    background-color: #0056b3;
     color: #ffffff;
-    border: 1px solid #ffffff;
+    border: none;
     border-radius: 5px;
-    height: 30px;
-    font-size: 12px;
-    width: 150px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
     cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
   }
+
   .buttons button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
+    background-color: #004494;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   }
+
+  /* Second container for report details */
   .second_container {
-    background-color: #dedede;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    font-size: 12px;
-    box-shadow: inset 0 0 2px 2px #888;
-    padding: 5px 10px;
+    gap: 20px;
+    background-color: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
   }
-  .second_container img {
-    width: 15px;
+
+  /* Individual report sections */
+  .report-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   }
-  .second_container p {
-    align-items: center;
+
+  .report-section h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+  }
+
+  .report-section p {
     display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555555;
+  }
+
+  .report-section img {
+    width: 20px;
+    margin-right: 10px;
   }
 </style>

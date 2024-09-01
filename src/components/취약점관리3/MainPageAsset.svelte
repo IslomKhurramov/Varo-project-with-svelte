@@ -72,77 +72,81 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
   }
-  main {
-    width: 80%;
-    display: flex;
 
+  main {
+    width: 85%;
+    display: flex;
     flex-direction: column;
     height: 600px;
     overflow-y: auto;
-    overflow-x: hidden;
     margin-top: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    margin-left: 20px;
-    margin-bottom: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    background-color: #ffffff;
   }
+
   table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
     width: 100%;
-    background: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
+    color: #333;
   }
 
   th,
   td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
+    padding: 12px 15px;
     text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
+    vertical-align: middle;
   }
 
   th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
+    background-color: #005fa3;
+    color: #ffffff;
     position: sticky;
     top: 0;
     z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  td {
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
   }
 
   tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+    background-color: #f9f9f9;
   }
 
   tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
+    background-color: #e9f3ff;
   }
 
   /* Second Line Styles */
   .second_line {
     width: 100%;
     display: flex;
-    flex-direction: row;
     justify-content: flex-start;
     gap: 10px;
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    margin-left: 20px;
+    margin: 20px 0;
+    padding-left: 20px;
   }
 
   .second_line button {
     background-color: #003366;
     color: #ffffff;
     border-radius: 5px;
-    height: 30px;
-    width: 120px;
+    height: 36px;
+    width: 130px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
     transition:
+      background-color 0.3s ease,
       transform 0.3s ease,
       box-shadow 0.3s ease;
   }
@@ -154,24 +158,26 @@
   }
 
   .select_input {
-    color: #000000;
-    border: none;
+    padding: 8px 10px;
+    color: #333;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 12px;
-    border: 1px solid black;
+    font-size: 13px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
   }
 
   .select_input:hover {
-    background-color: #b0b0b0;
-  }
-  .select_input option:hover {
-    background-color: #b0b0b0;
+    background-color: #e0e0e0;
+    border-color: #bbb;
   }
 
   .select_input:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #007acc;
+    border-color: #005fa3;
+    box-shadow: 0 0 4px rgba(0, 95, 163, 0.5);
   }
 </style>

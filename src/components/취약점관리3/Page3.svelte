@@ -39,32 +39,39 @@
     <aside>
       <div class="project_asset_container_buttons">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="project_button" on:click="{() => toggleList('project')}"
-          >프로젝트별</button
+        <button
+          class="switch_button primary_button"
+          on:click="{() => toggleList('project')}"
         >
+          프로젝트별
+        </button>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="asset_button" on:click="{() => toggleList('asset')}"
-          >자산별</button
+        <button
+          class="switch_button secondary_button"
+          on:click="{() => toggleList('asset')}"
         >
+          자산별
+        </button>
       </div>
       <div>
         <button
-          class="project_button"
-          on:click="{() => selectPage(WholePage, '전체')}">전체</button
+          class="switch_button1"
+          on:click="{() => selectPage(WholePage, '전체')}"
         >
+          전체
+        </button>
       </div>
 
       {#if showProject}
         {#each Project as project, index}
           <div class="chasanGroup_button">
-            <!-- svelte-ignore a11y-invalid-attribute -->
             <!-- svelte-ignore missing-declaration -->
             <a
               href="javascript:void(0)"
               on:click="{() => selectPage(MainPageProject, project)}"
               class="{activeMenu === project ? 'active' : ''}"
             >
-              <i class="fa fa-user-o" aria-hidden="true"></i>
+              <i class="fa fa-folder-open" aria-hidden="true"></i>
               {project}
             </a>
           </div>
@@ -72,14 +79,13 @@
       {:else}
         {#each Asset as asset, index}
           <div class="chasanGroup_button">
-            <!-- svelte-ignore a11y-invalid-attribute -->
             <!-- svelte-ignore missing-declaration -->
             <a
               href="javascript:void(0)"
               on:click="{() => selectPage(MainPageAsset, asset)}"
               class="{activeMenu === asset ? 'active' : ''}"
             >
-              <i class="fa fa-user-o" aria-hidden="true"></i>
+              <i class="fa fa-database" aria-hidden="true"></i>
               {asset}
             </a>
           </div>
@@ -155,89 +161,115 @@
 </main>
 
 <style>
-  /* Container and Layout Styles */
+  /* General Container and Layout */
+  .container {
+    display: flex;
+    width: 100%;
+  }
+
   .container_aside {
     min-height: 100vh;
     background-color: #2c3e50;
-    padding: 10px;
-  }
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+    padding: 20px;
+    width: 220px;
+    box-sizing: border-box;
   }
 
   .right_menu {
-    width: 100%;
-    min-height: 500px;
+    width: calc(100% - 220px);
+    min-height: 100vh;
+    background-color: #f2f3f4;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    /* padding: 20px; */
-    background-color: #f2f3f4; /* Light background for main content area */
   }
 
   /* Sidebar Styles */
   aside {
     color: #ffffff;
-    width: 170px;
     font-size: 16px;
   }
 
   .project_asset_container_buttons {
     display: flex;
-    flex-direction: row;
     gap: 10px;
     margin-bottom: 30px;
   }
+  .primary_button {
+    background-color: #2980b9;
+    color: #fff;
+  }
+
+  .primary_button:hover {
+    background-color: #1f6391;
+  }
+
+  .secondary_button {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+
+  .secondary_button:hover {
+    background-color: #c0392b;
+  }
+
+  .switch_button {
+    flex-grow: 1;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .switch_button:hover {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .switch_button1 {
+    flex-grow: 1;
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .switch_button1:hover {
+    background-color: #05498e;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
 
   .chasanGroup_button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 15px;
   }
 
-  /* Sidebar Links */
   aside a {
     font-size: 14px;
     color: #fff;
     display: block;
-    /* padding: 12px 10px; */
+    padding: 10px 15px;
     font-weight: 600;
     text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
 
   aside a:hover,
   aside a.active {
-    margin-top: 3px;
-    text-decoration: underline;
+    background-color: #34495e;
   }
 
   aside a i {
     margin-right: 10px;
-  }
-
-  /* Buttons */
-  .project_button,
-  .asset_button {
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    background-color: #2c3e50;
-    color: #fff;
-  }
-
-  .project_button:hover,
-  .asset_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
 
   /* Social Links */
@@ -246,7 +278,6 @@
   }
 
   .social a {
-    display: inline-block;
     color: #ffffff;
     font-size: 20px;
     margin-right: 10px;
@@ -259,33 +290,24 @@
 
   /* Header Styles */
   .header {
+    background-color: #ffffff;
+    padding: 15px 20px;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-
-    color: #000000;
-    border-radius: 5px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .header_option {
     display: flex;
-    align-items: center;
     gap: 20px;
   }
 
-  .header_button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 40px;
-  }
-
-  /* Form and Select Styles */
+  /* Form Select */
   .form_select {
     display: flex;
-    gap: 20px;
+    gap: 15px;
   }
 
   .select_container {
@@ -294,57 +316,59 @@
   }
 
   .select_input {
-    color: #000000;
     padding: 10px;
-    border: none;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
   }
 
   .select_input:hover {
-    background-color: #b0b0b0;
+    background-color: #e9ecef;
+    border-color: #007acc;
   }
 
   .select_input:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #007acc;
+    box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
+    border-color: #007acc;
   }
 
   /* Header Buttons */
   .header_button p {
-    color: #000000;
+    color: #003366;
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s ease;
   }
 
   .header_button p:hover {
-    color: #003366;
+    color: #005ea3;
     text-decoration: underline;
-  }
-
-  /* Dropdown Arrow */
-  .arrow {
-    color: #ffffff;
   }
 
   /* Toggle Button */
   .toggle_button {
-    background-color: #003366;
+    background-color: #007acc;
     color: #ffffff;
     padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    height: 30px;
-    font-weight: bold;
     transition: background-color 0.3s ease;
   }
 
   .toggle_button:hover {
-    background-color: #27293d;
+    background-color: #005fa3;
+  }
+
+  /* Content Container */
+  .swiper_container {
+    flex-grow: 1;
+    margin-top: 20px;
   }
 </style>

@@ -40,7 +40,7 @@
   function drawBarChart(svgElement, dataset) {
     d3.select(svgElement).selectAll("*").remove(); // Clear previous chart content
 
-    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const margin = { top: 20, right: 20, bottom: 50, left: 50 };
     const width = 500 - margin.left - margin.right;
     const height = 300 - margin.top - margin.bottom;
 
@@ -80,9 +80,23 @@
       .append("g")
       .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x))
-      .style("font-size", "16px");
+      .style("font-size", "14px");
 
-    svg.append("g").call(d3.axisLeft(y));
+    svg.append("g").call(d3.axisLeft(y)).style("font-size", "14px");
+
+    // Adding labels
+    svg
+      .selectAll(".label")
+      .data(dataset)
+      .enter()
+      .append("text")
+      .attr("class", "label")
+      .attr("x", (d) => x(d.subCategory) + x.bandwidth() / 2)
+      .attr("y", (d) => y(d.value) - 5)
+      .attr("text-anchor", "middle")
+      .style("fill", "#333")
+      .style("font-size", "12px")
+      .text((d) => d.value);
   }
 
   onMount(() => {
@@ -99,17 +113,17 @@
   <div class="first_container">
     <div class="first_line1">
       <p>기간선택</p>
-      <p>3/6/9/12/전체</p>
+      <p class="options">3/6/9/12/전체</p>
     </div>
     <div class="second_line1">
       <svg bind:this="{svg1}"></svg>
-      <p>전체자산 등록 추세</p>
+      <p class="chart_title">전체자산 등록 추세</p>
     </div>
   </div>
   <div class="second_container">
     <div class="second_line2">
       <p>
-        <select bind:value="{selectedGroupIndex}">
+        <select bind:value="{selectedGroupIndex}" class="dropdown">
           {#each chasanGroups as group}
             <option value="{group.index}">{group.chasanGroup}</option>
           {/each}
@@ -125,40 +139,76 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 20px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
-  .first_container {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+
+  .first_container,
+  .second_container {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+
   .first_line1 {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 25px;
+    margin-bottom: 20px;
   }
-  .first_line1,
-  .second_line1 p {
-    font-weight: bold;
+
+  .options {
+    font-weight: normal;
+    font-size: 14px;
+    color: #555;
   }
+
   .second_line1 {
     display: flex;
     flex-direction: column;
-  }
-  .second_container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-  }
-  .second_line2 {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
     align-items: center;
   }
+
+  .chart_title {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .second_container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .second_line2 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
   svg {
     width: 100%;
     max-height: 300px;
+  }
+
+  .dropdown {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    color: #333;
+  }
+
+  p {
+    margin: 0;
+    font-weight: bold;
+    color: #333;
   }
 </style>

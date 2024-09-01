@@ -34,6 +34,7 @@
     { label: "NETWORK", value: 35, color: "#ffeb3b" },
     { label: "DBMS", value: 20, color: "#f44336" },
   ];
+
   // Function to calculate the path for the pie slices
   function calculatePieSlice(value, total, radius, startAngle) {
     const angle = (value / total) * 2 * Math.PI;
@@ -166,8 +167,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
     background-color: #f0f0f0;
+    padding: 40px 0;
   }
 
   .container {
@@ -175,7 +176,7 @@
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
   }
 
@@ -184,22 +185,18 @@
   .security-level-section,
   .critical-weaknesses {
     margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
     background-color: #fafafa;
   }
-  .security-level-section {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 120px;
-  }
 
   h2 {
-    margin-bottom: 10px;
-    font-size: 18px;
+    margin-bottom: 15px;
+    font-size: 20px;
     color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
   }
 
   .overview {
@@ -207,48 +204,38 @@
     justify-content: space-between;
     align-items: flex-start;
   }
+
   .percentage1 {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     margin-right: 20px;
   }
 
   .security-level {
-    background-color: #ffffff;
-    color: #000000;
-    width: 70px;
-    height: 70px;
-    align-content: center;
-    text-align: center;
-    font-weight: 400;
-    font-size: 16px;
-    border: 1px solid #000000;
-    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 50%;
     box-shadow:
-      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
-      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
-      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
-  }
-
-  .percentage1 p {
-    margin: 0;
-    font-size: 12px;
-    font-weight: bold;
-  }
-
-  .security-level .score {
-    font-size: 16px;
-    font-weight: bold;
+      inset 0 0 35px 5px rgba(0, 0, 0, 0.1),
+      inset 0 2px 1px 1px rgba(255, 255, 255, 0.5),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.1);
   }
 
   .project-details p {
     margin: 5px 0;
     font-size: 14px;
+    color: #555;
   }
 
   .actions {
@@ -258,17 +245,21 @@
   }
 
   .actions button {
-    padding: 5px 10px;
-    background-color: #003366;
+    padding: 8px 12px;
+    background-color: #1976d2;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
   }
 
   .actions button:hover {
-    background-color: #1976d2;
+    background-color: #1565c0;
+    transform: translateY(-2px);
   }
 
   .status {
@@ -277,8 +268,8 @@
   }
 
   .pie-chart {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -288,16 +279,19 @@
     margin-bottom: 10px;
     font-weight: bold;
     font-size: 14px;
+    color: #555;
   }
 
   .bar-charts {
     flex-grow: 1;
     padding-left: 20px;
   }
+
   .bar-charts2 {
     flex-grow: 1;
     padding-left: 50px;
   }
+
   .bar {
     display: flex;
     align-items: center;
@@ -308,11 +302,12 @@
     width: 100px;
     font-weight: bold;
     font-size: 14px;
+    color: #555;
   }
 
   .bar .bar-fill {
     height: 20px;
-    background-color: rgb(103, 173, 103);
+    background-color: #4caf50;
     color: white;
     text-align: right;
     padding-right: 5px;
@@ -320,9 +315,10 @@
     border-radius: 5px;
     font-size: 14px;
   }
+
   .bar .bar-fill2 {
     height: 20px;
-    background-color: rgb(126, 180, 198);
+    background-color: #2196f3;
     color: white;
     text-align: right;
     padding-right: 5px;
@@ -334,9 +330,11 @@
   .security-level-section p {
     margin: 5px 0;
     font-size: 14px;
+    color: #555;
   }
 
   .critical-weaknesses .bar-chart {
     padding: 10px;
+    color: #555;
   }
 </style>

@@ -18,12 +18,7 @@
   }
 
   function toggleAll() {
-    if (allSelected) {
-      selected = [];
-    } else {
-      selected = [...assetData];
-    }
-    // selected = allSelected ? [] : [...assetData]; // short version
+    selected = allSelected ? [] : [...assetData];
   }
 </script>
 
@@ -45,7 +40,7 @@
         </div>
         <div class="colors">
           <div class="yellow_button"></div>
-          <span>이전(다른그룹으로) </span>
+          <span>이전(다른그룹으로)</span>
         </div>
       </div>
     </div>
@@ -65,7 +60,7 @@
             <button class="red"></button>
             <button class="yellow"></button>
           </div>
-          <button class="modal_button">등록 미승인 </button>
+          <button class="modal_button">등록 미승인</button>
           <div class="first_col">
             <div class="first_col_1">
               <p>보안점수</p>
@@ -79,33 +74,33 @@
             <div class="first_col_2">
               <p>연결중</p>
               <div>
-                <span style="font-weight: bold;"> {asset.assetData}</span>
+                <span style="font-weight: bold;">{asset.assetData}</span>
               </div>
             </div>
           </div>
           <div class="second_col">
             <p>
-              운영체제 :<span style="font-weight: bold;">
+              운영체제: <span style="font-weight: bold;">
                 {asset.operatingSystem}
               </span>
             </p>
             <p>
-              자산명 :<span style="font-weight: bold;">
+              자산명: <span style="font-weight: bold;">
                 {asset.assetName}
               </span>
             </p>
             <p>
-              아이피주소 :<span style="font-weight: bold;">
+              아이피주소: <span style="font-weight: bold;">
                 {asset.ipAdress}
               </span>
             </p>
             <p>
-              점검대상 :<span style="font-weight: bold;">
+              점검대상: <span style="font-weight: bold;">
                 {asset.inspectionTarget}
               </span>
             </p>
             <p>
-              에이전트설치여부 :<span style="font-weight: bold;">
+              에이전트설치여부: <span style="font-weight: bold;">
                 {asset.agentInstallation}
               </span>
             </p>
@@ -117,158 +112,160 @@
 </main>
 
 <style>
+  /* Main container for the card layout */
   .container {
-    width: 95%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    background-color: #e0e0e0;
-    margin-left: 30px;
-    margin-right: 10px;
-    margin-bottom: 40px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 
+  /* Header section for select and action buttons */
+  .allselect {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .allSelectDiv {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .selectButton {
+    cursor: pointer;
+    color: #333;
+    font-weight: 600;
+  }
+
+  /* Action buttons section */
   .color_group {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    font-size: 12px;
-    font-weight: 700;
-    width: auto;
-    gap: 25px;
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 5px;
+    gap: 20px;
   }
+
   .colors {
     display: flex;
-    flex-direction: row;
     align-items: center;
+    gap: 5px;
   }
-  .blue_button {
-    background-color: #4682b4;
-    width: 10px;
-    height: 10px;
-    border: 1px solid black;
-  }
-  .red_button {
-    background-color: #d9534f;
-    width: 10px;
-    height: 10px;
-    border: 1px solid black;
-  }
+
+  .blue_button,
+  .red_button,
   .yellow_button {
-    background-color: #f0ad4e;
-    width: 10px;
-    height: 10px;
-    border: 1px solid black;
-  }
-  main {
-    width: 100%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
   }
 
-  .first_col {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .first_col_1,
-  .first_col_2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .first_col_1 p {
-    padding-top: 0;
-    margin-top: 0;
-    padding-bottom: 0px;
-    margin-bottom: 0px;
-  }
-  .first_col_2 p {
-    margin-bottom: 0;
-    padding-bottom: 0;
+  .blue_button {
+    background-color: #6c757d;
   }
 
+  .red_button {
+    background-color: #dc3545;
+  }
+
+  .yellow_button {
+    background-color: #ffc107;
+  }
+
+  /* Card container for the assets */
   .card_container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 10px;
-    row-gap: 30px;
-    margin-top: 20px;
-    border: 1px solid #000000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-left: 10px;
-    margin-right: 10px;
-    padding: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    max-height: 600px;
     overflow-y: auto;
-    height: 400px;
-    background: #f0f0f0; /* Very Light Gray */
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
   }
 
+  /* Individual card styling */
   .card {
-    background-color: #d6d6d6; /* Muted Gray */
-    max-width: 300px;
-    height: 150px;
-    font-size: 10px;
     position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    gap: 10px;
-    box-shadow: inset 0 0 20px -8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000; /* Light gray border */
-    border-radius: 8px; /* Rounded corners */
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition:
+      transform 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out;
   }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Checkbox in each card */
   .checkbox {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 10px;
     cursor: pointer;
-  }
-  .box_number {
-    background-color: #ffffff; /* Medium blue */
-    color: #000000; /* White text for contrast */
-    width: 70px;
-    height: 50px;
-    align-content: center;
-    text-align: center;
-    font-weight: 400;
-    font-size: 18px;
-    border: 1px solid #000000; /* Light border */
-    border-radius: 5px; /* Slight rounding of corners */
-    box-shadow:
-      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
-      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
-      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
-  }
-  .card_buttons {
-    position: absolute;
-    top: -12px;
-    right: 0;
-  }
-  .card_buttons button {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid #000000;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    transform: scale(1.2);
   }
 
+  /* Security score box styling */
+  .box_number {
+    background-color: #007bff;
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  /* Action buttons within each card */
+  .card_buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+  }
+
+  .card_buttons button {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+  }
+
+  .blue {
+    background-color: #6c757d;
+  }
+
+  .red {
+    background-color: #dc3545;
+  }
+
+  .yellow {
+    background-color: #ffc107;
+  }
+
+  /* Modal button within each card */
   .modal_button {
     position: absolute;
-    bottom: -6px;
-    font-size: 8px;
-    right: 0px;
-    border: 1px solid #ff5722; /* Deep orange border */
-    width: 70px;
-    height: 20px; /* Adjusted height for better proportion */
-    background-color: #ff5722; /* Deep orange */
-    color: #ffffff; /* White text for contrast */
-    border-radius: 5px; /* Rounded corners */
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: #343a40;
+    color: #fff;
+    font-size: 10px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
     transition:
       background-color 0.3s ease,
@@ -276,48 +273,29 @@
   }
 
   .modal_button:hover {
-    background-color: #e64a19; /* Slightly darker shade on hover */
-    transform: translateY(-2px); /* Slight raise on hover */
+    background-color: #212529;
+    transform: translateY(-2px);
   }
 
-  .blue {
-    background-color: #4682b4; /* Steel Blue */
-  }
-
-  .blue:hover {
-    background-color: #3a76a8; /* Darker Steel Blue */
-  }
-
-  .red {
-    background-color: #d9534f; /* Muted Red */
-  }
-
-  .red:hover {
-    background-color: #b52a26; /* Darker Muted Red */
-  }
-
-  .yellow {
-    background-color: #f0ad4e; /* Muted Yellow */
-  }
-
-  .yellow:hover {
-    background-color: #e6a045; /* Darker Golden Yellow */
-  }
-  .selectButton {
-    color: #000000;
-    margin-top: 13.5px;
-    cursor: pointer;
-  }
-  .allselect {
-    margin-left: 20px;
+  /* Styling for asset details */
+  .first_col {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
   }
-  .allselect input {
-    cursor: pointer;
+
+  .first_col_1,
+  .first_col_2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  .allselect div input {
-    margin-bottom: 0px;
-    padding-bottom: 0px;
+
+  .second_col {
+    line-height: 1.5;
+  }
+
+  .second_col p {
+    margin: 0;
   }
 </style>

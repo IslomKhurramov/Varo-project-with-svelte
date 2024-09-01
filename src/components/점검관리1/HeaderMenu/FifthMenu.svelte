@@ -10,12 +10,12 @@
     "가이드라인",
   ];
 
-  for (let i = 0; i <= usage.length; i++) {
+  for (let i = 0; i < usage.length; i++) {
     performanceLog.push({
       number: (i + 1).toString(),
       usage: usage[i],
-      version: "AAAAAA",
-      fileName: "ERROR-099",
+      version: "1.0.0", // Updated version number
+      fileName: `file_${i + 1}.zip`,
     });
   }
 </script>
@@ -23,22 +23,28 @@
 <main>
   <div class="table_container">
     <table>
-      <tr class="first_line">
-        <th>순번</th>
-        <th>용도</th>
-        <th>버전</th>
-        <th>파일명</th>
-        <th>다운로드</th>
-      </tr>
-      {#each performanceLog as asset}
-        <tr>
-          <td>{asset.number}</td>
-          <td>{asset.usage}</td>
-          <td>{asset.version}</td>
-          <td>{asset.fileName}</td>
-          <td></td>
+      <thead>
+        <tr class="first_line">
+          <th>순번</th>
+          <th>용도</th>
+          <th>버전</th>
+          <th>파일명</th>
+          <th>다운로드</th>
         </tr>
-      {/each}
+      </thead>
+      <tbody>
+        {#each performanceLog as asset}
+          <tr>
+            <td>{asset.number}</td>
+            <td>{asset.usage}</td>
+            <td>{asset.version}</td>
+            <td>{asset.fileName}</td>
+            <td>
+              <button class="download_button">Download</button>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
     </table>
   </div>
 </main>
@@ -48,57 +54,74 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    padding: 20px;
+    background-color: #f4f4f4;
   }
 
   .table_container {
     display: flex;
     justify-content: center;
-    width: 94%;
-    margin: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 400px;
-
-    margin: 20px;
+    width: 90%;
+    margin: 20px 0;
     background: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    height: 400px;
   }
+
   table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
     width: 100%;
-    background: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
+    background-color: #ffffff;
   }
 
   th,
   td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
+    border: 1px solid #dddddd;
+    padding: 12px 15px;
     text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
+    vertical-align: middle;
   }
 
   th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
+    background-color: #0068d7;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
     position: sticky;
     top: 0;
     z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
   }
 
   tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+    background-color: #f9f9f9;
   }
 
   tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
+    background-color: #e6f7ff;
+    cursor: pointer;
+  }
+
+  .download_button {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .download_button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 </style>

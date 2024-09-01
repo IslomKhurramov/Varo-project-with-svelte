@@ -65,25 +65,40 @@
 <style>
   main {
     padding: 20px;
+    font-family: "Arial", sans-serif;
+    color: #333;
+    max-width: 400px;
+    margin: 0 auto;
   }
+
   h3 {
-    margin: 0 0 10px;
-    font-size: 18px;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: bold;
     text-align: center;
+    color: #333;
   }
+
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   ul li {
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition:
+      background-color 0.3s ease,
+      transform 0.2s ease;
+    background-color: #f9f9f9;
   }
 
   ul li:last-child {
@@ -91,28 +106,40 @@
   }
 
   ul li:hover {
-    background-color: #f0f0f0;
+    background-color: #e0e7ff;
+    transform: translateY(-2px);
   }
 
   ul li.selected {
     background-color: #d0e6f7;
+    color: #0056b3;
   }
 
   ul li.selected:hover {
     background-color: #c2dbe9;
   }
+
   .button {
+    display: block;
+    width: 100%;
+    text-align: center;
     background-color: #2196f3;
     color: white;
-    padding: 10px 20px;
+    padding: 12px;
+    margin-top: 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    transition:
+      background-color 0.3s ease,
+      transform 0.2s ease;
   }
 
   .button:hover {
     background-color: #1976d2;
+    transform: translateY(-2px);
   }
 
   .button.confirm {
@@ -121,5 +148,31 @@
 
   .button.confirm:hover {
     background-color: #388e3c;
+  }
+
+  .confirmation {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #e8f5e9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .confirmation h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #388e3c;
+  }
+
+  .confirmation p {
+    margin: 0;
+    color: #333;
+  }
+
+  .confirmation p:nth-child(3) {
+    margin-top: 5px;
+    font-style: italic;
+    color: #666;
   }
 </style>

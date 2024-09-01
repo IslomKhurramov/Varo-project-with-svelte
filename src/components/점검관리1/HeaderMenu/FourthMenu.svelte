@@ -17,28 +17,32 @@
 
 <main>
   <table>
-    <tr class="first_line">
-      <th>순번</th>
-      <th>프로젝트NO</th>
-      <th>자산명</th>
-      <th>분류코드</th>
-      <th>로그내용</th>
-      <th>수행자</th>
-      <th>날짜</th>
-      <th>비고</th>
-    </tr>
-    {#each performanceLog as asset}
-      <tr>
-        <td>{asset.number}</td>
-        <td>{asset.projectNO}</td>
-        <td>{asset.assetName}</td>
-        <td>{asset.cassification}</td>
-        <td>{asset.logContent}</td>
-        <td>{asset.performer}</td>
-        <td>{asset.date}</td>
-        <td>{asset.note}</td>
+    <thead>
+      <tr class="first_line">
+        <th>순번</th>
+        <th>프로젝트NO</th>
+        <th>자산명</th>
+        <th>분류코드</th>
+        <th>로그내용</th>
+        <th>수행자</th>
+        <th>날짜</th>
+        <th>비고</th>
       </tr>
-    {/each}
+    </thead>
+    <tbody>
+      {#each performanceLog as asset}
+        <tr>
+          <td>{asset.number}</td>
+          <td>{asset.projectNO}</td>
+          <td>{asset.assetName}</td>
+          <td>{asset.cassification}</td>
+          <td>{asset.logContent}</td>
+          <td>{asset.performer}</td>
+          <td>{asset.date}</td>
+          <td>{asset.note}</td>
+        </tr>
+      {/each}
+    </tbody>
   </table>
 </main>
 
@@ -47,47 +51,61 @@
     width: 96%;
     display: flex;
     justify-content: center;
-    height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
     margin-top: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
     margin-left: 20px;
     margin-bottom: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    height: 600px;
+    background-color: #f9f9f9;
   }
+
   table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
     width: 100%;
-    background: #ffffff;
-    font-size: 12px;
+    border-collapse: collapse;
+    font-family: "Arial", sans-serif;
+    font-size: 14px;
+    background-color: #ffffff;
   }
 
   th,
   td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
+    padding: 12px 15px;
     text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
+    vertical-align: middle;
   }
 
   th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
+    background-color: #0068d7;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
     position: sticky;
     top: 0;
     z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
   }
 
   tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+    background-color: #f4f4f4;
   }
 
   tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
+    background-color: #e6f7ff;
+    cursor: pointer;
+  }
+
+  tr td {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  thead th {
+    border-bottom: 2px solid #dddddd;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
   }
 </style>

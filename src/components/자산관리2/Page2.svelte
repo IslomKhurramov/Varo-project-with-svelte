@@ -42,23 +42,17 @@
   <div class="container_aside">
     <aside>
       <div class="add_delete_container">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button
-          class="menu_button"
-          on:click="{() => {
-            addProject();
-          }}">신규점검</button
+        <button class="menu_button add_button" on:click="{addProject}"
+          >신규점검</button
         >
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="menu_button">이력삭제</button>
+        <button class="menu_button delete_button">이력삭제</button>
       </div>
 
       {#each assets as asset, index}
         <div class="chasanGroup_button">
-          <!-- svelte-ignore a11y-invalid-attribute -->
           <!-- svelte-ignore missing-declaration -->
           <a
-            href="http://localhost:3000/page2"
+            href="#"
             on:click="{() => selectPage(AssetPage, asset)}"
             class="{activeMenu === asset ? 'active' : ''}"
           >
@@ -139,12 +133,12 @@
       <button
         on:click="{() =>
           selectPage(AssetManagementChasansangButton, '정보수집')}"
-        >자산상세검색</button
       >
-      <button on:click="{() => selectPage(Jongbusujin, '정보수집')}"
-        >정보수집</button
-      >
-
+        자산상세검색
+      </button>
+      <button on:click="{() => selectPage(Jongbusujin, '정보수집')}">
+        정보수집
+      </button>
       <button on:click="{() => (showModal = true)}">자산그룹별등록추세</button>
       <button>요약보고서출력</button>
       <button>상세보고서출력</button>
@@ -174,7 +168,7 @@
   .container_aside {
     min-height: 100vh;
     background-color: #2c3e50;
-    padding: 10px;
+    padding: 20px;
   }
 
   .container {
@@ -188,16 +182,16 @@
     min-height: 500px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    background-color: #f7f8fa;
+    padding: 20px;
     box-sizing: border-box;
-    /* padding: 20px; */
-    background-color: #f2f3f4; /* Light background for main content area */
+    border-left: 1px solid #e0e0e0;
   }
 
   /* Sidebar Styles */
   aside {
     color: #ffffff;
-    width: 170px;
+    width: 200px;
     font-size: 16px;
   }
 
@@ -208,6 +202,39 @@
     margin-bottom: 30px;
   }
 
+  .add_button {
+    background-color: #2980b9;
+  }
+
+  .delete_button {
+    background-color: #e74c3c;
+  }
+  .add_button:hover {
+    background-color: #1f6391;
+  }
+
+  .delete_button:hover {
+    background-color: #c0392b;
+  }
+
+  .menu_button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px 15px;
+    color: #ffffff;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .menu_button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
   .chasanGroup_button {
     display: flex;
     justify-content: space-between;
@@ -215,51 +242,43 @@
     margin-bottom: 15px;
   }
 
-  /* Sidebar Links */
   aside a {
     font-size: 14px;
-    color: #fff;
+    color: #ffffff;
     display: block;
-    /* padding: 12px 10px; */
     font-weight: 600;
     text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
 
   aside a:hover,
   aside a.active {
-    margin-top: 3px;
-    text-decoration: underline;
+    background-color: #53677a;
   }
 
   aside a i {
     margin-right: 10px;
   }
 
-  /* Buttons */
-  .menu_button,
   .asset_button {
+    background-color: #5bc0de;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    background-color: #2c3e50;
-    color: #fff;
-  }
-
-  .menu_button:hover,
-  .asset_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-
-  .asset_button {
-    background-color: #d9534f;
-    padding: 5px 10px;
     font-size: 12px;
-    margin-left: 10px;
+    padding: 5px 10px;
+    color: #ffffff;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .asset_button:hover {
+    background-color: #31b0d5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   /* Social Links */
@@ -282,13 +301,13 @@
   /* Header Styles */
   .header {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-
-    color: #000000;
+    padding: 15px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
+    margin-bottom: 20px;
   }
 
   .header_option {
@@ -299,15 +318,26 @@
 
   .header_button {
     display: flex;
-    flex-direction: row;
     align-items: center;
     gap: 40px;
+    font-weight: bold;
+  }
+
+  .header_button p {
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .header_button p:hover {
+    color: #007acc;
+    text-decoration: underline;
   }
 
   /* Form and Select Styles */
   .form_select {
     display: flex;
-    gap: 20px;
+    gap: 15px;
   }
 
   .select_container {
@@ -316,35 +346,26 @@
   }
 
   .select_input {
-    color: #000000;
-    padding: 10px;
-    border: none;
+    color: #333;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    background-color: #ffffff;
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .select_input:hover {
-    background-color: #b0b0b0;
+    border-color: #007acc;
   }
 
   .select_input:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #007acc;
-  }
-
-  /* Header Buttons */
-  .header_button p {
-    color: #000000;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-
-  .header_button p:hover {
-    color: #003366;
-    text-decoration: underline;
+    box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
+    border-color: #007acc;
   }
 
   /* Dropdown Arrow */
@@ -354,40 +375,33 @@
 
   /* Toggle Button */
   .toggle_button {
-    background-color: #003366;
+    background-color: #007acc;
     color: #ffffff;
     padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    height: 30px;
-    font-weight: bold;
     transition: background-color 0.3s ease;
   }
 
   .toggle_button:hover {
-    background-color: #27293d;
+    background-color: #005fa3;
   }
 
   /* Second Line Styles */
   .second_line {
-    width: 100%;
     display: flex;
-    flex-direction: row;
     justify-content: flex-end;
     gap: 10px;
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   .second_line button {
-    background-color: #003366;
+    background-color: #007acc;
     color: #ffffff;
     border-radius: 5px;
-    height: 30px;
-    width: 120px;
+    padding: 8px 12px;
     cursor: pointer;
     transition:
       transform 0.3s ease,
@@ -397,6 +411,6 @@
   .second_line button:hover {
     background-color: #005fa3;
     transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 </style>

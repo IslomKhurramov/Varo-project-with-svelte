@@ -311,7 +311,7 @@
   }
 
   th {
-    background-color: #003366; /* Header background color */
+    background-color: #0068d7; /* Header background color */
     color: #ffffff; /* Header text color */
     position: sticky;
     top: 0;

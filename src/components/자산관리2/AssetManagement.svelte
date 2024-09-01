@@ -29,7 +29,6 @@
     } else {
       selected = [...assetCard];
     }
-    // selected = allSelected ? [] : [...assetData]; // short version
   }
 </script>
 
@@ -53,14 +52,16 @@
       </select>
     </div>
   </div>
+
   <div class="second_container">
     <p>생성방법</p>
     <div class="inside_container">
       <div class="first_line_container">
         <input type="file" />
         <input type="file" />
-        <p style="color: #fff;">대용량업로드(엑셀파일)</p>
+        <p>대용량업로드(엑셀파일)</p>
       </div>
+
       <div class="second_line_container">
         <div class="group_container">
           {#each assetGroup as group}
@@ -69,17 +70,21 @@
         </div>
         <div class="right_container">
           <div class="option_container">
-            <select name="" id="">
-              <option value=""></option>
-            </select>
-            <select name="" id="">
-              <option value=""></option>
-            </select>
-            <select name="" id="">
-              <option value=""></option>
-            </select>
-            <button>button</button>
-            <button>저장 </button>
+            <div class="div1">
+              <select name="" id="">
+                <option value=""></option>
+              </select>
+              <select name="" id="">
+                <option value=""></option>
+              </select>
+              <select name="" id="">
+                <option value=""></option>
+              </select>
+            </div>
+            <div class="div2">
+              <button>button</button>
+              <button>저장</button>
+            </div>
           </div>
           <div class="first_check_cont">
             <input
@@ -119,8 +124,9 @@
       </div>
     </div>
   </div>
+
   <div class="input_buttons">
-    <button style="background: #dc3545;">저장하기</button>
+    <button class="save_button">저장하기</button>
   </div>
 </main>
 
@@ -129,28 +135,30 @@
     width: 100%;
     padding: 20px;
     font-family: "Arial", sans-serif;
-    color: lightgray; /* Light text color for readability */
+    color: #333; /* Darker text color for better readability */
+    box-sizing: border-box;
+    overflow-x: hidden; /* Prevent horizontal scroll */
   }
 
   .select_group {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between select elements */
-    max-width: 600px;
+    gap: 20px;
+    max-width: 60%; /* Ensure it doesn’t exceed the container */
     margin: 0 auto;
   }
 
   .select_container {
     display: flex;
     align-items: center;
-    border-radius: 5px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Stronger shadow for a more solid feel */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   .select_button {
-    background-color: #4682b4; /* A strong, trustworthy blue */
-    color: #ffffff;
+    background-color: #4682b4;
+    color: #fff;
     padding: 12px 24px;
     border: none;
     font-size: 14px;
@@ -162,7 +170,7 @@
   }
 
   .select_button:hover {
-    background-color: #005a99; /* Darker blue on hover */
+    background-color: #005a99;
   }
 
   .select_input {
@@ -171,19 +179,19 @@
     border: none;
     font-size: 14px;
     background-color: #fff;
-    color: #000000; /* Light text for readability */
+    color: #000;
     cursor: pointer;
     outline: none;
   }
 
   .select_input:hover,
   .select_input:focus {
-    background-color: #cccccc;
+    background-color: #e0e0e0;
   }
 
   .select_input option {
     background-color: #fff;
-    color: #000000;
+    color: #000;
   }
 
   .second_container {
@@ -193,81 +201,89 @@
     width: 100%;
     padding: 10px 10px;
   }
+
   .second_container p {
-    color: #000;
+    color: #333;
+    margin-bottom: 10px;
   }
 
   .inside_container {
     display: flex;
     flex-direction: column;
-    width: 95%;
+    width: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    background-color: #e0e0e0;
-    color: #000000;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
   .first_line_container {
     display: flex;
     flex-direction: row;
-    padding: 20px;
     gap: 10px;
     background-color: #2c3e50;
     border-radius: 10px;
-    color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    padding: 15px;
+  }
+
+  .first_line_container p {
+    margin: 0;
+    font-weight: bold;
+    color: #f2f3f4;
   }
 
   .second_line_container {
     display: flex;
     flex-direction: row;
-    padding: 20px;
-    width: 100%;
     gap: 35px;
     max-height: 500px;
+    overflow-x: hidden; /* Prevent horizontal overflow */
   }
 
   .group_container {
     width: 250px;
-    font-style: Roboto sans-serif;
-    background-color: #f7f7f7;
+    font-family: "Roboto", sans-serif;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Ensure items start from the top */
-    align-items: flex-start; /* Align items to the start of the container */
-    overflow-y: auto; /* Enable scrolling if content overflows */
+    overflow-y: auto;
     overflow-x: hidden;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 100%; /* Ensure the height fits within the parent container */
+    max-height: 100%;
   }
 
   .group_container p {
-    margin: 5px 0; /* Add spacing between the paragraphs */
-    padding: 0;
+    margin: 5px 0;
     font-size: 14px;
-    color: #000; /* Adjust text color if needed */
-    width: 100%; /* Ensure the paragraphs take up the full width */
-    box-sizing: border-box; /* Include padding/border in element's width/height */
+    color: #333;
+    padding: 8px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
+
   .group_container p:hover {
     cursor: pointer;
     background-color: #37a5f3;
+    color: #fff;
   }
 
   .right_container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-width: 650px;
-    background-color: #f7f7f7;
+    width: 100%;
+    background-color: #fff;
     gap: 10px;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
-    margin-right: -35px;
+    box-sizing: border-box;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden; /* Prevent horizontal overflow */
   }
 
   .option_container {
@@ -275,23 +291,26 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
-    padding: 5px;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
   }
 
   .option_container select {
     width: 120px;
-    background-color: #3a3a3a;
-    color: #e0e0e0;
+    background-color: #f2f3f4;
+    color: #333;
     border: none;
     padding: 10px;
     border-radius: 5px;
   }
 
+  .option_container select:hover {
+    background-color: #cccccc;
+  }
+
   .option_container button {
     background-color: #4682b4;
-    color: #ffffff;
+    color: #f2f3f4;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -308,29 +327,34 @@
   .card_container {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(150px, 1fr)
+    ); /* Responsive grid */
     gap: 10px;
-    row-gap: 30px;
-    justify-content: flex-start;
+    row-gap: 20px;
     overflow-y: auto;
-    overflow-x: hidden;
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 8px;
+    max-height: 300px; /* Limit height */
+    padding: 10px;
+    box-shadow:
+      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
+      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
   }
 
   .card {
     position: relative;
-    background-color: #ffffff;
+    background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    color: #000000;
+    color: #333;
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease;
-    padding: 10px;
-    width: 150px;
-    height: 83px;
+    padding: 15px;
+    width: 100%;
+    height: 120px; /* Adjusted height */
     font-size: 12px;
   }
 
@@ -354,8 +378,8 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
-    align-items: center; /* Center image vertically */
-    justify-content: center; /* Center image horizontally */
+    align-items: center;
+    justify-content: center;
   }
 
   .img_container img {
@@ -370,47 +394,58 @@
   }
 
   .img_overlay {
-    color: #000000;
+    color: #000;
     padding: 5px;
     display: flex;
     flex-direction: column;
+    text-align: center;
   }
+
   .img_overlay p {
     margin: 0;
+    font-size: 10px;
   }
+
   .info_card {
     padding-top: 5px;
   }
+
   .info_card p {
-    margin: 2px;
+    margin: 2px 0;
+    font-size: 12px;
+    color: #333;
   }
+
   .first_checkbox {
     width: 13px;
     cursor: pointer;
     transform: scale(1.2);
     margin-top: 10px;
   }
+
   .first_check_cont {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
     width: 100%;
+    margin-top: 10px;
   }
+
   .input_buttons {
     display: flex;
     flex-direction: row;
     gap: 10px;
     justify-content: center;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
   }
 
-  .input_buttons button {
-    background-color: #007bff; /* Primary button color */
-    color: #ffffff;
-    width: 100px;
-    height: 35px;
+  .save_button {
+    background-color: #007bff;
+    color: #fff;
+    width: 120px;
+    height: 40px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
@@ -419,7 +454,7 @@
       transform 0.3s ease;
   }
 
-  .input_buttons button:hover {
+  .save_button:hover {
     background-color: #0056b3;
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);

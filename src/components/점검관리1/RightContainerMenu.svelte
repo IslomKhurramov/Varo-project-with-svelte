@@ -47,9 +47,12 @@
         수행로그
       </h3>
     </div>
-    <div style="width: 200px;" class="header">
+    <div class="header">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3 on:click="{() => selectPage(FifthMenu, '프로그램다운로드')}">
+      <h3
+        on:click="{() => selectPage(FifthMenu, '프로그램다운로드')}"
+        class="{activeMenu === '프로그램다운로드' ? 'active' : ''}"
+      >
         프로그램다운로드
       </h3>
     </div>
@@ -65,63 +68,79 @@
 </div>
 
 <style>
+  /* Container Styling */
+  .container_page1 {
+    padding: 20px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+
+  /* Navbar Styling */
   .navbar {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
   }
 
   .header {
     display: flex;
-    flex-direction: row;
-    gap: 50px;
-    padding-left: 40px;
-    width: 100%;
-    color: #000000;
+    gap: 40px;
   }
 
   .header h3 {
-    color: black;
+    font-size: 14px;
     font-weight: bold;
-    font-size: 12px;
     cursor: pointer;
+    position: relative;
+    color: #333333;
   }
+
+  /* Gradient Effect for Menu Items */
   .header h3 {
-    background-image: linear-gradient(to right, #5486d6, #54b3d6 50%, #000 50%);
+    background-image: linear-gradient(to right, #3183a0, #54b3d6 50%, #000 50%);
     background-size: 200% 100%;
     background-position: -100%;
-    display: inline-block;
-    padding: 5px 0;
-    position: relative;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    transition: all 0.3s ease-in-out;
+    transition:
+      background-position 0.3s ease-in-out,
+      color 0.3s ease-in-out;
   }
 
-  .header h3:before {
+  .header h3::before {
     content: "";
-    background: #54b3d6;
-    display: block;
     position: absolute;
     bottom: -3px;
     left: 0;
     width: 0;
     height: 3px;
-    transition: all 0.3s ease-in-out;
+    background-color: #3183a0;
+    transition: width 0.3s ease-in-out;
   }
 
-  .header h3:hover {
+  /* Hover and Active State */
+  .header h3:hover,
+  .header h3.active {
     background-position: 0;
+    color: #3183a0;
   }
 
-  .header h3:hover::before {
+  .header h3:hover::before,
+  .header h3.active::before {
     width: 100%;
   }
-  .header h3.active {
-    color: #3183a0; /* Ensures active text color is visible */
-    -webkit-text-fill-color: #3183a0; /* Override webkit text fill */
-    background-image: none; /* Remove the gradient on active */
-    text-decoration: underline;
+
+  /* Right Menu Styling */
+  .right_menu {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 </style>

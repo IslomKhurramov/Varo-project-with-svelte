@@ -26,21 +26,23 @@
   };
 </script>
 
-<div div class="container">
+<div class="container">
   <div class="container_aside">
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <button
           on:click="{() => selectPage(AddPorject, 'add')}"
-          class="menu_button">신규점검</button
+          class="menu_button primary_button">신규점검</button
         >
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="menu_button">이력삭제</button>
+        <button class="menu_button secondary_button" on:click="{deleteProject}"
+          >이력삭제</button
+        >
       </div>
 
       {#each projects as asset, index}
-        <div class="chasanGroup_button">
+        <div class="project_button">
           <!-- svelte-ignore a11y-invalid-attribute -->
           <!-- svelte-ignore missing-declaration -->
           <a
@@ -48,7 +50,7 @@
             on:click="{() => selectPage(RightContainerMenu, asset)}"
             class="{activeMenu === asset ? 'active' : ''}"
           >
-            <i class="fa fa-user-o" aria-hidden="true"></i>
+            <i class="fa fa-folder-open" aria-hidden="true"></i>
             {asset}
           </a>
         </div>
@@ -66,6 +68,7 @@
   </div>
   <div class="right_menu">
     {#if currentView === "default"}
+      <!-- svelte-ignore missing-declaration -->
       <RightConainer />
     {:else if currentPage}
       <svelte:component this="{currentPage}" />
@@ -74,101 +77,112 @@
 </div>
 
 <style>
-  .mainMenuButton {
-    width: auto;
-    font-size: 12px;
-    width: 70px;
-
-    cursor: pointer;
-    background-color: #2c3e50;
-    color: #fff;
-    border: none;
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
-  .mainMenuButton:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
+
+  /* Container Layout */
+  .container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
   }
 
   .container_aside {
-    min-height: 100vh;
     background-color: #2c3e50;
-    padding: 10px;
+    padding: 20px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
+
+  .right_menu {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f4f4f4;
+    overflow-y: auto;
+  }
+
+  /* Sidebar */
   aside {
     color: #fff;
-    width: 170px;
     font-size: 16px;
+    width: 100%;
   }
 
   .add_delete_container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 30px;
   }
 
-  .chasanGroup_button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .project_button {
     margin-bottom: 15px;
   }
 
-  /* Sidebar Links */
   aside a {
     font-size: 14px;
     color: #fff;
     display: block;
-    /* padding: 12px 10px; */
+    padding: 10px 15px;
     font-weight: 600;
     text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
   }
 
   aside a:hover,
   aside a.active {
-    margin-top: 3px;
-    text-decoration: underline;
+    background-color: #34495e;
   }
 
   aside a i {
-    margin-right: 5px;
+    margin-right: 10px;
   }
 
-  /* Sidebar Hover Effects */
-  aside a:hover::after,
-  aside a:hover::before {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    height: 35px;
-    width: 35px;
-  }
-
-  /* Buttons */
   .menu_button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     text-align: center;
+    padding: 10px 15px;
     transition: background-color 0.3s ease;
-    background-color: #2c3e50;
+  }
+
+  .primary_button {
+    background-color: #2980b9;
     color: #fff;
   }
 
-  .menu_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
+  .primary_button:hover {
+    background-color: #1f6391;
+  }
+
+  .secondary_button {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+
+  .secondary_button:hover {
+    background-color: #c0392b;
   }
 
   .social {
-    margin-top: 20px;
+    margin-top: 30px;
+    text-align: center;
   }
 
   .social a {
     display: inline-block;
     color: #fff;
-    font-size: 18px;
+    font-size: 24px;
     margin-right: 10px;
     transition: color 0.3s ease;
   }
@@ -176,60 +190,14 @@
   .social a:hover {
     color: #0077b5;
   }
-  aside a {
-    font-size: 16px;
-    color: #fff;
-    display: block;
-    padding: 12px 10px;
-    font-weight: 600;
-    -webkit-tap-highlight-color: transparent;
-  }
 
-  aside a:hover {
-    margin-top: 3px;
-    text-decoration: underline;
-  }
-  aside a:hover,
-  aside a.active {
-    text-decoration: underline;
-    margin-top: 3px;
-  }
-
-  aside a i {
-    margin-right: 5px;
-  }
-
-  aside a:hover::after {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    bottom: 100%;
-    right: 0;
-    height: 35px;
-    width: 35px;
-    /* border-bottom-right-radius: 18px; */
-    box-shadow: 0 20px 0 0 #fff;
-  }
-
-  aside a:hover::before {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    top: 38px;
-    right: 0;
-    height: 35px;
-    width: 35px;
-    /* border-top-right-radius: 18px; */
-    box-shadow: 0 -20px 0 0 #fff;
-  }
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-  }
-
+  /* Add some padding to the right menu */
   .right_menu {
-    width: 100%;
+    padding: 20px;
+    background-color: #ecf0f1;
+  }
+
+  .right_menu > * {
+    margin-bottom: 20px;
   }
 </style>

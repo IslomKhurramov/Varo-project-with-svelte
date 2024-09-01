@@ -31,42 +31,42 @@
 <body>
   <div class="container">
     <div class="firstLine">
-      <div style="display: flex; flex-direction: row;">
-        <div class="firstline">
+      <div class="dropdown-group">
+        <div class="dropdown-container">
           <p>프로젝트:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
+        <div class="dropdown-container">
           <p>점검대상:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
+        <div class="dropdown-container">
           <p>호스트:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
+        <div class="dropdown-container">
           <p>점검결과:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
+        <div class="dropdown-container">
           <p>보기옵션:</p>
-          <select id="">
+          <select>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
             <option value="수리과터스트2">수리과터스트2</option>
@@ -74,81 +74,79 @@
         </div>
       </div>
       <div class="Button">
-        <button class="fisrtlineButton">조회하기</button>
-        <button class="fisrtlineButton">보안점수확점</button>
+        <button class="firstlineButton">조회하기</button>
+        <button class="firstlineButton">보안점수확점</button>
       </div>
     </div>
+
     <div class="secondLine">
       <div>
-        <p style="font-weight: bold;">프로젝트 전체 보안수준:</p>
+        <p class="bold-text">프로젝트 전체 보안수준:</p>
         <p>{projectsData[0].name}</p>
       </div>
       <div>
-        <p style="font-weight: bold;">결과미확정, 점검대상:</p>
+        <p class="bold-text">결과미확정, 점검대상:</p>
         <p>{projectsData[0].inspectionTarget}</p>
       </div>
       <div>
-        <p style="font-weight: bold;">점검일시:</p>
+        <p class="bold-text">점검일시:</p>
         <p>{projectsData[0].inspectionDateAndTime}</p>
       </div>
     </div>
+
     <div class="thirdLine">
-      <p style="font-size: bold;">
-        Show <span><select id=""><option value="">100</option></select></span> entries
+      <p class="bold-text">
+        Show <select><option value="">100</option></select> entries
       </p>
     </div>
+
     <table>
-      <tr>
-        <th>남버</th>
-        <th>호스트명</th>
-        <th>항목</th>
-        <th>점검항목</th>
-        <th>시스템상태</th>
-        <th>점검결과</th>
-        <th>결과변경</th>
-      </tr>
-      {#each hostInfo as host}
+      <thead>
         <tr>
-          <td>{host.number}</td>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
-            >{host.name}</td
-          >
-          <td>{host.item}</td>
-          <td>
-            <div style="display: flex; flex-direction:column">
-              {#if host.checklist && host.checklist.vulnerability}
-                <p>취약: {host.checklist.vulnerability}</p>
-              {:else}
-                <p>취약: 데이터 없음</p>
-              {/if}
-              {#if host.checklist && host.checklist.good}
-                <p>양호: {host.checklist.good}</p>
-              {:else}
-                <p>양호: 데이터 없음</p>
-              {/if}
-            </div>
-          </td>
-          <td>{host.system}</td>
-          <td>{host.instectionResult}</td>
-          <td>
-            <select id="">
-              <option value="양호">양호</option>
-              <option value="해당">해당</option>
-              <option value="empty"></option>
-            </select>
-            <select id="">
-              <option value="양호">양호</option>
-              <option value="해당">해당</option>
-              <option value="empty"></option>
-            </select>
-            <button>변경</button>
-          </td>
+          <th>번호</th>
+          <th>호스트명</th>
+          <th>항목</th>
+          <th>점검항목</th>
+          <th>시스템상태</th>
+          <th>점검결과</th>
+          <th>결과변경</th>
         </tr>
-      {/each}
+      </thead>
+      <tbody>
+        {#each hostInfo as host}
+          <tr>
+            <td>{host.number}</td>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
+              >{host.name}</td
+            >
+            <td>{host.item}</td>
+            <td>
+              <div class="checklist">
+                <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
+                <p>양호: {host.checklist.good || "데이터 없음"}</p>
+              </div>
+            </td>
+            <td>{host.system}</td>
+            <td>{host.instectionResult}</td>
+            <td>
+              <select>
+                <option value="양호">양호</option>
+                <option value="해당">해당</option>
+              </select>
+              <select>
+                <option value="양호">양호</option>
+                <option value="해당">해당</option>
+              </select>
+              <button class="save_button">변경</button>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
     </table>
   </div>
-  <div class="modal">
+
+  <div>
     <Modal bind:showModal>
       <ModalPage />
     </Modal>
@@ -159,137 +157,149 @@
   body {
     display: flex;
     justify-content: center;
-    width: 98%;
+    padding: 20px;
+    background-color: #f4f4f4;
   }
+
   .container {
     width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .firstLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .dropdown-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .dropdown-container {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    background-color: #dedede;
-    height: 600px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    overflow-y: auto;
-    font-size: 12px;
-    margin-left: 20px;
-    overflow-x: hidden;
-    margin-top: 40px;
   }
+
+  .dropdown-container p {
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .firstlineButton {
+    background-color: #004080;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .firstlineButton:hover {
+    background-color: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .secondLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+  }
+
+  .bold-text {
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .thirdLine {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 10px;
+  }
+
   table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
     width: 100%;
-    background: #ffffff;
-    font-size: 12px;
+    border-collapse: collapse;
+    font-size: 14px;
   }
 
   th,
   td {
-    border: 1px solid #000000;
-    padding: 5px 15px; /* Increased padding for better spacing */
+    border: 1px solid #dddddd;
+    padding: 10px;
     text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
   }
 
   th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
-  }
-
-  tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
-  }
-  .firstLine {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-around;
-  }
-  .firstline {
-    display: flex;
-    flex-direction: row;
-    height: 20px;
-    align-items: center;
-    margin-top: 10px;
-    gap: 10px;
-  }
-  .fisrtlineButton {
-    border: 1px solid black;
-    height: 20px;
-    font-size: 12px;
+    background-color: #004080;
+    color: #ffffff;
     font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #e0f7fa;
+  }
+
+  .checklist p {
+    margin: 0;
+  }
+
+  .save_button {
+    background-color: #004080;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
     cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .save_button:hover {
+    background-color: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal {
     display: flex;
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    padding: 0 10px; /* Optional: Add padding for horizontal spacing */
-    margin-top: 10px;
-    box-sizing: border-box;
-  }
-  .firstline p {
-    font-weight: bold;
-  }
-  .firstline select {
-    border: 1px solid black;
-    height: 20px;
-    font-size: 12px;
-    padding: 0px;
-  }
-  .firstline select option {
-    font-size: inherit;
-  }
-  .Button {
-    width: 180px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-  }
-  .secondLine {
-    display: flex;
-    flex-direction: row;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding-top: 0px;
-    gap: 20px;
-    margin-left: 5px;
-    margin-top: 0px;
-    padding-top: 0px;
-  }
-  .secondLine div {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-  }
-  .secondLine div p {
-    padding-top: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-  }
-  .thirdLine {
-    margin-left: 5px;
-    margin-bottom: 0; /* Ensure no margin at the bottom */
-    padding-bottom: 0; /* Ensure no padding at the bottom */
-  }
-  .thirdLine p {
-    font-weight: bold;
-    padding-top: 0px;
-    margin-top: 0px;
-    margin: 0; /* Remove all margins */
-    padding: 0; /* Remove all padding */
-  }
-  .thirdLine select {
-    border: 1px solid black;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none; /* Hide by default */
   }
 </style>

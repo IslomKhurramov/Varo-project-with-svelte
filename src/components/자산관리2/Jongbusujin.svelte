@@ -233,6 +233,7 @@
     background-color: #555555; /* Dark gray for a more muted header */
     color: white;
     text-align: center;
+    width: 120px;
   }
 
   tr:nth-child(even) {

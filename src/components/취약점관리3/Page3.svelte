@@ -66,6 +66,7 @@
         {#each Project as project, index}
           <div class="chasanGroup_button">
             <!-- svelte-ignore missing-declaration -->
+            <!-- svelte-ignore a11y-invalid-attribute -->
             <a
               href="javascript:void(0)"
               on:click="{() => selectPage(MainPageProject, project)}"
@@ -80,6 +81,7 @@
         {#each Asset as asset, index}
           <div class="chasanGroup_button">
             <!-- svelte-ignore missing-declaration -->
+            <!-- svelte-ignore a11y-invalid-attribute -->
             <a
               href="javascript:void(0)"
               on:click="{() => selectPage(MainPageAsset, asset)}"

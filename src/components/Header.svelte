@@ -76,6 +76,13 @@
           </Link>
           <Link
             to="/page5"
+            on:click="{() => (activeMenu = '대시보드')}"
+            class="{activeMenu === '대시보드' ? 'active' : ''}"
+          >
+            <p>대시보드</p>
+          </Link>
+          <Link
+            to="/page6"
             on:click="{() => (activeMenu = '환경설정')}"
             class="{activeMenu === '환경설정' ? 'active' : ''}"
           >

@@ -1,4 +1,5 @@
 <script>
+  import AddChecklistButton4 from "./AddChecklistButton4.svelte";
   import EditItem from "./EditItem.svelte";
   import ItemPage from "./ItemPage.svelte";
 
@@ -131,7 +132,9 @@
       <button>전체선택</button>
       <button>선택해제</button>
       <button>선택항목저장</button>
-      <button>점검항목추가</button>
+      <button on:click="{() => selectPage(AddChecklistButton4, '항목편집')}"
+        >점검항목추가</button
+      >
     </div>
 
     <div class="swiper_container">

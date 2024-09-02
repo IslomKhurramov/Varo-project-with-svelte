@@ -34,7 +34,7 @@
     <p>[IpAddress] : <strong>{hostData[0].ipadd}</strong></p>
     <p>[점검일시] : <strong>{hostData[0].time}</strong></p>
   </div>
-  <button>결과변경하기</button>
+  <button class="edit-button">결과변경하기</button>
   <table>
     <tr>
       <th>점검항목</th>
@@ -42,9 +42,7 @@
     </tr>
     <tr>
       <th>항목그룹</th>
-      <td>
-        {projectsData[0].itemGroup}
-      </td>
+      <td>{projectsData[0].itemGroup}</td>
     </tr>
     <tr>
       <th>점검기준</th>
@@ -64,19 +62,19 @@
       <td class="line5">
         <div class="line5">
           <p>점검결과:</p>
-          <select id="">
+          <select>
             <option value="양호">양호</option>
             <option value="취약">취약</option>
           </select>
         </div>
         <div class="line5">
           <p>점검결과:</p>
-          <select id="">
+          <select>
             <option value="양호">양호</option>
             <option value="취약">취약</option>
           </select>
         </div>
-        <p>(점검현황/점검결과 적용됨)</p>
+        <p class="status">(점검현황/점검결과 적용됨)</p>
       </td>
     </tr>
     <tr>
@@ -87,7 +85,7 @@
       <th>증적이미지</th>
       <td class="line7">
         <div>[파일변경]:</div>
-        <input type="file" />
+        <input type="file" class="file-input" />
       </td>
     </tr>
     <tr>
@@ -108,37 +106,100 @@
     gap: 10px;
     font-size: 12px;
   }
-  table,
+  .modal {
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .first_header {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .first_header p {
+    margin: 0;
+  }
+
+  .edit-button {
+    align-self: flex-end;
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .edit-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
   th,
   td {
-    border: 1px solid rgb(108, 108, 108);
-    border-collapse: collapse;
-    font-size: 12px;
+    border: 1px solid #dddddd;
+    padding: 12px 15px;
+    text-align: left;
   }
-  table th {
+
+  th {
+    background-color: #f1f1f1;
+    color: #333;
+    font-weight: bold;
     width: 120px;
-    background-color: #dedede;
-    height: 40px;
-    font-size: 12px;
+  }
+
+  .lineCol {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .line5,
   .line7 {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    gap: 10px;
+    align-items: flex-start;
   }
+
   .line5 select {
-    height: 28px;
+    height: 30px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
   }
 
-  .lineCol {
-    display: flex;
-    flex-direction: column;
+  .status {
+    font-size: 12px;
+    color: #555;
+    margin-top: 5px;
   }
 
-  table {
-    max-width: 700px; /* Make the table width 100% of its container */
+  .file-input {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
   }
 </style>

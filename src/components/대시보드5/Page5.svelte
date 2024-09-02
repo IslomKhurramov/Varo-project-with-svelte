@@ -1,167 +1,463 @@
 <script>
-  import { Doughnut, Bar } from "svelte-chartjs";
-  import { Chart as ChartJS, registerables } from "chart.js";
+  import { scaleLinear, scaleBand } from "d3-scale";
+  import { quantize, interpolatePlasma, pie, arc } from "d3";
 
-  ChartJS.register(...registerables);
+  let piedata = [
+    { ages: "<18", count: 727432 },
+    { ages: "18-24", count: 341435 },
+    { ages: "25-34", count: 444509 },
+    { ages: "35-44", count: 426967 },
+    { ages: "45-54", count: 480565 },
+    { ages: "55-64", count: 515347 },
+    { ages: "≥65", count: 629032 },
+  ];
 
-  // Data for the Doughnut Chart (위약점조치현황)
-  const doughnutData = {
-    labels: ["Complete", "In Progress", "Not Started"],
-    datasets: [
-      {
-        data: [40, 30, 30],
-        backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
-        hoverBackgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
-      },
-    ],
-  };
+  const pieWidth = 300;
+  const pieHeight = pieWidth;
+  const fontSize = 10;
+  const strokeWidth = 1;
+  const strokeLinejoin = "round";
+  const outerRadius = Math.min(pieWidth, pieHeight) * 0.5 - 15;
+  const innerRadius = 30;
+  const labelRadius = (innerRadius + outerRadius) / 2;
 
-  // Data for the Bar Chart (프로젝트등록현황)
-  const barData = {
-    labels: ["Project A", "Project B", "Project C"],
-    datasets: [
-      {
-        label: "Number of Registrations",
-        backgroundColor: "#42A5F5",
-        borderColor: "#1E88E5",
-        borderWidth: 1,
-        data: [50, 75, 100],
-      },
-    ],
-  };
+  // Generate colors
+  let colors = quantize(
+    (t) => interpolatePlasma(t * 0.7 + 0.3),
+    piedata.length
+  );
 
-  // Data for the Bar Chart (위약점 보유자산 Top 5)
-  const topAssetsData = {
-    labels: ["Asset 1", "Asset 2", "Asset 3", "Asset 4", "Asset 5"],
-    datasets: [
-      {
-        label: "Vulnerabilities",
-        backgroundColor: "#FF6384",
-        data: [12, 19, 3, 5, 2],
-      },
-    ],
-  };
+  // Create pie layout
+  const wedges = pie().value((d) => d.count)(piedata);
 
-  // Data for the Bar Chart (위약점 Top 5)
-  const topVulnerabilitiesData = {
-    labels: ["Vuln 1", "Vuln 2", "Vuln 3", "Vuln 4", "Vuln 5"],
-    datasets: [
-      {
-        label: "Occurrences",
-        backgroundColor: "#FF6384",
-        data: [15, 20, 7, 10, 5],
-      },
-    ],
-  };
+  // Create arc generators
+  const arcPath = arc().innerRadius(innerRadius).outerRadius(outerRadius);
+  const arcLabel = arc().innerRadius(labelRadius).outerRadius(labelRadius);
+
+  // Define four separate datasets
+  const data1 = [
+    { month: "Jan", measures: 15 },
+    { month: "Feb", measures: 10 },
+    { month: "Mar", measures: 20 },
+  ];
+
+  const data2 = [
+    { project: "Project A", status: 70 },
+    { project: "Project B", status: 50 },
+    { project: "Project C", status: 90 },
+  ];
+
+  const data3 = [
+    { asset: "Asset 1", securityLevel: 85 },
+    { asset: "Asset 2", securityLevel: 78 },
+    { asset: "Asset 3", securityLevel: 92 },
+  ];
+
+  const data4 = [
+    { asset: "Asset A", registration: 100 },
+    { asset: "Asset B", registration: 80 },
+    { asset: "Asset C", registration: 90 },
+  ];
+
+  const padding = { top: 30, right: 10, bottom: 20, left: 50 };
+
+  let width = 250;
+  let height = 200;
+
+  $: scales = [
+    {
+      xScale: scaleBand()
+        .domain(data1.map((d) => d.month))
+        .range([padding.left, width - padding.right])
+        .padding(0.1),
+      yScale: scaleLinear()
+        .domain([0, Math.max(...data1.map((d) => d.measures))])
+        .range([height - padding.bottom, padding.top]),
+    },
+    {
+      xScale: scaleBand()
+        .domain(data2.map((d) => d.project))
+        .range([padding.left, width - padding.right])
+        .padding(0.1),
+      yScale: scaleLinear()
+        .domain([0, 100])
+        .range([height - padding.bottom, padding.top]),
+    },
+    {
+      xScale: scaleBand()
+        .domain(data3.map((d) => d.asset))
+        .range([padding.left, width - padding.right])
+        .padding(0.1),
+      yScale: scaleLinear()
+        .domain([0, 100])
+        .range([height - padding.bottom, padding.top]),
+    },
+    {
+      xScale: scaleBand()
+        .domain(data4.map((d) => d.asset))
+        .range([padding.left, width - padding.right])
+        .padding(0.1),
+      yScale: scaleLinear()
+        .domain([0, 100])
+        .range([height - padding.bottom, padding.top]),
+    },
+  ];
 </script>
 
-<div class="dashboard-container">
-  <div class="header">
-    <button>공지사항</button>
-    <button>조치사항 알림</button>
-    <button>자료실</button>
-    <div class="summary">
-      <div>등록된 프로젝트: 10개</div>
-      <div>완료된 프로젝트: 10개</div>
-      <div>등록된 자산: 10개</div>
+<header>
+  <p>Registered Projects: 10</p>
+  <p>Completed Projects: 10</p>
+  <p>Registered Assets: 10</p>
+  <p>Automatic Registrations: 10</p>
+  <p>Manual Registrations: 10</p>
+</header>
+
+<main>
+  <div class="announcement_container">
+    <div class="table">
+      <h3>공지사항</h3>
+    </div>
+    <div class="table">
+      <h3>조치사항 알림</h3>
+    </div>
+    <div class="table">
+      <h3>자료실</h3>
     </div>
   </div>
-
-  <div class="content">
-    <!-- 위약점조치현황 (Doughnut Chart) -->
-    <div class="section large">
-      <h3>위약점조치현황</h3>
-      <Doughnut {doughnutData} />
+  <div class="charts-grid">
+    <div class="chart-container">
+      <h3>취약점조치현황</h3>
+      <div class="pie_container">
+        <svg
+          {pieWidth}
+          {pieHeight}
+          viewBox="{-pieWidth / 2} {-pieHeight / 2} {pieWidth} {pieHeight}"
+        >
+          {#each wedges as wedge, i}
+            <path
+              fill="{colors[i]}"
+              d="{arcPath(wedge)}"
+              stroke="white"
+              stroke-width="{strokeWidth}"
+              stroke-linejoin="{strokeLinejoin}"
+            ></path>
+            <text
+              transform="translate({arcLabel.centroid(wedge)})"
+              dy=".35em"
+              text-anchor="middle"
+              font-size="{fontSize}"
+              fill="white"
+            >
+              <tspan x="0" font-weight="bold">{piedata[i].ages}</tspan>
+              <tspan x="0" dy="1.2em">{piedata[i].count.toLocaleString()}</tspan
+              >
+            </text>
+          {/each}
+        </svg>
+      </div>
     </div>
 
-    <!-- 프로젝트등록현황 (Bar Chart) -->
-    <div class="section large">
+    <div class="chart-container">
+      <h3>월별취약점조치건수</h3>
+      <div class="chart">
+        <svg>
+          <g class="axis y-axis">
+            {#each scales[0].yScale.ticks(5) as tick}
+              <g
+                class="tick tick-{tick}"
+                transform="translate(0, {scales[0].yScale(tick)})"
+              >
+                <line x2="100%"></line>
+                <text y="-4">{tick}</text>
+              </g>
+            {/each}
+          </g>
+          <g class="axis x-axis">
+            {#each data1 as point, i}
+              <g
+                class="tick"
+                transform="translate({scales[0].xScale(point.month)},{height})"
+              >
+                <text x="{scales[0].xScale.bandwidth() / 2}" y="-4">
+                  {point.month}
+                </text>
+              </g>
+            {/each}
+          </g>
+          <g class="bars">
+            {#each data1 as point}
+              <rect
+                x="{scales[0].xScale(point.month)}"
+                y="{scales[0].yScale(point.measures)}"
+                width="{scales[0].xScale.bandwidth()}"
+                height="{scales[0].yScale(0) -
+                  scales[0].yScale(point.measures)}"
+              ></rect>
+            {/each}
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chart-container">
       <h3>프로젝트등록현황</h3>
-      <Bar {barData} />
+      <div class="chart">
+        <svg>
+          <g class="axis y-axis">
+            {#each scales[1].yScale.ticks(5) as tick}
+              <g
+                class="tick tick-{tick}"
+                transform="translate(0, {scales[1].yScale(tick)})"
+              >
+                <line x2="100%"></line>
+                <text y="-4">{tick}%</text>
+              </g>
+            {/each}
+          </g>
+          <g class="axis x-axis">
+            {#each data2 as point, i}
+              <g
+                class="tick"
+                transform="translate({scales[1].xScale(
+                  point.project
+                )},{height})"
+              >
+                <text x="{scales[1].xScale.bandwidth() / 2}" y="-4">
+                  {point.project}
+                </text>
+              </g>
+            {/each}
+          </g>
+          <g class="bars">
+            {#each data2 as point}
+              <rect
+                x="{scales[1].xScale(point.project)}"
+                y="{scales[1].yScale(point.status)}"
+                width="{scales[1].xScale.bandwidth()}"
+                height="{scales[1].yScale(0) - scales[1].yScale(point.status)}"
+              ></rect>
+            {/each}
+          </g>
+        </svg>
+      </div>
     </div>
 
-    <!-- 위약점 보유자산 Top 5 (Bar Chart) -->
-    <div class="section">
-      <h3>위약점 보유자산 Top 5</h3>
-      <Bar {topAssetsData} />
+    <div class="chart-container">
+      <h3>전체자산 보안수준</h3>
+      <div class="chart">
+        <svg>
+          <g class="axis y-axis">
+            {#each scales[2].yScale.ticks(5) as tick}
+              <g
+                class="tick tick-{tick}"
+                transform="translate(0, {scales[2].yScale(tick)})"
+              >
+                <line x2="100%"></line>
+                <text y="-4">{tick}%</text>
+              </g>
+            {/each}
+          </g>
+          <g class="axis x-axis">
+            {#each data3 as point, i}
+              <g
+                class="tick"
+                transform="translate({scales[2].xScale(point.asset)},{height})"
+              >
+                <text x="{scales[2].xScale.bandwidth() / 2}" y="-4">
+                  {point.asset}
+                </text>
+              </g>
+            {/each}
+          </g>
+          <g class="bars">
+            {#each data3 as point}
+              <rect
+                x="{scales[2].xScale(point.asset)}"
+                y="{scales[2].yScale(point.securityLevel)}"
+                width="{scales[2].xScale.bandwidth()}"
+                height="{scales[2].yScale(0) -
+                  scales[2].yScale(point.securityLevel)}"
+              ></rect>
+            {/each}
+          </g>
+        </svg>
+      </div>
     </div>
 
-    <!-- 위약점 Top 5 (Bar Chart) -->
-    <div class="section">
-      <h3>위약점 Top 5</h3>
-      <Bar {topVulnerabilitiesData} />
+    <div class="chart-container">
+      <h3>자산등록현황</h3>
+      <div class="chart">
+        <svg>
+          <g class="axis y-axis">
+            {#each scales[3].yScale.ticks(5) as tick}
+              <g
+                class="tick tick-{tick}"
+                transform="translate(0, {scales[3].yScale(tick)})"
+              >
+                <line x2="100%"></line>
+                <text y="-4">{tick}%</text>
+              </g>
+            {/each}
+          </g>
+          <g class="axis x-axis">
+            {#each data4 as point, i}
+              <g
+                class="tick"
+                transform="translate({scales[3].xScale(point.asset)},{height})"
+              >
+                <text x="{scales[3].xScale.bandwidth() / 2}" y="-4">
+                  {point.asset}
+                </text>
+              </g>
+            {/each}
+          </g>
+          <g class="bars">
+            {#each data4 as point}
+              <rect
+                x="{scales[3].xScale(point.asset)}"
+                y="{scales[3].yScale(point.registration)}"
+                width="{scales[3].xScale.bandwidth()}"
+                height="{scales[3].yScale(0) -
+                  scales[3].yScale(point.registration)}"
+              ></rect>
+            {/each}
+          </g>
+        </svg>
+      </div>
     </div>
   </div>
-</div>
+  <div class="announcement_container">
+    <div class="table">
+      <h3>취약점보유자산 Top5</h3>
+    </div>
+    <div class="table">
+      <h3>취약점 Top5</h3>
+    </div>
+  </div>
+</main>
 
 <style>
-  .dashboard-container {
-    font-family: Arial, sans-serif;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    gap: 20px;
-    background-color: #f5f5f5;
-  }
-
-  .header {
+  .announcement_container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0062cc;
-    padding: 10px 20px;
-    border-radius: 8px;
-    color: #fff;
-  }
-
-  .header button {
-    background-color: #fff;
-    border: none;
-    padding: 8px 12px;
-    margin: 0 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #0062cc;
-    font-weight: bold;
-  }
-
-  .header button:hover {
-    background-color: #e0e0e0;
-  }
-
-  .summary {
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-  }
-
-  .content {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto auto;
-    gap: 20px;
-  }
-
-  .section {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .section.large {
-    grid-column: span 2;
-    display: flex;
-    flex-direction: column;
+    gap: 10px;
+    width: 100%;
     justify-content: center;
     align-items: center;
   }
 
-  .section h3 {
+  header {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
     font-size: 16px;
-    color: #0062cc;
-    margin-bottom: 10px;
+    color: #ffffff;
+    background-color: #007acc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .chart-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: transform 0.3s;
+  }
+
+  .chart-container:hover {
+    transform: translateY(-10px);
+  }
+
+  h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .pie_container,
+  .chart {
+    width: 100%;
+    height: 230px;
+  }
+
+  .tick {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.75em;
+    font-weight: 400;
+  }
+
+  .tick line {
+    stroke: #ddd;
+    stroke-dasharray: 2;
+  }
+
+  .tick text {
+    fill: #888;
+    text-anchor: start;
+  }
+
+  .tick.tick-0 line {
+    stroke-dasharray: 0;
+  }
+
+  .x-axis .tick text {
+    text-anchor: middle;
+  }
+
+  .bars rect {
+    fill: #1e88e5;
+    stroke: none;
+    opacity: 0.85;
+    transition:
+      fill 0.3s,
+      transform 0.3s;
+  }
+
+  .bars rect:hover {
+    fill: #1565c0;
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  .table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: transform 0.3s;
+    width: 30%;
+    height: 250px;
   }
 </style>

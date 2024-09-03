@@ -51,6 +51,7 @@
       {#each assets as asset, index}
         <div class="chasanGroup_button">
           <!-- svelte-ignore missing-declaration -->
+          <!-- svelte-ignore a11y-invalid-attribute -->
           <a
             href="#"
             on:click="{() => selectPage(AssetPage, asset)}"

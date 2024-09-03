@@ -20,11 +20,13 @@
 
   <div class="section">
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">프로젝트명</label>
       <input type="text" class="input" bind:value="{projectName}" />
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">점검방식</label>
       <select class="dropdown" bind:value="{selectedType}">
         <option value="신규점검">신규점검</option>
@@ -33,6 +35,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">점검담당</label>
       <input
         type="text"
@@ -43,6 +46,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">점검일정</label>
       <input type="date" class="input" bind:value="{startDate}" />
       <span class="date-separator">~</span>
@@ -50,6 +54,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">일정 설정</label>
       <select class="dropdown" bind:value="{schedule}">
         <option value="실시일정">실시일정</option>
@@ -58,6 +63,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">시간</label>
       <input
         type="time"
@@ -68,6 +74,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">반복</label>
       <select class="dropdown" bind:value="{repeatCycle}">
         <option value="아니요">아니요</option>
@@ -76,6 +83,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">반복 주기</label>
       <input
         type="text"
@@ -86,6 +94,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">프로젝트 생성</label>
       <label class="checkbox-label">
         <input
@@ -98,6 +107,7 @@
     </div>
 
     <div class="row">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label blue-label">조치일정</label>
       <input type="date" class="input" bind:value="{startDate}" />
       <span class="date-separator">~</span>

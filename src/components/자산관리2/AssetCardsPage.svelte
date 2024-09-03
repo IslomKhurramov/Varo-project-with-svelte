@@ -1,4 +1,8 @@
 <script>
+  import Modal from "../../shared/Modal.svelte";
+  import ModalCard from "./ModalCard.svelte";
+
+  let showModal = false;
   let assetData = [];
 
   let selected = [];
@@ -60,7 +64,9 @@
             <button class="red"></button>
             <button class="yellow"></button>
           </div>
-          <button class="modal_button">등록 미승인</button>
+          <button class="modal_button" on:click="{() => (showModal = true)}"
+            >등록 미승인</button
+          >
           <div class="first_col">
             <div class="first_col_1">
               <p>보안점수</p>
@@ -109,6 +115,9 @@
       {/each}
     </div>
   </div>
+  <Modal bind:showModal>
+    <ModalCard />
+  </Modal>
 </main>
 
 <style>

@@ -111,7 +111,7 @@
   .first_header {
     display: flex;
     gap: 15px;
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 15px;
   }
 
@@ -123,7 +123,7 @@
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 20px;
-    font-size: 14px;
+    font-size: 12px;
     transition:
       background-color 0.3s ease,
       transform 0.3s ease;
@@ -137,7 +137,7 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 20px;
   }
 

@@ -73,14 +73,12 @@
     width: 100%;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    background-color: #f4f4f4;
   }
 
   /* Container for the entire content */
   .container {
     margin-top: 20px;
-    width: 70%; /* Slightly larger for better readability */
+    width: 100%; /* Slightly larger for better readability */
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -102,7 +100,7 @@
     border: none;
     border-radius: 5px;
     height: 40px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     padding: 10px 20px;
     cursor: pointer;
@@ -137,7 +135,7 @@
   }
 
   .report-section h3 {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     color: #333333;
     margin-bottom: 10px;
@@ -146,7 +144,7 @@
   .report-section p {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px;
     color: #555555;
   }
 

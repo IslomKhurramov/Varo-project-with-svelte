@@ -33,47 +33,37 @@
     <div class="firstLine">
       <div class="dropdown-group">
         <div class="dropdown-container">
-          <p>프로젝트:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+          <label for="project">프로젝트:</label>
+          <select id="project">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
         <div class="dropdown-container">
-          <p>점검대상:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+          <label for="target">점검대상:</label>
+          <select id="target">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
         <div class="dropdown-container">
-          <p>호스트:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+          <label for="host">호스트:</label>
+          <select id="host">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
         <div class="dropdown-container">
-          <p>점검결과:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+          <label for="result">점검결과:</label>
+          <select id="result">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
         <div class="dropdown-container">
-          <p>보기옵션:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+          <label for="viewOption">보기옵션:</label>
+          <select id="viewOption">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
       </div>
-      <div class="Button">
+      <div class="button-group">
         <button class="firstlineButton">조회하기</button>
         <button class="firstlineButton">보안점수확점</button>
       </div>
@@ -103,13 +93,13 @@
     <table>
       <thead>
         <tr>
-          <th>번호</th>
-          <th>호스트명</th>
-          <th>항목</th>
-          <th>점검항목</th>
-          <th>시스템상태</th>
-          <th>점검결과</th>
-          <th>결과변경</th>
+          <th style="width: 5%;">번호</th>
+          <th style="width: 20%;">호스트명</th>
+          <th style="width: 15%;">항목</th>
+          <th style="width: 30%;">점검항목</th>
+          <th style="width: 15%;">시스템상태</th>
+          <th style="width: 10%;">점검결과</th>
+          <th style="width: 5%;">결과변경</th>
         </tr>
       </thead>
       <tbody>
@@ -134,10 +124,6 @@
                 <option value="양호">양호</option>
                 <option value="해당">해당</option>
               </select>
-              <select>
-                <option value="양호">양호</option>
-                <option value="해당">해당</option>
-              </select>
               <button class="save_button">변경</button>
             </td>
           </tr>
@@ -157,13 +143,11 @@
   body {
     display: flex;
     justify-content: center;
-    padding: 20px;
     background-color: #f4f4f4;
   }
 
   .container {
     width: 100%;
-    max-width: 1200px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -182,19 +166,23 @@
 
   .dropdown-group {
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    flex-wrap: wrap;
     align-items: center;
   }
 
   .dropdown-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 5px;
+    align-items: center;
+    white-space: nowrap;
   }
 
-  .dropdown-container p {
+  .dropdown-container label {
     font-weight: bold;
     margin: 0;
+    font-size: 12px;
   }
 
   .firstlineButton {
@@ -203,7 +191,7 @@
     border: none;
     border-radius: 5px;
     padding: 8px 12px;
-    font-size: 14px;
+    font-size: 10px;
     font-weight: bold;
     cursor: pointer;
     transition:
@@ -219,16 +207,29 @@
 
   .secondLine {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 10px;
+    gap: 10px;
     background-color: #f4f4f4;
     border-radius: 5px;
+  }
+
+  .secondLine div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 12px;
+    justify-content: center;
   }
 
   .bold-text {
     font-weight: bold;
     margin: 0;
+  }
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
   }
 
   .thirdLine {
@@ -241,7 +242,7 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   th,
@@ -249,6 +250,7 @@
     border: 1px solid #dddddd;
     padding: 10px;
     text-align: left;
+    white-space: nowrap;
   }
 
   th {
@@ -287,19 +289,5 @@
     background-color: #003366;
     transform: translateY(-2px);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .modal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: none; /* Hide by default */
   }
 </style>

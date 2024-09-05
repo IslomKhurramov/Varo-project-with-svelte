@@ -61,8 +61,8 @@
   /* Header Buttons */
   .header {
     display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 10px;
     width: 100%;
     justify-content: flex-end;
   }
@@ -71,7 +71,7 @@
     background-color: #004080;
     color: #ffffff;
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     border-radius: 5px;
     border: none;
@@ -89,7 +89,7 @@
 
   /* Table Centering */
   .table_center {
-    width: 82%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,7 +98,7 @@
   /* Table Container Styling */
   .table_container {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
@@ -107,10 +107,10 @@
   }
 
   .word {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
     color: #333333;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
 
   /* Row Styling */
@@ -119,7 +119,11 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+  }
+  .secondLine {
+    align-items: center;
+    justify-content: center;
   }
 
   /* Button Styling */
@@ -131,7 +135,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px;
     border-radius: 5px;
     padding: 8px 12px;
     width: 150px;
@@ -150,7 +154,7 @@
     border: 1px solid #cccccc;
     border-radius: 5px;
     padding: 8px;
-    font-size: 14px;
+    font-size: 12px;
     color: #555555;
   }
 
@@ -161,7 +165,7 @@
   .upload {
     border: none;
     background-color: transparent;
-    font-size: 14px;
+    font-size: 12px;
     color: #333333;
     cursor: pointer;
   }
@@ -173,7 +177,7 @@
     border: none;
     border-radius: 5px;
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
     transition:
       background-color 0.3s ease,
@@ -188,7 +192,7 @@
 
   .span_at {
     width: 260px;
-    font-size: 14px;
+    font-size: 12px;
     color: #666666;
     display: flex;
     align-items: center;

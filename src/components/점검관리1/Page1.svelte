@@ -6,7 +6,13 @@
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
-  let projects = ["프로젝트 1"];
+  let projects = [];
+
+  for (let i = 1; i <= 15; i++) {
+    projects.push({
+      name: `프로젝트 ${i}`,
+    });
+  }
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -29,46 +35,35 @@
 <div class="container">
   <div class="container_aside">
     <aside>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button
-          on:click="{() => selectPage(AddPorject, 'add')}"
-          class="menu_button primary_button">신규점검</button
-        >
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="menu_button secondary_button" on:click="{deleteProject}"
-          >이력삭제</button
-        >
+        <p on:click="{() => selectPage(AddPorject, 'add')}" class="menu_button">
+          신규점검
+        </p>
+        <p class="menu_button" on:click="{deleteProject}">이력삭제</p>
       </div>
 
-      {#each projects as asset, index}
-        <div class="project_button">
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          <!-- svelte-ignore missing-declaration -->
-          <a
-            href="javascript:void(0)"
-            on:click="{() => selectPage(RightContainerMenu, asset)}"
-            class="{activeMenu === asset ? 'active' : ''}"
-          >
-            <i class="fa fa-folder-open" aria-hidden="true"></i>
-            {asset}
-          </a>
-        </div>
-      {/each}
-
-      <div class="social">
-        <a
-          href="https://www.linkedin.com/in/florin-cornea-b5118057/"
-          target="_blank"
-        >
-          <i class="fa fa-linkedin"></i>
-        </a>
+      <div class="project_container">
+        {#each projects as asset, index}
+          <div class="project_button">
+            <img src="./images/projectGray.png" alt="project" />
+            <!-- svelte-ignore a11y-invalid-attribute -->
+            <a
+              href="javascript:void(0)"
+              on:click="{() => selectPage(RightContainerMenu, asset)}"
+              class="{activeMenu === asset ? 'active' : ''}"
+            >
+              <i class="fa fa-folder-open" aria-hidden="true"></i>
+              {asset.name}
+            </a>
+          </div>
+        {/each}
       </div>
     </aside>
   </div>
   <div class="right_menu">
     {#if currentView === "default"}
-      <!-- svelte-ignore missing-declaration -->
       <RightConainer />
     {:else if currentPage}
       <svelte:component this="{currentPage}" />
@@ -82,122 +77,148 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Arial", sans-serif;
   }
 
-  /* Container Layout */
+  /* Main container for layout */
   .container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 100vh;
+    border-radius: 20px;
+    padding: 10px;
+    min-height: 100vh;
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   }
 
+  /* Sidebar container */
   .container_aside {
-    background-color: #2c3e50;
+    background-color: #f7f9fb; /* Use white background for cleanliness */
+    color: #343a40;
     padding: 20px;
     width: 250px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    border-radius: 20px;
+    top: 0;
+    bottom: 0;
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; /* Soft shadow for depth */
+    border-right: 1px solid #e0e0e0; /* Subtle border for separation */
   }
 
-  .right_menu {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #f4f4f4;
-    overflow-y: auto;
-  }
-
-  /* Sidebar */
+  /* Sidebar styling */
   aside {
-    color: #fff;
     font-size: 16px;
     width: 100%;
   }
 
-  .add_delete_container {
+  /* Project buttons */
+  .project_button {
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
+    align-items: center;
+
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    cursor: pointer;
   }
 
-  .project_button {
-    margin-bottom: 15px;
+  .project_container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f7f9fb; /* Soft background color */
+    border-radius: 8px; /* Smooth rounded corners */
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal overflow */
+    min-height: 80vh; /* Adjust height to fit inside sidebar */
+  }
+
+  .project_button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hover effect */
+  }
+
+  .project_button img {
+    width: 20px; /* Slightly larger project icon */
+    height: 20px;
+    margin-right: 15px;
   }
 
   aside a {
-    font-size: 14px;
-    color: #fff;
     display: block;
-    padding: 10px 15px;
+    color: #495057;
     font-weight: 600;
+    font-size: 16px;
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
   }
 
   aside a:hover,
   aside a.active {
-    background-color: #34495e;
+    text-decoration: underline; /* Add underline for active/hover */
   }
 
-  aside a i {
-    margin-right: 10px;
+  /* Add/Delete buttons */
+  .add_delete_container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: space-between;
+
+    background-color: #f7f9fb; /* Soft background color */
+    border-radius: 8px; /* Smooth rounded corners */
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
   }
 
   .menu_button {
-    border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
+    padding: 6px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    color: #495057;
     text-align: center;
-    padding: 10px 15px;
-    transition: background-color 0.3s ease;
+    width: 110px; /* Slightly wider button */
   }
 
-  .primary_button {
-    background-color: #2980b9;
-    color: #fff;
+  .menu_button:hover {
+    text-decoration: underline;
   }
 
-  .primary_button:hover {
-    background-color: #1f6391;
-  }
-
-  .secondary_button {
-    background-color: #e74c3c;
-    color: #fff;
-  }
-
-  .secondary_button:hover {
-    background-color: #c0392b;
-  }
-
-  .social {
-    margin-top: 30px;
-    text-align: center;
-  }
-
-  .social a {
-    display: inline-block;
-    color: #fff;
-    font-size: 24px;
-    margin-right: 10px;
-    transition: color 0.3s ease;
-  }
-
-  .social a:hover {
-    color: #0077b5;
-  }
-
-  /* Add some padding to the right menu */
+  /* Right content container */
   .right_menu {
-    padding: 20px;
-    background-color: #ecf0f1;
+    flex-grow: 1;
   }
 
-  .right_menu > * {
-    margin-bottom: 20px;
+  /* Scrollbar styling */
+  .right_menu::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .right_menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .right_menu::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 8px;
+  }
+
+  .right_menu::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 </style>

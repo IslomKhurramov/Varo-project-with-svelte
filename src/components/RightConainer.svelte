@@ -189,20 +189,20 @@
     box-shadow: 0.5px 1px 0.5px 1px #161515;
   }
   .projectContainer {
-    width: 70%;
+    width: 100%;
     height: 500px;
     display: flex;
     flex-direction: column;
     margin: 20px 20px;
     border: 1px solid #000000;
-    background: lightgray;
-    box-shadow: 0 4px 8px rgb(255, 255, 255);
+    box-shadow:
+      rgb(204, 219, 232) 3px 3px 6px 0px inset,
+      rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
     overflow-y: auto;
     box-sizing: border-box;
     border-radius: 10px;
   }
   .project {
-    background-color: lightgray;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -220,7 +220,7 @@
     background-color: #f2f3f4;
     border: 1px solid rgb(179, 179, 179);
     width: 100%;
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   }
   .projectInfo p {
     font-size: 12px;

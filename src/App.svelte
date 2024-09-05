@@ -23,11 +23,10 @@
     <Route path="/page5" component="{Page5}" />
     <Route path="/page6" component="{Page6}" />
   </Router>
-  <Footer />
 </main>
 
 <style>
   main {
-    padding-top: 300px; /* Adjust based on your header height */
+    padding-top: 0px; /* Adjust based on your header height */
   }
 </style>

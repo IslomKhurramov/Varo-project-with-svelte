@@ -48,11 +48,10 @@
 
 <style>
   main {
-    width: 96%;
+    width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 40px;
-    margin-left: 20px;
+
     margin-bottom: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

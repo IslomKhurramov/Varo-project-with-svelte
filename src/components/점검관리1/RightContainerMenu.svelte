@@ -135,12 +135,4 @@
   .header h3.active::before {
     width: 100%;
   }
-
-  /* Right Menu Styling */
-  .right_menu {
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
 </style>

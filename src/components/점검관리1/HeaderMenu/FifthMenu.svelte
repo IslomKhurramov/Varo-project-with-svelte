@@ -54,7 +54,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 20px;
+
     background-color: #f4f4f4;
   }
 

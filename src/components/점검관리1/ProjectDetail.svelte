@@ -88,13 +88,13 @@
         <div class="status">
           <div class="pie-chart">
             <div class="chart-label">전체등록현황</div>
-            <svg width="160" height="160" viewBox="-80 -80 160 160">
+            <svg width="120" height="120" viewBox="-60 -60 120 120">
               {#each pieData as { value, color }, i (i)}
                 <path
                   d="{calculatePieSlice(
                     value,
                     100,
-                    80,
+                    60,
                     pieData
                       .slice(0, i)
                       .reduce(
@@ -135,8 +135,8 @@
       <div class="security-level-section">
         <div>
           <p>전체보안수준: {securityLevel.overall}%</p>
-          <p>유닉스: {securityLevel.unix} %</p>
-          <p>윈도우: {securityLevel.windows} %</p>
+          <p>유닉스: {securityLevel.unix}%</p>
+          <p>윈도우: {securityLevel.windows}%</p>
         </div>
         <div class="bar-charts2">
           {#each criticalWeaknesses as weakness}
@@ -162,41 +162,43 @@
 </main>
 
 <style>
-  /* Main container centered and wider */
+  /* Main container centered and adjusted width */
   .main-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f0f0;
-    padding: 40px 0;
+    width: 100%;
   }
 
   .container {
-    width: 900px; /* Increased width */
-    padding: 20px;
+    width: 100%; /* Optional max-width for larger screens */
+    padding: 10px; /* Reduced padding from 20px to 10px */
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
+    font-size: 12px; /* Set base font size to 12px */
+    /* Reduced height */
+    height: auto; /* Let the height adjust based on content */
   }
 
   .overview,
   .registration-status,
   .security-level-section,
   .critical-weaknesses {
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 15px; /* Reduced margin */
     border: 1px solid #e0e0e0;
     border-radius: 10px;
     background-color: #fafafa;
+    padding: 10px; /* Added padding for content */
   }
 
   h2 {
-    margin-bottom: 15px;
-    font-size: 20px;
+    margin-bottom: 10px; /* Reduced margin */
+    font-size: 16px; /* Adjusted font size */
     color: #333;
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 5px; /* Reduced padding */
   }
 
   .overview {
@@ -206,52 +208,52 @@
   }
 
   .percentage1 {
-    width: 80px;
-    height: 80px;
+    width: 60px; /* Reduced size */
+    height: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-right: 20px;
+    margin-right: 10px; /* Reduced margin */
   }
 
   .security-level {
     background-color: #4caf50;
     color: white;
-    width: 80px;
-    height: 80px;
+    width: 60px; /* Reduced size */
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 14px; /* Adjusted font size */
     border-radius: 50%;
     box-shadow:
-      inset 0 0 35px 5px rgba(0, 0, 0, 0.1),
-      inset 0 2px 1px 1px rgba(255, 255, 255, 0.5),
-      inset 0 -2px 1px rgba(0, 0, 0, 0.1);
+      inset 0 0 25px 3px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0.5px 0.5px rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0.5px rgba(0, 0, 0, 0.1);
   }
 
   .project-details p {
-    margin: 5px 0;
-    font-size: 14px;
+    margin: 3px 0; /* Reduced margin */
+    font-size: 12px;
     color: #555;
   }
 
   .actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px; /* Reduced gap */
   }
 
   .actions button {
-    padding: 8px 12px;
+    padding: 6px 10px; /* Reduced padding */
     background-color: #1976d2;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px; /* Adjusted font size */
     transition:
       background-color 0.3s ease,
       transform 0.3s ease;
@@ -265,76 +267,79 @@
   .status {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
   }
 
   .pie-chart {
-    width: 100px;
-    height: 100px;
+    width: 80px; /* Reduced size */
+    height: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   .chart-label {
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced margin */
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px; /* Adjusted font size */
     color: #555;
   }
 
-  .bar-charts {
-    flex-grow: 1;
-    padding-left: 20px;
-  }
-
+  .bar-charts,
   .bar-charts2 {
     flex-grow: 1;
-    padding-left: 50px;
+    padding-left: 10px; /* Reduced padding */
   }
 
   .bar {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced margin */
   }
 
   .bar .label {
-    width: 100px;
+    width: 60px; /* Reduced width */
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px; /* Adjusted font size */
     color: #555;
   }
 
   .bar .bar-fill {
-    height: 20px;
+    height: 15px; /* Reduced height */
     background-color: #4caf50;
     color: white;
     text-align: right;
-    padding-right: 5px;
-    line-height: 20px;
+    padding-right: 3px; /* Reduced padding */
+    line-height: 15px;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 12px; /* Adjusted font size */
   }
 
   .bar .bar-fill2 {
-    height: 20px;
+    height: 15px; /* Reduced height */
     background-color: #2196f3;
     color: white;
     text-align: right;
-    padding-right: 5px;
-    line-height: 20px;
+    padding-right: 3px; /* Reduced padding */
+    line-height: 15px;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 12px; /* Adjusted font size */
   }
 
   .security-level-section p {
-    margin: 5px 0;
-    font-size: 14px;
+    margin: 3px 0; /* Reduced margin */
+    font-size: 12px; /* Adjusted font size */
     color: #555;
   }
-
+  .security-level-section {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    align-items: center;
+  }
   .critical-weaknesses .bar-chart {
-    padding: 10px;
+    padding: 5px; /* Reduced padding */
     color: #555;
+    font-size: 12px; /* Adjusted font size */
   }
 </style>

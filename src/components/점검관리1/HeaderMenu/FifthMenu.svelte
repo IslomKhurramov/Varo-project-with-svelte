@@ -54,28 +54,28 @@
     width: 100%;
     display: flex;
     justify-content: center;
-
-    background-color: #f4f4f4;
   }
 
   .table_container {
     display: flex;
     justify-content: center;
-    width: 90%;
+    width: 100%;
     margin: 20px 0;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border: 1px solid #ccc;
     overflow-y: auto;
-    height: 400px;
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
     width: 100%;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #ffffff;
   }
 

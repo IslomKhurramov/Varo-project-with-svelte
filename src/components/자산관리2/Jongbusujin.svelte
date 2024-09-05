@@ -49,19 +49,22 @@
 <main>
   <div class="container">
     <div class="container_h3">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3 on:click="{toggleHistory}">이력확인</h3>
-    </div>
-    <div class="select_container">
-      <button class="select_button">명령구분</button>
-      <select name="asset_group" id="asset_group" class="select_input">
-        {#each assetGroup as asset}
-          <option value="network_security">{asset.assetName}</option>
-        {/each}
-      </select>
     </div>
 
     <div class="second_container">
       <table>
+        <tr>
+          <th>명령구분</th>
+          <td>
+            <select name="asset_group" id="asset_group" class="select_input">
+              {#each assetGroup as asset}
+                <option value="network_security">{asset.assetName}</option>
+              {/each}
+            </select></td
+          >
+        </tr>
         <tr>
           <th>명령구분</th>
           <td>
@@ -195,14 +198,17 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin: 20px 0;
+
+    background-color: #f7f9fb;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   .container {
-    width: 80%;
-    max-width: 1200px;
+    width: 94%;
+    margin-top: 20px;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #f7f9fb;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
@@ -210,8 +216,6 @@
   .second_container {
     margin-top: 20px;
     border-radius: 10px;
-    background-color: #f9f9f9;
-    padding: 20px;
   }
 
   /* Table Styling */
@@ -220,17 +224,19 @@
     border-collapse: collapse;
     margin-bottom: 20px;
     background-color: #f7f7f7; /* Subdued background color */
+    border-radius: 20px;
   }
 
   th,
   td {
+    font-size: 14px;
     padding: 10px;
     border: 1px solid #cccccc; /* Light gray border */
     text-align: left;
   }
 
   th {
-    background-color: #555555; /* Dark gray for a more muted header */
+    background-color: #0068d7; /* Dark gray for a more muted header */
     color: white;
     text-align: center;
     width: 120px;
@@ -275,34 +281,8 @@
   }
 
   .checkbox-group label {
-    font-size: 14px;
+    font-size: 12px;
     color: #333333;
-  }
-
-  /* Command Selection Container */
-  .select_container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    background-color: #f7f7f7;
-    border: 1px solid #cccccc;
-  }
-
-  .select_button {
-    background-color: #555555;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 12px 20px;
-    margin-left: 20px;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: 5px;
-    width: 120px;
   }
 
   .select_input {
@@ -310,7 +290,7 @@
     padding: 12px;
     border: none;
     margin-right: 20px;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #ffffff;
     color: #333333;
     outline: none;
@@ -324,22 +304,23 @@
 
   /* History Box */
   .history_box {
-    width: 100%;
+    width: 94%;
     height: 400px;
     overflow-y: auto;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    margin-top: 40px;
+    padding: 20px;
   }
 
   .history_box table {
     background-color: #f9f9f9;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .history_box th {
-    background-color: #555555;
+    background-color: #0068d7;
     color: #ffffff;
   }
 
@@ -350,18 +331,18 @@
 
   /* Header Styling */
   .container_h3 {
-    position: absolute;
-    top: -60px;
-    left: 20px;
-    padding: 10px 20px;
-    background-color: #555555;
-    color: #ffffff;
-    border-radius: 5px;
+    text-decoration: underline;
+    font-size: 14px;
+    color: #151313;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    border: none;
+    border-radius: 5px;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
   }
 
   .container_h3:hover {
-    background-color: #444444;
+    transform: translateY(-2px);
   }
 </style>

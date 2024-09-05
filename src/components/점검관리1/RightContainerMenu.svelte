@@ -71,7 +71,6 @@
   /* Container Styling */
   .container_page1 {
     padding: 20px;
-    background-color: #f9f9f9;
     min-height: 100vh;
   }
 
@@ -80,7 +79,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #ffffff;
+    background-color: #f7f9fb;
     border-bottom: 1px solid #e0e0e0;
     padding: 10px 20px;
     margin-bottom: 20px;

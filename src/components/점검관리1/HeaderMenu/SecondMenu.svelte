@@ -90,46 +90,48 @@
       </p>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 5%;">번호</th>
-          <th style="width: 20%;">호스트명</th>
-          <th style="width: 15%;">항목</th>
-          <th style="width: 30%;">점검항목</th>
-          <th style="width: 15%;">시스템상태</th>
-          <th style="width: 10%;">점검결과</th>
-          <th style="width: 5%;">결과변경</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each hostInfo as host}
+    <div class="table_container">
+      <table>
+        <thead>
           <tr>
-            <td>{host.number}</td>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
-              >{host.name}</td
-            >
-            <td>{host.item}</td>
-            <td>
-              <div class="checklist">
-                <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
-                <p>양호: {host.checklist.good || "데이터 없음"}</p>
-              </div>
-            </td>
-            <td>{host.system}</td>
-            <td>{host.instectionResult}</td>
-            <td>
-              <select>
-                <option value="양호">양호</option>
-                <option value="해당">해당</option>
-              </select>
-              <button class="save_button">변경</button>
-            </td>
+            <th style="width: 5%;">번호</th>
+            <th style="width: 20%;">호스트명</th>
+            <th style="width: 15%;">항목</th>
+            <th style="width: 30%;">점검항목</th>
+            <th style="width: 15%;">시스템상태</th>
+            <th style="width: 10%;">점검결과</th>
+            <th style="width: 5%;">결과변경</th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {#each hostInfo as host}
+            <tr>
+              <td>{host.number}</td>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
+                >{host.name}</td
+              >
+              <td>{host.item}</td>
+              <td>
+                <div class="checklist">
+                  <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
+                  <p>양호: {host.checklist.good || "데이터 없음"}</p>
+                </div>
+              </td>
+              <td>{host.system}</td>
+              <td>{host.instectionResult}</td>
+              <td>
+                <select>
+                  <option value="양호">양호</option>
+                  <option value="해당">해당</option>
+                </select>
+                <button class="save_button">변경</button>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div>
@@ -145,7 +147,12 @@
     justify-content: center;
     background-color: #f4f4f4;
   }
-
+  .table_container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 500px;
+    width: 100%;
+  }
   .container {
     width: 100%;
     display: flex;
@@ -186,7 +193,7 @@
   }
 
   .firstlineButton {
-    background-color: #004080;
+    background-color: #0056b3;
     color: #ffffff;
     border: none;
     border-radius: 5px;
@@ -254,10 +261,13 @@
   }
 
   th {
-    background-color: #004080;
+    background-color: #0068d7;
     color: #ffffff;
     font-weight: bold;
     text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
   tbody tr:nth-child(even) {
@@ -273,7 +283,7 @@
   }
 
   .save_button {
-    background-color: #004080;
+    background-color: #28a745;
     color: #ffffff;
     border: none;
     border-radius: 5px;
@@ -286,7 +296,7 @@
   }
 
   .save_button:hover {
-    background-color: #003366;
+    background-color: #247e39;
     transform: translateY(-2px);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }

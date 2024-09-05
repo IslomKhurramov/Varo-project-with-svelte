@@ -109,7 +109,7 @@
         <div class="projectInfo">
           <div class="firstCol">
             <p>보안점수</p>
-            <div class="percentage"><p>80%</p></div>
+            <div class="percentage"><p class="box_number">80%</p></div>
           </div>
           <div class="secondCol">
             <p>제목: {project.projectTitle}</p>
@@ -135,9 +135,16 @@
 
 <style>
   main {
-    width: 100%;
+    width: 94%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    background-color: #f7f9fb;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
   }
   .form_select {
     display: flex;
@@ -170,14 +177,17 @@
 
   header {
     display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    margin-top: 20px;
+    background-color: #f7f9fb;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
   }
   .headerButton button {
-    background-color: #003366; /* Darker Blue */
+    background-color: #0056b3; /* Darker Blue */
     color: #ffffff;
     border: 1px solid #ffffff;
     border-radius: 5px;
@@ -190,7 +200,7 @@
   }
   .projectContainer {
     width: 100%;
-    height: 500px;
+    height: 600px;
     display: flex;
     flex-direction: column;
     margin: 20px 20px;
@@ -216,8 +226,9 @@
     flex-direction: row;
     gap: 100px;
     margin-left: 20px;
+    border-radius: 10px;
     padding: 10px 10px;
-    background-color: #f2f3f4;
+    background-color: #fff;
     border: 1px solid rgb(179, 179, 179);
     width: 100%;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
@@ -226,20 +237,14 @@
     font-size: 12px;
   }
   .percentage {
-    background-color: #ffffff; /* Medium blue */
-    color: #000000; /* White text for contrast */
-    width: 70px;
-    height: 50px;
-    align-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 8px;
+    color: #fff; /* White text for contrast */
     text-align: center;
-    font-weight: 400;
-    font-size: 18px;
-    border: 1px solid #000000; /* Light border */
-    border-radius: 5px; /* Slight rounding of corners */
-    box-shadow:
-      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
-      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
-      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
+    width: 50px;
+    background-color: #28a745;
   }
   .percentage p {
     font-weight: bold;
@@ -254,7 +259,7 @@
   }
   .buttons button {
     font-size: 10px;
-    background-color: #003366;
+    background-color: #4682b4;
     color: #fff;
     font-weight: 500;
     width: 80px;
@@ -263,5 +268,9 @@
   }
   .firstCol {
     margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 </style>

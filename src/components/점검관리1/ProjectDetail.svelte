@@ -59,26 +59,30 @@
       <!-- Overview Section -->
       <h2>[개요]</h2>
       <div class="overview">
-        <div class="percentage1">
-          <p><strong>보안수준</strong></p>
-          <div class="security-level">
-            <div class="score">{overallSecurityLevel}%</div>
+        <div class="first_cont">
+          <div class="percentage1">
+            <p><strong>보안수준</strong></p>
+            <div class="security-level">
+              <div class="score">{overallSecurityLevel}%</div>
+            </div>
           </div>
         </div>
-        <div class="project-details">
-          <p>제목: {projectTitle}</p>
-          <p>점검대상: {targetGroups}</p>
-          <p>{inspectionDetails}</p>
-          <p>생성자: {producer}</p>
-          <p>{progress}</p>
-          <p>점검일시: {startDate} ~ {endDate}</p>
-          <p>점검방법: {method}</p>
-        </div>
-        <div class="actions">
-          <button>결과등록</button>
-          <button>결과조회</button>
-          <button>변경</button>
-          <button>삭제</button>
+        <div class="first_cont2">
+          <div class="project-details">
+            <p>제목: {projectTitle}</p>
+            <p>점검대상: {targetGroups}</p>
+            <p>{inspectionDetails}</p>
+            <p>생성자: {producer}</p>
+            <p>{progress}</p>
+            <p>점검일시: {startDate} ~ {endDate}</p>
+            <p>점검방법: {method}</p>
+          </div>
+          <div class="actions">
+            <button>결과등록</button>
+            <button>결과조회</button>
+            <button>변경</button>
+            <button>삭제</button>
+          </div>
         </div>
       </div>
 
@@ -133,10 +137,12 @@
       <!-- Security Level Section -->
       <h2>[보안수준]</h2>
       <div class="security-level-section">
-        <div>
-          <p>전체보안수준: {securityLevel.overall}%</p>
-          <p>유닉스: {securityLevel.unix}%</p>
-          <p>윈도우: {securityLevel.windows}%</p>
+        <div class="third_cont">
+          <div>
+            <p>전체보안수준: {securityLevel.overall}%</p>
+            <p>유닉스: {securityLevel.unix}%</p>
+            <p>윈도우: {securityLevel.windows}%</p>
+          </div>
         </div>
         <div class="bar-charts2">
           {#each criticalWeaknesses as weakness}
@@ -169,11 +175,29 @@
     align-items: center;
     width: 100%;
   }
-
+  .third_cont {
+    align-items: center;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .first_cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+  }
+  .first_cont2 {
+    display: flex;
+    width: 70%;
+    justify-content: space-between;
+    align-items: center;
+  }
   .container {
     width: 100%; /* Optional max-width for larger screens */
     padding: 10px; /* Reduced padding from 20px to 10px */
-    background-color: #fff;
+    background-color: #f7f9fb;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
@@ -248,7 +272,7 @@
 
   .actions button {
     padding: 6px 10px; /* Reduced padding */
-    background-color: #1976d2;
+    background-color: #4682b4;
     color: white;
     border: none;
     border-radius: 5px;
@@ -271,7 +295,7 @@
   }
 
   .pie-chart {
-    width: 80px; /* Reduced size */
+    width: 30%; /* Reduced size */
     height: 80px;
     display: flex;
     flex-direction: column;
@@ -288,12 +312,14 @@
   .bar-charts,
   .bar-charts2 {
     flex-grow: 1;
-    padding-left: 10px; /* Reduced padding */
+    padding-left: 10px;
+    width: 70%; /* Reduced padding */
   }
 
   .bar {
     display: flex;
     align-items: center;
+    gap: 10px;
     margin-bottom: 5px; /* Reduced margin */
   }
 
@@ -334,7 +360,8 @@
   .security-level-section {
     display: flex;
     flex-direction: row;
-    gap: 50px;
+    justify-content: center;
+    width: 100%;
     align-items: center;
   }
   .critical-weaknesses .bar-chart {

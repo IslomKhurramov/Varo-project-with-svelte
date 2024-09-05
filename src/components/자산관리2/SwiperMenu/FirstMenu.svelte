@@ -149,21 +149,26 @@
 
 <style>
   main {
-    margin-left: 10px;
-    margin-right: -25px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f7f9fb;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   .button_container {
-    width: 96%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     gap: 10px;
     margin-bottom: 15px;
-    margin-right: 25px;
   }
 
   .button_container button {
-    background-color: #003366; /* Darker Blue */
+    background-color: #0056b3; /* Darker Blue */
     color: #ffffff;
 
     width: 130px;
@@ -185,13 +190,11 @@
   .table_container {
     display: flex;
     justify-content: center;
-    width: 94%;
+    width: 100%;
     margin: 0;
     overflow-y: auto;
     overflow-x: hidden;
     height: 300px;
-
-    margin: 20px;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -235,9 +238,8 @@
   .input_container {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    margin: 20px;
-    padding: 25px;
+    width: 100%;
+    margin-top: 20px;
     background: #f8f9fa;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -249,6 +251,7 @@
     flex-direction: row;
     gap: 10px;
     margin-top: 10px;
+    padding: 20px;
   }
 
   .input_buttons button {
@@ -272,6 +275,7 @@
 
   .input {
     margin-bottom: 10px;
+    padding: 20px;
   }
 
   .input input {
@@ -350,8 +354,9 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
     margin-bottom: 40px;
-    width: 90%;
-    margin: 20px;
-    padding: 25px;
+    width: 100%;
+  }
+  .last_container p {
+    padding: 20px;
   }
 </style>

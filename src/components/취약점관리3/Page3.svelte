@@ -357,6 +357,7 @@
     background-color: #007acc;
     color: #ffffff;
     padding: 10px;
+    height: 30px;
     border: none;
     border-radius: 5px;
     cursor: pointer;

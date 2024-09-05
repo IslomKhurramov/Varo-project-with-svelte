@@ -149,16 +149,25 @@
 
 <style>
   main {
-    margin-left: 10px;
-    margin-right: -25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #f7f9fb;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .header p {
+    color: #000000;
   }
   .header {
     display: flex;
     flex-direction: row;
-    width: 94%;
+    width: 100%;
     justify-content: space-between;
     color: #ffffff;
-    margin-left: 20px;
     height: 41px;
   }
 
@@ -182,17 +191,15 @@
   .table_container {
     display: flex;
     justify-content: center;
-    width: 94%;
+    width: 100%;
     margin: 0;
     overflow-y: auto;
     overflow-x: hidden;
     height: 300px;
-
-    margin: 20px;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    margin-bottom: 40px;
   }
 
   table {

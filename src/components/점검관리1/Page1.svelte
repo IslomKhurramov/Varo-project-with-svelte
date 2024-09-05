@@ -118,10 +118,9 @@
 
   /* Project buttons */
   .project_button {
-    margin-bottom: 20px;
     display: flex;
     align-items: center;
-
+    height: 40px;
     transition:
       box-shadow 0.3s ease,
       transform 0.3s ease;
@@ -136,10 +135,12 @@
     transition:
       box-shadow 0.3s ease,
       transform 0.3s ease;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+    box-shadow:
+      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Prevents horizontal overflow */
-    min-height: 80vh; /* Adjust height to fit inside sidebar */
+    height: 98vh; /* Adjust height to fit inside sidebar */
   }
 
   .project_button:hover {
@@ -180,7 +181,9 @@
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+    box-shadow:
+      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
   }
 
   .menu_button {

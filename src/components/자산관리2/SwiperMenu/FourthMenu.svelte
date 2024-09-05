@@ -61,119 +61,107 @@
   </div>
   <div class="container">
     <div class="firstLine">
-      <div style="display: flex; flex-direction: row;">
-        <div class="firstline">
-          <p>프로젝트:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+      <div class="dropdown-group">
+        <div class="dropdown-container">
+          <label for="project">프로젝트:</label>
+          <select id="project">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
-          <p>점검대상:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+        <div class="dropdown-container">
+          <label for="target">점검대상:</label>
+          <select id="target">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
-          <p>호스트:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+        <div class="dropdown-container">
+          <label for="host">호스트:</label>
+          <select id="host">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
-          <p>점검결과:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+        <div class="dropdown-container">
+          <label for="result">점검결과:</label>
+          <select id="result">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
-        <div class="firstline">
-          <p>보기옵션:</p>
-          <select>
-            <option value="수리과터스트2">수리과터스트2</option>
-            <option value="수리과터스트2">수리과터스트2</option>
+        <div class="dropdown-container">
+          <label for="viewOption">보기옵션:</label>
+          <select id="viewOption">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
         </div>
       </div>
-      <div class="Button">
-        <button class="fisrtlineButton">조회하기</button>
-        <button class="fisrtlineButton">보안점수확점</button>
+      <div class="button-group">
+        <button class="firstlineButton">조회하기</button>
+        <button class="firstlineButton">보안점수확점</button>
       </div>
     </div>
+
     <div class="secondLine">
       <div>
-        <p style="font-weight: bold;">프로젝트 전체 보안수준:</p>
+        <p class="bold-text">프로젝트 전체 보안수준:</p>
         <p>{projectsData[0].name}</p>
       </div>
       <div>
-        <p style="font-weight: bold;">결과미확정, 점검대상:</p>
+        <p class="bold-text">결과미확정, 점검대상:</p>
         <p>{projectsData[0].inspectionTarget}</p>
       </div>
       <div>
-        <p style="font-weight: bold;">점검일시:</p>
+        <p class="bold-text">점검일시:</p>
         <p>{projectsData[0].inspectionDateAndTime}</p>
       </div>
     </div>
+
     <div class="thirdLine">
-      <p style="font-size: bold;">
-        Show <span><select id=""><option value="">100</option></select></span> entries
+      <p class="bold-text">
+        Show <select><option value="">100</option></select> entries
       </p>
     </div>
-    <table>
-      <tr>
-        <th>남버</th>
-        <th>호스트명</th>
-        <th>항목</th>
-        <th>점검항목</th>
-        <th>시스템상태</th>
-        <th>점검결과</th>
-        <th>결과변경</th>
-      </tr>
-      {#each hostInfo as host}
-        <tr>
-          <td>{host.number}</td>
-          <td style="cursor: pointer;">{host.name}</td>
-          <td>{host.item}</td>
-          <td>
-            <div style="display: flex; flex-direction:column">
-              {#if host.checklist && host.checklist.vulnerability}
-                <p>취약: {host.checklist.vulnerability}</p>
-              {:else}
-                <p>취약: 데이터 없음</p>
-              {/if}
-              {#if host.checklist && host.checklist.good}
-                <p>양호: {host.checklist.good}</p>
-              {:else}
-                <p>양호: 데이터 없음</p>
-              {/if}
-            </div>
-          </td>
-          <td>{host.system}</td>
-          <td>{host.instectionResult}</td>
-          <td>
-            <select>
-              <option value="양호">양호</option>
-              <option value="해당">해당</option>
-              <option value="empty"></option>
-            </select>
-            <select>
-              <option value="양호">양호</option>
-              <option value="해당">해당</option>
-              <option value="empty"></option>
-            </select>
-            <button class="fisrtlineButton">변경</button>
-          </td>
-        </tr>
-      {/each}
-    </table>
+
+    <div class="table_container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 5%;">번호</th>
+            <th style="width: 20%;">호스트명</th>
+            <th style="width: 15%;">항목</th>
+            <th style="width: 30%;">점검항목</th>
+            <th style="width: 15%;">시스템상태</th>
+            <th style="width: 10%;">점검결과</th>
+            <th style="width: 5%;">결과변경</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each hostInfo as host}
+            <tr>
+              <td>{host.number}</td>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
+                >{host.name}</td
+              >
+              <td>{host.item}</td>
+              <td>
+                <div class="checklist">
+                  <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
+                  <p>양호: {host.checklist.good || "데이터 없음"}</p>
+                </div>
+              </td>
+              <td>{host.system}</td>
+              <td>{host.instectionResult}</td>
+              <td>
+                <select>
+                  <option value="양호">양호</option>
+                  <option value="해당">해당</option>
+                </select>
+                <button class="save_button">변경</button>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   </div>
 </main>
 
@@ -181,172 +169,168 @@
   .container1 {
     display: flex;
     flex-direction: column;
-    margin-left: 20px;
+    background-color: #f7f9fb;
+    padding: 10px;
     margin-bottom: 40px;
     font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .container {
+  .table_container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 300px;
     width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .container {
+    width: 97%;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    background-color: #f8f9fa;
-    height: 600px;
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid #ced4da;
-    overflow-y: auto;
-    font-size: 13px;
-    overflow-x: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 40px;
     padding: 20px;
   }
 
-  .table_container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 0 auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 300px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid #ced4da;
-    margin-bottom: 20px;
-  }
-
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    background: #ffffff;
-    font-size: 13px;
-  }
-
-  th,
-  td {
-    border: 1px solid #ced4da;
-    padding: 10px 15px;
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  th {
-    background-color: #0068d7;
-    color: #ffffff;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase;
-    font-size: 13px;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-
-  tr:hover {
-    background-color: #e9ecef;
-  }
-
   .firstLine {
     display: flex;
-    flex-direction: row;
-    width: 100%;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
   }
 
-  .firstline {
+  .dropdown-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .dropdown-container {
     display: flex;
     flex-direction: row;
-    height: 25px;
+    gap: 5px;
     align-items: center;
-    gap: 10px;
+    white-space: nowrap;
   }
 
-  .fisrtlineButton {
-    border: 1px solid #004080;
-    height: 25px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 10px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    background-color: #004080;
-    color: #ffffff;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-
-  .fisrtlineButton:hover {
-    background-color: #0056b3;
-  }
-
-  .firstline p {
+  .dropdown-container label {
     font-weight: bold;
     margin: 0;
+    font-size: 12px;
   }
 
-  .firstline select {
-    border: 1px solid #ced4da;
-    height: 25px;
-    font-size: 13px;
-    padding: 0 5px;
+  .firstlineButton {
+    background-color: #0056b3;
+    color: #ffffff;
+    border: none;
     border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
   }
 
-  .Button {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
+  .firstlineButton:hover {
+    background-color: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 
   .secondLine {
     display: flex;
-    flex-direction: row;
-    width: 100%;
-    padding-top: 10px;
-    gap: 20px;
-    margin-top: 10px;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
   }
 
   .secondLine div {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    font-size: 12px;
+    justify-content: center;
+  }
+
+  .bold-text {
+    font-weight: bold;
+    margin: 0;
+  }
+  .button-group {
+    display: flex;
+    flex-direction: row;
     gap: 5px;
   }
 
-  .secondLine div p {
-    margin: 0;
-  }
-
   .thirdLine {
-    margin-left: 5px;
-    margin-bottom: 0;
-    padding-bottom: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 10px;
   }
 
-  .thirdLine p {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  th,
+  td {
+    border: 1px solid #dddddd;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: #0068d7;
+    color: #ffffff;
     font-weight: bold;
-    padding-top: 0px;
-    margin-top: 0px;
-    margin: 0;
-    padding: 0;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
-  .thirdLine select {
-    border: 1px solid #ced4da;
-    padding: 5px;
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #e0f7fa;
+  }
+
+  .checklist p {
+    margin: 0;
+  }
+
+  .save_button {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
     border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .save_button:hover {
+    background-color: #247e39;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 </style>

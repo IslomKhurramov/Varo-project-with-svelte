@@ -65,7 +65,7 @@
     width: 100%;
     border-collapse: collapse;
     font-family: "Arial", sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #ffffff;
   }
 

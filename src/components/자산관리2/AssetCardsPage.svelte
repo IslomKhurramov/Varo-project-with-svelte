@@ -70,7 +70,16 @@
           <div class="first_col">
             <div class="first_col_1">
               <p>보안점수</p>
-              <div class="box_number">{asset.secureScore}%</div>
+              <div
+                class="box_number {asset.secureScore < 50
+                  ? 'low'
+                  : asset.secureScore < 80
+                    ? 'medium'
+                    : 'high'}"
+              >
+                {asset.secureScore}%
+              </div>
+
               <p>
                 <span style="font-weight: bold;">
                   {asset.assetGroup}
@@ -123,10 +132,10 @@
 <style>
   /* Main container for the card layout */
   .container {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 20px auto;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #f7f9fb;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
@@ -156,6 +165,7 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    font-size: 12px;
   }
 
   .colors {
@@ -201,15 +211,30 @@
   /* Individual card styling */
   .card {
     position: relative;
-    background-color: #e9ecef;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow:
+      rgba(0, 0, 0, 0.4) 0px 2px 4px,
+      rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+      rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    padding: 20px;
+    color: #222121; /* White text for contrast */
+    font-size: 12px; /* Set font size to 12px */
+    margin-bottom: 20px;
     transition:
-      transform 0.2s ease-in-out,
-      box-shadow 0.2s ease-in-out;
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
+  .card:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Stronger shadow on hover */
+  }
+
+  .first_col_1 p {
+    margin: 0px;
+  }
   .card:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
@@ -226,13 +251,28 @@
 
   /* Security score box styling */
   .box_number {
-    background-color: #007bff;
-    color: #fff;
-    padding: 8px 12px;
-    font-size: 18px;
+    font-size: 12px;
     font-weight: bold;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 8px;
+    color: #fff; /* White text for contrast */
     text-align: center;
+    width: 50px;
+  }
+
+  /* Low security score */
+  .box_number.low {
+    background-color: #dc3545; /* Red for low score */
+  }
+
+  /* Medium security score */
+  .box_number.medium {
+    background-color: #ffc107; /* Yellow for medium score */
+  }
+
+  /* High security score */
+  .box_number.high {
+    background-color: #28a745; /* Green for high score */
   }
 
   /* Action buttons within each card */
@@ -246,6 +286,7 @@
 
   .card_buttons button {
     width: 16px;
+    font-size: 12px;
     height: 16px;
     border-radius: 50%;
     border: none;
@@ -266,11 +307,11 @@
 
   /* Modal button within each card */
   .modal_button {
-    position: absolute;
     bottom: 10px;
+    position: absolute;
     right: 10px;
     padding: 5px 10px;
-    background-color: #343a40;
+    background-color: #5bc0de;
     color: #fff;
     font-size: 10px;
     border: none;
@@ -282,7 +323,7 @@
   }
 
   .modal_button:hover {
-    background-color: #212529;
+    background-color: #31b0d5;
     transform: translateY(-2px);
   }
 
@@ -291,6 +332,7 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    margin-top: 10px;
   }
 
   .first_col_1,

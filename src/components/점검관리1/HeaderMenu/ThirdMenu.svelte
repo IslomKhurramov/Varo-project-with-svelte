@@ -82,7 +82,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: #ffffff;
+    background-color: #f7f9fb;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);

@@ -68,7 +68,7 @@
   }
 
   .header button {
-    background-color: #004080;
+    background-color: #0056b3;
     color: #ffffff;
     padding: 8px 16px;
     font-size: 12px;
@@ -99,7 +99,7 @@
   .table_container {
     width: 100%;
     padding: 10px;
-    background-color: #ffffff;
+    background-color: #f7f9fb;
     border-radius: 10px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #dddddd;
@@ -172,7 +172,7 @@
 
   /* Save Button Styling */
   .save_button {
-    background-color: #004080;
+    background-color: #0056b3;
     color: #ffffff;
     border: none;
     border-radius: 5px;

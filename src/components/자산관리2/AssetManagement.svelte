@@ -132,12 +132,15 @@
 
 <style>
   main {
+    background-color: #f7f9fb;
     width: 100%;
-    padding: 20px;
-    font-family: "Arial", sans-serif;
     color: #333; /* Darker text color for better readability */
     box-sizing: border-box;
     overflow-x: hidden; /* Prevent horizontal scroll */
+    font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
   }
 
   .select_group {
@@ -157,11 +160,11 @@
   }
 
   .select_button {
-    background-color: #4682b4;
+    background-color: #0056b3;
     color: #fff;
     padding: 12px 24px;
     border: none;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     transition: background-color 0.3s ease;
     border-right: 1px solid #3e3e3e;
@@ -177,7 +180,7 @@
     width: 100%;
     padding: 12px;
     border: none;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #fff;
     color: #000;
     cursor: pointer;
@@ -199,7 +202,6 @@
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    padding: 10px 10px;
   }
 
   .second_container p {
@@ -224,7 +226,7 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
-    background-color: #2c3e50;
+    background-color: #0068d7;
     border-radius: 10px;
     color: #fff;
     padding: 15px;
@@ -260,7 +262,7 @@
 
   .group_container p {
     margin: 5px 0;
-    font-size: 14px;
+    font-size: 12px;
     color: #333;
     padding: 8px;
     border-radius: 5px;
@@ -309,13 +311,13 @@
   }
 
   .option_container button {
-    background-color: #4682b4;
+    background-color: #0056b3;
     color: #f2f3f4;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     transition: background-color 0.3s ease;
   }
@@ -353,8 +355,8 @@
       transform 0.3s ease,
       box-shadow 0.3s ease;
     padding: 15px;
-    width: 100%;
-    height: 120px; /* Adjusted height */
+    width: 75%;
+    height: 85px; /* Adjusted height */
     font-size: 12px;
   }
 
@@ -442,7 +444,7 @@
   }
 
   .save_button {
-    background-color: #007bff;
+    background-color: #0056b3;
     color: #fff;
     width: 120px;
     height: 40px;

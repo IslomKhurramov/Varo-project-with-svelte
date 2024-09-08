@@ -192,17 +192,6 @@
 
 <style>
   /* General Layout */
-  main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-
-    background-color: #f7f9fb;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
 
   .container {
     width: 94%;
@@ -236,7 +225,7 @@
   }
 
   th {
-    background-color: #0068d7; /* Dark gray for a more muted header */
+    background-color: #005fa3; /* Dark gray for a more muted header */
     color: white;
     text-align: center;
     width: 120px;

@@ -150,7 +150,7 @@
   }
 
   th {
-    background-color: #f8f9fa;
+    background-color: #005fa3;
     font-weight: bold;
     color: #333;
     width: 160px;

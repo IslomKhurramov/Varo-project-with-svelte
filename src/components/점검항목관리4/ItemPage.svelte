@@ -33,14 +33,13 @@
   }
 </script>
 
-<div class="header_buttons">
-  <button>UNIX</button>
-  <button>PC</button>
-  <button>NETWORK</button>
-  <button>CLOUD</button>
-</div>
-
 <main>
+  <div class="header_buttons">
+    <button>UNIX</button>
+    <button>PC</button>
+    <button>NETWORK</button>
+    <button>CLOUD</button>
+  </div>
   <div class="table1">
     <table>
       <tr>
@@ -58,6 +57,7 @@
           <td>{data.assetName}</td>
           <td>{data.cassification}</td>
           <td>{data.logContent}</td>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <td on:click|stopPropagation
             ><button class="delete_button">삭제</button></td
           >
@@ -115,27 +115,27 @@
 
 <style>
   main {
-    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-    gap: 30px;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f4f6f8;
+    background-color: #f7f9fb;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
   }
   .header_buttons {
     display: flex;
     gap: 10px;
     align-items: center;
+    justify-content: flex-start;
     width: 100%;
     margin: 20px 0;
-    justify-content: center;
   }
 
   .header_buttons button {
-    background-color: #3498db;
+    background-color: #007acc;
     color: #ffffff;
     border-radius: 5px;
     height: 36px;
@@ -156,28 +156,33 @@
   }
   .table1,
   .table2 {
-    width: 90%;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e1e1e1;
+    font-family: "Arial", sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    color: #333;
     overflow-y: auto;
-    background-color: #ffffff;
+    overflow-x: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f7f9fb;
   }
 
   .table1 {
-    margin-top: 40px;
-    height: 250px;
+    height: 300px;
   }
 
   .table2 {
     height: 450px;
+    margin-top: 40px;
+    margin-bottom: 20px;
   }
 
   table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
     width: 100%;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   th,
@@ -189,7 +194,7 @@
   }
 
   th {
-    background-color: #34495e;
+    background-color: #005fa3;
     color: #ffffff;
     position: sticky;
     top: 0;

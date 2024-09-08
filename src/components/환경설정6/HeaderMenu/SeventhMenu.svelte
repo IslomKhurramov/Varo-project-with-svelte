@@ -117,7 +117,7 @@
   }
 
   th {
-    background-color: #2980b9;
+    background-color: #005fa3;
     color: white;
   }
 

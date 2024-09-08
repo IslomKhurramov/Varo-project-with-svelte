@@ -32,52 +32,55 @@
   }
 </script>
 
-<div class="header_buttons">
-  <button>UNIX</button>
-  <button>PC</button>
-  <button>NETWORK</button>
-  <button>CLOUD</button>
-</div>
-
 <main>
-  <table class="table">
-    <thead>
-      <tr>
-        <th></th>
-        <th>번호</th>
-        <th>항목분류</th>
-        <th>점검항목</th>
-        <th>항목코드</th>
-        <th>설명</th>
-        <th>시스템</th>
-        <th>기준</th>
-        <th>점검항목</th>
-        <th>위험도</th>
-        <th>상태</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each tableData as row}
-        <tr on:click="{() => openModal(row)}">
-          <td on:click|stopPropagation><input type="checkbox" /></td>
-          <td>{row.id}</td>
-          <td>{row.category}</td>
-          <td>{row.item}</td>
-          <td>{row.code}</td>
-          <td>{row.description}</td>
-          <td>{row.system}</td>
-          <td>{row.criteria}</td>
-          <td>{row.checkItem}</td>
-          <td>{row.risk}</td>
-          <td on:click|stopPropagation>
-            {#if !row.isDefault}
-              <button class="status-button">{row.status}</button>
-            {/if}
-          </td>
+  <div class="header_buttons">
+    <button>UNIX</button>
+    <button>PC</button>
+    <button>NETWORK</button>
+    <button>CLOUD</button>
+  </div>
+  <div class="table_container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>번호</th>
+          <th>항목분류</th>
+          <th>점검항목</th>
+          <th>항목코드</th>
+          <th>설명</th>
+          <th>시스템</th>
+          <th>기준</th>
+          <th>점검항목</th>
+          <th>위험도</th>
+          <th>상태</th>
         </tr>
-      {/each}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {#each tableData as row}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <tr on:click="{() => openModal(row)}">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <td on:click|stopPropagation><input type="checkbox" /></td>
+            <td>{row.id}</td>
+            <td>{row.category}</td>
+            <td>{row.item}</td>
+            <td>{row.code}</td>
+            <td>{row.description}</td>
+            <td>{row.system}</td>
+            <td>{row.criteria}</td>
+            <td>{row.checkItem}</td>
+            <td>{row.risk}</td>
+            <td on:click|stopPropagation>
+              {#if !row.isDefault}
+                <button class="status-button">{row.status}</button>
+              {/if}
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 
   {#if showModal}
     <Modal bind:showModal>
@@ -88,26 +91,27 @@
 
 <style>
   main {
-    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #f4f6f8;
-    box-sizing: border-box;
+    flex-direction: column;
+    background-color: #f7f9fb;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
   }
-
   .header_buttons {
     display: flex;
     gap: 10px;
     align-items: center;
+    justify-content: flex-start;
     width: 100%;
     margin: 20px 0;
-    justify-content: center;
   }
 
   .header_buttons button {
-    background-color: #3498db;
+    background-color: #007acc;
     color: #ffffff;
     border-radius: 5px;
     height: 36px;
@@ -126,17 +130,28 @@
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
-
+  .table_container {
+    font-family: "Arial", sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    color: #333;
+    background-color: #f7f9fb;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
   .table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
-    width: 90%;
-    background: #ffffff;
-    font-size: 13px;
-    margin-top: 20px;
+    width: 100%;
+    font-size: 12px;
+    color: #333;
+    overflow-y: auto;
+    overflow-x: hidden;
     border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   th,
@@ -148,7 +163,7 @@
   }
 
   th {
-    background-color: #34495e;
+    background-color: #005fa3;
     color: #ffffff;
     position: sticky;
     top: 0;

@@ -18,16 +18,16 @@
   }
 </script>
 
-<div class="second_line">
-  <!-- svelte-ignore missing-declaration -->
-  <button>CCE</button>
-  <!-- svelte-ignore missing-declaration -->
-  <button>CVE/CPE </button>
-  <button>보안감사 </button>
-</div>
+<main>
+  <div class="second_line">
+    <!-- svelte-ignore missing-declaration -->
+    <button>CCE</button>
+    <!-- svelte-ignore missing-declaration -->
+    <button>CVE/CPE </button>
+    <button>보안감사 </button>
+  </div>
 
-<div class="main_container">
-  <main>
+  <div class="main_container">
     <table>
       <tr class="first_line">
         <th>순번</th>
@@ -64,24 +64,26 @@
         </tr>
       {/each}
     </table>
-  </main>
-</div>
+  </div>
+</main>
 
 <style>
-  .main_container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-
   main {
-    width: 90%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f7f9fb;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-family: "Arial", sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .main_container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     height: 600px;
     overflow-y: auto;
-    margin-top: 40px;
     border-radius: 12px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
@@ -136,7 +138,7 @@
   }
 
   .second_line button {
-    background-color: #003366;
+    background-color: #0056b3;
     color: #ffffff;
     border-radius: 5px;
     height: 36px;

@@ -18,6 +18,7 @@
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
+    currentView = "pageView";
   };
 
   function toggleView() {
@@ -41,39 +42,43 @@
   <div class="container_aside">
     <aside>
       <div class="add_delete_container">
-        <button class="menu_button add_button" on:click="{addProject}"
-          >항목추가</button
-        >
-        <button class="menu_button delete_button">항목삭제</button>
+        <button class="menu_button" on:click="{addProject}">항목추가</button>
+        <button class="menu_button">항목삭제</button>
       </div>
 
-      {#each assets as asset, index}
-        <div class="chasanGroup_button">
-          <a
-            href="#"
-            on:click="{() => selectPage(ItemPage, asset)}"
-            class="{activeMenu === asset ? 'active' : ''}"
-          >
-            <i class="fa fa-user-o" aria-hidden="true"></i>
-            {#if editingIndex === index}
-              <input
-                type="text"
-                value="{asset}"
-                on:blur="{(event) => finishEditing(index, event)}"
-                on:keydown="{(event) => handleKeydown(event, index)}"
-                autofocus
-              />
-            {:else}
-              {asset}
-            {/if}
-          </a>
-          <button
-            class="asset_button"
-            style="width: 112px;"
-            on:click="{() => selectPage(EditItem, '항목편집')}">항목편집</button
-          >
-        </div>
-      {/each}
+      <div class="project_container">
+        {#each assets as asset, index}
+          <div class="project_button">
+            <img src="./images/file.png" alt="project" />
+            <!-- svelte-ignore a11y-invalid-attribute -->
+            <a
+              href="#"
+              on:click="{() => selectPage(ItemPage, asset)}"
+              class="{activeMenu === asset ? 'active' : ''}"
+            >
+              <i class="fa fa-user-o" aria-hidden="true"></i>
+              {#if editingIndex === index}
+                <!-- svelte-ignore a11y-autofocus -->
+                <input
+                  type="text"
+                  value="{asset}"
+                  on:blur="{(event) => finishEditing(index, event)}"
+                  on:keydown="{(event) => handleKeydown(event, index)}"
+                  autofocus
+                />
+              {:else}
+                {asset}
+              {/if}
+            </a>
+            <button
+              class="menu_button"
+              style="width: 112px;"
+              on:click="{() => selectPage(EditItem, '항목편집')}"
+              >항목편집</button
+            >
+          </div>
+        {/each}
+      </div>
     </aside>
   </div>
   <div class="right_menu">
@@ -138,7 +143,9 @@
     </div>
 
     <div class="swiper_container">
-      {#if currentPage}
+      {#if currentView === "default"}
+        <ItemPage />
+      {:else if currentPage}
         <svelte:component this="{currentPage}" />
       {/if}
     </div>
@@ -146,129 +153,170 @@
 </main>
 
 <style>
-  /* Container and Layout Styles */
-  .container_aside {
-    min-height: 100vh;
-    background-color: #34495e;
-    padding: 20px;
-    width: 20%;
+  .right_menu {
+    flex-grow: 1;
+    margin: 10px 20px;
+    width: 80%;
   }
 
+  /* Scrollbar styling */
+  .right_menu::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .right_menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .right_menu::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 8px;
+  }
+
+  .right_menu::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Arial", sans-serif;
+  }
+
+  /* Main container for layout */
   .container {
     display: flex;
     flex-direction: row;
     width: 100%;
+    border-radius: 20px;
+    padding: 10px;
+    min-height: 100vh;
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   }
 
-  .right_menu {
-    width: 80%;
-    min-height: 500px;
+  /* Sidebar container */
+  .container_aside {
+    background-color: #f7f9fb; /* Use white background for cleanliness */
+    color: #343a40;
+    padding: 20px;
+    width: 300px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    background-color: #ecf0f1;
-    padding: 20px;
-    box-sizing: border-box;
+    border-radius: 20px;
+    top: 0;
+    bottom: 0;
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; /* Soft shadow for depth */
+    border-right: 1px solid #e0e0e0; /* Subtle border for separation */
   }
 
-  /* Sidebar Styles */
+  /* Sidebar styling */
   aside {
-    color: #ecf0f1;
     font-size: 16px;
-    padding-right: 20px;
+    width: 100%;
   }
 
-  .add_delete_container {
+  /* Project buttons */
+  .project_button {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .chasanGroup_button {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    height: 40px;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    cursor: pointer;
   }
 
-  /* Sidebar Links */
+  .project_container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f7f9fb; /* Soft background color */
+    border-radius: 8px; /* Smooth rounded corners */
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    box-shadow:
+      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal overflow */
+    height: 98vh; /* Adjust height to fit inside sidebar */
+  }
+
+  .project_button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hover effect */
+  }
+
+  .project_button img {
+    width: 30px; /* Slightly larger project icon */
+    height: auto;
+  }
+
   aside a {
-    padding: 8px 0;
-
-    font-size: 14px;
-    color: #fff;
     display: block;
-
+    color: #495057;
     font-weight: 600;
+    font-size: 14px;
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    margin-top: 5px;
   }
 
   aside a:hover,
   aside a.active {
-    background-color: #53677a;
+    text-decoration: underline; /* Add underline for active/hover */
   }
 
-  aside a i {
-    margin-right: 10px;
+  /* Add/Delete buttons */
+  .add_delete_container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: space-between;
+
+    background-color: #f7f9fb; /* Soft background color */
+    border-radius: 8px; /* Smooth rounded corners */
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    cursor: pointer;
+    box-shadow:
+      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
   }
 
-  /* Buttons */
-  .menu_button,
-  .asset_button {
-    border: none;
+  .menu_button {
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
+    padding: 6px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    color: #495057;
     text-align: center;
-    padding: 10px 15px;
-    transition:
-      background-color 0.3s ease,
-      box-shadow 0.3s ease;
-    background-color: #2c3e50;
-    color: #ecf0f1;
+    width: 110px; /* Slightly wider button */
   }
 
-  .add_button {
-    background-color: #2980b9;
-  }
-
-  .delete_button {
-    background-color: #e74c3c;
-  }
-  .add_button:hover {
-    background-color: #1f6391;
-  }
-
-  .delete_button:hover {
-    background-color: #c0392b;
-  }
   .menu_button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-decoration: underline;
   }
 
-  .asset_button {
-    background-color: #1abc9c;
-    padding: 8px 12px;
-    margin-left: 10px;
-  }
-  .asset_button:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-  }
-
+  /* Header Styles */
   /* Header Styles */
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background-color: #ffffff;
+    padding: 10px 20px;
+    background-color: #f7f9fb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
   }
 
   .header_option {
@@ -284,10 +332,10 @@
     gap: 40px;
   }
 
-  /* Form and Select Styles */
+  /* Form Select */
   .form_select {
     display: flex;
-    gap: 20px;
+    gap: 15px;
   }
 
   .select_container {
@@ -296,27 +344,25 @@
   }
 
   .select_input {
-    color: #34495e;
-    padding: 10px;
-    border: 1px solid #bdc3c7;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
-    background-color: #ecf0f1;
     transition:
       background-color 0.3s ease,
       border-color 0.3s ease;
   }
 
   .select_input:hover {
-    background-color: #e0e0e0;
-    border-color: #3498db;
+    background-color: #e9ecef;
+    border-color: #007acc;
   }
 
   .select_input:focus {
     outline: none;
-    box-shadow: 0 0 4px rgba(52, 152, 219, 0.5);
-    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
+    border-color: #007acc;
   }
 
   /* Header Buttons */
@@ -366,7 +412,7 @@
   }
 
   .second_line button {
-    background-color: #3498db;
+    background-color: #007acc;
     color: #ffffff;
     border-radius: 5px;
     height: 36px;

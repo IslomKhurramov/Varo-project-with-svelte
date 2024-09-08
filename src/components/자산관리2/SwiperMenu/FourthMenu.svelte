@@ -1,4 +1,28 @@
 <script>
+  import { onMount } from "svelte";
+  import { getAllPlanInfo } from "../../../services/planInfoService";
+
+  let planData = {};
+  let planArray = []; // Declare planArray here so it can be used in the template
+  let loading = true;
+  let error = null;
+
+  onMount(async () => {
+    try {
+      console.log("DATA FUNCTION");
+      planData = await getAllPlanInfo();
+      console.log("Plan Data:", planData);
+      planArray = Object.values(planData); // Convert object to array
+    } catch (err) {
+      error = err.message;
+      console.log("ERR:::", error);
+    } finally {
+      loading = false;
+      console.log("LOADING", loading);
+    }
+  });
+
+  /*****************************/
   let dataTable1 = [];
   for (let i = 1; i <= 100; i++) {
     dataTable1.push({
@@ -47,14 +71,14 @@
         <th>프로젝트보안수준</th>
         <th>점검대상 / 자산보안수준</th>
       </tr>
-      {#each dataTable1 as data}
+      {#each planArray as data}
         <tr>
-          <td>{data.number}</td>
-          <td>{data.projectNO}</td>
-          <td>{data.assetName}</td>
-          <td>{data.cassification}</td>
-          <td>{data.logContent}</td>
-          <td>{data.performer}</td>
+          <td>{data?.ccp_index}</td>
+          <td>{data?.ccp_title}</td>
+          <td>{data?.ccp_ruleset__ccg_group}</td>
+          <td>{data?.ccp_ruleset__ccg_group}</td>
+          <td>{data?.ccp_security_point}</td>
+          <td>{data?.asset}</td>
         </tr>
       {/each}
     </table>
@@ -294,7 +318,7 @@
   }
 
   th {
-    background-color: #0068d7;
+    background-color: #005fa3;
     color: #ffffff;
     font-weight: bold;
     text-transform: uppercase;

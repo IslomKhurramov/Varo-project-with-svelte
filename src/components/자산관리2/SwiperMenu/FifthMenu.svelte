@@ -219,7 +219,7 @@
   }
 
   th {
-    background-color: #0068d7; /* Header background color */
+    background-color: #005fa3; /* Header background color */
     color: #ffffff; /* Header text color */
     position: sticky;
     top: 0;

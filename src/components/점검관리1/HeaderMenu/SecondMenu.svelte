@@ -261,7 +261,7 @@
   }
 
   th {
-    background-color: #0068d7;
+    background-color: #005fa3;
     color: #ffffff;
     font-weight: bold;
     text-transform: uppercase;

@@ -306,7 +306,7 @@
   }
 
   th {
-    background-color: #f1f1f1;
+    background-color: #005fa3;
     color: #333;
     font-weight: bold;
     width: 120px;

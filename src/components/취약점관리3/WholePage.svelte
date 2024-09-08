@@ -152,14 +152,13 @@
     justify-content: center;
     align-items: center;
     background-color: #f0f0f0;
-    padding: 20px;
     width: 100%;
   }
 
   .container {
-    width: 80%;
+    width: 100%;
     padding: 30px;
-    background-color: #ffffff;
+    background-color: #f7f9fb;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
@@ -311,7 +310,7 @@
   }
 
   th {
-    background-color: #0068d7; /* Header background color */
+    background-color: #005fa3; /* Header background color */
     color: #ffffff; /* Header text color */
     position: sticky;
     top: 0;

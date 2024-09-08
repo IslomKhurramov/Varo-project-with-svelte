@@ -160,7 +160,7 @@
   }
 
   .select_button {
-    background-color: #0056b3;
+    background-color: #005fa3;
     color: #fff;
     padding: 12px 24px;
     border: none;
@@ -226,7 +226,7 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
-    background-color: #0068d7;
+    background-color: #005fa3;
     border-radius: 10px;
     color: #fff;
     padding: 15px;

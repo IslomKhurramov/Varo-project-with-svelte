@@ -1,7 +1,14 @@
 <script>
   import { Link } from "svelte-routing";
+  // import { authToken } from "../stores/authToken";
+  import { navigate } from "svelte-routing";
 
   export let activeMenu = "";
+
+  // const handleLogout = () => {
+  //   authToken.set(null); // Clear the token, effectively logging the user out
+  //   navigate("/login"); // Redirect to login
+  // };
 </script>
 
 <main>
@@ -56,7 +63,9 @@
     </div>
     <div class="right_side">
       <img src="./images/user.png" alt="user" class="user_image" />
-      <p>Logged in user</p>
+      <Link to="/login" on:click="{() => (activeMenu = 'login')}">
+        <p>Login</p>
+      </Link>
     </div>
   </div>
 </main>

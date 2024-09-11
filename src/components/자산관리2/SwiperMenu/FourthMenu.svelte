@@ -1,6 +1,6 @@
 <script>
+  import { getAllPlanInfo } from "../../../services/page1/planInfoService";
   import { onMount } from "svelte";
-  import { getAllPlanInfo } from "../../../services/planInfoService";
 
   let planData = {};
   let planArray = []; // Declare planArray here so it can be used in the template
@@ -21,7 +21,6 @@
       console.log("LOADING", loading);
     }
   });
-
   /*****************************/
   let dataTable1 = [];
   for (let i = 1; i <= 100; i++) {
@@ -71,6 +70,7 @@
         <th>프로젝트보안수준</th>
         <th>점검대상 / 자산보안수준</th>
       </tr>
+
       {#each planArray as data}
         <tr>
           <td>{data?.ccp_index}</td>

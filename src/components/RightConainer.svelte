@@ -1,136 +1,203 @@
 <script>
-  let projects = [
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-    {
-      projectTitle: "varo",
-      inspectionTarget: "자산그룹1",
-      constructor: "홍길동",
-      progress: "점검진행진행중",
-      inspectionDate: "date",
-      inspectionMethod: "정기점검",
-    },
-  ];
+  import { getAllPlanInfo } from "../services/page1/planInfoService";
+  import { onMount } from "svelte";
+  import { utils, writeFile } from "xlsx";
+
+  let projectData = {};
+  let projectArray = [];
+  let filteredProjects = [];
+  let loading = true;
+  let error = null;
+
+  // Filter state for each select input
+  let selectedStatus = "";
+  let selectedScheduleRange = ""; // Schedule range
+  let selectedOS = ""; // Operating system (Windows, Unix, etc.)
+  let selectedAgentStatus = "";
+
+  onMount(async () => {
+    try {
+      projectData = await getAllPlanInfo();
+      projectArray = Object.values(projectData); // Convert object to array
+      filteredProjects = projectArray;
+      // Initialize filtered projects with all projects
+    } catch (err) {
+      error = err.message;
+    } finally {
+      loading = false;
+    }
+  });
+
+  // Function to filter based on the selected criteria
+  function filterProjects() {
+    filteredProjects = projectArray.filter((project) => {
+      return (
+        (selectedStatus === "" ||
+          project.ccp_b_finalized === (selectedStatus === "approved")) &&
+        (selectedScheduleRange === "" ||
+          doesProjectMatchScheduleRange(
+            project.ccp_cdate,
+            selectedScheduleRange
+          )) &&
+        (selectedOS === "" || doesProjectMatchOS(project, selectedOS)) &&
+        (selectedAgentStatus === "" ||
+          project.uploaded_result === selectedAgentStatus)
+      );
+    });
+  }
+
+  // Function to check if the project matches the selected OS (asset type)
+  function doesProjectMatchOS(project, os) {
+    if (os === "Windows") {
+      return project.asset?.WINDOWS; // Match Windows
+    } else if (os === "Unix") {
+      return project.asset?.UNIX; // Match Unix
+    } else if (os === "Security") {
+      return project.asset?.SECURITY; // Match Security Assets
+    }
+    return false;
+  }
+
+  // Function to check if the project date matches the selected schedule range
+  function doesProjectMatchScheduleRange(projectDate, range) {
+    const projectDateObj = new Date(projectDate);
+    const now = new Date();
+
+    if (range === "next7days") {
+      const next7Days = new Date();
+      next7Days.setDate(now.getDate() + 7);
+      return projectDateObj >= now && projectDateObj <= next7Days;
+    } else if (range === "past90days") {
+      const past90Days = new Date();
+      past90Days.setDate(now.getDate() - 90);
+      return projectDateObj >= past90Days && projectDateObj <= now;
+    }
+    return true; // Default, show all if no range selected
+  }
+
+  // Function to download Excel
+  function downloadExcel() {
+    const wb = utils.book_new();
+    const ws = utils.json_to_sheet(projectArray);
+    utils.book_append_sheet(wb, ws, "Projects");
+    writeFile(wb, "projects.xlsx");
+  }
+
+  // Function to download Program
+  function downloadProgram() {
+    const fileUrl = "/path/to/program.zip"; // Update this with the actual path to the file
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = "program.zip"; // Specify the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up after the click event
+  }
 </script>
 
 <header>
   <form action="/action_page.php" class="form_select">
-    <div class="select_container">
-      <select name="approval_status" id="approval_status" class="select_input">
-        <option value="pending">프로젝트명</option>
-        <option value="approved">운영체제</option>
-        <option value="rejected">에이전트여부</option>
-        <option value="rejected">등록승인여부</option>
-      </select>
-    </div>
-    <div class="select_container">
-      <select name="asset_group" id="asset_group" class="select_input">
-        <option value="network">일정범위</option>
-        <option value="endpoint">Endpoint Security</option>
-        <option value="cloud">Cloud Security</option>
-      </select>
-    </div>
+    <!-- Select for filtering by project status -->
     <div class="select_container">
       <select
-        name="operating_system"
-        id="operating_system"
+        bind:value="{selectedStatus}"
+        on:change="{filterProjects}"
         class="select_input"
       >
-        <option value="windows">생성자</option>
-        <option value="linux">Linux</option>
-        <option value="macos">macOS</option>
+        <option value="">프로젝트명</option>
+        <option value="approved">완료된 프로젝트</option>
+        <option value="pending">진행 중인 프로젝트</option>
       </select>
     </div>
+
+    <!-- Select for filtering by schedule range -->
     <div class="select_container">
-      <select name="agent_status" id="agent_status" class="select_input">
-        <option value="active">결과등록상태</option>
-        <option value="inactive">Inactive</option>
+      <select
+        bind:value="{selectedScheduleRange}"
+        on:change="{filterProjects}"
+        class="select_input"
+      >
+        <option value="">일정범위</option>
+        <option value="next7days">Next 7 Days</option>
+        <option value="past90days">Past 90 Days</option>
+      </select>
+    </div>
+
+    <!-- Select for filtering by operating system (derived from asset type) -->
+    <div class="select_container">
+      <select
+        bind:value="{selectedOS}"
+        on:change="{filterProjects}"
+        class="select_input"
+      >
+        <option value="">운영체제</option>
+        <option value="Windows">Windows</option>
+        <option value="Unix">Unix</option>
+        <option value="Security">Security</option>
+      </select>
+    </div>
+
+    <!-- Select for filtering by agent status -->
+    <div class="select_container">
+      <select
+        bind:value="{selectedAgentStatus}"
+        on:change="{filterProjects}"
+        class="select_input"
+      >
+        <option value="">결과등록상태</option>
+        <option value="12">Registered</option>
         <option value="pending">Pending</option>
       </select>
     </div>
   </form>
 
   <div class="headerButton">
-    <button> 프로그램다운로드 </button>
-    <button> 엑셀다운로드 </button>
+    <button on:click="{downloadProgram}"> 프로그램다운로드 </button>
+    <button on:click="{downloadExcel}"> 엑셀다운로드 </button>
   </div>
 </header>
 
 <main>
-  <div class="projectContainer">
-    {#each projects as project, index}
-      <div class="project">
-        <div class="projectInfo">
-          <div class="firstCol">
-            <p>보안점수</p>
-            <div class="percentage"><p class="box_number">80%</p></div>
+  {#if loading}
+    <p>Loading...</p>
+  {:else if error}
+    <p>Error: {error}</p>
+  {:else if filteredProjects.length > 0}
+    <div class="projectContainer">
+      {#each filteredProjects as project, index}
+        <div class="project">
+          <div class="projectInfo">
+            <div class="firstCol">
+              <p>보안점수</p>
+              <div class="percentage">
+                <p class="box_number">{project.ccp_security_point}%</p>
+              </div>
+            </div>
+            <div class="secondCol">
+              <p>제목: {project.ccp_title}</p>
+              <p>점검대상: {project.asset?.SECURITY ?? "N/A"}</p>
+              <p>생성자: {project.user_index__user_name}</p>
+            </div>
+            <div class="thirdCol">
+              <p>진행상태: {project.ccp_b_finalized ? "완료됨" : "진행 중"}</p>
+              <p>
+                점검일시: {new Date(project.ccp_cdate).toLocaleDateString()}
+              </p>
+              <p>점검방법: {project.ccp_ruleset__ccg_group}</p>
+            </div>
           </div>
-          <div class="secondCol">
-            <p>제목: {project.projectTitle}</p>
-            <p>점검대상: {project.inspectionTarget}</p>
-            <p>생성자: {project.constructor}</p>
-          </div>
-          <div class="thirdCol">
-            <p>진행상태: {project.progress}</p>
-            <p>점검일시: {project.date}</p>
-            <p>점검방법: {project.inspectionMethod}</p>
+          <div class="buttons">
+            <button>결과등록</button>
+            <button>결과조회</button>
+            <button>보고서생성</button>
+            <button>재점검실행</button>
           </div>
         </div>
-        <div class="buttons">
-          <button>결과등록</button>
-          <button>결과조회</button>
-          <button>보고서생성</button>
-          <button>재점검실행</button>
-        </div>
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </div>
+  {:else}
+    <p>No projects available based on the selected criteria.</p>
+  {/if}
 </main>
 
 <style>

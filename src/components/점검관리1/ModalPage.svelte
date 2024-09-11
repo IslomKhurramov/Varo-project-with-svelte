@@ -152,7 +152,7 @@
   th {
     background-color: #005fa3;
     font-weight: bold;
-    color: #333;
+    color: #ffffff;
     width: 160px;
   }
 

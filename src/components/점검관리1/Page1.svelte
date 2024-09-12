@@ -2,32 +2,49 @@
   import RightContainerMenu from "./RightContainerMenu.svelte";
   import AddPorject from "../AddPorject.svelte";
   import RightConainer from "../RightConainer.svelte";
+  import { onMount } from "svelte";
+  import { getAllPlanInfo } from "../../services/page1/planInfoService";
 
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
-  let projects = [];
+  let projectData = {};
+  let projectArray = [];
+  let loading = true;
+  let error = null;
+  let selectedProjectIndex = null;
 
-  for (let i = 1; i <= 15; i++) {
-    projects.push({
-      name: `프로젝트 ${i}`,
-    });
-  }
+  onMount(async () => {
+    try {
+      projectData = await getAllPlanInfo();
+      projectArray = Object.values(projectData); // Convert object to array
 
-  const selectPage = (page, menu) => {
+      // Initialize filtered projects with all projects
+    } catch (err) {
+      error = err.message;
+    } finally {
+      loading = false;
+    }
+  });
+
+  /**********************************/
+
+  const selectPage = (page, project) => {
     currentPage = page;
-    activeMenu = menu;
-    currentView = "pageView"; // Switch the view to indicate a specific page is selected
+    activeMenu = project;
+    currentView = "pageView";
+    selectedProjectIndex = project.ccp_index;
+    console.log("INDEX::", selectedProjectIndex);
   };
 
   const addProject = () => {
-    const newProjectNumber = projects.length + 1;
-    projects = [...projects, `프로젝트 ${newProjectNumber}`];
+    const newProjectNumber = projectArray.length + 1;
+    projectArray = [...projectArray, `프로젝트 ${newProjectNumber}`];
   };
 
   const deleteProject = () => {
-    if (projects.length > 0) {
-      projects = projects.slice(0, -1); // Remove the last project
+    if (projectArray.length > 0) {
+      projectArray = projectArray.slice(0, -1); // Remove the last project
     }
   };
 </script>
@@ -45,20 +62,26 @@
       </div>
 
       <div class="project_container">
-        {#each projects as asset, index}
-          <div class="project_button">
-            <img src="./images/projectGray.png" alt="project" />
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a
-              href="javascript:void(0)"
-              on:click="{() => selectPage(RightContainerMenu, asset)}"
-              class="{activeMenu === asset ? 'active' : ''}"
-            >
-              <i class="fa fa-folder-open" aria-hidden="true"></i>
-              {asset.name}
-            </a>
-          </div>
-        {/each}
+        {#if loading}
+          <p>Loading...</p>
+        {:else if error}
+          <p>Error: {error}</p>
+        {:else if projectArray}
+          {#each projectArray as asset, index}
+            <div class="project_button">
+              <img src="./images/projectGray.png" alt="project" />
+              <!-- svelte-ignore a11y-invalid-attribute -->
+              <a
+                href="javascript:void(0)"
+                on:click="{() => selectPage(RightContainerMenu, asset)}"
+                class="{activeMenu === asset ? 'active' : ''}"
+              >
+                <i class="fa fa-folder-open" aria-hidden="true"></i>
+                {asset.ccp_title}
+              </a>
+            </div>
+          {/each}
+        {/if}
       </div>
     </aside>
   </div>
@@ -66,7 +89,10 @@
     {#if currentView === "default"}
       <RightConainer />
     {:else if currentPage}
-      <svelte:component this="{currentPage}" />
+      <svelte:component
+        this="{currentPage}"
+        projectIndex="{selectedProjectIndex}"
+      />
     {/if}
   </div>
 </div>

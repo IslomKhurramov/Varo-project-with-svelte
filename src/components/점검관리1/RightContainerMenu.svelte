@@ -6,6 +6,7 @@
   import FifthMenu from "./HeaderMenu/FifthMenu.svelte";
   import ProjectDetail from "./ProjectDetail.svelte";
 
+  export let projectIndex;
   let currentPage = null;
   let activeMenu = null;
 
@@ -62,7 +63,7 @@
     {#if currentPage}
       <svelte:component this="{currentPage}" />
     {:else}
-      <ProjectDetail />
+      <ProjectDetail {projectIndex} />
     {/if}
   </div>
 </div>

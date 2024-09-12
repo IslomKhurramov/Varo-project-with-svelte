@@ -1,4 +1,27 @@
 <script>
+  import { getPlanDetailInformation } from "../../services/page1/projectDetail";
+  export let projectIndex;
+  import { onMount } from "svelte";
+
+  let projectDetails = {};
+  let loading = true;
+  let error = null;
+
+  onMount(async () => {
+    try {
+      console.log("Fetching details for project index:", projectIndex);
+
+      // Fetch the project details
+      projectDetails = await getPlanDetailInformation(projectIndex);
+      console.log("Project Details Fetched:", projectDetails);
+    } catch (err) {
+      error = err.message;
+      console.error("Error fetching project details:", err);
+    } finally {
+      loading = false;
+    }
+  });
+
   // Mock Data for demonstration purposes
   let projectTitle = "프로젝트1 어쩌고 저쩌고...";
   let targetGroups = "자산그룹1 (총 28대)";

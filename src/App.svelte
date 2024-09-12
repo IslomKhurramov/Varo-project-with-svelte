@@ -26,7 +26,6 @@
 </script>
 
 <main>
-  =======
   <Router>
     {#if $userData.isLoggedIn}
       <Header class="header" />

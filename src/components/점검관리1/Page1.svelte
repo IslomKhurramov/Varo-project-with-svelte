@@ -2,9 +2,9 @@
   import RightContainerMenu from "./RightContainerMenu.svelte";
   import AddPorject from "../AddPorject.svelte";
   import RightConainer from "../RightConainer.svelte";
-
+  import { onMount } from "svelte";
   import { userData } from "../../stores/user.store";
-
+  import { getAllPlanInfo } from "../../services/page1/planInfoService";
   console.log("PAGE 1 ");
   console.log("USER DATA => ", $userData);
 

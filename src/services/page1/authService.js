@@ -26,25 +26,27 @@ export const login = async (email, password) => {
 
 export const register = async (name, email, password, department) => {
   try {
+    const formData = new FormData();
+    formData.append("user_email", email);
+    formData.append("user_pw", password);
+    formData.append("user_name", name);
+    formData.append("user_depart", department);
+
     const response = await axios.post(
       `${serverApi}/setRegisterNewMember/`,
-      name,
-      email,
-      password,
-      department,
+      formData,
       { withCredentials: true }
     );
     const data = response.data;
 
-    if (response.status === 200) {
+    console.log("login: response =>", response);
+
+    if (data.RESULT !== "ERROR") {
       return { success: true };
     } else {
-      return { success: false, message: data.message }; // Error message from server
+      throw new Error(data.CODE);
     }
   } catch (error) {
-    return {
-      success: false,
-      message: error.response?.data?.message || error.message,
-    };
+    throw error;
   }
 };

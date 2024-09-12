@@ -13,34 +13,47 @@
   let username = "";
   let emailSignUp = "";
   let passwordSignUp = "";
-  let confirmPasswordSignUp = ""; // Optional: To confirm password match
+  let confirmPasswordSignUp = ""; 
+  let department = "";
   let errorMessageSignUp = "";
   let successMessageSignUp = "";
-  let department = "";
+  
 
   //FUNCTION SighUp
 
   const handleRegister = async () => {
-    if (passwordSignUp !== confirmPasswordSignUp) {
-      errorMessageSignUp = "Passwords don't match"; // Ensure passwords match
-      return;
-    }
+    try {
 
-    const response = await register(
-      username,
-      emailSignUp,
-      passwordSignUp,
-      department
-    );
-    console.log("REGISTER:", response);
-    if (response.success) {
-      successMessageSignUp = "Registration successful! Redirecting to login...";
-      errorMessageSignUp = "";
+      console.log("username:", username)
+      console.log("emailSignUp:", emailSignUp)
+      console.log("passwordSignUp:", passwordSignUp)
+      console.log("confirmPasswordSignUp:", confirmPasswordSignUp)
+      console.log("department:", department)
 
-      // Redirect to login page after 2 seconds
-      setTimeout(() => navigate("/login"), 2000);
-    } else {
-      errorMessageSignUp = response.message;
+      // if (!username || !emailSignUp || !passwordSignUp || !confirmPasswordSignUp || department) {
+      //   throw new Error('Please fulfill all inputs!')
+      // }
+
+        if (passwordSignUp !== confirmPasswordSignUp) {
+          throw new Error("Passwords don't match")
+        }
+
+        const response = await register(
+          username,
+          emailSignUp,
+          passwordSignUp,
+          department
+        );
+        console.log("REGISTER:", response);
+        
+        successMessageSignUp = "Registration successful! Redirecting to login...";
+        errorMessageSignUp = "";
+
+        // Redirect to login page after 2 seconds
+        setTimeout(() => navigate("/login"), 2000);
+       
+    } catch (err) {
+      errorMessageSignUp = err?.message;
       successMessageSignUp = "";
     }
   };

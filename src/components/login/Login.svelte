@@ -1,7 +1,7 @@
 <script>
   import { login, register } from "../../services/page1/authService";
-
   import { navigate } from "svelte-routing";
+  import { userData } from '../../stores/user.store';
 
   //for LOGIN
   let containerActive = false;
@@ -47,11 +47,18 @@
 
   // Handle login using session-based authentication
   const handleLogin = async () => {
-    const response = await login(email, password);
-    if (response.success) {
-      navigate("/"); // Redirect to the protected page
-    } else {
-      errorMessage = response.message || "Login failed";
+    try {
+      await login(email, password);
+
+      userData.set({
+        isLoggedIn: true,
+        userInfo: "test",
+      });
+
+      navigate("/"); 
+   
+    } catch(err) {
+      errorMessage = err?.message
     }
   };
 

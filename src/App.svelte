@@ -8,30 +8,28 @@
   import Page4 from "./components/점검항목관리4/Page4.svelte";
   import Page6 from "./components/환경설정6/Page6.svelte";
   import Page5 from "./components/대시보드5/Page5.svelte";
-  import Footer from "./Footer.svelte";
   import Login from "./components/login/Login.svelte";
-  import { checkSession } from "./stores/authToken";
+  import { userData } from "./stores/user.store";
 
-  let isAuthenticated = false;
-  let user = null; // Store the user info
+  let userInfo;
 
-  // Check session on component mount
-  onMount(async () => {
-    const session = await checkSession();
-    isAuthenticated = session.isAuthenticated;
-    user = session.user; // Store user info if authenticated
+  $: $userData, userInfo = $userData.userInfo;
 
-    if (!isAuthenticated) {
-      navigate("/login"); // Redirect to login if not authenticated
+  onMount(() => {
+
+    if ($userData.isLoggedIn) {
+      console.log('User is logged in:', userInfo);
     } else {
-      console.log("Authenticated user info:", user); // Log user info to the console
+      console.log('User is not logged in.');
+      navigate("/login");
     }
   });
+
 </script>
 
 <main>
   <Router>
-    {#if isAuthenticated}
+    {#if $userData.isLoggedIn}
       <Header class="header" />
       <Route path="/" component="{Page1}" />
       <Route path="/page1" component="{Page1}" />

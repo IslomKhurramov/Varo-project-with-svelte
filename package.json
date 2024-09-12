@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --no-clear",
-    "serve": "node server.js",
-    "serve-dev": "nodemon server.js"
+    "serve-dev": "nodemon server.js",
+    "dev": "rollup -c -w --single",
+    "start": "sirv public --no-clear --single",
+    "serve": "sirv public --no-clear --single"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",

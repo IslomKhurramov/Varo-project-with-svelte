@@ -2,8 +2,11 @@
   import RightContainerMenu from "./RightContainerMenu.svelte";
   import AddPorject from "../AddPorject.svelte";
   import RightConainer from "../RightConainer.svelte";
-  import { onMount } from "svelte";
-  import { getAllPlanInfo } from "../../services/page1/planInfoService";
+
+  import { userData } from "../../stores/user.store";
+
+  console.log("PAGE 1 ");
+  console.log("USER DATA => ", $userData);
 
   let currentView = "default";
   let currentPage = null;

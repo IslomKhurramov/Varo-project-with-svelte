@@ -65,7 +65,7 @@
 
       userData.set({
         isLoggedIn: true,
-        userInfo: "test",
+        userInfo: "data",
       });
 
       navigate("/"); 

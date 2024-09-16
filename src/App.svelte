@@ -9,15 +9,18 @@
   import Page6 from "./components/환경설정6/Page6.svelte";
   import Page5 from "./components/대시보드5/Page5.svelte";
   import Login from "./components/login/Login.svelte";
-  import { userData } from "./stores/user.store";
+  import { checkAuth, userData } from "./stores/user.store";
+  import Cookies from "js-cookie";
 
-  let userInfo;
 
-  $: $userData, (userInfo = $userData.userInfo);
+  console.log("$userData:", $userData)
 
   onMount(() => {
+    checkAuth()
+
     if ($userData.isLoggedIn) {
-      console.log("User is logged in:", userInfo);
+      console.log("User is logged in:", $userData);
+      navigate("/"); 
     } else {
       console.log("User is not logged in.");
       navigate("/login");

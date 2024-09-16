@@ -3,13 +3,16 @@ import { serverApi } from "../../lib/config";
 
 export const login = async (email, password) => {
   try {
-    const formData = new FormData();
-    formData.append("user_email", email);
-    formData.append("user_pw", password);
-
-    const response = await axios.post(`${serverApi}/api/setLogin/`, formData, {
-      withCredentials: true,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/setLogin/`,
+      {
+        user_email: email,
+        user_pw: password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     const data = response.data;
 
     console.log("login: response =>", response);
@@ -26,15 +29,15 @@ export const login = async (email, password) => {
 
 export const register = async (name, email, password, department) => {
   try {
-    const formData = new FormData();
-    formData.append("user_email", email);
-    formData.append("user_pw", password);
-    formData.append("user_name", name);
-    formData.append("user_depart", department);
-
     const response = await axios.post(
-      `${serverApi}/setRegisterNewMember/`,
-      formData,
+      `${serverApi}/api/setRegisterNewMember/`,
+      {
+        user_email: email,
+        user_pw: password,
+        user_name: name,
+        user_depart: department,
+        user_rolltype: 1,
+      },
       { withCredentials: true }
     );
     const data = response.data;

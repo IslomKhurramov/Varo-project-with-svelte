@@ -37,39 +37,6 @@
   // Trigger when category changes
   $: filterData();
 
-  /***Function to filter based on selected criteria*/
-  // function filterProjects() {
-  //   filteredProjects = allChecklistArray.filter((project) => {
-  //     return (
-  //       selectedSystem === "점검대상" ||
-  //       doesProjectMatchOS(project, selectedSystem)
-  //     );
-  //   });
-  // }
-
-  // Function to check if the project date matches the selected schedule range
-
-  // function doesProjectMatchOS(project, os) {
-  //   if (os === "Windows") {
-  //     return project.asset?.WINDOWS; // Match Windows
-  //   } else if (os === "WINDOWS") {
-  //     return project.asset?.WINDOWS; // Match Unix
-  //   } else if (os === "NETWORK") {
-  //     return project.asset?.NETWORK; // Match Security Assets
-  //   } else if (os === "DBMS") {
-  //     return project.asset?.DBMS; // Match Unix
-  //   } else if (os === "WEB") {
-  //     return project.asset?.WAS; // Match Security Assets
-  //   } else if (os === "WAS") {
-  //     return project.asset?.UNIX; // Match Unix
-  //   } else if (os === "CLOUD") {
-  //     return project.asset?.CLOUD; // Match Security Assets
-  //   } else if (os === "SECURITY") {
-  //     return project.asset?.SECURITY; // Match Security Assets
-  //   }
-
-  //   return false;
-  // }
   /**********************************************/
   let currentView = "default";
   let currentPage = null;
@@ -125,41 +92,45 @@
           <!-- Render the allChecklistArray -->
           {#each allChecklistArray as checkList, index}
             <div class="project_button">
-              <img src="./images/file.png" alt="project" />
-              <!-- svelte-ignore a11y-invalid-attribute -->
-              <a
-                href="#"
-                on:click="{() => selectPage(ItemPage, checkList)}"
-                class="{activeMenu === checkList ? 'active' : ''}"
-              >
-                <i class="fa fa-user-o" aria-hidden="true"></i>
-                {#if editingIndex === index}
-                  <input
-                    type="text"
-                    value="{checkList.ccg_group}"
-                    on:blur="{(event) => finishEditing(index, event)}"
-                    on:keydown="{(event) => handleKeydown(event, index)}"
-                  />
-                {:else}
-                  <!-- Display ccg_group and other relevant info -->
-                  {checkList.ccg_group ? checkList.ccg_group : "No group info"}
-                  <p>{checkList.ccg_checklist_year}</p>
-                  <!-- Example of another property -->
-                {/if}
-              </a>
+              <div class="icon_title">
+                <img src="./images/file.png" alt="project" />
+                <!-- svelte-ignore a11y-invalid-attribute -->
+                <a
+                  href="#"
+                  on:click="{() => selectPage(ItemPage, checkList)}"
+                  class="{activeMenu === checkList ? 'active' : ''}"
+                >
+                  <i class="fa fa-user-o" aria-hidden="true"></i>
+                  {#if editingIndex === index}
+                    <input
+                      type="text"
+                      value="{checkList.ccg_group}"
+                      on:blur="{(event) => finishEditing(index, event)}"
+                      on:keydown="{(event) => handleKeydown(event, index)}"
+                    />
+                  {:else}
+                    <!-- Display ccg_group and other relevant info -->
+                    {checkList.ccg_group
+                      ? checkList.ccg_group
+                      : "No group info"}
+                    <p>{checkList.ccg_checklist_year}</p>
+                    <!-- Example of another property -->
+                  {/if}
+                </a>
+              </div>
               <div style="display: flex; flex-direction:column">
                 <button
-                  class="menu_button1"
+                  class="menu_button1 edit"
                   on:click="{() => selectPage(EditItem, '항목편집')}"
                   >편집</button
                 >
                 <button
-                  class="menu_button1"
+                  class="menu_button1 copy"
                   on:click="{() => selectPage(EditItem, '항목편집')}"
                   >복사</button
                 >
                 <button
-                  class="menu_button1"
+                  class="menu_button1 delete"
                   on:click="{() => selectPage(EditItem, '항목편집')}"
                   >삭제</button
                 >
@@ -311,17 +282,24 @@
     font-size: 16px;
     width: 100%;
   }
-
+  .icon_title {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
   /* Project buttons */
   .project_button {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     height: auto;
     transition:
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 5px;
+    border-radius: 15px;
   }
 
   .project_container {
@@ -415,6 +393,42 @@
       rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
   }
 
+  /***edit delete copy buttons*/
+  /* Edit Button - Light Blue */
+  .menu_button1.edit {
+    background-color: #3498db;
+    color: #ffffff;
+  }
+
+  .menu_button1.edit:hover {
+    background-color: #2980b9;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Delete Button - Red */
+  .menu_button1.delete {
+    background-color: #e74c3c;
+    color: #ffffff;
+  }
+
+  .menu_button1.delete:hover {
+    background-color: #c0392b;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Copy Button - Green */
+  .menu_button1.copy {
+    background-color: #2ecc71;
+    color: #ffffff;
+  }
+
+  .menu_button1.copy:hover {
+    background-color: #27ae60;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
   /* Header Styles */
   /* Header Styles */
   .header {

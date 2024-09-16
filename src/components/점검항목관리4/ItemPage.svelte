@@ -4,8 +4,10 @@
   export let allChecklistArray;
   export let filteredData = [];
   export let selectedCategory = "UNIX";
+
   let showModal = false;
   let formattedDate = "";
+  let selectedItem = null;
 
   // Convert to a more human-readable format
   function formatDate(dateString) {
@@ -21,23 +23,6 @@
   }
 
   /***************************/
-
-  let tableData = [];
-  for (let i = 1; i <= 15; i++) {
-    tableData.push({
-      number: i.toString(),
-      name: "UNIX",
-      second: "계정관리",
-      third: "U-01",
-      fourth: "root 계정 원격접속 제한",
-      fifth: "상",
-      checklist: {
-        vulnerability:
-          "기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은 경우",
-        good: "기본 패스워드를 변경한 경우",
-      },
-    });
-  }
 </script>
 
 <main>
@@ -83,7 +68,12 @@
       <tbody>
         {#if filteredData.length > 0}
           {#each filteredData as item, index}
-            <tr on:click="{() => (showModal = true)}">
+            <tr
+              on:click="{() => {
+                selectedItem = item;
+                showModal = true;
+              }}"
+            >
               <td>{index + 1}</td>
               <td>{selectedCategory}</td>
               <td>{item[3]}</td>
@@ -101,7 +91,7 @@
   </div>
 
   <Modal bind:showModal>
-    <ModalEditItem />
+    <ModalEditItem {selectedItem} {selectedCategory} />
   </Modal>
 </main>
 

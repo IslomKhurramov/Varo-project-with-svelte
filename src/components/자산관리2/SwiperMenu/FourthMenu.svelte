@@ -1,5 +1,5 @@
 <script>
-  import { getAllPlanInfo } from "../../../services/page1/planInfoService";
+  import { getAllPlanLists } from "../../../services/page1/planInfoService";
   import { onMount } from "svelte";
 
   let planData = {};
@@ -10,7 +10,7 @@
   onMount(async () => {
     try {
       console.log("DATA FUNCTION");
-      planData = await getAllPlanInfo();
+      planData = await getAllPlanLists();
       console.log("Plan Data:", planData);
       planArray = Object.values(planData); // Convert object to array
     } catch (err) {

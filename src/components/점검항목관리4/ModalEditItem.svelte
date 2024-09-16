@@ -1,12 +1,8 @@
 <script>
-  let hostData = [
-    {
-      name: "A16()",
-      ipadd: "192.168.01.1",
-      time: "2024.07.07 1:31 오후",
-    },
-  ];
+  export let selectedItem;
+  export let selectedCategory;
 
+  $: selectedItem && console.log("DATAMODAL", selectedItem);
   let projectsData = [
     {
       checklist: "[ U -53 ] 사용자 shell 점검",
@@ -29,83 +25,69 @@
 </script>
 
 <div class="modal">
-  <div class="first_header">
-    <p>[Hostname] : <strong>{hostData[0].name}</strong></p>
-    <p>[IpAddress] : <strong>{hostData[0].ipadd}</strong></p>
-    <p>[점검일시] : <strong>{hostData[0].time}</strong></p>
-  </div>
-  <button class="edit-button">결과변경하기</button>
   <table>
-    <tr>
-      <th>점검항목</th>
-      <td>{projectsData[0].checklist}</td>
-    </tr>
-    <tr>
-      <th>항목그룹</th>
-      <td>{projectsData[0].itemGroup}</td>
-    </tr>
-    <tr>
-      <th>점검기준</th>
-      <td>{projectsData[0].inspectionCriteria}</td>
-    </tr>
-    <tr>
-      <th>위험도</th>
-      <td class="lineCol">
-        <div>양호 : <span>{projectsData[0].riskLevel.good}</span></div>
-        <div>
-          취약 : <span>{projectsData[0].riskLevel.vulnerability}</span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th>점검결과수정</th>
-      <td class="line5">
-        <div class="line5">
-          <p>점검결과:</p>
-          <select>
-            <option value="양호">양호</option>
-            <option value="취약">취약</option>
-          </select>
-        </div>
-        <div class="line5">
-          <p>점검결과:</p>
-          <select>
-            <option value="양호">양호</option>
-            <option value="취약">취약</option>
-          </select>
-        </div>
-        <p class="status">(점검현황/점검결과 적용됨)</p>
-      </td>
-    </tr>
-    <tr>
-      <th>정검현황</th>
-      <td>{projectsData[0].evidenceImage}</td>
-    </tr>
-    <tr>
-      <th>증적이미지</th>
-      <td class="line7">
-        <div>[파일변경]:</div>
-        <input type="file" class="file-input" />
-      </td>
-    </tr>
-    <tr>
-      <th>개선방법</th>
-      <td>{projectsData[0].improve}</td>
-    </tr>
-    <tr>
-      <th>개선예시</th>
-      <td>{projectsData[0].inprovement}</td>
-    </tr>
+    {#if selectedItem}
+      <tr>
+        <th>점검대상</th>
+        <td>{selectedCategory}</td>
+      </tr>
+      <tr>
+        <th>항목그룹</th>
+        <td>{selectedItem[3]}</td>
+      </tr>
+      <tr>
+        <th>정검목적</th>
+        <td>{selectedItem[9]}</td>
+      </tr>
+      <tr>
+        <th>보안위협</th>
+        <td>{selectedItem[10]}</td>
+      </tr>
+      <tr>
+        <th>점검내용</th>
+        <td>{selectedItem[11]}</td>
+      </tr>
+      <tr>
+        <th>대상시스템</th>
+        <td>{selectedItem[7]}</td>
+      </tr>
+      <tr>
+        <th>식별코드</th>
+        <td>{selectedItem[5]}</td>
+      </tr>
+      <tr>
+        <th>점검항목</th>
+        <td>{selectedItem[4]}</td>
+      </tr>
+      <tr>
+        <th>위험도</th>
+        <td>{selectedItem[6]}</td>
+      </tr>
+      <tr>
+        <th>평가기준</th>
+        <td>{selectedItem[12]}</td>
+      </tr>
+      <tr>
+        <th>조치방안</th>
+        <td>{selectedItem[13]}</td>
+      </tr>
+      <tr>
+        <th>조치예시</th>
+        <td>{selectedItem[14]}</td>
+      </tr>
+      <tr>
+        <th>조치시영향도</th>
+        <td>{selectedItem[15] || "N/A"}</td>
+      </tr>
+    {:else}
+      <tr>
+        <td colspan="2">No data available</td>
+      </tr>
+    {/if}
   </table>
 </div>
 
 <style>
-  .first_header {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    font-size: 12px;
-  }
   .modal {
     border-radius: 10px;
     background-color: #f9f9f9;
@@ -113,45 +95,10 @@
     max-width: 700px;
     margin: 0 auto;
   }
-
-  .first_header {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  .first_header p {
-    margin: 0;
-  }
-
-  .edit-button {
-    align-self: flex-end;
-    padding: 8px 12px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .edit-button:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 20px;
   }
 

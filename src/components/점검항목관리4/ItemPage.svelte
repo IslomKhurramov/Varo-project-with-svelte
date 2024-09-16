@@ -2,44 +2,40 @@
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
 
+  export let allChecklistArray;
+  export let filteredData = [];
+  export let selectedCategory = "UNIX";
+  export let selectedChecklist = null;
+
   let showModal = false;
-  let dataTable1 = [];
-  for (let i = 1; i <= 10; i++) {
-    dataTable1.push({
-      number: i.toString(),
-      projectNO: `Final Test Project`,
-      assetName: "21년 기반시설 점검 가이드라인",
-      cassification: "2024-07-07 12:07:07",
-      logContent: "결과미확점",
-      performer: "SECURITY(90.78)",
-    });
+  let formattedDate = "";
+  let selectedItem = null;
+
+  // Filter the data according to the selected checklist index
+  let filteredChecklistData = [];
+
+  // Ensure selectedChecklist[selectedCategory] is an array
+  $: if (selectedChecklist) {
+    filteredChecklistData = selectedChecklist[selectedCategory] || [];
+    if (!Array.isArray(filteredChecklistData)) {
+      filteredChecklistData = [];
+    }
   }
 
-  let tableData = [];
-  for (let i = 1; i <= 15; i++) {
-    tableData.push({
-      number: i.toString(),
-      name: "UNIX",
-      second: "계정관리",
-      third: "U-01",
-      fourth: "root 계정 원격접속 제한",
-      fifth: "상",
-      checklist: {
-        vulnerability:
-          "기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은 경우",
-        good: "기본 패스워드를 변경한 경우",
-      },
-    });
+  // Convert to a more human-readable format
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const timeOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+    return `${date.toLocaleDateString("en-US", options)} ${date.toLocaleTimeString("en-US", timeOptions)}`;
   }
 </script>
 
 <main>
-  <div class="header_buttons">
-    <button>UNIX</button>
-    <button>PC</button>
-    <button>NETWORK</button>
-    <button>CLOUD</button>
-  </div>
   <div class="table1">
     <table>
       <tr>
@@ -50,17 +46,17 @@
         <th>등록일</th>
         <th>삭제</th>
       </tr>
-      {#each dataTable1 as data}
+      {#each allChecklistArray as data}
         <tr>
-          <td>{data.number}</td>
-          <td>{data.projectNO}</td>
-          <td>{data.assetName}</td>
-          <td>{data.cassification}</td>
-          <td>{data.logContent}</td>
+          <td>{data.cgl_index_id}</td>
+          <td>{data.ccg_group}</td>
+          <td>{data.ccg_checklist_year}</td>
+          <td>{data.ccg_support_part}</td>
+          <td>{formatDate(data.ccg_createdate)}</td>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <td on:click|stopPropagation
-            ><button class="delete_button">삭제</button></td
-          >
+          <td on:click|stopPropagation>
+            <button class="delete_button">삭제</button>
+          </td>
         </tr>
       {/each}
     </table>
@@ -80,36 +76,34 @@
         </tr>
       </thead>
       <tbody>
-        {#each tableData as row}
-          <tr on:click="{() => (showModal = true)}">
-            <td>{row.number}</td>
-            <td>{row.name}</td>
-            <td>{row.second}</td>
-            <td>{row.third}</td>
-            <td>{row.fourth}</td>
-            <td>{row.fifth}</td>
-            <td>
-              <div class="checklist">
-                {#if row.checklist && row.checklist.vulnerability}
-                  <p>취약: {row.checklist.vulnerability}</p>
-                {:else}
-                  <p>취약: 데이터 없음</p>
-                {/if}
-                {#if row.checklist && row.checklist.good}
-                  <p>양호: {row.checklist.good}</p>
-                {:else}
-                  <p>양호: 데이터 없음</p>
-                {/if}
-              </div>
-            </td>
+        {#if filteredChecklistData.length > 0}
+          {#each filteredChecklistData as item, index}
+            <tr
+              on:click="{() => {
+                selectedItem = item;
+                showModal = true;
+              }}"
+            >
+              <td>{index + 1}</td>
+              <td>{selectedCategory}</td>
+              <td>{item[0]}</td>
+              <td>{item[5]}</td>
+              <td>{item[4]}</td>
+              <td>{item[6]}</td>
+              <td>{item[11]}</td>
+            </tr>
+          {/each}
+        {:else}
+          <tr>
+            <td colspan="7">No data available</td>
           </tr>
-        {/each}
+        {/if}
       </tbody>
     </table>
   </div>
 
   <Modal bind:showModal>
-    <ModalEditItem />
+    <ModalEditItem {selectedItem} {selectedCategory} />
   </Modal>
 </main>
 
@@ -125,35 +119,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 10px;
   }
-  .header_buttons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    margin: 20px 0;
-  }
 
-  .header_buttons button {
-    background-color: #007acc;
-    color: #ffffff;
-    border-radius: 5px;
-    height: 36px;
-    width: 130px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .header_buttons button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
   .table1,
   .table2 {
     font-family: "Arial", sans-serif;
@@ -200,6 +166,7 @@
     top: 0;
     z-index: 1;
     font-size: 14px;
+    white-space: nowrap;
   }
 
   tr:nth-child(even) {
@@ -212,10 +179,6 @@
 
   tr {
     cursor: pointer;
-  }
-
-  .checklist p {
-    margin: 5px 0;
   }
 
   .delete_button {

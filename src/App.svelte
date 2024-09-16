@@ -29,8 +29,8 @@
 </script>
 
 <main>
-  <!-- <Router>
-    {#if $userData.isLoggedIn}
+  <Router>
+    <!-- {#if $userData.isLoggedIn} -->
       <Header class="header" />
       <Route path="/" component="{Page1}" />
       <Route path="/page1" component="{Page1}" />
@@ -39,20 +39,11 @@
       <Route path="/page4" component="{Page4}" />
       <Route path="/page5" component="{Page5}" />
       <Route path="/page6" component="{Page6}" />
-    {:else}
+    <!-- {:else}
       <Route path="/login" component="{Login}" />
-    {/if}
-  </Router> -->
-  <Router>
-    <Header class="header" />
-    <Route path="/" component="{Page1}" />
-    <Route path="/page1" component="{Page1}" />
-    <Route path="/page2" component="{Page2}" />
-    <Route path="/page3" component="{Page3}" />
-    <Route path="/page4" component="{Page4}" />
-    <Route path="/page5" component="{Page5}" />
-    <Route path="/page6" component="{Page6}" />
+    {/if} -->
   </Router>
+ 
 </main>
 
 <style>

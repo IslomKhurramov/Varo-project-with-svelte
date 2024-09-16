@@ -5,18 +5,14 @@
 
   let projectDetails = {};
   let loading = true;
-  let error = null;
+  let errorMessage = null;
 
   onMount(async () => {
     try {
-      console.log("Fetching details for project index:", projectIndex);
-
-      // Fetch the project details
       projectDetails = await getPlanDetailInformation(projectIndex);
-      console.log("Project Details Fetched:", projectDetails);
+      console.log("Fetched Project Details:", projectDetails);
     } catch (err) {
-      error = err.message;
-      console.error("Error fetching project details:", err);
+      errorMessage = err.message || "Failed to fetch project details";
     } finally {
       loading = false;
     }
@@ -78,6 +74,15 @@
 
 <main>
   <div class="main-container">
+    <div>
+      {#if loading}
+        <p>Loading...</p>
+      {:else if errorMessage}
+        <p>Error: {errorMessage}</p>
+      {:else}
+        <p>Project Details: {JSON.stringify(projectDetails)}</p>
+      {/if}
+    </div>
     <div class="container">
       <!-- Overview Section -->
       <h2>[개요]</h2>

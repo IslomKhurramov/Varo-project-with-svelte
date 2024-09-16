@@ -1,8 +1,26 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
+  export let allChecklistArray;
 
   let showModal = false;
+  let formattedDate = "";
+
+  // Convert to a more human-readable format
+  function formatDate(dateString) {
+    const date = new Date(dateString); // Parse the ISO 8601 string
+    const options = { year: "numeric", month: "long", day: "numeric" }; // Example: May 23, 2024
+    const timeOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }; // Example: 11:30:33 AM
+
+    return `${date.toLocaleDateString("en-US", options)} ${date.toLocaleTimeString("en-US", timeOptions)}`;
+  }
+
+  /***************************/
+
   let dataTable1 = [];
   for (let i = 1; i <= 10; i++) {
     dataTable1.push({
@@ -50,13 +68,13 @@
         <th>등록일</th>
         <th>삭제</th>
       </tr>
-      {#each dataTable1 as data}
+      {#each allChecklistArray as data}
         <tr>
-          <td>{data.number}</td>
-          <td>{data.projectNO}</td>
-          <td>{data.assetName}</td>
-          <td>{data.cassification}</td>
-          <td>{data.logContent}</td>
+          <td>{data.cgl_index_id}</td>
+          <td>{data.ccg_group}</td>
+          <td>{data.ccg_checklist_year}</td>
+          <td>{data.ccg_support_part}</td>
+          <td>{(formattedDate = formatDate(data.ccg_createdate))}</td>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <td on:click|stopPropagation
             ><button class="delete_button">삭제</button></td

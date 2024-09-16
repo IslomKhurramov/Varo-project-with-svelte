@@ -1,7 +1,7 @@
 <script>
   import { login, register } from "../../services/page1/authService";
   import { navigate } from "svelte-routing";
-  import { userData } from '../../stores/user.store';
+  import { userData } from "../../stores/user.store";
 
   //for LOGIN
   let containerActive = false;
@@ -13,45 +13,42 @@
   let username = "";
   let emailSignUp = "";
   let passwordSignUp = "";
-  let confirmPasswordSignUp = ""; 
+  let confirmPasswordSignUp = "";
   let department = "";
   let errorMessageSignUp = "";
   let successMessageSignUp = "";
-  
 
   //FUNCTION SighUp
 
   const handleRegister = async () => {
     try {
-
-      console.log("username:", username)
-      console.log("emailSignUp:", emailSignUp)
-      console.log("passwordSignUp:", passwordSignUp)
-      console.log("confirmPasswordSignUp:", confirmPasswordSignUp)
-      console.log("department:", department)
+      console.log("username:", username);
+      console.log("emailSignUp:", emailSignUp);
+      console.log("passwordSignUp:", passwordSignUp);
+      console.log("confirmPasswordSignUp:", confirmPasswordSignUp);
+      console.log("department:", department);
 
       // if (!username || !emailSignUp || !passwordSignUp || !confirmPasswordSignUp || department) {
       //   throw new Error('Please fulfill all inputs!')
       // }
 
-        if (passwordSignUp !== confirmPasswordSignUp) {
-          throw new Error("Passwords don't match")
-        }
+      if (passwordSignUp !== confirmPasswordSignUp) {
+        throw new Error("Passwords don't match");
+      }
 
-        const response = await register(
-          username,
-          emailSignUp,
-          passwordSignUp,
-          department
-        );
-        console.log("REGISTER:", response);
-        
-        successMessageSignUp = "Registration successful! Redirecting to login...";
-        errorMessageSignUp = "";
+      const response = await register(
+        username,
+        emailSignUp,
+        passwordSignUp,
+        department
+      );
+      console.log("REGISTER:", response);
 
-        // Redirect to login page after 2 seconds
-        setTimeout(() => navigate("/login"), 2000);
-       
+      successMessageSignUp = "Registration successful! Redirecting to login...";
+      errorMessageSignUp = "";
+
+      // Redirect to login page after 2 seconds
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       errorMessageSignUp = err?.message;
       successMessageSignUp = "";
@@ -65,13 +62,12 @@
 
       userData.set({
         isLoggedIn: true,
-        userInfo: "test",
+        userInfo: { email },
       });
 
-      navigate("/"); 
-   
-    } catch(err) {
-      errorMessage = err?.message
+      navigate("/");
+    } catch (err) {
+      errorMessage = err?.message;
     }
   };
 

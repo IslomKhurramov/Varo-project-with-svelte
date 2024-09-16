@@ -1,8 +1,32 @@
 <script>
   import AddChecklistButton4 from "./AddChecklistButton4.svelte";
+  import { onMount } from "svelte";
   import EditItem from "./EditItem.svelte";
   import ItemPage from "./ItemPage.svelte";
+  import { userData } from "../../stores/user.store";
+  import { getAllCheckList } from "../../services/page4/getAllCheckList";
 
+  console.log("PAGE 1 ");
+  console.log("USER DATA => ", $userData);
+  let loading = true;
+  let error = null;
+  let allCheckList = {};
+  export let allChecklistArray = [];
+  let selectedProjectIndex = null;
+
+  onMount(async () => {
+    try {
+      allCheckList = await getAllCheckList();
+      allChecklistArray = Object.values(allCheckList); // Convert object to array
+      console.log("DATA", allChecklistArray[0].ccg_index);
+    } catch (err) {
+      error = err.message;
+    } finally {
+      loading = false;
+    }
+  });
+
+  /**********************************************/
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
@@ -19,6 +43,8 @@
     currentPage = page;
     activeMenu = menu;
     currentView = "pageView";
+    selectedProjectIndex = allChecklistArray[0].ccg_index;
+    console.log("INDEX::", selectedProjectIndex);
   };
 
   function toggleView() {
@@ -47,37 +73,56 @@
       </div>
 
       <div class="project_container">
-        {#each assets as asset, index}
-          <div class="project_button">
-            <img src="./images/file.png" alt="project" />
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a
-              href="#"
-              on:click="{() => selectPage(ItemPage, asset)}"
-              class="{activeMenu === asset ? 'active' : ''}"
-            >
-              <i class="fa fa-user-o" aria-hidden="true"></i>
-              {#if editingIndex === index}
-                <!-- svelte-ignore a11y-autofocus -->
-                <input
-                  type="text"
-                  value="{asset}"
-                  on:blur="{(event) => finishEditing(index, event)}"
-                  on:keydown="{(event) => handleKeydown(event, index)}"
-                  autofocus
-                />
-              {:else}
-                {asset}
-              {/if}
-            </a>
-            <button
-              class="menu_button"
-              style="width: 112px;"
-              on:click="{() => selectPage(EditItem, '항목편집')}"
-              >항목편집</button
-            >
-          </div>
-        {/each}
+        {#if loading}
+          <p>Loading...</p>
+        {:else if error}
+          <p>Error: {error}</p>
+        {:else}
+          <!-- Render the allChecklistArray -->
+          {#each allChecklistArray as checkList, index}
+            <div class="project_button">
+              <img src="./images/file.png" alt="project" />
+              <!-- svelte-ignore a11y-invalid-attribute -->
+              <a
+                href="#"
+                on:click="{() => selectPage(ItemPage, checkList)}"
+                class="{activeMenu === checkList ? 'active' : ''}"
+              >
+                <i class="fa fa-user-o" aria-hidden="true"></i>
+                {#if editingIndex === index}
+                  <input
+                    type="text"
+                    value="{checkList.ccg_group}"
+                    on:blur="{(event) => finishEditing(index, event)}"
+                    on:keydown="{(event) => handleKeydown(event, index)}"
+                  />
+                {:else}
+                  <!-- Display ccg_group and other relevant info -->
+                  {checkList.ccg_group ? checkList.ccg_group : "No group info"}
+                  <p>{checkList.ccg_checklist_year}</p>
+                  <!-- Example of another property -->
+                {/if}
+              </a>
+              <div style="display: flex; flex-direction:column">
+                <button
+                  class="menu_button1"
+                  on:click="{() => selectPage(EditItem, '항목편집')}"
+                  >편집</button
+                >
+                <button
+                  class="menu_button1"
+                  on:click="{() => selectPage(EditItem, '항목편집')}"
+                  >복사</button
+                >
+                <button
+                  class="menu_button1"
+                  on:click="{() => selectPage(EditItem, '항목편집')}"
+                  >삭제</button
+                >
+              </div>
+            </div>
+          {/each}
+        {/if}
       </div>
     </aside>
   </div>
@@ -128,23 +173,13 @@
         </form>
       </div>
       <div class="header_button">
-        <p>자산명</p>
-        <p>엑셀다운로드</p>
+        <p>조회</p>
       </div>
     </header>
 
-    <div class="second_line">
-      <button>전체선택</button>
-      <button>선택해제</button>
-      <button>선택항목저장</button>
-      <button on:click="{() => selectPage(AddChecklistButton4, '항목편집')}"
-        >점검항목추가</button
-      >
-    </div>
-
     <div class="swiper_container">
       {#if currentView === "default"}
-        <ItemPage />
+        <ItemPage {allChecklistArray} />
       {:else if currentPage}
         <svelte:component this="{currentPage}" />
       {/if}
@@ -224,11 +259,12 @@
   .project_button {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: auto;
     transition:
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
+    margin-top: 15px;
   }
 
   .project_container {
@@ -245,6 +281,7 @@
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Prevents horizontal overflow */
     height: 98vh; /* Adjust height to fit inside sidebar */
+    margin-right: 5px;
   }
 
   .project_button:hover {
@@ -265,6 +302,7 @@
     text-decoration: none;
     transition: all 0.3s ease;
     margin-top: 5px;
+    margin-right: 5px;
   }
 
   aside a:hover,
@@ -301,9 +339,23 @@
     text-align: center;
     width: 110px; /* Slightly wider button */
   }
-
-  .menu_button:hover {
+  .menu_button1 {
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    color: #495057;
+    text-align: center;
+    width: 60px;
+  }
+  .menu_button:hover,
+  .menu_button1:hover {
     text-decoration: underline;
+    box-shadow:
+      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
   }
 
   /* Header Styles */

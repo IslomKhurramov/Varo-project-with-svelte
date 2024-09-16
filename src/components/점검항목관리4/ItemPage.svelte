@@ -1,28 +1,38 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
+
   export let allChecklistArray;
   export let filteredData = [];
   export let selectedCategory = "UNIX";
+  export let selectedChecklist = null;
 
   let showModal = false;
   let formattedDate = "";
   let selectedItem = null;
 
+  // Filter the data according to the selected checklist index
+  let filteredChecklistData = [];
+
+  // Ensure selectedChecklist[selectedCategory] is an array
+  $: if (selectedChecklist) {
+    filteredChecklistData = selectedChecklist[selectedCategory] || [];
+    if (!Array.isArray(filteredChecklistData)) {
+      filteredChecklistData = [];
+    }
+  }
+
   // Convert to a more human-readable format
   function formatDate(dateString) {
-    const date = new Date(dateString); // Parse the ISO 8601 string
-    const options = { year: "numeric", month: "long", day: "numeric" }; // Example: May 23, 2024
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "long", day: "numeric" };
     const timeOptions = {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-    }; // Example: 11:30:33 AM
-    console.log("DAATTAA:", filteredData);
+    };
     return `${date.toLocaleDateString("en-US", options)} ${date.toLocaleTimeString("en-US", timeOptions)}`;
   }
-
-  /***************************/
 </script>
 
 <main>
@@ -42,11 +52,11 @@
           <td>{data.ccg_group}</td>
           <td>{data.ccg_checklist_year}</td>
           <td>{data.ccg_support_part}</td>
-          <td>{(formattedDate = formatDate(data.ccg_createdate))}</td>
+          <td>{formatDate(data.ccg_createdate)}</td>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <td on:click|stopPropagation
-            ><button class="delete_button">삭제</button></td
-          >
+          <td on:click|stopPropagation>
+            <button class="delete_button">삭제</button>
+          </td>
         </tr>
       {/each}
     </table>
@@ -66,8 +76,8 @@
         </tr>
       </thead>
       <tbody>
-        {#if filteredData.length > 0}
-          {#each filteredData as item, index}
+        {#if filteredChecklistData.length > 0}
+          {#each filteredChecklistData as item, index}
             <tr
               on:click="{() => {
                 selectedItem = item;
@@ -76,15 +86,17 @@
             >
               <td>{index + 1}</td>
               <td>{selectedCategory}</td>
-              <td>{item[3]}</td>
+              <td>{item[0]}</td>
               <td>{item[5]}</td>
               <td>{item[4]}</td>
               <td>{item[6]}</td>
-              <td>
-                {item[11]}
-              </td>
+              <td>{item[11]}</td>
             </tr>
           {/each}
+        {:else}
+          <tr>
+            <td colspan="7">No data available</td>
+          </tr>
         {/if}
       </tbody>
     </table>

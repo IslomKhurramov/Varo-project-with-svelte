@@ -10,6 +10,7 @@
   let error = null;
   let allChecklistArray = [];
   let filteredData = [];
+  let selectedChecklist = null;
 
   // Fetching data on mount
   onMount(async () => {
@@ -37,6 +38,14 @@
   // Trigger when category changes
   $: filterData();
 
+  // When a checklist is selected, pass it to the second component
+  const selectPage = (page, checklist) => {
+    selectedChecklist = checklist; // Store the selected checklist
+    currentPage = page;
+    activeMenu = checklist;
+    currentView = "pageView";
+    console.log("INDEX:", selectedChecklist);
+  };
   /**********************************************/
   let currentView = "default";
   let currentPage = null;
@@ -48,14 +57,6 @@
     const newProjectNumber = assets.length + 1;
     assets = [...assets, `자산그룹${newProjectNumber}`];
     editingIndex = assets.length - 1;
-  };
-
-  const selectPage = (page, menu) => {
-    currentPage = page;
-    activeMenu = menu;
-    currentView = "pageView";
-    selectedProjectIndex = allChecklistArray[0].ccg_index;
-    console.log("INDEX::", selectedProjectIndex);
   };
 
   function toggleView() {
@@ -206,11 +207,12 @@
     </header>
 
     <div class="swiper_container">
-      {#if currentView === "default"}
-        <ItemPage {allChecklistArray} {filteredData} {selectedCategory} />
-      {:else if currentPage}
-        <svelte:component this="{currentPage}" />
-      {/if}
+      <ItemPage
+        {allChecklistArray}
+        {filteredData}
+        {selectedCategory}
+        {selectedChecklist}
+      />
     </div>
   </div>
 </main>

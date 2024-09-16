@@ -2,7 +2,8 @@
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
   export let allChecklistArray;
-
+  export let filteredData = [];
+  export let selectedCategory = "UNIX";
   let showModal = false;
   let formattedDate = "";
 
@@ -15,23 +16,11 @@
       minute: "2-digit",
       second: "2-digit",
     }; // Example: 11:30:33 AM
-
+    console.log("DAATTAA:", filteredData);
     return `${date.toLocaleDateString("en-US", options)} ${date.toLocaleTimeString("en-US", timeOptions)}`;
   }
 
   /***************************/
-
-  let dataTable1 = [];
-  for (let i = 1; i <= 10; i++) {
-    dataTable1.push({
-      number: i.toString(),
-      projectNO: `Final Test Project`,
-      assetName: "21년 기반시설 점검 가이드라인",
-      cassification: "2024-07-07 12:07:07",
-      logContent: "결과미확점",
-      performer: "SECURITY(90.78)",
-    });
-  }
 
   let tableData = [];
   for (let i = 1; i <= 15; i++) {
@@ -52,12 +41,6 @@
 </script>
 
 <main>
-  <div class="header_buttons">
-    <button>UNIX</button>
-    <button>PC</button>
-    <button>NETWORK</button>
-    <button>CLOUD</button>
-  </div>
   <div class="table1">
     <table>
       <tr>
@@ -98,30 +81,21 @@
         </tr>
       </thead>
       <tbody>
-        {#each tableData as row}
-          <tr on:click="{() => (showModal = true)}">
-            <td>{row.number}</td>
-            <td>{row.name}</td>
-            <td>{row.second}</td>
-            <td>{row.third}</td>
-            <td>{row.fourth}</td>
-            <td>{row.fifth}</td>
-            <td>
-              <div class="checklist">
-                {#if row.checklist && row.checklist.vulnerability}
-                  <p>취약: {row.checklist.vulnerability}</p>
-                {:else}
-                  <p>취약: 데이터 없음</p>
-                {/if}
-                {#if row.checklist && row.checklist.good}
-                  <p>양호: {row.checklist.good}</p>
-                {:else}
-                  <p>양호: 데이터 없음</p>
-                {/if}
-              </div>
-            </td>
-          </tr>
-        {/each}
+        {#if filteredData.length > 0}
+          {#each filteredData as item, index}
+            <tr on:click="{() => (showModal = true)}">
+              <td>{index + 1}</td>
+              <td>{selectedCategory}</td>
+              <td>{item[3]}</td>
+              <td>{item[5]}</td>
+              <td>{item[4]}</td>
+              <td>{item[6]}</td>
+              <td>
+                {item[11]}
+              </td>
+            </tr>
+          {/each}
+        {/if}
       </tbody>
     </table>
   </div>
@@ -143,35 +117,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 10px;
   }
-  .header_buttons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    margin: 20px 0;
-  }
 
-  .header_buttons button {
-    background-color: #007acc;
-    color: #ffffff;
-    border-radius: 5px;
-    height: 36px;
-    width: 130px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .header_buttons button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
   .table1,
   .table2 {
     font-family: "Arial", sans-serif;
@@ -218,6 +164,7 @@
     top: 0;
     z-index: 1;
     font-size: 14px;
+    white-space: nowrap;
   }
 
   tr:nth-child(even) {
@@ -230,10 +177,6 @@
 
   tr {
     cursor: pointer;
-  }
-
-  .checklist p {
-    margin: 5px 0;
   }
 
   .delete_button {

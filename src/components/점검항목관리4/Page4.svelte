@@ -1,24 +1,22 @@
 <script>
   import AddChecklistButton4 from "./AddChecklistButton4.svelte";
-  import { onMount } from "svelte";
   import EditItem from "./EditItem.svelte";
   import ItemPage from "./ItemPage.svelte";
-  import { userData } from "../../stores/user.store";
+  import { onMount } from "svelte";
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
 
-  console.log("PAGE 1 ");
-  console.log("USER DATA => ", $userData);
+  let selectedCategory = "UNIX"; // Default to UNIX
   let loading = true;
   let error = null;
-  let allCheckList = {};
-  export let allChecklistArray = [];
-  let selectedProjectIndex = null;
+  let allChecklistArray = [];
+  let filteredData = [];
 
+  // Fetching data on mount
   onMount(async () => {
     try {
-      allCheckList = await getAllCheckList();
-      allChecklistArray = Object.values(allCheckList); // Convert object to array
-      console.log("DATA", allChecklistArray[0].ccg_index);
+      const allCheckList = await getAllCheckList();
+      allChecklistArray = Object.values(allCheckList); // Convert to array
+      filterData(); // Filter data on mount
     } catch (err) {
       error = err.message;
     } finally {
@@ -26,6 +24,52 @@
     }
   });
 
+  // Filter data based on selected category
+  function filterData() {
+    if (selectedCategory && allChecklistArray.length > 0) {
+      // Filter the checklist array based on the selected category
+      filteredData = allChecklistArray.flatMap(
+        (item) => item[selectedCategory] || []
+      );
+    }
+  }
+
+  // Trigger when category changes
+  $: filterData();
+
+  /***Function to filter based on selected criteria*/
+  // function filterProjects() {
+  //   filteredProjects = allChecklistArray.filter((project) => {
+  //     return (
+  //       selectedSystem === "점검대상" ||
+  //       doesProjectMatchOS(project, selectedSystem)
+  //     );
+  //   });
+  // }
+
+  // Function to check if the project date matches the selected schedule range
+
+  // function doesProjectMatchOS(project, os) {
+  //   if (os === "Windows") {
+  //     return project.asset?.WINDOWS; // Match Windows
+  //   } else if (os === "WINDOWS") {
+  //     return project.asset?.WINDOWS; // Match Unix
+  //   } else if (os === "NETWORK") {
+  //     return project.asset?.NETWORK; // Match Security Assets
+  //   } else if (os === "DBMS") {
+  //     return project.asset?.DBMS; // Match Unix
+  //   } else if (os === "WEB") {
+  //     return project.asset?.WAS; // Match Security Assets
+  //   } else if (os === "WAS") {
+  //     return project.asset?.UNIX; // Match Unix
+  //   } else if (os === "CLOUD") {
+  //     return project.asset?.CLOUD; // Match Security Assets
+  //   } else if (os === "SECURITY") {
+  //     return project.asset?.SECURITY; // Match Security Assets
+  //   }
+
+  //   return false;
+  // }
   /**********************************************/
   let currentView = "default";
   let currentPage = null;
@@ -146,10 +190,23 @@
             </select>
           </div>
           <div class="select_container">
-            <select name="asset_group" id="asset_group" class="select_input">
-              <option value="network">점검대상</option>
-              <option value="endpoint">Endpoint Security</option>
-              <option value="cloud">Cloud Security</option>
+            <select
+              name="asset_group"
+              id="asset_group"
+              class="select_input"
+              bind:value="{selectedCategory}"
+              on:change="{filterData}"
+            >
+              <option value="점검대상">점검대상</option>
+              <option value="UNIX">UNIX</option>
+              <option value="WINDOWS">WINDOWS</option>
+              <option value="PC">PC</option>
+              <option value="NETWORK">NETWORK</option>
+              <option value="DBMS">DBMS</option>
+              <option value="WEB">WEB</option>
+              <option value="WAS">WAS</option>
+              <option value="CLOUD">CLOUD</option>
+              <option value="SECURITY">SECURITY</option>
             </select>
           </div>
           <div class="select_container">
@@ -179,7 +236,7 @@
 
     <div class="swiper_container">
       {#if currentView === "default"}
-        <ItemPage {allChecklistArray} />
+        <ItemPage {allChecklistArray} {filteredData} {selectedCategory} />
       {:else if currentPage}
         <svelte:component this="{currentPage}" />
       {/if}

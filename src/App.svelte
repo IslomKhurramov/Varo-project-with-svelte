@@ -12,15 +12,14 @@
   import { checkAuth, userData } from "./stores/user.store";
   import Cookies from "js-cookie";
 
-
-  console.log("$userData:", $userData)
+  console.log("$userData:", $userData);
 
   onMount(() => {
-    checkAuth()
+    checkAuth();
 
     // if ($userData.isLoggedIn) {
     //   console.log("User is logged in:", $userData);
-    //   navigate("/"); 
+    //   navigate("/");
     // } else {
     //   console.log("User is not logged in.");
     //   navigate("/login");
@@ -31,19 +30,18 @@
 <main>
   <Router>
     <!-- {#if $userData.isLoggedIn} -->
-      <Header class="header" />
-      <Route path="/" component="{Page1}" />
-      <Route path="/page1" component="{Page1}" />
-      <Route path="/page2" component="{Page2}" />
-      <Route path="/page3" component="{Page3}" />
-      <Route path="/page4" component="{Page4}" />
-      <Route path="/page5" component="{Page5}" />
-      <Route path="/page6" component="{Page6}" />
+    <Header class="header" />
+    <Route path="/" component="{Page1}" />
+    <Route path="/page1" component="{Page1}" />
+    <Route path="/page2" component="{Page2}" />
+    <Route path="/page3" component="{Page3}" />
+    <Route path="/page4" component="{Page4}" />
+    <Route path="/page5" component="{Page5}" />
+    <Route path="/page6" component="{Page6}" />
     <!-- {:else}
       <Route path="/login" component="{Login}" />
     {/if} -->
   </Router>
- 
 </main>
 
 <style>

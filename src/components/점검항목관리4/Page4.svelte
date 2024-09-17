@@ -4,6 +4,8 @@
   import ItemPage from "./ItemPage.svelte";
   import { onMount } from "svelte";
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
+  import addedChecklist from "../점검항목관리4/addedChecklist.svelte";
+  import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
 
   let selectedCategory = "UNIX"; // Default to UNIX
   let loading = true;
@@ -11,13 +13,23 @@
   let allChecklistArray = [];
   let filteredData = [];
   let selectedChecklist = null;
+  let activeMenu = null;
+  let newChecklistArray = [];
 
   // Fetching data on mount
   onMount(async () => {
     try {
       const allCheckList = await getAllCheckList();
       allChecklistArray = Object.values(allCheckList); // Convert to array
+      // Set the first checklist as the default active one
+      const newChecklist = await setNewChecklistGroup();
+      newChecklistArray = Object.values(newChecklist);
+
       filterData(); // Filter data on mount
+      if (allChecklistArray.length > 0) {
+        selectedChecklist = allChecklistArray[0]; // Select first checklist
+        activeMenu = allChecklistArray[0]; // Set first checklist as active menu
+      }
     } catch (err) {
       error = err.message;
     } finally {
@@ -48,8 +60,7 @@
   };
   /**********************************************/
   let currentView = "default";
-  let currentPage = null;
-  let activeMenu = null;
+  let currentPage = ItemPage;
   let assets = ["주요정보통신기반시설 (2021) (520개)"];
   let editingIndex = null;
 
@@ -80,8 +91,8 @@
   <div class="container_aside">
     <aside>
       <div class="add_delete_container">
-        <button class="menu_button" on:click="{addProject}">항목추가</button>
-        <button class="menu_button">항목삭제</button>
+        <button class="menu_button" on:click="{addProject}">그룹추가</button>
+        <button class="menu_button">그룹삭제</button>
       </div>
 
       <div class="project_container">
@@ -121,19 +132,9 @@
               </div>
               <div style="display: flex; flex-direction:column">
                 <button
-                  class="menu_button1 edit"
-                  on:click="{() => selectPage(EditItem, '항목편집')}"
-                  >편집</button
-                >
-                <button
                   class="menu_button1 copy"
-                  on:click="{() => selectPage(EditItem, '항목편집')}"
+                  on:click="{() => selectPage(addedChecklist, '복사')}"
                   >복사</button
-                >
-                <button
-                  class="menu_button1 delete"
-                  on:click="{() => selectPage(EditItem, '항목편집')}"
-                  >삭제</button
                 >
               </div>
             </div>
@@ -207,12 +208,15 @@
     </header>
 
     <div class="swiper_container">
-      <ItemPage
-        {allChecklistArray}
-        {filteredData}
-        {selectedCategory}
-        {selectedChecklist}
-      />
+      <div class="swiper_container">
+        <svelte:component
+          this="{currentPage}"
+          {allChecklistArray}
+          {filteredData}
+          {selectedCategory}
+          {selectedChecklist}
+        />
+      </div>
     </div>
   </div>
 </main>

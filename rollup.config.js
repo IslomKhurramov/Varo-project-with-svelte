@@ -36,11 +36,9 @@ export default {
 		format: 'iife',
 		name: 'app',
 		file: 'public/build/bundle.js',
-		globals: {
-			'js-cookie': 'Cookies'  // Map js-cookie to global variable 'Cookies'
-		}
+		
 	},
-	external: ['js-cookie'], 
+	
 	plugins: [
 		svelte({
 			compilerOptions: {

@@ -86,7 +86,7 @@
             >
               <td>{index + 1}</td>
               <td>{selectedCategory}</td>
-              <td>{item.ccc_item_group}</td>
+              <td>{item.ccc_index}</td>
               <td>{item.ccc_item_no}</td>
               <td>{item.ccc_item_title}</td>
               <td>{item.ccc_item_level}</td>

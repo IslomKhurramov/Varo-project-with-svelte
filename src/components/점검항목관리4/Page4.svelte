@@ -1,12 +1,13 @@
 <script>
-  import AddChecklistButton4 from "./AddChecklistButton4.svelte";
-  import EditItem from "./EditItem.svelte";
   import ItemPage from "./ItemPage.svelte";
   import { onMount } from "svelte";
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
-  import addedChecklist from "../점검항목관리4/addedChecklist.svelte";
   import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
-
+  import AddedChecklist from "./AddedChecklist.svelte";
+  import Modal from "../../shared/Modal.svelte";
+  import { setDeleteChecklistGroup } from "../../services/page4/getAllCheckList";
+  let currentView = "default";
+  let currentPage = ItemPage;
   let selectedCategory = "UNIX"; // Default to UNIX
   let loading = true;
   let error = null;
@@ -14,29 +15,114 @@
   let filteredData = [];
   let selectedChecklist = null;
   let activeMenu = null;
-  let newChecklistArray = [];
-
-  // Fetching data on mount
-  onMount(async () => {
+  let newChecklistName = "";
+  let showModal = false; // Modal visibility control
+  let selectedChecklistForCopyId = null; // Selected checklist for copying
+  let createdChecklists = []; // Track created checklists (with unique IDs)
+  let lastCreatedChecklistId = null; // Track the last created checklist ID
+  /*****************************************************************************/
+  // Fetching data on component mount
+  async function fetchChecklists() {
+    loading = true;
     try {
       const allCheckList = await getAllCheckList();
       allChecklistArray = Object.values(allCheckList); // Convert to array
-      // Set the first checklist as the default active one
-      const newChecklist = await setNewChecklistGroup();
-      newChecklistArray = Object.values(newChecklist);
-
-      filterData(); // Filter data on mount
       if (allChecklistArray.length > 0) {
-        selectedChecklist = allChecklistArray[0]; // Select first checklist
-        activeMenu = allChecklistArray[0]; // Set first checklist as active menu
+        selectedChecklist = allChecklistArray[0]; // Select the first checklist
+        activeMenu = allChecklistArray[0];
       }
     } catch (err) {
       error = err.message;
     } finally {
       loading = false;
     }
-  });
+  }
 
+  onMount(fetchChecklists); // Fetch checklists on component mount
+  /*****************************************************************************/
+  // Create a new checklist group
+  async function createNewChecklistGroup() {
+    try {
+      const response = await setNewChecklistGroup(
+        selectedChecklistForCopyId,
+        newChecklistName
+      );
+
+      if (response.success) {
+        // Find the highest existing ID in the checklist array
+        const existingIds = allChecklistArray
+          .map((item) => Number(item.ccg_index))
+          .filter((id) => !isNaN(id));
+
+        // If there are existing IDs, find the maximum and increment it by 1
+        const maxId = existingIds.length ? Math.max(...existingIds) : 0;
+        const newChecklistId = maxId + 1; // Increment by 1 to generate a new ID
+
+        const newChecklist = {
+          ccg_group: newChecklistName,
+          ccg_index: newChecklistId.toString(), // Use the incremented number as the new ID
+        };
+
+        console.log("New Checklist Created with ID:", newChecklistId);
+
+        // Add the newly created checklist to both arrays
+        allChecklistArray = [...allChecklistArray, newChecklist];
+        createdChecklists = [...createdChecklists, newChecklist];
+        lastCreatedChecklistId = newChecklistId; // Track the last created checklist ID
+
+        // Re-fetch the checklists to ensure everything is up-to-date
+        await fetchChecklists();
+
+        // Reset modal and variables
+        newChecklistName = "";
+        selectedChecklistForCopyId = null;
+        showModal = false;
+      } else {
+        throw new Error("Failed to create checklist.");
+      }
+    } catch (err) {
+      alert(`Failed to create new checklist group: ${err.message}`);
+    }
+  }
+
+  /*********************************************************************************/
+  // Delete a checklist (only for the last created checklist)
+  async function deleteChecklist(checklistId) {
+    console.log("Attempting to delete checklist with ID:", checklistId); // Log the checklist ID
+
+    if (!checklistId) {
+      alert("Checklist ID is undefined. Cannot delete.");
+      return;
+    }
+
+    try {
+      const response = await setDeleteChecklistGroup(checklistId);
+
+      if (response.success) {
+        alert("Checklist deleted successfully!");
+
+        // Remove the deleted checklist from arrays
+        allChecklistArray = allChecklistArray.filter(
+          (checklist) => checklist.ccg_index !== checklistId
+        );
+        createdChecklists = createdChecklists.filter(
+          (checklist) => checklist.ccg_index !== checklistId
+        );
+
+        console.log("Deleted checklist ID:", checklistId); // Log successful deletion
+
+        // Reset the last created checklist ID after deletion
+        lastCreatedChecklistId = null;
+        await fetchChecklists(); // Optionally refetch the checklist data
+      } else {
+        throw new Error("Deletion failed.");
+      }
+    } catch (err) {
+      alert(`Failed to delete checklist group: ${err.message}`);
+    }
+  }
+
+  /************************************************************************/
   // Filter data based on selected category
   function filterData() {
     if (selectedCategory && allChecklistArray.length > 0) {
@@ -49,7 +135,7 @@
 
   // Trigger when category changes
   $: filterData();
-
+  /**********************************************************************/
   // When a checklist is selected, pass it to the second component
   const selectPage = (page, checklist) => {
     selectedChecklist = checklist; // Store the selected checklist
@@ -59,10 +145,6 @@
     console.log("INDEX:", selectedChecklist);
   };
   /**********************************************/
-  let currentView = "default";
-  let currentPage = ItemPage;
-  let assets = ["주요정보통신기반시설 (2021) (520개)"];
-  let editingIndex = null;
 
   const addProject = () => {
     const newProjectNumber = assets.length + 1;
@@ -70,20 +152,9 @@
     editingIndex = assets.length - 1;
   };
 
-  function toggleView() {
-    currentView = currentView === "default" ? "newView" : "default";
-    currentPage = null;
-  }
-
-  function finishEditing(index, event) {
-    editingIndex = null;
-    assets[index] = event.target.value || assets[index];
-  }
-
-  function handleKeydown(event, index) {
-    if (event.key === "Enter") {
-      finishEditing(index, event);
-    }
+  // Edit checklist function (to be defined)
+  function editChecklist(checklistId) {
+    alert(`Editing checklist: ${checklistId}`);
   }
 </script>
 
@@ -101,40 +172,56 @@
         {:else if error}
           <p>Error: {error}</p>
         {:else}
-          <!-- Render the allChecklistArray -->
-          {#each allChecklistArray as checkList, index}
+          {#each allChecklistArray as checkList (checkList.ccg_index)}
             <div class="project_button">
               <div class="icon_title">
                 <img src="./images/file.png" alt="project" />
-                <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
                   on:click="{() => selectPage(ItemPage, checkList)}"
                   class="{activeMenu === checkList ? 'active' : ''}"
                 >
-                  <i class="fa fa-user-o" aria-hidden="true"></i>
-                  {#if editingIndex === index}
-                    <input
-                      type="text"
-                      value="{checkList.ccg_group}"
-                      on:blur="{(event) => finishEditing(index, event)}"
-                      on:keydown="{(event) => handleKeydown(event, index)}"
-                    />
-                  {:else}
-                    <!-- Display ccg_group and other relevant info -->
-                    {checkList.ccg_group
-                      ? checkList.ccg_group
-                      : "No group info"}
-                    <p>{checkList.ccg_checklist_year}</p>
-                    <!-- Example of another property -->
-                  {/if}
+                  {checkList.ccg_group ? checkList.ccg_group : "No group info"}
                 </a>
               </div>
               <div style="display: flex; flex-direction:column">
                 <button
                   class="menu_button1 copy"
-                  on:click="{() => selectPage(addedChecklist, '복사')}"
-                  >복사</button
+                  on:click="{() => {
+                    showModal = true;
+                    selectedChecklistForCopyId = checkList.ccg_index;
+                  }}">복사</button
+                >
+              </div>
+            </div>
+          {/each}
+
+          <!-- Render newly created checklists with Edit/Delete buttons -->
+          {#each createdChecklists as checklist (checklist.ccg_index)}
+            <div class="project_button new-project">
+              <div class="icon_title">
+                <img src="./images/file.png" alt="new project" />
+                <a href="#">
+                  {checklist.ccg_group}
+                </a>
+              </div>
+              <div style="display: flex; flex-direction:column">
+                <button
+                  class="menu_button1 edit"
+                  on:click="{() => editChecklist(checklist.ccg_index)}"
+                  >Edit</button
+                >
+                <button
+                  class="menu_button1 copy"
+                  on:click="{() => {
+                    showModal = true;
+                    selectedChecklistForCopyId = checklist.ccg_index;
+                  }}">복사</button
+                >
+                <button
+                  class="menu_button1 delete"
+                  on:click="{() => deleteChecklist(checklist.ccg_index)}"
+                  >Delete</button
                 >
               </div>
             </div>
@@ -146,9 +233,6 @@
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button on:click="{toggleView}" class="toggle_button">
-          <span class="arrow">&#9662;</span>
-        </button>
         <form action="/action_page.php" class="form_select">
           <div class="select_container">
             <select
@@ -204,6 +288,7 @@
       </div>
       <div class="header_button">
         <p>조회</p>
+        <p>엑셀저장</p>
       </div>
     </header>
 
@@ -219,6 +304,14 @@
       </div>
     </div>
   </div>
+  <Modal bind:showModal>
+    <AddedChecklist
+      {createNewChecklistGroup}
+      {allChecklistArray}
+      bind:newChecklistName
+      bind:selectedChecklistForCopyId
+    />
+  </Modal>
 </main>
 
 <style>
@@ -281,12 +374,16 @@
       rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
       rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; /* Soft shadow for depth */
     border-right: 1px solid #e0e0e0; /* Subtle border for separation */
+    flex-shrink: 0;
   }
 
   /* Sidebar styling */
   aside {
     font-size: 16px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
   }
   .icon_title {
     display: flex;
@@ -439,7 +536,7 @@
   /* Header Styles */
   .header {
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
     align-items: center;
     padding: 10px 20px;
     background-color: #f7f9fb;

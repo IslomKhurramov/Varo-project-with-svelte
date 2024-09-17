@@ -1,132 +1,72 @@
 <script>
-  export let filteredData = [];
-  export let selectedCategory = "UNIX";
-  export let selectedChecklist = null;
+  export let createNewChecklistGroup;
+  export let allChecklistArray;
+  export let newChecklistName = "";
+  export let selectedChecklistForCopyId = null; // The selected checklist's ID
 
-  let showModal = false;
-  let formattedDate = "";
-  let selectedItem = null;
-
-  // Filter the data according to the selected checklist index
-  let filteredChecklistData = [];
-
-  // Ensure selectedChecklist[selectedCategory] is an array
-  $: if (selectedChecklist) {
-    filteredChecklistData = selectedChecklist[selectedCategory] || [];
-    if (!Array.isArray(filteredChecklistData)) {
-      filteredChecklistData = [];
-    }
+  function checkSelection() {
+    console.log("DATACREATE:", selectedChecklistForCopyId, newChecklistName);
   }
 </script>
 
-<main>
-  <div class="table2">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>남버</th>
-          <th>점검대상</th>
-          <th>항목그룹</th>
-          <th>식별코드</th>
-          <th>점검항목</th>
-          <th>위험도</th>
-          <th>평가기준</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#if filteredChecklistData.length > 0}
-          {#each filteredChecklistData as item, index}
-            <tr
-              on:click="{() => {
-                selectedItem = item;
-                showModal = true;
-              }}"
-            >
-              <td>{index + 1}</td>
-              <td>{selectedCategory}</td>
-              <td>{item[0]}</td>
-              <td>{item[5]}</td>
-              <td>{item[4]}</td>
-              <td>{item[6]}</td>
-              <td>{item[11]}</td>
-            </tr>
-          {/each}
-        {:else}
-          <tr>
-            <td colspan="7">No data available</td>
-          </tr>
-        {/if}
-      </tbody>
-    </table>
+<div class="modal-overlay">
+  <div class="modal">
+    <h3>새로운 진단 그룹 생성</h3>
+    <div>
+      <label for="source-group">복사 대상:</label>
+      <select bind:value="{selectedChecklistForCopyId}" id="source-group">
+        {#each allChecklistArray as checklist}
+          <option value="{checklist.ccg_index}">{checklist.ccg_group}</option>
+        {/each}
+      </select>
+    </div>
+    <div>
+      <label for="new-group">신규 그룹명:</label>
+      <input
+        type="text"
+        bind:value="{newChecklistName}"
+        id="new-group"
+        placeholder="새로운 진단 그룹명을 입력하세요"
+      />
+    </div>
+    <div class="modal-actions">
+      <button class="pretty-button" on:click="{createNewChecklistGroup}"
+        >저장하기</button
+      >
+    </div>
   </div>
-</main>
+</div>
 
 <style>
-  main {
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb;
-    padding: 10px;
-    margin-bottom: 40px;
-    font-family: "Arial", sans-serif;
+  .modal-overlay {
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
-  }
-
-  .table2 {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 12px;
-    color: #333;
-    overflow-y: auto;
-    overflow-x: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f7f9fb;
-  }
-
-  .table2 {
-    height: 450px;
-    margin-top: 40px;
-    margin-bottom: 20px;
-  }
-
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-
-  tr:nth-child(even) {
     background-color: #f9f9f9;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
   }
 
-  tr:hover {
-    background-color: #e0f7fa;
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
   }
-
-  tr {
+  .pretty-button {
+    background: linear-gradient(135deg, #007acc, #005fa3);
+    color: white;
+    padding: 8px 20px;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .pretty-button:hover {
+    background: linear-gradient(135deg, #005fa3, #004f8c);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
   }
 </style>

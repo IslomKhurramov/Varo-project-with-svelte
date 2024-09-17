@@ -56,3 +56,24 @@ export const setDeleteChecklistGroup = async (checklist_index) => {
   }
 };
 
+export const setUpdateGroupName = async (checklist_index,new_checklist_name) => {
+  try {
+
+    const response = await axios.post(`${serverApi}/api/setUpdateGroupName/`, {
+      checklist_group_no: checklist_index,checklist_new_group_name:   new_checklist_name });
+
+    const data = response.data;
+
+    console.log("API edit Response:", data); // Log response for debugging
+
+    if (data.RESULT !== "ERROR") {
+      return { success: true };
+    } else {
+      throw new Error(data.CODE); // Log the error code from the backend
+    }
+  } catch (error) {
+    console.error("Error setUpdateGroupName:", error); // Log error for debugging
+    throw error;
+  }
+};
+

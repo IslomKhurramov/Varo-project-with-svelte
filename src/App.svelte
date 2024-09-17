@@ -16,19 +16,19 @@
   onMount(() => {
     checkAuth();
 
-    if ($userData.isLoggedIn) {
-      console.log("User is logged in:", $userData);
-      navigate("/");
-    } else {
-      console.log("User is not logged in.");
-      navigate("/login");
-    }
+    // if ($userData.isLoggedIn) {
+    //   console.log("User is logged in:", $userData);
+    //   navigate("/");
+    // } else {
+    //   console.log("User is not logged in.");
+    //   navigate("/login");
+    // }
   });
 </script>
 
 <main>
   <Router>
-    {#if $userData.isLoggedIn}
+    <!-- {#if $userData.isLoggedIn} -->
     <Header class="header" />
     <Route path="/" component="{Page1}" />
     <Route path="/page1" component="{Page1}" />
@@ -37,9 +37,9 @@
     <Route path="/page4" component="{Page4}" />
     <Route path="/page5" component="{Page5}" />
     <Route path="/page6" component="{Page6}" />
-    {:else}
-      <Route path="/login" component="{Login}" />
-    {/if}
+    <!-- {:else} -->
+    <Route path="/login" component="{Login}" />
+    <!-- {/if} -->
   </Router>
 </main>
 

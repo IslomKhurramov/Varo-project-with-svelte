@@ -6,6 +6,8 @@
   import AddedChecklist from "./AddedChecklist.svelte";
   import Modal from "../../shared/Modal.svelte";
   import { setDeleteChecklistGroup } from "../../services/page4/getAllCheckList";
+  import { setUpdateGroupName } from "../../services/page4/getAllCheckList";
+
   let currentView = "default";
   let currentPage = ItemPage;
   let selectedCategory = "UNIX"; // Default to UNIX
@@ -16,10 +18,12 @@
   let selectedChecklist = null;
   let activeMenu = null;
   let newChecklistName = "";
-  let showModal = false; // Modal visibility control
-  let selectedChecklistForCopyId = null; // Selected checklist for copying
-  let createdChecklists = []; // Track created checklists (with unique IDs)
-  let lastCreatedChecklistId = null; // Track the last created checklist ID
+  let showModal = false;
+  let selectedChecklistForCopyId = null;
+  let createdChecklists = [];
+  let lastCreatedChecklistId = null;
+  let editingChecklistId = null;
+  let editedChecklistName = "";
   /*****************************************************************************/
   // Fetching data on component mount
   async function fetchChecklists() {
@@ -49,31 +53,25 @@
       );
 
       if (response.success) {
-        // Find the highest existing ID in the checklist array
+        // Generate a new ID locally and update the state
         const existingIds = allChecklistArray
           .map((item) => Number(item.ccg_index))
           .filter((id) => !isNaN(id));
 
-        // If there are existing IDs, find the maximum and increment it by 1
         const maxId = existingIds.length ? Math.max(...existingIds) : 0;
-        const newChecklistId = maxId + 1; // Increment by 1 to generate a new ID
+        const newChecklistId = maxId + 1;
 
         const newChecklist = {
           ccg_group: newChecklistName,
-          ccg_index: newChecklistId.toString(), // Use the incremented number as the new ID
+          ccg_index: newChecklistId.toString(),
         };
 
-        console.log("New Checklist Created with ID:", newChecklistId);
-
-        // Add the newly created checklist to both arrays
+        // Update local state without re-fetching
         allChecklistArray = [...allChecklistArray, newChecklist];
         createdChecklists = [...createdChecklists, newChecklist];
-        lastCreatedChecklistId = newChecklistId; // Track the last created checklist ID
+        lastCreatedChecklistId = newChecklistId;
 
-        // Re-fetch the checklists to ensure everything is up-to-date
-        await fetchChecklists();
-
-        // Reset modal and variables
+        // Reset the form and modal
         newChecklistName = "";
         selectedChecklistForCopyId = null;
         showModal = false;
@@ -88,20 +86,13 @@
   /*********************************************************************************/
   // Delete a checklist (only for the last created checklist)
   async function deleteChecklist(checklistId) {
-    console.log("Attempting to delete checklist with ID:", checklistId); // Log the checklist ID
-
-    if (!checklistId) {
-      alert("Checklist ID is undefined. Cannot delete.");
-      return;
-    }
-
     try {
       const response = await setDeleteChecklistGroup(checklistId);
 
       if (response.success) {
         alert("Checklist deleted successfully!");
 
-        // Remove the deleted checklist from arrays
+        // Update local state without re-fetching
         allChecklistArray = allChecklistArray.filter(
           (checklist) => checklist.ccg_index !== checklistId
         );
@@ -109,11 +100,8 @@
           (checklist) => checklist.ccg_index !== checklistId
         );
 
-        console.log("Deleted checklist ID:", checklistId); // Log successful deletion
-
         // Reset the last created checklist ID after deletion
         lastCreatedChecklistId = null;
-        await fetchChecklists(); // Optionally refetch the checklist data
       } else {
         throw new Error("Deletion failed.");
       }
@@ -151,10 +139,39 @@
     assets = [...assets, `자산그룹${newProjectNumber}`];
     editingIndex = assets.length - 1;
   };
-
+  /***********************************************************/
   // Edit checklist function (to be defined)
-  function editChecklist(checklistId) {
-    alert(`Editing checklist: ${checklistId}`);
+  async function editChecklist(checklistId, editedName) {
+    try {
+      const response = await setUpdateGroupName(checklistId, editedName);
+      if (response.success) {
+        // Update the checklist locally
+        allChecklistArray = allChecklistArray.map((checklist) =>
+          checklist.ccg_index === checklistId
+            ? { ...checklist, ccg_group: editedName }
+            : checklist
+        );
+
+        window.location.reload();
+        editingChecklistId = null;
+        editedChecklistName = "";
+      } else {
+        throw new Error("Failed to update checklist.");
+      }
+    } catch (err) {
+      alert(`Error on editing checklist name: ${err.message}`);
+    }
+  }
+
+  // Trigger edit mode
+  function startEditing(checklistId, currentName) {
+    editingChecklistId = checklistId;
+    editedChecklistName = currentName;
+  }
+  // Cancel edit mode
+  function cancelEditing() {
+    editingChecklistId = null;
+    editedChecklistName = "";
   }
 </script>
 
@@ -201,28 +218,63 @@
             <div class="project_button new-project">
               <div class="icon_title">
                 <img src="./images/file.png" alt="new project" />
-                <a href="#">
-                  {checklist.ccg_group}
-                </a>
+
+                {#if editingChecklistId === checklist.ccg_index}
+                  <!-- Edit mode: render input field -->
+                  <input
+                    type="text"
+                    bind:value="{editedChecklistName}"
+                    placeholder="Edit name"
+                  />
+                {:else}
+                  <!-- Normal mode: render the checklist name -->
+                  <a href="#">
+                    {checklist.ccg_group}
+                  </a>
+                {/if}
               </div>
+
               <div style="display: flex; flex-direction:column">
-                <button
-                  class="menu_button1 edit"
-                  on:click="{() => editChecklist(checklist.ccg_index)}"
-                  >Edit</button
-                >
-                <button
-                  class="menu_button1 copy"
-                  on:click="{() => {
-                    showModal = true;
-                    selectedChecklistForCopyId = checklist.ccg_index;
-                  }}">복사</button
-                >
-                <button
-                  class="menu_button1 delete"
-                  on:click="{() => deleteChecklist(checklist.ccg_index)}"
-                  >Delete</button
-                >
+                {#if editingChecklistId === checklist.ccg_index}
+                  <!-- Show Save/Cancel buttons in edit mode -->
+                  <button
+                    class="menu_button1 save"
+                    on:click="{() =>
+                      editChecklist(checklist.ccg_index, editedChecklistName)}"
+                  >
+                    Save
+                  </button>
+                  <button
+                    class="menu_button1 cancel"
+                    on:click="{cancelEditing}"
+                  >
+                    Cancel
+                  </button>
+                {:else}
+                  <!-- Normal mode: show Edit, Copy, Delete buttons -->
+                  <button
+                    class="menu_button1 edit"
+                    on:click="{() =>
+                      startEditing(checklist.ccg_index, checklist.ccg_group)}"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    class="menu_button1 copy"
+                    on:click="{() => {
+                      showModal = true;
+                      selectedChecklistForCopyId = checklist.ccg_index;
+                    }}"
+                  >
+                    Copy
+                  </button>
+                  <button
+                    class="menu_button1 delete"
+                    on:click="{() => deleteChecklist(checklist.ccg_index)}"
+                  >
+                    Delete
+                  </button>
+                {/if}
               </div>
             </div>
           {/each}
@@ -418,7 +470,7 @@
       rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Prevents horizontal overflow */
-    height: 98vh; /* Adjust height to fit inside sidebar */
+    min-height: 100vh; /* Adjust height to fit inside sidebar */
     margin-right: 5px;
   }
 
@@ -531,6 +583,25 @@
     background-color: #27ae60;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
+  }
+  /* Save Button - Green */
+  .menu_button1.save {
+    background-color: #2ecc71;
+    color: white;
+  }
+
+  .menu_button1.save:hover {
+    background-color: #27ae60;
+  }
+
+  /* Cancel Button - Red */
+  .menu_button1.cancel {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .menu_button1.cancel:hover {
+    background-color: #c0392b;
   }
   /* Header Styles */
   /* Header Styles */

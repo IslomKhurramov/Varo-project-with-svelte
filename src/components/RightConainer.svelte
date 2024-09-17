@@ -1,5 +1,5 @@
 <script>
-  import { getAllPlanInfo } from "../services/page1/planInfoService";
+  import { getAllPlanLists } from "../services/page1/planInfoService";
   import { onMount } from "svelte";
   import { utils, writeFile } from "xlsx";
 
@@ -17,7 +17,7 @@
 
   onMount(async () => {
     try {
-      projectData = await getAllPlanInfo();
+      projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array
       filteredProjects = projectArray;
       // Initialize filtered projects with all projects

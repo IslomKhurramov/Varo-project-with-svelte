@@ -4,7 +4,7 @@
   import RightConainer from "../RightConainer.svelte";
   import { onMount } from "svelte";
   import { userData } from "../../stores/user.store";
-  import { getAllPlanInfo } from "../../services/page1/planInfoService";
+  import { getAllPlanLists } from "../../services/page1/planInfoService";
   console.log("PAGE 1 ");
   console.log("USER DATA => ", $userData);
 
@@ -19,7 +19,7 @@
 
   onMount(async () => {
     try {
-      projectData = await getAllPlanInfo();
+      projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array
 
       // Initialize filtered projects with all projects

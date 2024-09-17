@@ -10,7 +10,6 @@
   import Page5 from "./components/대시보드5/Page5.svelte";
   import Login from "./components/login/Login.svelte";
   import { checkAuth, userData } from "./stores/user.store";
-  import Cookies from "js-cookie";
 
   console.log("$userData:", $userData);
 

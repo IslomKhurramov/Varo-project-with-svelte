@@ -86,11 +86,11 @@
             >
               <td>{index + 1}</td>
               <td>{selectedCategory}</td>
-              <td>{item[0]}</td>
-              <td>{item[5]}</td>
-              <td>{item[4]}</td>
-              <td>{item[6]}</td>
-              <td>{item[11]}</td>
+              <td>{item.ccc_item_group}</td>
+              <td>{item.ccc_item_no}</td>
+              <td>{item.ccc_item_title}</td>
+              <td>{item.ccc_item_level}</td>
+              <td>{item.ccc_item_criteria}</td>
             </tr>
           {/each}
         {:else}

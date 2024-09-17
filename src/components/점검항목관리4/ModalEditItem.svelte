@@ -3,25 +3,6 @@
   export let selectedCategory;
 
   $: selectedItem && console.log("DATAMODAL", selectedItem);
-  let projectsData = [
-    {
-      checklist: "[ U -53 ] 사용자 shell 점검",
-      itemGroup: "[ UNIX ] 계정 관리",
-      inspectionCriteria: "하",
-      riskLevel: {
-        vulnerability:
-          " 로그인이 필요하지 않은 계정에 /bin/false(/sbin/nologin) 쉘이 부여되어 있는 경우 ",
-        good: " 로그인이 필요하지 않은 계정에 /bin/false(/sbin/nologin) 쉘이 부여되어 있는 경우 ",
-      },
-      modifyInspectionResults: "",
-      inspectionStatus: "2020.12.15",
-      evidenceImage: "사용하지 않는 계정에 쉘이 적용되어 있지 않음",
-      improve:
-        "로그인이 필요하지 않은 계정에 대해 /bin/false(/sbin/nologin) 쉘 부여",
-      inprovement:
-        "일반적으로 로그인이 불필요한 계정 daemon, bin, sys, adm, listen, nobody, nobody4, noaccess, diag, operator, games, gopher 등 일반적으로 UID 100 이하 60000 이상의 시 스템 계정 해당",
-    },
-  ];
 </script>
 
 <div class="modal">
@@ -33,51 +14,51 @@
       </tr>
       <tr>
         <th>항목그룹</th>
-        <td>{selectedItem[3]}</td>
+        <td>{selectedItem.ccc_item_group}</td>
       </tr>
       <tr>
         <th>정검목적</th>
-        <td>{selectedItem[9]}</td>
+        <td>{selectedItem.ccc_check_purpose}</td>
       </tr>
       <tr>
         <th>보안위협</th>
-        <td>{selectedItem[10]}</td>
+        <td>{selectedItem.ccc_security_threat}</td>
       </tr>
       <tr>
         <th>점검내용</th>
-        <td>{selectedItem[11]}</td>
+        <td>{selectedItem.ccc_check_content}</td>
       </tr>
       <tr>
         <th>대상시스템</th>
-        <td>{selectedItem[7]}</td>
+        <td>{selectedItem.ccc_target_system}</td>
       </tr>
       <tr>
         <th>식별코드</th>
-        <td>{selectedItem[5]}</td>
+        <td>{selectedItem.ccc_item_no}</td>
       </tr>
       <tr>
         <th>점검항목</th>
-        <td>{selectedItem[4]}</td>
+        <td>{selectedItem.ccc_item_title}</td>
       </tr>
       <tr>
         <th>위험도</th>
-        <td>{selectedItem[6]}</td>
+        <td>{selectedItem.ccc_item_level}</td>
       </tr>
       <tr>
         <th>평가기준</th>
-        <td>{selectedItem[12]}</td>
+        <td>{selectedItem.ccc_item_criteria}</td>
       </tr>
       <tr>
         <th>조치방안</th>
-        <td>{selectedItem[13]}</td>
+        <td>{selectedItem.ccc_mitigation_method}</td>
       </tr>
       <tr>
         <th>조치예시</th>
-        <td>{selectedItem[14]}</td>
+        <td>{selectedItem.ccc_mitigation_example}</td>
       </tr>
       <tr>
         <th>조치시영향도</th>
-        <td>{selectedItem[15] || "N/A"}</td>
+        <td>{selectedItem.ccc_impact || "N/A"}</td>
       </tr>
     {:else}
       <tr>

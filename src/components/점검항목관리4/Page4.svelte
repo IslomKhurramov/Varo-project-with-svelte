@@ -1,16 +1,18 @@
 <script>
   import ItemPage from "./ItemPage.svelte";
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
   import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
   import AddedChecklist from "./AddedChecklist.svelte";
   import Modal from "../../shared/Modal.svelte";
   import { setDeleteChecklistGroup } from "../../services/page4/getAllCheckList";
   import { setUpdateGroupName } from "../../services/page4/getAllCheckList";
+  import { Swiper, Navigation, Pagination } from "swiper";
+  import "swiper/swiper-bundle.min.css";
 
   let currentView = "default";
   let currentPage = ItemPage;
-  let selectedCategory = "UNIX"; // Default to UNIX
+  let selectedCategory = "점검대상"; // Default to UNIX
   let loading = true;
   let error = null;
   let allChecklistArray = [];
@@ -24,6 +26,38 @@
   let lastCreatedChecklistId = null;
   let editingChecklistId = null;
   let editedChecklistName = "";
+  let swiperContainer;
+  let swiperInstance;
+  let slides = [];
+  let showSlide = false;
+
+  /****************************************************************************/
+  // Swiper
+
+  function initializeSwiper() {
+    if (swiperInstance) {
+      swiperInstance.destroy(true, true); // Destroy previous instance before re-initializing
+    }
+
+    // Initialize Swiper only when we have slides
+    if (swiperContainer && slides.length > 0) {
+      swiperInstance = new Swiper(swiperContainer, {
+        modules: [Navigation, Pagination],
+        loop: false,
+        slidesPerView: 8,
+        spaceBetween: 15,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    }
+  }
+
   /*****************************************************************************/
   // Fetching data on component mount
   async function fetchChecklists() {
@@ -114,15 +148,32 @@
   // Filter data based on selected category
   function filterData() {
     if (selectedCategory && allChecklistArray.length > 0) {
-      // Filter the checklist array based on the selected category
+      // Flatten the checklist array and filter by category
       filteredData = allChecklistArray.flatMap(
         (item) => item[selectedCategory] || []
       );
+
+      // Map the filtered data to extract `ccc_item_no`
+      slides = filteredData.map((item) => item.ccc_item_no || "No Item Number");
+      showSlide = slides.length > 0;
+      // Initialize or update Swiper only when the data is ready
+      initializeSwiper();
+    } else {
+      showSlide = false;
     }
   }
 
-  // Trigger when category changes
+  /************************************************************************/
+  // Run filterData every time `selectedCategory` or `allChecklistArray` updates
   $: filterData();
+
+  /************************************************************************/
+  // After component updates (e.g., after DOM updates), ensure Swiper is properly initialized
+  afterUpdate(() => {
+    if (slides.length > 0) {
+      initializeSwiper();
+    }
+  });
   /**********************************************************************/
   // When a checklist is selected, pass it to the second component
   const selectPage = (page, checklist) => {
@@ -130,8 +181,8 @@
     currentPage = page;
     activeMenu = checklist;
     currentView = "pageView";
-    console.log("INDEX:", selectedChecklist);
   };
+
   /**********************************************/
 
   const addProject = () => {
@@ -193,6 +244,7 @@
             <div class="project_button">
               <div class="icon_title">
                 <img src="./images/file.png" alt="project" />
+                <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
                   on:click="{() => selectPage(ItemPage, checkList)}"
@@ -228,6 +280,7 @@
                   />
                 {:else}
                   <!-- Normal mode: render the checklist name -->
+                  <!-- svelte-ignore a11y-invalid-attribute -->
                   <a href="#">
                     {checklist.ccg_group}
                   </a>
@@ -288,18 +341,6 @@
         <form action="/action_page.php" class="form_select">
           <div class="select_container">
             <select
-              name="approval_status"
-              id="approval_status"
-              class="select_input"
-            >
-              <option value="pending">점검그룹</option>
-              <option value="approved">운영체제</option>
-              <option value="rejected">에이전트여부</option>
-              <option value="rejected">등록승인여부</option>
-            </select>
-          </div>
-          <div class="select_container">
-            <select
               name="asset_group"
               id="asset_group"
               class="select_input"
@@ -319,14 +360,8 @@
             </select>
           </div>
           <div class="select_container">
-            <select
-              name="operating_system"
-              id="operating_system"
-              class="select_input"
-            >
+            <select name="id_code" id="id_code" class="select_input">
               <option value="windows">점검항목</option>
-              <option value="linux">Linux</option>
-              <option value="macos">macOS</option>
             </select>
           </div>
           <div class="select_container">
@@ -343,7 +378,26 @@
         <p>엑셀저장</p>
       </div>
     </header>
-
+    {#if showSlide}
+      <div class="swiper_container1">
+        <img src="./images/left.png" alt="left" />
+        <div bind:this="{swiperContainer}" class="swiper-container">
+          <div class="swiper-wrapper">
+            {#each slides as slide}
+              <div class="swiper-slide">{slide}</div>
+            {/each}
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+        <img
+          src="./images/left.png"
+          style="transform: rotate(180deg);"
+          alt="right"
+        />
+      </div>
+    {/if}
     <div class="swiper_container">
       <div class="swiper_container">
         <svelte:component
@@ -675,55 +729,76 @@
     text-decoration: underline;
   }
 
-  /* Dropdown Arrow */
-  .arrow {
-    color: #ffffff;
+  /* Swiper Styles */
+  .swiper-container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px 0;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    position: relative;
   }
-
-  /* Toggle Button */
-  .toggle_button {
-    background-color: #007acc;
-    color: #ffffff;
-    padding: 10px;
-    height: 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-
-  .toggle_button:hover {
-    background-color: #005fa3;
-  }
-
-  /* Second Line Styles */
-  .second_line {
+  .swiper_container1 {
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-    padding-right: 20px;
+    align-items: center;
+  }
+  .swiper_container1 img {
+    width: 50px;
+    height: auto;
+  }
+  .swiper-wrapper {
+    display: flex;
   }
 
-  .second_line button {
-    background-color: #007acc;
-    color: #ffffff;
-    border-radius: 5px;
-    height: 36px;
-    width: 140px;
-    cursor: pointer;
-    font-size: 14px;
+  .swiper-slide {
+    height: 50px;
+    max-width: 300px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.1);
     transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    cursor: pointer;
   }
 
-  .second_line button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  .swiper-slide:hover {
+    transform: scale(1.1);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.2),
+      0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .swiper-pagination {
+    color: #007acc;
+  }
+
+  /* Move the left and right navigation buttons outside the swiper container */
+  .swiper-button-prev,
+  .swiper-button-next {
+    color: #007acc;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .swiper-button-prev {
+    left: -50px;
+  }
+
+  .swiper-button-next {
+    right: -50px;
   }
 </style>

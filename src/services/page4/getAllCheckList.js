@@ -77,3 +77,31 @@ export const setUpdateGroupName = async (checklist_index,new_checklist_name) => 
   }
 };
 
+
+export const getChecklistItemBySearch = async (ccg_index,category,item_no,riskLevel) => {
+  try {
+
+    const response = await axios.post(`${serverApi}/api/getChecklistItemBySearch/`, {
+      checklist_group:ccg_index,
+      assessment_target:category,
+      checklist_item_id:item_no,
+      item_security_level:riskLevel
+
+     });
+
+    const data = response.data;
+
+    console.log("API Search Response:", data); // Log response for debugging
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE); // Log the error code from the backend
+    }
+    
+  } catch (error) {
+    console.error("Error getChecklistItemBySearch:", error); // Log error for debugging
+    throw error;
+  }
+};
+

@@ -6,6 +6,8 @@
   export let filteredData = [];
   export let selectedCategory = "UNIX";
   export let selectedChecklist = null;
+  export let searchResult;
+  export let isSearchActive;
 
   let showModal = false;
   let formattedDate = "";
@@ -36,34 +38,76 @@
 </script>
 
 <main>
+  <p>점검그룹</p>
   <div class="table1">
-    <table>
-      <tr>
-        <th>넘버</th>
-        <th>점검항목이름</th>
-        <th>분류</th>
-        <th>지원대상</th>
-        <th>등록일</th>
-        <th>삭제</th>
-      </tr>
-      {#each allChecklistArray as data}
+    {#if isSearchActive}
+      <table>
+        <thead>
+          <tr>
+            <th>남버</th>
+            <th>점검대상</th>
+            <th>항목그룹</th>
+            <th>식별코드</th>
+            <th>점검항목</th>
+            <th>위험도</th>
+            <th>평가기준</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#if searchResult.length > 0}
+            {#each searchResult as item, index}
+              <tr
+                on:click="{() => {
+                  selectedItem = item;
+                  showModal = true;
+                }}"
+              >
+                <td>{index + 1}</td>
+                <td>{selectedCategory}</td>
+                <td>{item.ccc_index}</td>
+                <td>{item.ccc_item_no}</td>
+                <td>{item.ccc_item_title}</td>
+                <td>{item.ccc_item_level}</td>
+                <td>{item.ccc_item_criteria}</td>
+              </tr>
+            {/each}
+          {:else}
+            <tr>
+              <td colspan="7">점검대상 선택해 주세요</td>
+            </tr>
+          {/if}
+        </tbody>
+      </table>
+    {:else}
+      <table>
         <tr>
-          <td>{data.cgl_index_id}</td>
-          <td>{data.ccg_group}</td>
-          <td>{data.ccg_checklist_year}</td>
-          <td>{data.ccg_support_part}</td>
-          <td>{formatDate(data.ccg_createdate)}</td>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <td on:click|stopPropagation>
-            <button class="delete_button">삭제</button>
-          </td>
+          <th>넘버</th>
+          <th>점검항목이름</th>
+          <th>분류</th>
+          <th>지원대상</th>
+          <th>등록일</th>
+          <th>삭제</th>
         </tr>
-      {/each}
-    </table>
+        {#each allChecklistArray as data}
+          <tr>
+            <td>{data.cgl_index_id}</td>
+            <td>{data.ccg_group}</td>
+            <td>{data.ccg_checklist_year}</td>
+            <td>{data.ccg_support_part}</td>
+            <td>{formatDate(data.ccg_createdate)}</td>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <td on:click|stopPropagation>
+              <button class="delete_button">삭제</button>
+            </td>
+          </tr>
+        {/each}
+      </table>
+    {/if}
   </div>
 
+  <p>점검그룹 세부내용</p>
   <div class="table2">
-    <table class="table">
+    <table>
       <thead>
         <tr>
           <th>남버</th>
@@ -95,7 +139,7 @@
           {/each}
         {:else}
           <tr>
-            <td colspan="7">No data available</td>
+            <td colspan="7">점검대상 선택해 주세요</td>
           </tr>
         {/if}
       </tbody>
@@ -119,7 +163,10 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 10px;
   }
-
+  main p {
+    font-size: 16px;
+    font-weight: bold;
+  }
   .table1,
   .table2 {
     font-family: "Arial", sans-serif;
@@ -140,7 +187,6 @@
 
   .table2 {
     height: 450px;
-    margin-top: 40px;
     margin-bottom: 20px;
   }
 

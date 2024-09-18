@@ -3,6 +3,7 @@
   import { onMount, afterUpdate } from "svelte";
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
   import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
+  import { getChecklistItemBySearch } from "../../services/page4/getAllCheckList";
   import AddedChecklist from "./AddedChecklist.svelte";
   import Modal from "../../shared/Modal.svelte";
   import Modal2 from "../../shared/Modal2.svelte";
@@ -34,7 +35,10 @@
   let showSlide = false;
   let showModalSecond = false;
   let selectedSlide = null;
-
+  let selectedRisk = "위험도";
+  let item_no = "";
+  let searchResult = [];
+  let isSearchActive = false;
   /****************************************************************************/
   // Swiper
 
@@ -217,6 +221,43 @@
       alert(`Error on editing checklist name: ${err.message}`);
     }
   }
+  /*********************************************************************/
+  //Search
+  async function searchItem(
+    selectedChecklist,
+    selectedCategory,
+    item_no,
+    selectedRisk
+  ) {
+    const ccg_index = selectedChecklist.ccg_index,
+      category = selectedCategory,
+      item_number = item_no,
+      riskLevel = selectedRisk;
+
+    console.log("INFO:", ccg_index, category, item_number, riskLevel);
+
+    try {
+      const response = await getChecklistItemBySearch(
+        ccg_index,
+        category,
+        item_number,
+        riskLevel
+      );
+
+      console.log("SEARCH RESPONSE:", response); //
+
+      if (response.RESULT === "OK" && Array.isArray(response.CODE)) {
+        console.log("SEARCH SUCCEED:", response.CODE);
+        searchResult = response.CODE;
+        isSearchActive = true;
+      } else {
+        throw new Error(`Failed in searching: ${response.CODE}`);
+      }
+    } catch (err) {
+      console.error("ERROR searching checklistItem:", err.message);
+      alert(`ERROR searching checklistItem: ${err.message}`);
+    }
+  }
 
   // Trigger edit mode
   function startEditing(checklistId, currentName) {
@@ -364,21 +405,42 @@
             </select>
           </div>
           <div class="select_container">
-            <select name="id_code" id="id_code" class="select_input">
-              <option value="windows">점검항목</option>
-            </select>
+            <input
+              placeholder="입력 점검항목"
+              type="text"
+              class="select_input"
+              bind:value="{item_no}"
+            />
           </div>
           <div class="select_container">
-            <select name="agent_status" id="agent_status" class="select_input">
-              <option value="active">위험도</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+            <select
+              bind:value="{selectedRisk}"
+              name="agent_status"
+              id="agent_status"
+              class="select_input"
+            >
+              <option value="위험도">위험도</option>
+              <option value="상">상</option>
+              <option value="중">중</option>
+              <option value="하">하</option>
             </select>
           </div>
         </form>
       </div>
       <div class="header_button">
-        <p>조회</p>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <p
+          on:click="{() =>
+            searchItem(
+              selectedChecklist,
+              selectedCategory,
+              item_no,
+              selectedRisk
+            )}"
+        >
+          조회
+        </p>
+
         <p>엑셀저장</p>
       </div>
     </header>
@@ -419,6 +481,8 @@
           {filteredData}
           {selectedCategory}
           {selectedChecklist}
+          {searchResult}
+          {isSearchActive}
         />
       </div>
     </div>

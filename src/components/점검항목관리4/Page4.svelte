@@ -15,7 +15,7 @@
 
   let currentView = "default";
   let currentPage = ItemPage;
-  let selectedCategory = "점검대상"; // Default to UNIX
+  let selectedCategory = "UNIX"; // Default to UNIX
   let loading = true;
   let error = null;
   let allChecklistArray = [];
@@ -74,8 +74,8 @@
       const allCheckList = await getAllCheckList();
       allChecklistArray = Object.values(allCheckList); // Convert to array
       if (allChecklistArray.length > 0) {
-        selectedChecklist = allChecklistArray[0]; // Select the first checklist
-        activeMenu = allChecklistArray[0];
+        selectedChecklist = null; // Select the first checklist
+        activeMenu = null;
       }
     } catch (err) {
       error = err.message;
@@ -99,7 +99,6 @@
         const existingIds = allChecklistArray
           .map((item) => Number(item.ccg_index))
           .filter((id) => !isNaN(id));
-
         const maxId = existingIds.length ? Math.max(...existingIds) : 0;
         const newChecklistId = maxId + 1;
 
@@ -112,7 +111,8 @@
         allChecklistArray = [...allChecklistArray, newChecklist];
         createdChecklists = [...createdChecklists, newChecklist];
         lastCreatedChecklistId = newChecklistId;
-
+        selectedChecklist = newChecklist;
+        activeMenu = newChecklist;
         // Reset the form and modal
         newChecklistName = "";
         selectedChecklistForCopyId = null;
@@ -229,12 +229,37 @@
     item_no,
     selectedRisk
   ) {
-    const ccg_index = selectedChecklist.ccg_index,
-      category = selectedCategory,
-      item_number = item_no,
-      riskLevel = selectedRisk;
+    // Check if selectedChecklist is null or undefined before proceeding
+    if (!selectedChecklist) {
+      alert("Please select a checklist item.");
+      return;
+    }
 
-    console.log("INFO:", ccg_index, category, item_number, riskLevel);
+    const ccg_index = selectedChecklist.ccg_index;
+    const category = selectedCategory;
+    const item_number = item_no;
+    const riskLevel = selectedRisk;
+
+    // Check for empty fields before making the search request
+    if (!ccg_index) {
+      alert("Please select a valid checklist item.");
+      return;
+    }
+
+    if (category === "점검대상") {
+      alert("Please choose a category.");
+      return;
+    }
+
+    if (!item_number) {
+      alert("Please input the item number.");
+      return;
+    }
+
+    if (riskLevel === "위험도") {
+      alert("Please choose a risk level.");
+      return;
+    }
 
     try {
       const response = await getChecklistItemBySearch(
@@ -244,14 +269,18 @@
         riskLevel
       );
 
-      console.log("SEARCH RESPONSE:", response); //
+      console.log("SEARCH RESPONSE:", response);
 
       if (response.RESULT === "OK" && Array.isArray(response.CODE)) {
-        console.log("SEARCH SUCCEED:", response.CODE);
-        searchResult = response.CODE;
-        isSearchActive = true;
+        if (response.CODE.length > 0) {
+          console.log("SEARCH SUCCEED:", response.CODE);
+          searchResult = response.CODE;
+          isSearchActive = true;
+        } else {
+          alert("No results found for your search.");
+        }
       } else {
-        throw new Error(`Failed in searching: ${response.CODE}`);
+        throw new Error(`Search failed: ${response.CODE}`);
       }
     } catch (err) {
       console.error("ERROR searching checklistItem:", err.message);
@@ -483,6 +512,7 @@
           {selectedChecklist}
           {searchResult}
           {isSearchActive}
+          {activeMenu}
         />
       </div>
     </div>
@@ -560,7 +590,7 @@
       rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
       rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; /* Soft shadow for depth */
     border-right: 1px solid #e0e0e0; /* Subtle border for separation */
-    flex-shrink: 0;
+    height: 110vh;
   }
 
   /* Sidebar styling */
@@ -604,7 +634,7 @@
       rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Prevents horizontal overflow */
-    min-height: 100vh; /* Adjust height to fit inside sidebar */
+    height: 100vh; /* Adjust height to fit inside sidebar */
     margin-right: 5px;
   }
 
@@ -631,7 +661,8 @@
 
   aside a:hover,
   aside a.active {
-    text-decoration: underline; /* Add underline for active/hover */
+    text-decoration: underline;
+    color: #3498db; /* Add underline for active/hover */
   }
 
   /* Add/Delete buttons */

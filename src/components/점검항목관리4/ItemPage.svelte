@@ -5,12 +5,11 @@
   export let allChecklistArray;
   export let filteredData = [];
   export let selectedCategory = "UNIX";
-  export let selectedChecklist = null;
   export let searchResult;
   export let isSearchActive;
+  export let selectedChecklist;
 
   let showModal = false;
-  let formattedDate = "";
   let selectedItem = null;
 
   // Filter the data according to the selected checklist index
@@ -103,6 +102,14 @@
         {/each}
       </table>
     {/if}
+    <div class="reset">
+      <button
+        class="reset_button"
+        on:click="{() => {
+          isSearchActive = false;
+        }}">테이블 재설정</button
+      >
+    </div>
   </div>
 
   <p>점검그룹 세부내용</p>
@@ -243,5 +250,31 @@
     background-color: #c0392b;
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .reset_button {
+    justify-content: end;
+    background-color: #ff6b6b; /* Red background color */
+    color: #ffffff; /* White text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px 10px; /* Padding around the text */
+    font-size: 12px; /* Font size for the button text */
+    font-weight: bold; /* Make text bold */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease; /* Smooth transition */
+    margin-right: 15px;
+  }
+
+  .reset_button:hover {
+    background-color: #e74c3c; /* Darker red on hover */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  }
+  .reset {
+    display: flex;
+    width: 100%;
+    justify-content: end;
+    margin-top: 10px;
   }
 </style>

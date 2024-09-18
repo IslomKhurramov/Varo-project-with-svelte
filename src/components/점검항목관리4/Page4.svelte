@@ -5,10 +5,12 @@
   import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
   import AddedChecklist from "./AddedChecklist.svelte";
   import Modal from "../../shared/Modal.svelte";
+  import Modal2 from "../../shared/Modal2.svelte";
   import { setDeleteChecklistGroup } from "../../services/page4/getAllCheckList";
   import { setUpdateGroupName } from "../../services/page4/getAllCheckList";
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
+  import ModalSwiper from "./ModalSwiper.svelte";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -30,6 +32,8 @@
   let swiperInstance;
   let slides = [];
   let showSlide = false;
+  let showModalSecond = false;
+  let selectedSlide = null;
 
   /****************************************************************************/
   // Swiper
@@ -154,7 +158,7 @@
       );
 
       // Map the filtered data to extract `ccc_item_no`
-      slides = filteredData.map((item) => item.ccc_item_no || "No Item Number");
+      slides = filteredData.map((item) => item);
       showSlide = slides.length > 0;
       // Initialize or update Swiper only when the data is ready
       initializeSwiper();
@@ -384,7 +388,16 @@
         <div bind:this="{swiperContainer}" class="swiper-container">
           <div class="swiper-wrapper">
             {#each slides as slide}
-              <div class="swiper-slide">{slide}</div>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <div
+                class="swiper-slide"
+                on:click="{() => {
+                  showModalSecond = true;
+                  selectedSlide = slide;
+                }}"
+              >
+                {slide.ccc_item_no}
+              </div>
             {/each}
           </div>
           <div class="swiper-pagination"></div>
@@ -418,6 +431,9 @@
       bind:selectedChecklistForCopyId
     />
   </Modal>
+  <Modal2 bind:showModalSecond>
+    <ModalSwiper {selectedSlide} {selectedCategory} />
+  </Modal2>
 </main>
 
 <style>

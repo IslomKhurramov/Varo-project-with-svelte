@@ -12,6 +12,7 @@
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
   import ModalSwiper from "./ModalSwiper.svelte";
+  import { tick } from "svelte";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -39,6 +40,7 @@
   let item_no = "";
   let searchResult = [];
   let isSearchActive = false;
+  let activeChecklistElement = null;
   /****************************************************************************/
   // Swiper
 
@@ -86,7 +88,7 @@
 
   onMount(fetchChecklists); // Fetch checklists on component mount
   /*****************************************************************************/
-  // Create a new checklist group
+
   async function createNewChecklistGroup() {
     try {
       const response = await setNewChecklistGroup(
@@ -95,7 +97,6 @@
       );
 
       if (response.success) {
-        // Generate a new ID locally and update the state
         const existingIds = allChecklistArray
           .map((item) => Number(item.ccg_index))
           .filter((id) => !isNaN(id));
@@ -113,6 +114,16 @@
         lastCreatedChecklistId = newChecklistId;
         selectedChecklist = newChecklist;
         activeMenu = newChecklist;
+
+        // Scroll to the newly created checklist
+        await tick(); // Wait for DOM updates
+        if (activeChecklistElement) {
+          activeChecklistElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+
         // Reset the form and modal
         newChecklistName = "";
         selectedChecklistForCopyId = null;
@@ -124,6 +135,24 @@
       alert(`Failed to create new checklist group: ${err.message}`);
     }
   }
+
+  // Ensure that the selected page scrolls into view
+  const selectPage = (page, checklist) => {
+    selectedChecklist = checklist; // Store the selected checklist
+    currentPage = page;
+    activeMenu = checklist;
+    currentView = "pageView";
+
+    // Scroll to the active checklist
+    tick().then(() => {
+      if (activeChecklistElement) {
+        activeChecklistElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    });
+  };
 
   /*********************************************************************************/
   // Delete a checklist (only for the last created checklist)
@@ -182,14 +211,7 @@
       initializeSwiper();
     }
   });
-  /**********************************************************************/
-  // When a checklist is selected, pass it to the second component
-  const selectPage = (page, checklist) => {
-    selectedChecklist = checklist; // Store the selected checklist
-    currentPage = page;
-    activeMenu = checklist;
-    currentView = "pageView";
-  };
+  /*************************************************************/
 
   /**********************************************/
 
@@ -315,13 +337,14 @@
           <p>Error: {error}</p>
         {:else}
           {#each allChecklistArray as checkList (checkList.ccg_index)}
-            <div class="project_button">
+            <div class="project_button" bind:this="{activeChecklistElement}">
               <div class="icon_title">
                 <img src="./images/file.png" alt="project" />
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
-                  on:click="{() => selectPage(ItemPage, checkList)}"
+                  on:click|preventDefault="{() =>
+                    selectPage(ItemPage, checkList)}"
                   class="{activeMenu === checkList ? 'active' : ''}"
                 >
                   {checkList.ccg_group ? checkList.ccg_group : "No group info"}
@@ -385,15 +408,6 @@
                       startEditing(checklist.ccg_index, checklist.ccg_group)}"
                   >
                     Edit
-                  </button>
-                  <button
-                    class="menu_button1 copy"
-                    on:click="{() => {
-                      showModal = true;
-                      selectedChecklistForCopyId = checklist.ccg_index;
-                    }}"
-                  >
-                    Copy
                   </button>
                   <button
                     class="menu_button1 delete"

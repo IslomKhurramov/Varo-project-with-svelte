@@ -77,6 +77,14 @@
           {/if}
         </tbody>
       </table>
+      <div class="reset">
+        <button
+          class="reset_button"
+          on:click="{() => {
+            isSearchActive = false;
+          }}">테이블 재설정</button
+        >
+      </div>
     {:else}
       <table>
         <tr>
@@ -102,14 +110,6 @@
         {/each}
       </table>
     {/if}
-    <div class="reset">
-      <button
-        class="reset_button"
-        on:click="{() => {
-          isSearchActive = false;
-        }}">테이블 재설정</button
-      >
-    </div>
   </div>
 
   <p>점검그룹 세부내용</p>

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { setNewPlan, getAssetGroups } from "../services/page1/newInspection"; // Only one service is needed
+  import { setNewPlan, getAssetGroups, getOptionsForNewPlan } from "../services/page1/newInspection"; // Only one service is needed
   let loading = true;
   let error = null;
 
@@ -8,8 +8,8 @@
   // Data for the form
   let projectName = "";
   let selectedType = "";
-  let selectedTarget = "";
-  let selectedChecklist = "";
+  let selectedCheckList = "";
+  let selectedAssetList = "";
   let selectedPersons = "";
   let startDate = "";
   let endDate = "";
@@ -36,6 +36,10 @@
   let actionStartDate = "";
   let actionEndDate = "";
 
+
+  // 
+  let planOptions = [];
+
   function toggleList(view) {
     showTable = view === "table";
   }
@@ -43,11 +47,11 @@
   // Submit the entire form (POST all form data)
   const submitNewPlan = async () => {
     try {
-      const response = await setNewPlan({
+      const sendData = {
         projectName,
         selectedType,
-        selectedTarget,
-        selectedChecklist,
+        selectedCheckList,
+        selectedAssetList,
         selectedPersons,
         startDate,
         endDate,
@@ -59,19 +63,22 @@
         actionSchedule,
         actionStartDate,
         actionEndDate,
-      });
+      }
+      console.log("submitNewPlan: sendData:", sendData)
+
+      // const response = await setNewPlan(sendData);
 
       // Log the entire response object to see what is being returned
-      console.log("API Response:", response);
+      // console.log("API Response:", response);
 
-      if (response.success) {
-        console.log("New plan submitted successfully!");
-      } else {
-        console.error(
-          "Failed to submit new plan:",
-          response.message || "Unknown error"
-        );
-      }
+      // if (response.success) {
+      //   console.log("New plan submitted successfully!");
+      // } else {
+      //   console.error(
+      //     "Failed to submit new plan:",
+      //     response.message || "Unknown error"
+      //   );
+      // }
     } catch (error) {
       console.error("Error submitting new plan:", error);
     }
@@ -81,9 +88,12 @@
   onMount(async () => {
     loading = true; // Set loading to true when starting the fetch process
     try {
-      const projectData = await getAssetGroups();
-      assetGroup = projectData;
-      console.log("Asset Groups:", assetGroup);
+      // const projectData = await getAssetGroups();
+      // assetGroup = projectData;
+      // console.log("Asset Groups:", assetGroup);
+
+      planOptions = await getOptionsForNewPlan();
+      console.log("planOptions:", planOptions)
     } catch (err) {
       error = err.message;
       console.error("Error loading asset groups:", error);
@@ -91,6 +101,10 @@
       loading = false; // Ensure loading is set to false once complete
     }
   });
+
+
+  console.log("schedule:", schedule)
+
 </script>
 
 <div class="container">
@@ -128,10 +142,12 @@
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
         <label class="label blue-label">점검대상</label>
-        <select class="dropdown" bind:value="{selectedTarget}">
-          <option value="Servers">Servers</option>
-          <option value="Databases">Databases</option>
-          <!-- Populate dynamically if needed -->
+        <select class="dropdown" bind:value="{selectedCheckList}">
+          {#if planOptions.checklist_group}
+            {#each planOptions.checklist_group as item}
+              <option value={item.ccg_index}>{item.ccg_group}</option>
+            {/each}
+          {/if}
         </select>
       </div>
 
@@ -139,11 +155,13 @@
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
-        <label class="label blue-label">점검항목</label>
-        <select class="dropdown" bind:value="{selectedChecklist}">
-          <option value="FirewallStatus">Firewall Status</option>
-          <option value="BackupLevels">Backup Levels</option>
-          <!-- Populate dynamically if needed -->
+        <label class="label blue-label1">점검항목</label>
+        <select class="dropdown" bind:value="{selectedAssetList}">
+          {#if planOptions.asset_group}
+            {#each planOptions.asset_group as asset}
+              <option value={asset.asg_index}>{asset.asg_title}</option>
+            {/each}
+          {/if}
         </select>
       </div>
 
@@ -151,13 +169,14 @@
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
-        <label class="label blue-label">점검자지정</label>
-        <input
-          type="text"
-          class="input"
-          placeholder="한동훈, 김지연, 윤정훈"
-          bind:value="{selectedPersons}"
-        />
+        <label class="label blue-label2">점검자지정</label>
+        <select class="dropdown" bind:value="{selectedPersons}">
+          {#if planOptions.member_group}
+            {#each planOptions.member_group as member}
+              <option value={member.user_index}>{member.user_name}</option>
+            {/each}
+          {/if}
+        </select>
       </div>
 
       <!-- Inspection Schedule -->
@@ -179,7 +198,8 @@
         </select>
       </div>
 
-      <!-- Repeat -->
+      {#if schedule == '반복실행'}
+        <!-- Repeat -->
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
@@ -189,7 +209,6 @@
           <option value="반복설정">반복설정</option>
         </select>
       </div>
-
       <!-- Cycle -->
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -208,6 +227,8 @@
           <option value="월">월</option>
         </select>
       </div>
+      {/if}
+      
 
       <!-- Repeat-Based Project Creation -->
       <div class="row">

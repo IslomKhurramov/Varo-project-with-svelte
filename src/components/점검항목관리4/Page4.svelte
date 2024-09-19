@@ -13,6 +13,10 @@
   import "swiper/swiper-bundle.min.css";
   import ModalSwiper from "./ModalSwiper.svelte";
   import { tick } from "svelte";
+  import {
+    checklistStore,
+    fetchChecklistData,
+  } from "../../services/page4/checklistStore";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -70,23 +74,21 @@
 
   /*****************************************************************************/
   // Fetching data on component mount
-  async function fetchChecklists() {
-    loading = true;
-    try {
-      const allCheckList = await getAllCheckList();
-      allChecklistArray = Object.values(allCheckList); // Convert to array
-      if (allChecklistArray.length > 0) {
-        selectedChecklist = null; // Select the first checklist
-        activeMenu = null;
-      }
-    } catch (err) {
-      error = err.message;
-    } finally {
-      loading = false;
+  // Subscribe to checklistStore
+  checklistStore.subscribe(
+    ({ loading: storeLoading, data, error: storeError }) => {
+      loading = storeLoading;
+      allChecklistArray = data;
+      error = storeError;
     }
-  }
+  );
 
-  onMount(fetchChecklists); // Fetch checklists on component mount
+  // Fetch the checklist data once
+  onMount(() => {
+    if (!allChecklistArray.length) {
+      fetchChecklistData();
+    }
+  });
   /*****************************************************************************/
 
   async function createNewChecklistGroup() {
@@ -97,23 +99,18 @@
       );
 
       if (response.success) {
-        const existingIds = allChecklistArray
-          .map((item) => Number(item.ccg_index))
-          .filter((id) => !isNaN(id));
-        const maxId = existingIds.length ? Math.max(...existingIds) : 0;
-        const newChecklistId = maxId + 1;
+        // Fetch the updated checklist data
+        await refreshChecklistData();
+        lastCreatedChecklistId = selectedChecklist.ccg_index;
 
-        const newChecklist = {
-          ccg_group: newChecklistName,
-          ccg_index: newChecklistId.toString(),
-        };
-
-        // Update local state without re-fetching
-        allChecklistArray = [...allChecklistArray, newChecklist];
-        createdChecklists = [...createdChecklists, newChecklist];
-        lastCreatedChecklistId = newChecklistId;
-        selectedChecklist = newChecklist;
-        activeMenu = newChecklist;
+        // Add the new checklist to createdChecklists
+        createdChecklists = [
+          ...createdChecklists,
+          {
+            ccg_index: lastCreatedChecklistId,
+            ccg_group: newChecklistName,
+          },
+        ];
 
         // Scroll to the newly created checklist
         await tick(); // Wait for DOM updates
@@ -153,6 +150,22 @@
       }
     });
   };
+
+  async function refreshChecklistData() {
+    try {
+      const allCheckList = await getAllCheckList();
+      allChecklistArray = Object.values(allCheckList); // Convert to array
+
+      // Automatically set the newly created checklist as the active one
+      if (allChecklistArray.length > 0) {
+        selectedChecklist = allChecklistArray[allChecklistArray.length - 1];
+        activeMenu = selectedChecklist;
+        console.log("Refreshed data:", selectedChecklist);
+      }
+    } catch (error) {
+      console.error("Error fetching checklist data:", error);
+    }
+  }
 
   /*********************************************************************************/
   // Delete a checklist (only for the last created checklist)
@@ -377,7 +390,6 @@
                   />
                 {:else}
                   <!-- Normal mode: render the checklist name -->
-                  <!-- svelte-ignore a11y-invalid-attribute -->
                   <a href="#">
                     {checklist.ccg_group}
                   </a>

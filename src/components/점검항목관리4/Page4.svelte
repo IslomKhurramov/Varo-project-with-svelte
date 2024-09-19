@@ -539,6 +539,7 @@
           {searchResult}
           {isSearchActive}
           {activeMenu}
+          {lastCreatedChecklistId}
         />
       </div>
     </div>

@@ -79,7 +79,7 @@
   ) {
     isNewlyCreatedChecklist = true;
   } else {
-    isNewlyCreatedChecklist = true;
+    isNewlyCreatedChecklist = false;
   }
 
   /******************************************************************************/

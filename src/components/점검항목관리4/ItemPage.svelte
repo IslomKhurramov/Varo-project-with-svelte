@@ -2,7 +2,7 @@
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
   import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
-
+  import { filteredChecklistData } from "../../services/page4/checklistStore";
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
   export let searchResult;
@@ -13,18 +13,25 @@
   let selected = [];
   let showModal = false;
   let isNewlyCreatedChecklist = false;
-  let filteredChecklistData = [];
 
   /**********************************************************************/
-  $: allSelected = filteredChecklistData.length === selected.length;
+  $: if (selectedChecklist) {
+    filteredChecklistData.set(selectedChecklist[selectedCategory] || []);
+  }
+
+  // Subscribe to filteredChecklistData store to make it reactive
+  let allSelected;
+  $: filteredChecklistData.subscribe((data) => {
+    allSelected = data.length === selected.length;
+  });
 
   function selectAll() {
-    selected = allSelected ? [] : [...filteredChecklistData];
+    $filteredChecklistData.update((data) => {
+      selected = allSelected ? [] : [...data];
+      return data;
+    });
   }
 
-  function check() {
-    console.log("selected:", selected);
-  }
   // Extract ccc_index from selected items
   function arrayOfDeletedItem() {
     return selected.map((item) => item.ccc_index);
@@ -33,7 +40,7 @@
   /***********************************************************************************/
   // Function to delete selected items
   async function deleteSelectedItem() {
-    const selectedItems = filteredChecklistData.filter((item) =>
+    const selectedItems = $filteredChecklistData.filter((item) =>
       selected.includes(item)
     );
 
@@ -45,8 +52,6 @@
     const mainIndex = selected[0].ccg_index_id;
     const arrayIndexes = arrayOfDeletedItem();
 
-    console.log("main:", mainIndex, "array:", arrayIndexes);
-
     try {
       const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
 
@@ -54,12 +59,9 @@
         alert(`Selected items deleted successfully!`);
 
         // Update filteredChecklistData by removing deleted items
-        filteredChecklistData = filteredChecklistData.filter(
-          (item) => !arrayIndexes.includes(item.ccc_index)
+        filteredChecklistData.update((data) =>
+          data.filter((item) => !arrayIndexes.includes(item.ccc_index))
         );
-
-        // Force the UI to refresh by reassigning the filteredChecklistData
-        filteredChecklistData = [...filteredChecklistData];
 
         // Clear the selected array
         selected = [];
@@ -69,16 +71,6 @@
       alert("Error occurred while deleting items.");
     }
   }
-
-  /***********************************************************************/
-  // Ensure selectedChecklist[selectedCategory] is an array
-  $: if (selectedChecklist) {
-    filteredChecklistData = selectedChecklist[selectedCategory] || [];
-    if (!Array.isArray(filteredChecklistData)) {
-      filteredChecklistData = [];
-    }
-  }
-
   /************************************************************************/
   // Mark the newly created checklist as new
   $: if (
@@ -187,7 +179,7 @@
         type="checkbox"
         on:click="{selectAll}"
         checked="{allSelected}"
-      /><strong on:click="{check}"> 전체선택 </strong>
+      /><strong> 전체선택 </strong>
 
       <button on:click="{deleteSelectedItem}">선택항목삭제</button>
     </div>
@@ -209,8 +201,8 @@
         </tr>
       </thead>
       <tbody>
-        {#if filteredChecklistData.length > 0}
-          {#each filteredChecklistData as item, index}
+        {#if $filteredChecklistData.length > 0}
+          {#each $filteredChecklistData as item, index}
             <tr
               on:click="{() => {
                 selectedItem = item;

@@ -27,3 +27,5 @@ export async function fetchChecklistData() {
     });
   }
 }
+
+export const filteredChecklistData = writable([]);

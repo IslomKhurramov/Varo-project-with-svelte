@@ -1,68 +1,85 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
+  import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
 
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
   export let searchResult;
   export let isSearchActive;
   export let selectedChecklist;
-  let selectedItem = null;
-  let showModal = false;
-  let selected = null;
-  let isNewlyCreatedChecklist = false;
-  let allSelected = false;
-  let filteredChecklistData = [];
   export let lastCreatedChecklistId;
+  let selectedItem = null;
+  let selected = [];
+  let showModal = false;
+  let isNewlyCreatedChecklist = false;
+  let filteredChecklistData = [];
 
-  // Function to select all items
+  /**********************************************************************/
+  $: allSelected = filteredChecklistData.length === selected.length;
+
   function selectAll() {
-    // Set selected property to true for all items in filteredChecklistData
-    filteredChecklistData = filteredChecklistData.map((item) => ({
-      ...item,
-      selected: true,
-    }));
+    selected = allSelected ? [] : [...filteredChecklistData];
   }
 
-  // Function to deselect all items
-  function deselectAll() {
-    // Set selected property to false for all items in filteredChecklistData
-    filteredChecklistData = filteredChecklistData.map((item) => ({
-      ...item,
-      selected: false,
-    }));
+  function check() {
+    console.log("selected:", selected);
+  }
+  // Extract ccc_index from selected items
+  function arrayOfDeletedItem() {
+    return selected.map((item) => item.ccc_index);
   }
 
+  /***********************************************************************************/
   // Function to delete selected items
-  async function deleteSelectedItems() {
-    const selectedItems = filteredChecklistData.filter((item) => item.selected);
+  async function deleteSelectedItem() {
+    const selectedItems = filteredChecklistData.filter((item) =>
+      selected.includes(item)
+    );
+
     if (selectedItems.length === 0) {
       alert("삭제할 항목을 선택하세요.");
       return;
     }
 
-    // API logic for deleting selected items (mocked here)
-    // for (let item of selectedItems) {
-    //   await fetch(`/api/setDeleteChecklistitem/${item.ccc_item_no}`, {
-    //     method: "GET",
-    //   });
-    // }
+    const mainIndex = selected[0].ccg_index_id;
+    const arrayIndexes = arrayOfDeletedItem();
+
+    console.log("main:", mainIndex, "array:", arrayIndexes);
+
+    try {
+      const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
+
+      if (deleteItem.success) {
+        alert(`Selected items deleted successfully!`);
+
+        // Update filteredChecklistData by removing deleted items
+        filteredChecklistData = filteredChecklistData.filter(
+          (item) => !arrayIndexes.includes(item.ccc_index)
+        );
+
+        // Force the UI to refresh by reassigning the filteredChecklistData
+        filteredChecklistData = [...filteredChecklistData];
+
+        // Clear the selected array
+        selected = [];
+      }
+    } catch (error) {
+      console.error("Error deleting items:", error);
+      alert("Error occurred while deleting items.");
+    }
   }
 
+  /***********************************************************************/
   // Ensure selectedChecklist[selectedCategory] is an array
   $: if (selectedChecklist) {
     filteredChecklistData = selectedChecklist[selectedCategory] || [];
     if (!Array.isArray(filteredChecklistData)) {
       filteredChecklistData = [];
     }
-
-    // Initialize 'selected' property for each item if it doesn't exist
-    filteredChecklistData = filteredChecklistData.map((item) => ({
-      ...item,
-      selected: item.selected || false,
-    }));
   }
 
+  /************************************************************************/
   // Mark the newly created checklist as new
   $: if (
     selectedChecklist &&
@@ -70,9 +87,10 @@
   ) {
     isNewlyCreatedChecklist = true;
   } else {
-    isNewlyCreatedChecklist = false;
+    isNewlyCreatedChecklist = true;
   }
 
+  /******************************************************************************/
   // Convert to a more human-readable format
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -165,9 +183,13 @@
   <p>점검그룹 세부내용</p>
   {#if isNewlyCreatedChecklist}
     <div class="control-buttons">
-      <button on:click="{selectAll}">전체선택</button>
-      <button on:click="{deselectAll}">선택해제</button>
-      <button on:click="{deleteSelectedItems}">선택항목삭제</button>
+      <input
+        type="checkbox"
+        on:click="{selectAll}"
+        checked="{allSelected}"
+      /><strong on:click="{check}"> 전체선택 </strong>
+
+      <button on:click="{deleteSelectedItem}">선택항목삭제</button>
     </div>
   {/if}
   <div class="table2">
@@ -175,7 +197,7 @@
       <thead>
         <tr>
           {#if isNewlyCreatedChecklist}
-            <th></th>
+            <th on:click|stopPropagation></th>
           {/if}
           <th>남버</th>
           <th>점검대상</th>
@@ -196,11 +218,13 @@
               }}"
             >
               {#if isNewlyCreatedChecklist}
-                <td
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td on:click|stopPropagation
                   ><input
                     type="checkbox"
-                    on:click|stopPropagation
-                    bind:checked="{item.selected}"
+                    bind:group="{selected}"
+                    value="{item}"
+                    name="{item}"
                   /></td
                 >
               {/if}

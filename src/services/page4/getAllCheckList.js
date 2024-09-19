@@ -105,3 +105,28 @@ export const getChecklistItemBySearch = async (ccg_index,category,item_no,riskLe
   }
 };
 
+
+export const setDeleteChecklistItem = async (ccg_index,ccc_indexes) => {
+  try {
+
+    const response = await axios.post(`${serverApi}/api/setDeleteChecklistItem/`, {
+      checklist_group_no: ccg_index,
+      selected_items: ccc_indexes
+     });
+
+    const data = response.data;
+
+    console.log("API setDeleteChecklistItem Response:", data); // Log response for debugging
+
+    if (data.RESULT !== "ERROR") {
+      return {success:true};
+    } else {
+      throw new Error(data.CODE); // Log the error code from the backend
+    }
+    
+  } catch (error) {
+    console.error("Error setDeleteChecklistItem:", error); // Log error for debugging
+    throw error;
+  }
+};
+

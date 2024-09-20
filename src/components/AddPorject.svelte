@@ -113,7 +113,7 @@
       >CCE점검</button
     >
     <button class="button green-button" on:click="{() => toggleList('table')}"
-      >보안감사점검</button
+      >자산정보수집</button
     >
   </div>
 

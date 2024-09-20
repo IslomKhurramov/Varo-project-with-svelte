@@ -5,6 +5,7 @@
   import { onMount } from "svelte";
   import { userData } from "../../stores/user.store";
   import { getAllPlanLists } from "../../services/page1/planInfoService";
+  import { setDeletePlan } from "../../services/page1/newInspection";
   console.log("PAGE 1 ");
   console.log("USER DATA => ", $userData);
 
@@ -22,7 +23,6 @@
       projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array
 
-      // Initialize filtered projects with all projects
     } catch (err) {
       error = err.message;
     } finally {
@@ -45,9 +45,15 @@
     projectArray = [...projectArray, `프로젝트 ${newProjectNumber}`];
   };
 
-  const deleteProject = () => {
-    if (projectArray.length > 0) {
-      projectArray = projectArray.slice(0, -1); // Remove the last project
+  const deleteProject = async () => {
+    try {
+      if (projectArray.length > 0) {
+        const lastProject = projectArray[projectArray.length - 1]
+        await setDeletePlan(lastProject.ccp_index);
+        projectArray = projectArray.slice(0, -1); 
+      }
+    } catch (err) {
+      console.log("ERROR deleteProject:", err)
     }
   };
 </script>

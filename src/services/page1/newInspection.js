@@ -26,6 +26,27 @@ export const setNewPlan = async (planData) => {
   }
 };
 
+export const setDeletePlan = async (plan_index) => {
+  try {
+    console.log("plan_index:", plan_index);
+    const response = await axios.post(
+      `${serverApi}/api/setDeletePlan/`,
+      {
+        plan_index: plan_index,
+      },
+      { withCredentials: true }
+    );
+    console.log("setDeletePlan response:", response);
+    if (response.data.RESULT === "ERROR") {
+      throw new Error("Something went wrong");
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error posting new plan information:", error);
+    throw error;
+  }
+};
+
 export const getAssetGroups = async () => {
   try {
     const response = await axios.get(`${serverApi}/getAssetGroups/`);

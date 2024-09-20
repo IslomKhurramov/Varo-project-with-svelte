@@ -11,3 +11,46 @@ export const getAllAssetLists = async () => {
       throw error;
     }
   };
+
+
+  export const setAssetUnActivate = async (uuid) => {
+    try {
+      // Send request to server to unactivate the asset
+      const response = await axios.post(`${serverApi}/api/setAssetUnActivate/`, {
+        ass_uuid: uuid,
+      });
+  
+      const data = response.data;
+      console.log("Data from unactivate", data);
+  
+      // If successful, return success
+      if (data.RESULT !== "ERROR") {
+        return { success: true };
+      } else {
+        throw new Error(`Error Code: ${data.CODE}`);
+      }
+    } catch (error) {
+     throw error
+    }
+  };
+  
+  export const setAssetActivate = async (uuid) => {
+    try {
+      // Send request to server to unactivate the asset
+      const response = await axios.post(`${serverApi}/api/setAssetActivate/`, {
+        ass_uuid: uuid,
+      });
+  
+      const data = response.data;
+      console.log("Data from setAssetActivate", data);
+  
+      // If successful, return success
+      if (data.RESULT !== "ERROR") {
+        return { success: true };
+      } else {
+        throw new Error(`Error Code: ${data.CODE}`);
+      }
+    } catch (error) {
+     throw error
+    }
+  };

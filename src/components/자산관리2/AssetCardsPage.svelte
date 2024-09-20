@@ -85,13 +85,17 @@
   // Convert to a more human-readable format
   function formatDate(dateString) {
     const date = new Date(dateString);
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    const timeOptions = {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    };
-    return `${date.toLocaleDateString("en-US", options)} ${date.toLocaleTimeString("en-US", timeOptions)}`;
+
+    // Extract year, month, day, hour, minute, and second
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed, so add 1
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    // Return the date in the format YYYY/MM/DD HH:MM:SS
+    return `${year}/${month}/${day} ${hours}:${minutes}`;
   }
 
   /**********************************************************************/
@@ -117,16 +121,12 @@
           <div class="red_button"></div>
           <span>삭제</span>
         </div>
-        <div class="colors">
-          <div class="yellow_button"></div>
-          <span>이전(다른그룹으로)</span>
-        </div>
       </div>
     </div>
     <div class="card_container">
       {#if $allAssetList.length > 0}
         {#each $allAssetList as asset}
-          <div class="card">
+          <div class="card {asset.ast_activate ? `` : 'deactivated'}">
             <input
               type="checkbox"
               class="checkbox"
@@ -142,7 +142,6 @@
               ></button>
               <button class="red" on:click="{() => unActivate(asset.ass_uuid)}"
               ></button>
-              <button class="yellow"></button>
             </div>
 
             <button class="modal_button" on:click="{() => (showModal = true)}">
@@ -164,7 +163,7 @@
                 </div>
 
                 <p>
-                  <span style="font-weight: bold;">
+                  <span style="font-weight: bold; white-space: nowrap;">
                     {asset.asset_group[0].asg_index__asg_title}
                     <!-- Asset Group -->
                   </span>
@@ -473,5 +472,10 @@
     background-color: #005fa3;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .deactivated {
+    opacity: 0.5; /* Faded appearance for deactivated cards */
+    background-color: #f0f0f0; /* Light grey background */
+    border: 2px dashed #cccccc; /* Dashed border */
   }
 </style>

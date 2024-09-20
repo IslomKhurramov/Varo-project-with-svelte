@@ -28,6 +28,10 @@
 
 <main>
   <div class="container">
+    <div class="header_buttons">
+      <button>요약보고서</button>
+      <button>상세보고서 </button>
+    </div>
     <div class="allselect">
       <div class="allSelectDiv">
         <input type="checkbox" on:click="{toggleAll}" checked="{allSelected}" />
@@ -138,6 +142,7 @@
     background-color: #f7f9fb;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
   }
 
   /* Header section for select and action buttons */
@@ -206,6 +211,7 @@
     background-color: #ffffff;
     border-radius: 8px;
     border: 1px solid #ced4da;
+    min-height: 100vh;
   }
 
   /* Individual card styling */
@@ -348,5 +354,29 @@
 
   .second_col p {
     margin: 0;
+  }
+  .header_buttons {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .header_buttons button {
+    background-color: #0056b3;
+    color: #ffffff;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .header_buttons button:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 </style>

@@ -4,25 +4,36 @@
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
   import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
-  import Jongbusujin from "./Jongbusujin.svelte";
-  import AssetManagementChasansangButton from "./AssetManagementChasansangButton.svelte";
-
+  import { allAssetList } from "../../services/page2/asset.store";
+  import { getAllAssetLists } from "../../services/page2/assetService";
+  import { onMount } from "svelte";
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
   let showModal = false;
+  /*************************GetAllAssetList*****************************************/
+  async function assetList() {
+    try {
+      const response = await getAllAssetLists();
 
+      if (response.RESULT === "OK") {
+        allAssetList.set(Object.values(response.CODE));
+        console.log("array data", allAssetList);
+      }
+    } catch (err) {
+      alert(`Error getting AllAssetList ${err.message}`);
+    }
+  }
+
+  onMount(() => {
+    assetList();
+  });
+
+  /***********************************************************/
   let assets = ["자산그룹 1"];
-
   const addProject = () => {
     const newProjectNumber = assets.length + 1;
     assets = [...assets, `자산그룹${newProjectNumber}`];
-  };
-
-  const deleteProject = () => {
-    if (projects.length > 0) {
-      projects = projects.slice(0, -1); // Remove the last project
-    }
   };
 
   const selectPage = (page, menu) => {
@@ -48,28 +59,32 @@
       </div>
 
       <div class="project_container">
-        {#each assets as asset, index}
-          <dir class="project_button">
-            <div class="button_cont">
-              <img src="./images/asset.png" alt="project" />
-              <!-- svelte-ignore missing-declaration -->
-              <!-- svelte-ignore a11y-invalid-attribute -->
-              <a
-                href="#"
-                on:click="{() => selectPage(AssetPage, asset)}"
-                class="{activeMenu === asset ? 'active' : ''}"
-              >
-                <i class="fa fa-user-o" aria-hidden="true"></i>
-                {asset}
-              </a>
+        {#if $allAssetList.length > 0}
+          {#each $allAssetList as asset, index}
+            <div class="project_button">
+              <div class="button_cont">
+                <img src="./images/asset.png" alt="project" />
+                <!-- svelte-ignore missing-declaration -->
+                <!-- svelte-ignore a11y-invalid-attribute -->
+                <a
+                  href="#"
+                  on:click="{() => selectPage(AssetCardsPage, asset)}"
+                  class="{activeMenu === asset ? 'active' : ''}"
+                >
+                  <i class="fa fa-user-o" aria-hidden="true"></i>
+                  {asset.ast_hostname}
+                </a>
+              </div>
+              <div>
+                <button
+                  class="asset_button"
+                  on:click="{() => selectPage(AssetManagement, '자산관리')}"
+                  >자산관리</button
+                >
+              </div>
             </div>
-            <button
-              class="asset_button"
-              on:click="{() => selectPage(AssetManagement, '자산관리')}"
-              >자산관리</button
-            >
-          </dir>
-        {/each}
+          {/each}
+        {/if}
       </div>
     </aside>
   </div>
@@ -121,25 +136,12 @@
       </div>
       <div class="header_button">
         <p>자산명</p>
-        <p>엑셀다운로드</p>
+        <p>엑셀저장</p>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <p on:click="{() => (showModal = true)}">등록현황</p>
+        <p>이력관리</p>
       </div>
     </header>
-
-    <div class="second_line">
-      <button
-        on:click="{() =>
-          selectPage(AssetManagementChasansangButton, '정보수집')}"
-      >
-        자산상세검색
-      </button>
-      <button on:click="{() => selectPage(Jongbusujin, '정보수집')}">
-        정보수집
-      </button>
-      <button on:click="{() => (showModal = true)}">자산그룹별등록추세</button>
-      <button>요약보고서출력</button>
-      <button>상세보고서출력</button>
-      <button>목록엑셀저장</button>
-    </div>
 
     <div class="swiper_container">
       {#if currentPage}
@@ -187,6 +189,7 @@
     color: #343a40;
     padding: 20px;
     width: 250px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     border-radius: 20px;
@@ -265,10 +268,13 @@
   .button_cont {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
   }
   .project_container {
     display: flex;
     flex-direction: column;
+    gap: 5px;
     background-color: #f7f9fb; /* Soft background color */
     border-radius: 8px; /* Smooth rounded corners */
     transition:
@@ -279,7 +285,7 @@
       rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
     overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden; /* Prevents horizontal overflow */
-    height: 98vh; /* Adjust height to fit inside sidebar */
+    height: 100vh; /* Adjust height to fit inside sidebar */
   }
 
   .project_button:hover {
@@ -297,27 +303,30 @@
     display: block;
     color: #495057;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     text-decoration: none;
     transition: all 0.3s ease;
+    margin-top: 5px;
+    margin-right: 5px;
   }
 
   aside a:hover,
   aside a.active {
-    text-decoration: underline; /* Add underline for active/hover */
+    text-decoration: underline;
+    color: #3498db; /* Add underline for active/hover */
   }
 
   .asset_button {
     background-color: #5bc0de;
     border: none;
+    width: 60px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 12px;
-    padding: 5px 10px;
+    font-size: 10px;
+    padding: 2px;
     color: #ffffff;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
+    transition: all 0.3s ease;
+    text-align: center;
   }
 
   .asset_button:hover {
@@ -427,30 +436,5 @@
 
   .toggle_button:hover {
     background-color: #005fa3;
-  }
-
-  /* Second Line Styles */
-  .second_line {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .second_line button {
-    background-color: #0056b3;
-    color: #ffffff;
-    border-radius: 5px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .second_line button:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 </style>

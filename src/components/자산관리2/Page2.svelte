@@ -188,7 +188,7 @@
     background-color: #f7f9fb; /* Use white background for cleanliness */
     color: #343a40;
     padding: 20px;
-    width: 250px;
+    width: 300px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -317,7 +317,7 @@
   }
 
   .asset_button {
-    background-color: #5bc0de;
+    background-color: #207792;
     border: none;
     width: 60px;
     border-radius: 5px;
@@ -327,11 +327,13 @@
     color: #ffffff;
     transition: all 0.3s ease;
     text-align: center;
+    border: 1px solid #0e4556;
   }
 
   .asset_button:hover {
     background-color: #31b0d5;
     transform: translateY(-2px);
+    border: 1px solid #0e4556;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 

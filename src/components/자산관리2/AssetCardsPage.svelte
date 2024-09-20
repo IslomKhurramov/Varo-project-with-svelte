@@ -7,14 +7,24 @@
     setAssetUnActivate,
   } from "../../services/page2/assetService";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
+  import { all } from "axios";
 
   let showModal = false;
-  let assetData = [];
   let selected = [];
-  $: allSelected = assetData.length === selected.length;
+
+  let allSelected;
+  $: allAssetList.subscribe((data) => {
+    allSelected = data.length === selected.length;
+  });
 
   function toggleAll() {
-    selected = allSelected ? [] : [...assetData];
+    allAssetList.update((data) => {
+      selected = allSelected ? [] : [...data];
+      return data;
+    });
+  }
+  function check() {
+    console.log("SELECTED", selected);
   }
 
   /**************UnActivate**************************************/
@@ -104,7 +114,7 @@
 <main>
   <div class="container">
     <div class="header_buttons">
-      <button>요약보고서</button>
+      <button on:click="{check}">요약보고서</button>
       <button>상세보고서 </button>
     </div>
     <div class="allselect">
@@ -131,8 +141,8 @@
               type="checkbox"
               class="checkbox"
               bind:group="{selected}"
-              name="{asset.ast_hostname}"
-              value="{asset.ast_hostname}"
+              name="{asset}"
+              value="{asset}"
             />
 
             <div class="card_buttons">
@@ -411,10 +421,10 @@
     position: absolute;
     right: 10px;
     padding: 5px 10px;
-    background-color: #5bc0de;
+    background-color: #207792;
     color: #fff;
+    border: 1px solid #0e4556;
     font-size: 10px;
-    border: none;
     border-radius: 4px;
     cursor: pointer;
     transition:

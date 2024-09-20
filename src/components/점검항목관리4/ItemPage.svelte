@@ -1,28 +1,88 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
-
+  import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
+  import { filteredChecklistData } from "../../services/page4/checklistStore";
   export let allChecklistArray;
-  export let filteredData = [];
   export let selectedCategory = "UNIX";
   export let searchResult;
   export let isSearchActive;
   export let selectedChecklist;
-
-  let showModal = false;
+  export let lastCreatedChecklistId;
   let selectedItem = null;
+  let selected = [];
+  let showModal = false;
+  let isNewlyCreatedChecklist = false;
 
-  // Filter the data according to the selected checklist index
-  let filteredChecklistData = [];
-
-  // Ensure selectedChecklist[selectedCategory] is an array
+  /**********************************************************************/
   $: if (selectedChecklist) {
-    filteredChecklistData = selectedChecklist[selectedCategory] || [];
-    if (!Array.isArray(filteredChecklistData)) {
-      filteredChecklistData = [];
-    }
+    filteredChecklistData.set(selectedChecklist[selectedCategory] || []);
   }
 
+  // Subscribe to filteredChecklistData store to make it reactive
+  let allSelected;
+  $: filteredChecklistData.subscribe((data) => {
+    allSelected = data.length === selected.length;
+  });
+
+  function selectAll() {
+    $filteredChecklistData.update((data) => {
+      selected = allSelected ? [] : [...data];
+      return data;
+    });
+  }
+
+  // Extract ccc_index from selected items
+  function arrayOfDeletedItem() {
+    return selected.map((item) => item.ccc_index);
+  }
+
+  /***********************************************************************************/
+  // Function to delete selected items
+  async function deleteSelectedItem() {
+    const selectedItems = $filteredChecklistData.filter((item) =>
+      selected.includes(item)
+    );
+
+    if (selectedItems.length === 0) {
+      alert("삭제할 항목을 선택하세요.");
+      return;
+    }
+
+    const mainIndex = selected[0].ccg_index_id;
+    const arrayIndexes = arrayOfDeletedItem();
+
+    try {
+      const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
+
+      if (deleteItem.success) {
+        alert(`Selected items deleted successfully!`);
+
+        // Update filteredChecklistData by removing deleted items
+        filteredChecklistData.update((data) =>
+          data.filter((item) => !arrayIndexes.includes(item.ccc_index))
+        );
+
+        // Clear the selected array
+        selected = [];
+      }
+    } catch (error) {
+      console.error("Error deleting items:", error);
+      alert("Error occurred while deleting items.");
+    }
+  }
+  /************************************************************************/
+  // Mark the newly created checklist as new
+  $: if (
+    selectedChecklist &&
+    selectedChecklist.ccg_index === lastCreatedChecklistId
+  ) {
+    isNewlyCreatedChecklist = true;
+  } else {
+    isNewlyCreatedChecklist = false;
+  }
+
+  /******************************************************************************/
   // Convert to a more human-readable format
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -57,7 +117,7 @@
             {#each searchResult as item, index}
               <tr
                 on:click="{() => {
-                  selectedItem = item;
+                  selected = item;
                   showModal = true;
                 }}"
               >
@@ -77,6 +137,14 @@
           {/if}
         </tbody>
       </table>
+      <div class="reset">
+        <button
+          class="reset_button"
+          on:click="{() => {
+            isSearchActive = false;
+          }}">테이블 재설정</button
+        >
+      </div>
     {:else}
       <table>
         <tr>
@@ -102,21 +170,27 @@
         {/each}
       </table>
     {/if}
-    <div class="reset">
-      <button
-        class="reset_button"
-        on:click="{() => {
-          isSearchActive = false;
-        }}">테이블 재설정</button
-      >
-    </div>
   </div>
 
   <p>점검그룹 세부내용</p>
+  {#if isNewlyCreatedChecklist}
+    <div class="control-buttons">
+      <input
+        type="checkbox"
+        on:click="{selectAll}"
+        checked="{allSelected}"
+      /><strong> 전체선택 </strong>
+
+      <button on:click="{deleteSelectedItem}">선택항목삭제</button>
+    </div>
+  {/if}
   <div class="table2">
     <table>
       <thead>
         <tr>
+          {#if isNewlyCreatedChecklist}
+            <th on:click|stopPropagation></th>
+          {/if}
           <th>남버</th>
           <th>점검대상</th>
           <th>항목그룹</th>
@@ -127,14 +201,25 @@
         </tr>
       </thead>
       <tbody>
-        {#if filteredChecklistData.length > 0}
-          {#each filteredChecklistData as item, index}
+        {#if $filteredChecklistData.length > 0}
+          {#each $filteredChecklistData as item, index}
             <tr
               on:click="{() => {
                 selectedItem = item;
                 showModal = true;
               }}"
             >
+              {#if isNewlyCreatedChecklist}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td on:click|stopPropagation
+                  ><input
+                    type="checkbox"
+                    bind:group="{selected}"
+                    value="{item}"
+                    name="{item}"
+                  /></td
+                >
+              {/if}
               <td>{index + 1}</td>
               <td>{selectedCategory}</td>
               <td>{item.ccc_index}</td>
@@ -145,9 +230,11 @@
             </tr>
           {/each}
         {:else}
-          <tr>
-            <td colspan="7">점검대상 선택해 주세요</td>
-          </tr>
+          <tr
+            ><td colspan="{isNewlyCreatedChecklist ? '8' : '7'}"
+              >점검대상 선택해 주세요</td
+            ></tr
+          >
         {/if}
       </tbody>
     </table>
@@ -276,5 +363,28 @@
     width: 100%;
     justify-content: end;
     margin-top: 10px;
+  }
+  .control-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .control-buttons button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .control-buttons button:hover {
+    background-color: #0056b3;
+  }
+  input[type="checkbox"] {
+    cursor: pointer;
   }
 </style>

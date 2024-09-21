@@ -1,6 +1,10 @@
 <script>
   import { onMount } from "svelte";
-  import { setNewPlan, getAssetGroups, getOptionsForNewPlan } from "../services/page1/newInspection"; // Only one service is needed
+  import {
+    setNewPlan,
+    getAssetGroups,
+    getOptionsForNewPlan,
+  } from "../services/page1/newInspection"; // Only one service is needed
   let loading = true;
   let error = null;
 
@@ -36,8 +40,7 @@
   let actionStartDate = "";
   let actionEndDate = "";
 
-
-  // 
+  //
   let planOptions = [];
 
   function toggleList(view) {
@@ -63,8 +66,8 @@
         actionSchedule,
         actionStartDate,
         actionEndDate,
-      }
-      console.log("submitNewPlan: sendData:", sendData)
+      };
+      console.log("submitNewPlan: sendData:", sendData);
 
       // const response = await setNewPlan(sendData);
 
@@ -93,7 +96,7 @@
       // console.log("Asset Groups:", assetGroup);
 
       planOptions = await getOptionsForNewPlan();
-      console.log("planOptions:", planOptions)
+      console.log("planOptions:", planOptions);
     } catch (err) {
       error = err.message;
       console.error("Error loading asset groups:", error);
@@ -102,9 +105,7 @@
     }
   });
 
-
-  console.log("schedule:", schedule)
-
+  console.log("schedule:", schedule);
 </script>
 
 <div class="container">
@@ -145,7 +146,7 @@
         <select class="dropdown" bind:value="{selectedCheckList}">
           {#if planOptions.checklist_group}
             {#each planOptions.checklist_group as item}
-              <option value={item.ccg_index}>{item.ccg_group}</option>
+              <option value="{item.ccg_index}">{item.ccg_group}</option>
             {/each}
           {/if}
         </select>
@@ -159,7 +160,7 @@
         <select class="dropdown" bind:value="{selectedAssetList}">
           {#if planOptions.asset_group}
             {#each planOptions.asset_group as asset}
-              <option value={asset.asg_index}>{asset.asg_title}</option>
+              <option value="{asset.asg_index}">{asset.asg_title}</option>
             {/each}
           {/if}
         </select>
@@ -173,7 +174,7 @@
         <select class="dropdown" bind:value="{selectedPersons}">
           {#if planOptions.member_group}
             {#each planOptions.member_group as member}
-              <option value={member.user_index}>{member.user_name}</option>
+              <option value="{member.user_index}">{member.user_name}</option>
             {/each}
           {/if}
         </select>
@@ -198,37 +199,36 @@
         </select>
       </div>
 
-      {#if schedule == '반복실행'}
+      {#if schedule == "반복실행"}
         <!-- Repeat -->
-      <div class="row">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <div class="row">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
 
-        <label class="label blue-label">반복</label>
-        <select class="dropdown" bind:value="{repetition}">
-          <option value="아니요">아니요</option>
-          <option value="반복설정">반복설정</option>
-        </select>
-      </div>
-      <!-- Cycle -->
-      <div class="row">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
+          <label class="label blue-label">반복</label>
+          <select class="dropdown" bind:value="{repetition}">
+            <option value="아니요">아니요</option>
+            <option value="반복설정">반복설정</option>
+          </select>
+        </div>
+        <!-- Cycle -->
+        <div class="row">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
 
-        <label class="label blue-label">주기</label>
-        <input
-          type="text"
-          class="input"
-          placeholder="반복주기지정(반복설정)"
-          bind:value="{repeatCycle}"
-        />
-        <select class="dropdown" bind:value="{repeatCycle}">
-          <option value="시">시</option>
-          <option value="일">일</option>
-          <option value="주">주</option>
-          <option value="월">월</option>
-        </select>
-      </div>
+          <label class="label blue-label">주기</label>
+          <input
+            type="text"
+            class="input"
+            placeholder="반복주기지정(반복설정)"
+            bind:value="{repeatCycle}"
+          />
+          <select class="dropdown" bind:value="{repeatCycle}">
+            <option value="시">시</option>
+            <option value="일">일</option>
+            <option value="주">주</option>
+            <option value="월">월</option>
+          </select>
+        </div>
       {/if}
-      
 
       <!-- Repeat-Based Project Creation -->
       <div class="row">

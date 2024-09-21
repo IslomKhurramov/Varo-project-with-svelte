@@ -1,35 +1,120 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalCard from "./ModalCard.svelte";
+  import { allAssetList } from "../../services/page2/asset.store";
+  import {
+    setAssetActivate,
+    setAssetUnActivate,
+  } from "../../services/page2/assetService";
+  import { successAlert, errorAlert } from "../../shared/sweetAlert";
+  import { all } from "axios";
 
   let showModal = false;
-  let assetData = [];
-
   let selected = [];
-  $: allSelected = assetData.length === selected.length;
 
-  for (let i = 0; i <= 15; i++) {
-    assetData.push({
-      secureScore: "90",
-      assetGroup: "(자산그룹1)",
-      assetData: "2024/07/22 13:11:22",
-      operatingSystem: "윈도우 서버 2022",
-      assetName: "ABCDEFSDFSDFEWFSDF",
-      ipAdress: "192.168.0.01",
-      inspectionTarget: "UNIX, DBMS, WEB",
-      agentInstallation: "설치됨",
-    });
-  }
+  let allSelected;
+  $: allAssetList.subscribe((data) => {
+    allSelected = data.length === selected.length;
+  });
 
   function toggleAll() {
-    selected = allSelected ? [] : [...assetData];
+    allAssetList.update((data) => {
+      selected = allSelected ? [] : [...data];
+      return data;
+    });
   }
+  function check() {
+    console.log("SELECTED", selected);
+  }
+
+  /**************UnActivate**************************************/
+
+  async function unActivate(uuid) {
+    const asset = $allAssetList.find((a) => a.ass_uuid === uuid); // Find the asset in the store
+
+    // If the asset is already unactivated, show an alert and skip API call
+    if (!asset.ast_activate) {
+      errorAlert("The asset is already unactivated.");
+      return; // Stop execution, don't call the API
+    }
+    try {
+      const unActivating = await setAssetUnActivate(uuid);
+
+      if (unActivating.success) {
+        successAlert("The asset has been successfully unactivated!");
+
+        // Update the asset's activation status directly in the store
+        allAssetList.update((assets) => {
+          return assets.map((asset) => {
+            if (asset.ass_uuid === uuid) {
+              return { ...asset, ast_activate: false }; // Mark asset as unactivated
+            }
+            return asset;
+          });
+        });
+      } else if (unActivating.alreadyUnactivated) {
+        errorAlert("The asset is already unactivated.");
+      } else {
+        throw new Error(unActivating.CODE);
+      }
+    } catch (err) {
+      alert(`Error on unActivating Asset! ${err.message}`);
+    }
+  }
+
+  /**************Activate**************************************/
+
+  async function activateAsset(uuid) {
+    const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
+    if (asset.ast_activate) {
+      errorAlert("The asset is already activated.");
+      return;
+    }
+    try {
+      const activating = await setAssetActivate(uuid);
+
+      if (activating.success) {
+        successAlert("The asset has been successfully activated!");
+
+        // Update the asset's activation status in the store
+        allAssetList.update((assets) => {
+          return assets.map((asset) => {
+            if (asset.ass_uuid === uuid) {
+              return { ...asset, ast_activate: true }; // Mark asset as activated
+            }
+            return asset;
+          });
+        });
+      }
+    } catch (err) {
+      alert(`Error on activating Asset! ${err.message}`);
+    }
+  }
+
+  /*****************************************************************/
+  // Convert to a more human-readable format
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+
+    // Extract year, month, day, hour, minute, and second
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed, so add 1
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    // Return the date in the format YYYY/MM/DD HH:MM:SS
+    return `${year}/${month}/${day} ${hours}:${minutes}`;
+  }
+
+  /**********************************************************************/
 </script>
 
 <main>
   <div class="container">
     <div class="header_buttons">
-      <button>요약보고서</button>
+      <button on:click="{check}">요약보고서</button>
       <button>상세보고서 </button>
     </div>
     <div class="allselect">
@@ -46,86 +131,105 @@
           <div class="red_button"></div>
           <span>삭제</span>
         </div>
-        <div class="colors">
-          <div class="yellow_button"></div>
-          <span>이전(다른그룹으로)</span>
-        </div>
       </div>
     </div>
     <div class="card_container">
-      {#each assetData as asset}
-        <div class="card">
-          <input
-            type="checkbox"
-            class="checkbox"
-            bind:group="{selected}"
-            name="{asset}"
-            value="{asset}"
-          />
+      {#if $allAssetList.length > 0}
+        {#each $allAssetList as asset}
+          <div class="card {asset.ast_activate ? `` : 'deactivated'}">
+            <input
+              type="checkbox"
+              class="checkbox"
+              bind:group="{selected}"
+              name="{asset}"
+              value="{asset}"
+            />
 
-          <div class="card_buttons">
-            <button class="blue"></button>
-            <button class="red"></button>
-            <button class="yellow"></button>
-          </div>
-          <button class="modal_button" on:click="{() => (showModal = true)}"
-            >등록 미승인</button
-          >
-          <div class="first_col">
-            <div class="first_col_1">
-              <p>보안점수</p>
-              <div
-                class="box_number {asset.secureScore < 50
-                  ? 'low'
-                  : asset.secureScore < 80
-                    ? 'medium'
-                    : 'high'}"
-              >
-                {asset.secureScore}%
+            <div class="card_buttons">
+              <button
+                class="blue"
+                on:click="{() => activateAsset(asset.ass_uuid)}"
+              ></button>
+              <button class="red" on:click="{() => unActivate(asset.ass_uuid)}"
+              ></button>
+            </div>
+
+            <button class="modal_button" on:click="{() => (showModal = true)}">
+              등록 미승인
+            </button>
+
+            <div class="first_col">
+              <div class="first_col_1">
+                <p>보안점수</p>
+                <div
+                  class="box_number {asset.asset_point_history[0]
+                    .ast_security_point < 50
+                    ? 'low'
+                    : asset.asset_point_history[0].ast_security_point < 80
+                      ? 'medium'
+                      : 'high'}"
+                >
+                  {asset.asset_point_history[0].ast_security_point}%
+                </div>
+
+                <p>
+                  <span style="font-weight: bold; white-space: nowrap;">
+                    {asset.asset_group[0].asg_index__asg_title}
+                    <!-- Asset Group -->
+                  </span>
+                </p>
               </div>
 
+              <div class="first_col_2">
+                <div>
+                  <span style="font-weight: bold;">
+                    {asset.ast_activate ? "연결중" : "연결 안됨"}
+                  </span>
+                </div>
+                <div>
+                  <span style="font-weight: bold;"
+                    >{formatDate(asset.ast_lastconnect)}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="second_col">
               <p>
-                <span style="font-weight: bold;">
-                  {asset.assetGroup}
+                운영체제: <span style="font-weight: bold;">
+                  {asset.ast_os}
+                  <!-- Operating System -->
+                </span>
+              </p>
+              <p>
+                자산명: <span style="font-weight: bold;">
+                  {asset.ast_hostname}
+                  <!-- Asset Name -->
+                </span>
+              </p>
+              <p>
+                아이피주소: <span style="font-weight: bold;">
+                  {asset.ast_ipaddr}
+                  <!-- IP Address -->
+                </span>
+              </p>
+              <p>
+                점검대상: <span style="font-weight: bold;">
+                  {asset.asset_point_history[0]
+                    .ast_uuid__ast_target__cct_target}
+                  <!-- Inspection Target -->
+                </span>
+              </p>
+              <p>
+                에이전트설치여부: <span style="font-weight: bold;">
+                  {asset.ast_agent_installed ? "설치됨" : "설치 안됨"}
+                  <!-- Agent Installation -->
                 </span>
               </p>
             </div>
-            <div class="first_col_2">
-              <p>연결중</p>
-              <div>
-                <span style="font-weight: bold;">{asset.assetData}</span>
-              </div>
-            </div>
           </div>
-          <div class="second_col">
-            <p>
-              운영체제: <span style="font-weight: bold;">
-                {asset.operatingSystem}
-              </span>
-            </p>
-            <p>
-              자산명: <span style="font-weight: bold;">
-                {asset.assetName}
-              </span>
-            </p>
-            <p>
-              아이피주소: <span style="font-weight: bold;">
-                {asset.ipAdress}
-              </span>
-            </p>
-            <p>
-              점검대상: <span style="font-weight: bold;">
-                {asset.inspectionTarget}
-              </span>
-            </p>
-            <p>
-              에이전트설치여부: <span style="font-weight: bold;">
-                {asset.agentInstallation}
-              </span>
-            </p>
-          </div>
-        </div>
-      {/each}
+        {/each}
+      {/if}
     </div>
   </div>
   <Modal bind:showModal>
@@ -317,10 +421,10 @@
     position: absolute;
     right: 10px;
     padding: 5px 10px;
-    background-color: #5bc0de;
+    background-color: #207792;
     color: #fff;
+    border: 1px solid #0e4556;
     font-size: 10px;
-    border: none;
     border-radius: 4px;
     cursor: pointer;
     transition:
@@ -378,5 +482,10 @@
     background-color: #005fa3;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .deactivated {
+    opacity: 0.5; /* Faded appearance for deactivated cards */
+    background-color: #f0f0f0; /* Light grey background */
+    border: 2px dashed #cccccc; /* Dashed border */
   }
 </style>

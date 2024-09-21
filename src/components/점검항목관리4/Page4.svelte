@@ -17,6 +17,7 @@
     checklistStore,
     fetchChecklistData,
   } from "../../services/page4/checklistStore";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -174,7 +175,7 @@
       const response = await setDeleteChecklistGroup(checklistId);
 
       if (response.success) {
-        alert("Checklist deleted successfully!");
+        successAlert("Checklist deleted successfully!");
 
         // Update local state without re-fetching
         allChecklistArray = allChecklistArray.filter(
@@ -266,7 +267,7 @@
   ) {
     // Check if selectedChecklist is null or undefined before proceeding
     if (!selectedChecklist) {
-      alert("Please select a checklist item.");
+      errorAlert("Please select a checklist item.");
       return;
     }
 
@@ -277,22 +278,22 @@
 
     // Check for empty fields before making the search request
     if (!ccg_index) {
-      alert("Please select a valid checklist item.");
+      errorAlert("Please select a valid checklist item.");
       return;
     }
 
     if (category === "점검대상") {
-      alert("Please choose a category.");
+      errorAlert("Please choose a category.");
       return;
     }
 
     if (!item_number) {
-      alert("Please input the item number.");
+      errorAlert("Please input the item number.");
       return;
     }
 
     if (riskLevel === "위험도") {
-      alert("Please choose a risk level.");
+      errorAlert("Please choose a risk level.");
       return;
     }
 

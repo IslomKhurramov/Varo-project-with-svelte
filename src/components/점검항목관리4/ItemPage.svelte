@@ -3,6 +3,7 @@
   import ModalEditItem from "./ModalEditItem.svelte";
   import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
   import { filteredChecklistData } from "../../services/page4/checklistStore";
+  import { successAlert } from "../../shared/sweetAlert";
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
   export let searchResult;
@@ -56,7 +57,7 @@
       const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
 
       if (deleteItem.success) {
-        alert(`Selected items deleted successfully!`);
+        successAlert(`Selected items deleted successfully!`);
 
         // Update filteredChecklistData by removing deleted items
         filteredChecklistData.update((data) =>

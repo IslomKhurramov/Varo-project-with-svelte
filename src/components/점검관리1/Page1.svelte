@@ -19,6 +19,7 @@
   let selectedProjectIndex = null;
 
   onMount(async () => {
+    console.log("onMount RUNNING")
     try {
       projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array

@@ -27,7 +27,7 @@ export const setNewPlan = async (planData) => {
     );
     console.log("setNewPlan: RESPONSE:", response);
     if (response.data.RESULT === "ERROR") {
-      throw new Error("Something went wrong");
+      throw new Error(response.data.CODE);
     }
     return response.data;
   } catch (error) {
@@ -104,6 +104,25 @@ export const getPlanCommandExcel = async (asset_group) => {
       }
     );
     console.log("getPlanCommandExcel: ", response.data);
+
+    if (response.status === 200) {
+      return response.data.CODE;
+    } else {
+      console.error("Error fetching asset groups:", response);
+      throw new Error("Failed to fetch asset groups");
+    }
+  } catch (error) {
+    console.error("Error fetching asset groups:", error);
+    throw error;
+  }
+};
+
+export const getPlanLists = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getPlanLists/`, {
+      withCredentials: true,
+    });
+    console.log("getPlanLists: ", response.data);
 
     if (response.status === 200) {
       return response.data.CODE;

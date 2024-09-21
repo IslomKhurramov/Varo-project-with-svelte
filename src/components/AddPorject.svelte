@@ -5,9 +5,12 @@
     getAssetGroups,
     getOptionsForNewPlan,
     getPlanCommandExcel,
+    getPlanLists,
   } from "../services/page1/newInspection"; // Only one service is needed
-  import { parse } from "svelte/compiler";
   import moment from 'moment';
+  import { navigate, useLocation } from "svelte-routing";
+  import { errorAlert } from "../shared/sweetAlert";
+
   let loading = true;
   let error = null;
 
@@ -54,18 +57,18 @@
 
   //
   let planOptions = [];
+  let planList = [];
 
   function toggleList(view) {
     showTable = view === "table";
   }
 
-  // Submit the entire form (POST all form data)
   const submitNewPlan = async () => {
     try {
       const sendData = {
         plan_name: projectName,
         plan_recheck: parseInt(selectedType),
-        plan_recheck_plan_index: selectedType == 1 ? 1 : 0, 
+        plan_recheck_plan_index: parseInt(recheckplanIndex), 
         asset_group_index: parseInt(selectedCheckList),
         checklist_index: parseInt(selectedAssetList),
         plan_planer_info: parseInt(selectedPersons),
@@ -92,31 +95,24 @@
 
       const response = await setNewPlan(formData);
 
-      console.log("API Response:", response);
+     
 
-      if (response.success) {
-        console.log("New plan submitted successfully!");
-      } else {
-        console.error(
-          "Failed to submit new plan:",
-          response.message || "Unknown error"
-        );
-      }
+      navigate(window.location?.pathname == '/' ? '/page1' : '/')
     } catch (error) {
       console.error("Error submitting new plan:", error);
+      errorAlert(error?.message)
     }
   };
 
   /******ASSET GROUPS DATA*/
   onMount(async () => {
-    loading = true; // Set loading to true when starting the fetch process
+    loading = true; 
     try {
-      // const projectData = await getAssetGroups();
-      // assetGroup = projectData;
-      // console.log("Asset Groups:", assetGroup);
-
       planOptions = await getOptionsForNewPlan();
       console.log("planOptions:", planOptions);
+
+      planList = await getPlanLists();
+
     } catch (err) {
       error = err.message;
       console.error("Error loading asset groups:", error);
@@ -182,7 +178,15 @@
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
         <label class="label blue-label">이전플랜</label>
-        <input type="text" class="input" bind:value="{recheckplanIndex}" />
+        <select class="dropdown" bind:value="{recheckplanIndex}">
+          <option value="" selected disabled>이전 점검플랜명</option>
+          
+          {#if planList}
+            {#each planList as plan}
+              <option value="{plan.ccp_index}">{plan.ccp_title}</option>
+            {/each}
+          {/if}
+        </select>
       </div>
       {/if}
 
@@ -314,6 +318,7 @@
 
         <label class="label blue-label">점검정보</label>
         <input type="file" class="input" on:change="{(event) => handleFileUpload(event)}"  />
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p on:click={sampleClick}>샘플다운로드</p>
       </div>
 

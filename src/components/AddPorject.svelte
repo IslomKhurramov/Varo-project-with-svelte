@@ -4,7 +4,13 @@
     setNewPlan,
     getAssetGroups,
     getOptionsForNewPlan,
+    getPlanCommandExcel,
+    getPlanLists,
   } from "../services/page1/newInspection"; // Only one service is needed
+  import moment from 'moment';
+  import { navigate, useLocation } from "svelte-routing";
+  import { errorAlert } from "../shared/sweetAlert";
+
   let loading = true;
   let error = null;
 
@@ -20,7 +26,6 @@
   let schedule = "";
   let repetition = "";
   let repeatCycle = "";
-  let newProjectAutoCreation = false;
   let inspectionInformation = "";
 
   //Data2
@@ -39,64 +44,75 @@
   let actionSchedule = "";
   let actionStartDate = "";
   let actionEndDate = "";
+  let ruleType = "";
+  let repealRule = "";
+  let conductorInfo = "";
+  let recheckplanIndex = null;
+
+  $: if (ruleType === '1') {
+    repealRule = `${projectName} {}`;
+  } else {
+    repealRule = projectName;
+  }
 
   //
   let planOptions = [];
+  let planList = [];
 
   function toggleList(view) {
     showTable = view === "table";
   }
 
-  // Submit the entire form (POST all form data)
   const submitNewPlan = async () => {
     try {
       const sendData = {
-        projectName,
-        selectedType,
-        selectedCheckList,
-        selectedAssetList,
-        selectedPersons,
-        startDate,
-        endDate,
-        schedule,
-        repetition,
-        repeatCycle,
-        newProjectAutoCreation,
-        inspectionInformation,
-        actionSchedule,
-        actionStartDate,
-        actionEndDate,
+        plan_name: projectName,
+        plan_recheck: parseInt(selectedType),
+        plan_recheck_plan_index: parseInt(recheckplanIndex), 
+        asset_group_index: parseInt(selectedCheckList),
+        checklist_index: parseInt(selectedAssetList),
+        plan_planer_info: parseInt(selectedPersons),
+        plan_start_date: moment(startDate).format('YYYY-MM-DD h:mm:ss'),
+        plan_end_date: moment(endDate).format('YYYY-MM-DD h:mm:ss'), 
+        plan_execution_type: parseInt(schedule),
+        plan_execute_interval_value: schedule == 1 ? 1 : 0, 
+        plan_execute_interval_term: schedule == 0 ? 'hours' : repeatCycle,
+        plan_name_repeat_rule_type: parseInt(ruleType), 
+        plan_name_repeat_rule: repealRule,
+        fix_date_setup: parseInt(actionSchedule),
+        fix_start_date: actionStartDate,
+        fix_end_date: actionEndDate,
+        fix_conductor_info: parseInt(conductorInfo),
+        assessment_command: inspectionInformation,
       };
       console.log("submitNewPlan: sendData:", sendData);
 
-      // const response = await setNewPlan(sendData);
+      const formData = new FormData();
 
-      // Log the entire response object to see what is being returned
-      // console.log("API Response:", response);
+      for (const key in sendData) {
+        formData.append(key, sendData[key]);
+      }
 
-      // if (response.success) {
-      //   console.log("New plan submitted successfully!");
-      // } else {
-      //   console.error(
-      //     "Failed to submit new plan:",
-      //     response.message || "Unknown error"
-      //   );
-      // }
+      const response = await setNewPlan(formData);
+
+     
+
+      navigate(window.location?.pathname == '/' ? '/page1' : '/')
     } catch (error) {
       console.error("Error submitting new plan:", error);
+      errorAlert(error?.message)
     }
   };
 
   /******ASSET GROUPS DATA*/
   onMount(async () => {
-    loading = true; // Set loading to true when starting the fetch process
+    loading = true; 
     try {
-      // const projectData = await getAssetGroups();
-      // assetGroup = projectData;
-      // console.log("Asset Groups:", assetGroup);
-
       planOptions = await getOptionsForNewPlan();
       console.log("planOptions:", planOptions);
+
+      planList = await getPlanLists();
+
     } catch (err) {
       error = err.message;
       console.error("Error loading asset groups:", error);
@@ -104,6 +120,19 @@
       loading = false; // Ensure loading is set to false once complete
     }
   });
+
+  const sampleClick = async () => {
+    try {
+      await getPlanCommandExcel(selectedCheckList);
+    } catch (error) {
+      console.log("Error sampleClick: ", error)
+    }
+  }
+
+  const handleFileUpload = (event) => {
+    inspectionInformation = event.target.files[0]; 
+    console.log(inspectionInformation);
+  };
 
   console.log("schedule:", schedule);
 </script>
@@ -114,7 +143,7 @@
       >CCE점검</button
     >
     <button class="button green-button" on:click="{() => toggleList('table')}"
-      >보안감사점검</button
+      >자산정보수집</button
     >
   </div>
 
@@ -123,8 +152,8 @@
       <!-- Project Name -->
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
-        <label class="label blue-label">프로젝트명</label>
-        <input type="text" class="input" bind:value="{projectName}" />
+        <label class="label blue-label">점검플랜명</label>
+        <input type="text" class="input" bind:value="{projectName}" placeholder="점검플랜명" />
       </div>
 
       <!-- Inspection Method -->
@@ -132,11 +161,30 @@
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
         <label class="label blue-label">점검방법</label>
-        <select class="dropdown" bind:value="{selectedType}">
-          <option value="신규점검">신규점검</option>
-          <option value="이행점검">이행점검</option>
+        <select class="dropdown" bind:value="{selectedType}" placeholder="test">
+          <option value="" selected disabled>신규점검/이행점검</option>
+          <option value="0">신규점검</option>
+          <option value="1">이행점검</option>
         </select>
       </div>
+
+
+      {#if selectedType === '1'}
+      <div class="row">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
+        <label class="label blue-label">이전플랜</label>
+        <select class="dropdown" bind:value="{recheckplanIndex}">
+          <option value="" selected disabled>이전 점검플랜명</option>
+          
+          {#if planList}
+            {#each planList as plan}
+              <option value="{plan.ccp_index}">{plan.ccp_title}</option>
+            {/each}
+          {/if}
+        </select>
+      </div>
+      {/if}
 
       <!-- Inspection Target -->
       <div class="row">
@@ -144,9 +192,11 @@
 
         <label class="label blue-label">점검대상</label>
         <select class="dropdown" bind:value="{selectedCheckList}">
-          {#if planOptions.checklist_group}
-            {#each planOptions.checklist_group as item}
-              <option value="{item.ccg_index}">{item.ccg_group}</option>
+          <option value="" selected disabled>자산 그룹목록</option>
+          
+          {#if planOptions.asset_group}
+            {#each planOptions.asset_group as asset}
+              <option value="{asset.asg_index}">{asset.asg_title}</option>
             {/each}
           {/if}
         </select>
@@ -158,20 +208,21 @@
 
         <label class="label blue-label1">점검항목</label>
         <select class="dropdown" bind:value="{selectedAssetList}">
-          {#if planOptions.asset_group}
-            {#each planOptions.asset_group as asset}
-              <option value="{asset.asg_index}">{asset.asg_title}</option>
-            {/each}
-          {/if}
+          <option value="" selected disabled>점검항목 목록</option>
+          {#if planOptions.checklist_group}
+          {#each planOptions.checklist_group as item}
+            <option value="{item.ccg_index}">{item.ccg_group}</option>
+          {/each}
+        {/if}
         </select>
       </div>
 
       <!-- Assignee -->
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
-
         <label class="label blue-label2">점검자지정</label>
         <select class="dropdown" bind:value="{selectedPersons}">
+          <option value="" selected disabled>선택</option>
           {#if planOptions.member_group}
             {#each planOptions.member_group as member}
               <option value="{member.user_index}">{member.user_name}</option>
@@ -184,9 +235,9 @@
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label blue-label">점검일정</label>
-        <input type="date" class="input" bind:value="{startDate}" />
+        <input type="datetime-local" class="input" bind:value="{startDate}" placeholder="test"/>
         <span class="date-separator">~</span>
-        <input type="date" class="input" bind:value="{endDate}" />
+        <input type="datetime-local" class="input" bind:value="{endDate}" />
       </div>
 
       <!-- Schedule Execution -->
@@ -194,38 +245,31 @@
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label blue-label">점검 실행</label>
         <select class="dropdown" bind:value="{schedule}">
-          <option value="즉시실행">즉시실행</option>
-          <option value="반복실행">반복실행</option>
+          <option value="" selected disabled>즉시실행/반복실행</option>
+          <option value="0">즉시실행</option>
+          <option value="1">반복실행</option>
         </select>
       </div>
 
-      {#if schedule == "반복실행"}
-        <!-- Repeat -->
-        <div class="row">
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-
-          <label class="label blue-label">반복</label>
-          <select class="dropdown" bind:value="{repetition}">
-            <option value="아니요">아니요</option>
-            <option value="반복설정">반복설정</option>
-          </select>
-        </div>
-        <!-- Cycle -->
+      {#if schedule == "1"}
         <div class="row">
           <!-- svelte-ignore a11y-label-has-associated-control -->
 
           <label class="label blue-label">주기</label>
           <input
+          disabled
             type="text"
             class="input"
             placeholder="반복주기지정(반복설정)"
-            bind:value="{repeatCycle}"
+            
           />
           <select class="dropdown" bind:value="{repeatCycle}">
-            <option value="시">시</option>
-            <option value="일">일</option>
-            <option value="주">주</option>
-            <option value="월">월</option>
+            <option value="" selected disabled>시/일/주/월/년</option>
+            <option value="hours">시</option>
+            <option value="days">일</option>
+            <option value="weeks">주</option>
+            <option value="months">월</option>
+            <option value="years">년</option>
           </select>
         </div>
       {/if}
@@ -233,17 +277,21 @@
       <!-- Repeat-Based Project Creation -->
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label class="label blue-label">프로젝트 생성</label>
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            class="checkbox"
-            bind:checked="{newProjectAutoCreation}"
-          />
-          반복설정시마다 신규 프로젝트 자동 생성
-        </label>
+        <label class="label blue-label">생성 규칙</label>
+        <select class="dropdown" bind:value="{ruleType}">
+          <option value="" selected disabled>반복실행시 마다 신규점검 자동 생성/현 점검 하위로 점검 자동 생성</option>
+          <option value="1">반복실행시 마다 신규점검 자동 생성</option>
+          <option value="0">현 점검 하위로 점검 자동 생성</option>
+        </select>
       </div>
+
+      {#if ruleType === '1'}
+      <div class="row">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label class="label blue-label">점검 플랜</label>
+        <input type="text" class="input" bind:value="{repealRule}" disabled />
+      </div>
+      {/if}
 
       <!-- Action Schedule -->
       <div class="row">
@@ -251,8 +299,9 @@
 
         <label class="label blue-label">조치일정</label>
         <select class="dropdown" bind:value="{actionSchedule}">
-          <option value="설정">설정</option>
-          <option value="미설정">미설정</option>
+          <option value="" selected disabled>설정/미설정</option>
+          <option value="1">설정</option>
+          <option value="0">미설정</option>
         </select>
         <input type="date" class="input" bind:value="{actionStartDate}" />
         <span class="date-separator">~</span>
@@ -264,9 +313,25 @@
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
         <label class="label blue-label">점검정보</label>
-        <input type="file" class="input" bind:value="{inspectionInformation}" />
-        <p>샘플다운로드</p>
+        <input type="file" class="input" on:change="{(event) => handleFileUpload(event)}"  />
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <p on:click={sampleClick} style="cursor: pointer;">샘플다운로드</p>
       </div>
+
+      <div class="row">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
+        <label class="label blue-label2">조치담당자 지정 </label>
+        <select class="dropdown" bind:value="{conductorInfo}">
+          <option value="" selected disabled>선택</option>
+          {#if planOptions.member_group}
+            {#each planOptions.member_group as member}
+              <option value="{member.user_index}">{member.user_name}</option>
+            {/each}
+          {/if}
+        </select>
+      </div>
+
       <!-- Single Button to Submit the Plan -->
       <button class="button blue-button" on:click="{submitNewPlan}"
         >저장하기</button
@@ -395,7 +460,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    max-width: 600px;
+    max-width: 640px;
     margin: 50px auto;
     background-color: #ffffff;
     border-radius: 10px;

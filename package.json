@@ -42,7 +42,6 @@
     "svelte-i18n": "^4.0.0",
     "svelte-material-ui": "^7.0.0",
     "sweetalert": "^2.1.2",
-    "swiper": "^6.8.4",
-    "xlsx": "^0.18.5"
+    "swiper": "^6.8.4"
   }
 }

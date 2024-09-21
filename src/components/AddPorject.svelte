@@ -123,13 +123,9 @@
 
   const sampleClick = async () => {
     try {
-
-      const data = await getPlanCommandExcel(selectedCheckList);
-      console.log("sampleClick data:", data)
-      
+      await getPlanCommandExcel(selectedCheckList);
     } catch (error) {
-      console.log("Error sampleClick: ", err)
-      alert(err)
+      console.log("Error sampleClick: ", error)
     }
   }
 
@@ -319,7 +315,7 @@
         <label class="label blue-label">점검정보</label>
         <input type="file" class="input" on:change="{(event) => handleFileUpload(event)}"  />
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p on:click={sampleClick}>샘플다운로드</p>
+        <p on:click={sampleClick} style="cursor: pointer;">샘플다운로드</p>
       </div>
 
       <div class="row">

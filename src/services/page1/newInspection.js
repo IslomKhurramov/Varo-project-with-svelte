@@ -100,17 +100,18 @@ export const getPlanCommandExcel = async (asset_group) => {
         asset_group: asset_group,
       },
       {
-        withCredentials: true,
+        responseType: "blob", // Important for file downloads
+        withCredentials: true, // If you're using session cookies
       }
     );
-    console.log("getPlanCommandExcel: ", response.data);
 
-    if (response.status === 200) {
-      return response.data.CODE;
-    } else {
-      console.error("Error fetching asset groups:", response);
-      throw new Error("Failed to fetch asset groups");
-    }
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sample.xlsx"; // Set the desired file name
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   } catch (error) {
     console.error("Error fetching asset groups:", error);
     throw error;

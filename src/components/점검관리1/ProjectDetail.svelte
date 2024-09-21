@@ -2,6 +2,8 @@
   import { getPlanDetailInformation } from "../../services/page1/projectDetail";
   export let projectIndex;
   import { onMount } from "svelte";
+  import { errorAlert } from "../../shared/sweetAlert";
+  import { navigate } from "svelte-routing";
 
   let projectDetails = {};
   let loading = true;
@@ -12,10 +14,9 @@
       projectDetails = await getPlanDetailInformation(projectIndex);
       console.log("Fetched Project Details:", projectDetails);
     } catch (err) {
-      errorMessage = err.message || "Failed to fetch project details";
-    } finally {
-      loading = false;
-    }
+      await errorAlert(err?.message);
+      navigate(window.location?.pathname == '/' ? '/page1' : '/')
+    } 
   });
 
   // Mock Data for demonstration purposes
@@ -75,14 +76,15 @@
 <main>
   <div class="main-container">
     <div>
-      {#if loading}
+      <!-- {#if loading}
         <p>Loading...</p>
       {:else if errorMessage}
         <p>Error: {errorMessage}</p>
       {:else}
         <p>Project Details: {JSON.stringify(projectDetails)}</p>
-      {/if}
+      {/if} -->
     </div>
+    {#if projectDetails?.ccp_title}
     <div class="container">
       <!-- Overview Section -->
       <h2>[개요]</h2>
@@ -97,8 +99,8 @@
         </div>
         <div class="first_cont2">
           <div class="project-details">
-            <p>제목: {projectTitle}</p>
-            <p>점검대상: {targetGroups}</p>
+            <p>제목: {projectDetails?.ccp_title}</p>
+            <p>점검대상: {projectDetails?.asg_index__asg_title}</p>
             <p>{inspectionDetails}</p>
             <p>생성자: {producer}</p>
             <p>{progress}</p>
@@ -192,6 +194,7 @@
         </div>
       </div>
     </div>
+    {/if}
   </div>
 </main>
 

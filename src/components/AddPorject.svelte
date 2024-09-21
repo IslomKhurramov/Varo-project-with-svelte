@@ -68,7 +68,7 @@
       const sendData = {
         plan_name: projectName,
         plan_recheck: parseInt(selectedType),
-        plan_recheck_plan_index: parseInt(recheckplanIndex), 
+        plan_recheck_plan_index: parseInt(recheckplanIndex ?? 0), 
         asset_group_index: parseInt(selectedCheckList),
         checklist_index: parseInt(selectedAssetList),
         plan_planer_info: parseInt(selectedPersons),

@@ -5,9 +5,10 @@
   import {
     setAssetActivate,
     setAssetUnActivate,
+    getAllAssetLists,
   } from "../../services/page2/assetService";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
-  import { all } from "axios";
+  import { onMount } from "svelte";
 
   let showModal = false;
   let selected = [];
@@ -26,6 +27,24 @@
   function check() {
     console.log("SELECTED", selected);
   }
+
+  /************************************************************/
+  async function assetList() {
+    try {
+      const response = await getAllAssetLists();
+
+      if (response.RESULT === "OK") {
+        allAssetList.set(Object.values(response.CODE));
+        console.log("array data", allAssetList);
+      }
+    } catch (err) {
+      alert(`Error getting AllAssetList ${err.message}`);
+    }
+  }
+
+  onMount(() => {
+    assetList();
+  });
 
   /**************UnActivate**************************************/
 

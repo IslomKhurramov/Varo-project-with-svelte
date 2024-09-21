@@ -156,24 +156,53 @@
             </svg>
           </div>
           <div class="bar-charts">
-            <div class="bar">
-              <div class="label">UNIX</div>
-              <div class="bar-fill" style="width: {unixRegistration}%;">
-                {unixRegistration}% 등록
+            {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}
+              <div class="bar">
+                <div class="label">UNIX</div>
+                <div class="bar-fill" style="width: {unixRegistration}%;">
+                  {projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}% 등록
+                </div>
               </div>
-            </div>
-            <div class="bar">
-              <div class="label">NETWORK</div>
-              <div class="bar-fill" style="width: {networkRegistration}%;">
-                {networkRegistration}% 등록
+            {/if}
+
+            {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'NETWORK')[0]?.['y']}
+              <div class="bar">
+                <div class="label">NETWORK</div>
+                <div class="bar-fill" style="width: {networkRegistration}%;">
+                  {projectDetails.target_securitypoint.filter(ele => ele.label === 'NETWORK')[0]?.['y']}% 등록
+                </div>
               </div>
-            </div>
-            <div class="bar">
-              <div class="label">DBMS</div>
-              <div class="bar-fill" style="width: {dbmsRegistration}%;">
-                {dbmsRegistration}% 등록
+            {/if}
+
+            {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'DBMS')[0]?.['y']}
+              <div class="bar">
+                <div class="label">DBMS</div>
+                <div class="bar-fill" style="width: {dbmsRegistration}%;">
+                  {projectDetails.target_securitypoint.filter(ele => ele.label === 'DBMS')[0]?.['y']}% 등록
+                </div>
               </div>
-            </div>
+           {/if}
+
+           {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'SECURITY')[0]?.['y']}
+              <div class="bar">
+                <div class="label">SECURITY</div>
+                <div class="bar-fill" style="width: {dbmsRegistration}%;">
+                  {projectDetails.target_securitypoint.filter(ele => ele.label === 'SECURITY')[0]?.['y']}% 등록
+                </div>
+              </div>
+           {/if}
+
+           {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'WINDOWS')[0]?.['y']}
+              <div class="bar">
+                <div class="label">WINDOWS</div>
+                <div class="bar-fill" style="width: {dbmsRegistration}%;">
+                  {projectDetails.target_securitypoint.filter(ele => ele.label === 'WINDOWS')[0]?.['y']}% 등록
+                </div>
+              </div>
+           {/if}
+            
+            
+            
           </div>
         </div>
       </div>

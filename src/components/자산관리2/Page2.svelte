@@ -4,40 +4,79 @@
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
   import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
-  import { allAssetList } from "../../services/page2/asset.store";
-  import { getAllAssetLists } from "../../services/page2/assetService";
+  import { allAssetGroupList } from "../../services/page2/asset.store";
+  import {
+    getAssetGroup,
+    setNewAssetGroup,
+  } from "../../services/page2/assetService";
   import { onMount } from "svelte";
+  import { successAlert } from "../../shared/sweetAlert";
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
   let showModal = false;
+  let newGroupName = "";
+  let isAddingNewGroup = false;
+  let inputRef;
   /*************************GetAllAssetList*****************************************/
-  async function assetList() {
+  async function assetGroupList() {
     try {
-      const response = await getAllAssetLists();
+      const response = await getAssetGroup();
 
       if (response.RESULT === "OK") {
-        allAssetList.set(Object.values(response.CODE));
-        console.log("array data", allAssetList);
+        allAssetGroupList.set(Object.values(response.CODE));
       }
     } catch (err) {
-      alert(`Error getting AllAssetList ${err.message}`);
+      throw err;
     }
   }
-
   onMount(() => {
-    assetList();
+    assetGroupList();
   });
 
   /***********************************************************/
-  let assets = ["자산그룹 1"];
-  const addProject = () => {
-    const newProjectNumber = assets.length + 1;
-    assets = [...assets, `자산그룹${newProjectNumber}`];
+  const addNewGroup = async () => {
+    if (!newGroupName.trim()) {
+      alert("Group name cannot be empty.");
+      return;
+    }
+
+    try {
+      const response = await setNewAssetGroup(newGroupName); // Send new group to backend
+      if (response.success) {
+        successAlert("Group created successfully!");
+
+        allAssetGroupList.update((groups) => [
+          ...groups,
+          { asg_index: response.new_asg_index, asg_title: newGroupName },
+        ]);
+
+        newGroupName = "";
+        isAddingNewGroup = false;
+      } else {
+        throw new Error("Failed to save group.");
+      }
+    } catch (error) {
+      console.error("Error saving group:", error);
+      alert("Failed to save the group. Please try again.");
+    }
+  };
+  /************************************************/
+  // Show input field for new group
+  const showNewGroupInput = () => {
+    isAddingNewGroup = true;
+    setTimeout(() => {
+      inputRef?.focus(); // Set focus once the input is available
+    }, 0);
   };
 
+  // Cancel adding new group
+  const cancelNewGroup = () => {
+    newGroupName = "";
+    isAddingNewGroup = false;
+  };
+  /*****************************************/
   const selectPage = (page, menu) => {
-    console.log("Page selected:", page);
     currentPage = page;
     activeMenu = menu;
   };
@@ -54,13 +93,13 @@
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click="{addProject}">신규점검</p>
-        <p class="menu_button">이력삭제</p>
+        <p class="menu_button" on:click="{showNewGroupInput}">그룹추가</p>
+        <p class="menu_button">그룹삭제</p>
       </div>
 
       <div class="project_container">
-        {#if $allAssetList.length > 0}
-          {#each $allAssetList as asset, index}
+        {#if $allAssetGroupList.length > 0}
+          {#each $allAssetGroupList as group, index}
             <div class="project_button">
               <div class="button_cont">
                 <img src="./images/asset.png" alt="project" />
@@ -68,11 +107,11 @@
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
-                  on:click="{() => selectPage(AssetCardsPage, asset)}"
-                  class="{activeMenu === asset ? 'active' : ''}"
+                  on:click="{() => selectPage(AssetCardsPage, group)}"
+                  class="{activeMenu === group ? 'active' : ''}"
                 >
                   <i class="fa fa-user-o" aria-hidden="true"></i>
-                  {asset.ast_hostname}
+                  {group.asg_title}
                 </a>
               </div>
               <div>
@@ -84,6 +123,25 @@
               </div>
             </div>
           {/each}
+        {/if}
+        {#if isAddingNewGroup}
+          <div class="new_input">
+            <input
+              type="text"
+              placeholder="Enter Group Name"
+              bind:value="{newGroupName}"
+              bind:this="{inputRef}"
+              class="editable_input"
+            />
+            <div>
+              <button class="asset_button save" on:click="{addNewGroup}"
+                >Save</button
+              >
+              <button class="asset_button cancel" on:click="{cancelNewGroup}"
+                >Cancel</button
+              >
+            </div>
+          </div>
         {/if}
       </div>
     </aside>
@@ -371,6 +429,7 @@
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
+    border-bottom: 1px solid #cbcbcb;
   }
 
   .header_button p {
@@ -438,5 +497,21 @@
 
   .toggle_button:hover {
     background-color: #005fa3;
+  }
+  .editable_input {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 1px;
+  }
+  .new_input {
+    display: flex;
+    flex-direction: row;
+  }
+  .save {
+    background-color: #2ecc71;
+  }
+  .cancel {
+    background-color: #e74c3c;
   }
 </style>

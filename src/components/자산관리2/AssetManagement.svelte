@@ -1,4 +1,25 @@
 <script>
+  import { onMount } from "svelte";
+  import { allAssetGroupList } from "../../services/page2/asset.store";
+  import { getAssetGroup } from "../../services/page2/assetService";
+
+  async function assetGroupList() {
+    try {
+      const response = await getAssetGroup();
+
+      if (response.RESULT === "OK") {
+        allAssetGroupList.set(Object.values(response.CODE));
+        console.log("CALLED GROUP", allAssetGroupList);
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+  onMount(() => {
+    assetGroupList();
+  });
+  /***************************************************/
+
   let assetGroup = [];
   for (let i = 1; i <= 25; i++) {
     assetGroup.push({
@@ -64,9 +85,11 @@
 
       <div class="second_line_container">
         <div class="group_container">
-          {#each assetGroup as group}
-            <p>{group.assetName}</p>
-          {/each}
+          {#if $allAssetGroupList.length > 0}
+            {#each $allAssetGroupList as group}
+              <p>{group.asg_title}</p>
+            {/each}
+          {/if}
         </div>
         <div class="right_container">
           <div class="option_container">

@@ -6,6 +6,8 @@
     getOptionsForNewPlan,
     getPlanCommandExcel,
   } from "../services/page1/newInspection"; // Only one service is needed
+  import { parse } from "svelte/compiler";
+  import moment from 'moment';
   let loading = true;
   let error = null;
 
@@ -62,39 +64,44 @@
     try {
       const sendData = {
         plan_name: projectName,
-        plan_recheck: selectedType,
+        plan_recheck: parseInt(selectedType),
         plan_recheck_plan_index: selectedType == 1 ? 1 : 0, 
-        asset_group_index: selectedCheckList,
-        checklist_index: selectedAssetList,
-        plan_planer_info: selectedPersons,
-        plan_start_date: startDate,
-        plan_end_date: endDate,
-        plan_execution_type: schedule,
+        asset_group_index: parseInt(selectedCheckList),
+        checklist_index: parseInt(selectedAssetList),
+        plan_planer_info: parseInt(selectedPersons),
+        plan_start_date: moment(startDate).format('YYYY-MM-DD h:mm:ss'),
+        plan_end_date: moment(endDate).format('YYYY-MM-DD h:mm:ss'), 
+        plan_execution_type: parseInt(schedule),
         plan_execute_interval_value: schedule == 1 ? 1 : 0, 
-        plan_execute_interval_term: repeatCycle,
-        plan_name_repeat_rule_type: ruleType, 
+        plan_execute_interval_term: schedule == 0 ? 'hours' : repeatCycle,
+        plan_name_repeat_rule_type: parseInt(ruleType), 
         plan_name_repeat_rule: repealRule,
-        fix_date_setup: actionSchedule,
+        fix_date_setup: parseInt(actionSchedule),
         fix_start_date: actionStartDate,
         fix_end_date: actionEndDate,
-        fix_conductor_info: conductorInfo,
+        fix_conductor_info: parseInt(conductorInfo),
         assessment_command: inspectionInformation,
       };
       console.log("submitNewPlan: sendData:", sendData);
 
-      // const response = await setNewPlan(sendData);
+      const formData = new FormData();
 
-      // Log the entire response object to see what is being returned
-      // console.log("API Response:", response);
+      for (const key in sendData) {
+        formData.append(key, sendData[key]);
+      }
 
-      // if (response.success) {
-      //   console.log("New plan submitted successfully!");
-      // } else {
-      //   console.error(
-      //     "Failed to submit new plan:",
-      //     response.message || "Unknown error"
-      //   );
-      // }
+      const response = await setNewPlan(formData);
+
+      console.log("API Response:", response);
+
+      if (response.success) {
+        console.log("New plan submitted successfully!");
+      } else {
+        console.error(
+          "Failed to submit new plan:",
+          response.message || "Unknown error"
+        );
+      }
     } catch (error) {
       console.error("Error submitting new plan:", error);
     }
@@ -129,6 +136,11 @@
       alert(err)
     }
   }
+
+  const handleFileUpload = (event) => {
+    inspectionInformation = event.target.files[0]; 
+    console.log(inspectionInformation);
+  };
 
   console.log("schedule:", schedule);
 </script>
@@ -181,9 +193,10 @@
         <label class="label blue-label">점검대상</label>
         <select class="dropdown" bind:value="{selectedCheckList}">
           <option value="" selected disabled>자산 그룹목록</option>
-          {#if planOptions.checklist_group}
-            {#each planOptions.checklist_group as item}
-              <option value="{item.ccg_index}">{item.ccg_group}</option>
+          
+          {#if planOptions.asset_group}
+            {#each planOptions.asset_group as asset}
+              <option value="{asset.asg_index}">{asset.asg_title}</option>
             {/each}
           {/if}
         </select>
@@ -196,11 +209,11 @@
         <label class="label blue-label1">점검항목</label>
         <select class="dropdown" bind:value="{selectedAssetList}">
           <option value="" selected disabled>점검항목 목록</option>
-          {#if planOptions.asset_group}
-            {#each planOptions.asset_group as asset}
-              <option value="{asset.asg_index}">{asset.asg_title}</option>
-            {/each}
-          {/if}
+          {#if planOptions.checklist_group}
+          {#each planOptions.checklist_group as item}
+            <option value="{item.ccg_index}">{item.ccg_group}</option>
+          {/each}
+        {/if}
         </select>
       </div>
 
@@ -248,7 +261,7 @@
             type="text"
             class="input"
             placeholder="반복주기지정(반복설정)"
-            bind:value="{repeatCycle}"
+            
           />
           <select class="dropdown" bind:value="{repeatCycle}">
             <option value="" selected disabled>시/일/주/월/년</option>
@@ -265,13 +278,7 @@
       <div class="row">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label class="label blue-label">생성 규칙</label>
-        <select class="dropdown" bind:value="{ruleType}" onchange={() => {
-          console.log("before: repealRule", repealRule)
-          console.log("before: ruleType", ruleType)
-          repealRule = ruleType == 1 ? `${projectName} {}` : projectName
-          console.log("after: repealRule", repealRule)
-          console.log("after: ruleType", ruleType)
-        }}>
+        <select class="dropdown" bind:value="{ruleType}">
           <option value="" selected disabled>반복실행시 마다 신규점검 자동 생성/현 점검 하위로 점검 자동 생성</option>
           <option value="1">반복실행시 마다 신규점검 자동 생성</option>
           <option value="0">현 점검 하위로 점검 자동 생성</option>
@@ -306,7 +313,7 @@
         <!-- svelte-ignore a11y-label-has-associated-control -->
 
         <label class="label blue-label">점검정보</label>
-        <input type="file" class="input" bind:value="{inspectionInformation}" />
+        <input type="file" class="input" on:change="{(event) => handleFileUpload(event)}"  />
         <p on:click={sampleClick}>샘플다운로드</p>
       </div>
 

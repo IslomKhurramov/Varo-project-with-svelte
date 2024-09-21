@@ -18,7 +18,17 @@ export const postNewPlanInformation = async (planInfo) => {
 // Post request to submit the full plan
 export const setNewPlan = async (planData) => {
   try {
-    const response = await axios.post(`${serverApi}/setNewPlan/`, planData);
+    const response = await axios.post(
+      `${serverApi}/api/setNewPlanSave/`,
+      planData,
+      {
+        withCredentials: true,
+      }
+    );
+    console.log("setNewPlan: RESPONSE:", response);
+    if (response.data.RESULT === "ERROR") {
+      throw new Error("Something went wrong");
+    }
     return response.data;
   } catch (error) {
     console.error("Error setting new plan:", error);

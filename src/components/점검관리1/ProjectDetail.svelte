@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { errorAlert } from "../../shared/sweetAlert";
   import { navigate } from "svelte-routing";
+  import moment from "moment";
 
   let projectDetails = {};
   let loading = true;
@@ -100,12 +101,25 @@
         <div class="first_cont2">
           <div class="project-details">
             <p>제목: {projectDetails?.ccp_title}</p>
+            <p>점검방법: {projectDetails?.recheck  == 0 ? '신규점겅검' : '이행점검'}</p>
             <p>점검대상: {projectDetails?.asg_index__asg_title}</p>
             <p>{inspectionDetails}</p>
-            <p>생성자: {producer}</p>
+            <p>점검항목: {projectDetails?.ccp_ruleset__ccg_group}</p>
+            <p>생성자: {projectDetails?.plan_planer_info__user_name}</p>
+            <p>진행상태: -</p>
+            <p>점검일시: {moment(projectDetails?.plan_start_date).format('YYYY MM DD')} ~ { moment(projectDetails?.plan_end_date).format('YYYY MM DD')}</p>
+            <p>점검실행: {projectDetails?.plan_execution_type ? '반복실행' : '즉시실행'}</p>
+            <p>주기: {projectDetails?.plan_execute_interval_term}</p>
+            <p>생성 규칙: {projectDetails?.plan_name_repeat_rule_type == 0 ? '현 점검 하위로 점검 자동 생성' : '반복실행시 마다 신규점검 자동 생성'}</p>
+            {#if projectDetails?.fix_date_setup }
+            <p>조치일정: {moment(projectDetails?.fix_start_date).format('YYYY MM DD')} ~ { moment(projectDetails?.fix_end_date).format('YYYY MM DD')}</p>
+            {/if}
+            <p>조치담당자: {projectDetails?.fix_conductor_info_id} </p>
             <p>{progress}</p>
-            <p>점검일시: {startDate} ~ {endDate}</p>
-            <p>점검방법: {method}</p>
+           
+            
+            
+            
           </div>
           <div class="actions">
             <button>결과등록</button>

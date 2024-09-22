@@ -1,5 +1,4 @@
 import axios from "axios";
-import { navigate } from "svelte-routing";
 import { serverApi } from "../../lib/config";
 
 export const getPlanDetailInformation = async (index) => {

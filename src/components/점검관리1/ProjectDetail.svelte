@@ -1,12 +1,18 @@
 <script>
   import { getPlanDetailInformation } from "../../services/page1/projectDetail";
+  import { getCCEResultUploadStatus } from "../../services/result/resultService";
   import { errorAlert } from "../../shared/sweetAlert";
   import { navigate } from "svelte-routing";
   import moment from "moment";
+  import ModalDynamic from "../../shared/ModalDynamic.svelte";
+  import ResultPopUp from "./ResultPopup.svelte";
+  import Modal from "../../shared/Modal.svelte";
 
   export let projectIndex;
 
   let projectDetails = {};
+  let assetsInfo = null;
+  let modalData = null;
 
   let totalPercentage = 0;
 
@@ -18,11 +24,16 @@
     try {
       console.log("projectIndex:", projectIndex);
       projectDetails = await getPlanDetailInformation(projectIndex);
-      console.log("Fetched Project Details:", projectDetails);
 
       const totalY = projectDetails?.target_securitypoint.reduce((sum, item) => sum + item.y, 0);
       const maxY = projectDetails.target_securitypoint?.length * 100;
       totalPercentage = (totalY / maxY) * 100;
+
+
+      // assets info data fetch
+      assetsInfo = await getCCEResultUploadStatus(projectIndex);
+      console.log("assetsInfo:", assetsInfo)
+
     } catch (err) {
       await errorAlert(err?.message);
       navigate(window.location?.pathname == '/' ? '/page1' : '/');
@@ -67,6 +78,13 @@
       Z
     `;
   }
+
+
+  let showModal = false; 
+
+  $: {
+		console.log("modalData1:", modalData)
+	}
 </script>
 
 <main>
@@ -146,9 +164,13 @@
             </svg>
           </div>
 
-          <div class="bar-charts">
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div class="bar-charts" >
             {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}
-              <div class="bar">
+              <div class="bar" on:click="{() => {
+                showModal = true;
+                modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'UNIX')
+              }}">
                 <div class="label">UNIX</div>
                 <div class="bar-fill" style="width: {unixRegistration}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}% 등록
@@ -157,7 +179,10 @@
             {/if}
 
             {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'NETWORK')[0]?.['y']}
-              <div class="bar">
+              <div class="bar" on:click="{() => {
+                showModal = true;
+                modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'NETWORK')
+              }}">
                 <div class="label">NETWORK</div>
                 <div class="bar-fill" style="width: {networkRegistration}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'NETWORK')[0]?.['y']}% 등록
@@ -166,7 +191,10 @@
             {/if}
 
             {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'DBMS')[0]?.['y']}
-              <div class="bar">
+              <div class="bar" on:click="{() => {
+                showModal = true;
+                modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'DBMS')
+              }}">
                 <div class="label">DBMS</div>
                 <div class="bar-fill" style="width: {dbmsRegistration}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'DBMS')[0]?.['y']}% 등록
@@ -175,7 +203,10 @@
            {/if}
 
            {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'SECURITY')[0]?.['y']}
-              <div class="bar">
+              <div class="bar" on:click="{() => {
+                showModal = true;
+                modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'SECURITY')
+              }}">
                 <div class="label">SECURITY</div>
                 <div class="bar-fill" style="width: {dbmsRegistration}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'SECURITY')[0]?.['y']}% 등록
@@ -184,7 +215,10 @@
            {/if}
 
            {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'WINDOWS')[0]?.['y']}
-              <div class="bar">
+              <div class="bar" on:click="{() => {
+                showModal = true;
+                modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'SECURITY')
+              }}">
                 <div class="label">WINDOWS</div>
                 <div class="bar-fill" style="width: {dbmsRegistration}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'WINDOWS')[0]?.['y']}% 등록
@@ -230,6 +264,12 @@
     </div>
     {/if}
   </div>
+
+  {#if modalData}
+  <ModalDynamic bind:showModal modalWidth={60} >
+    <ResultPopUp bind:modalData />
+  </ModalDynamic>
+  {/if}
 </main>
 
 <style>

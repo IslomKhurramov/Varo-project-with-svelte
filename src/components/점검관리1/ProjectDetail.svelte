@@ -15,6 +15,8 @@
   let modalData = null;
 
   let totalPercentage = 0;
+  let showModal = false; 
+
 
   $: if (projectIndex) {
     updateProjectDetails();
@@ -79,12 +81,23 @@
     `;
   }
 
+  const calculateSecurityStatistic = (target_group_securitypoint, group) => {
+    console.log("target_group_securitypoint:", target_group_securitypoint)
+    const accountManagementYs = Object.values(target_group_securitypoint).flat()
+        .filter(item => item.label === group)
+        .map(item => item.y);
 
-  let showModal = false; 
+    const totalY = accountManagementYs.reduce((sum, value) => sum + value, 0);
+    return parseInt((totalY / accountManagementYs.length).toFixed(2)); 
+  };
 
-  $: {
-		console.log("modalData1:", modalData)
-	}
+  const calculateAllSecurityLevel = (target_group_securitypoint) => {
+    const allItems = Object.values(target_group_securitypoint).flat();
+    const totalY = allItems.reduce((sum, item) => sum + item.y, 0);
+    
+    return parseInt((totalY / allItems.length).toFixed(2));
+  }
+
 </script>
 
 <main>
@@ -146,6 +159,7 @@
       <!-- Registration Status Section -->
       <h2>[결과 등록 현황]</h2>
       <div class="registration-status">
+        {#if projectDetails.target_securitypoint.length !== 0}
         <div class="status">
           <div class="pie-chart">
             <div class="chart-label">전체등록현황</div>
@@ -230,6 +244,9 @@
             
           </div>
         </div>
+        {:else}
+          <h1>결과 미등록</h1>
+        {/if}
       </div>
 
       <!-- Security Level Section -->
@@ -237,20 +254,43 @@
       <div class="security-level-section">
         <div class="third_cont">
           <div>
-            <p>전체보안수준: {securityLevel.overall}%</p>
+            <p>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</p>
             <p>유닉스: {securityLevel.unix}%</p>
             <p>윈도우: {securityLevel.windows}%</p>
           </div>
         </div>
         <div class="bar-charts2">
-          {#each criticalWeaknesses as weakness}
             <div class="bar">
-              <div class="label">{weakness.name}</div>
-              <div class="bar-fill2" style="width: {weakness.value}%;">
-                {weakness.value}% 등록
+              <div class="label">계정 관리</div>
+              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}% 등록
               </div>
             </div>
-          {/each}
+            <div class="bar">
+              <div class="label">접근 관리</div>
+              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}% 등록
+              </div>
+            </div>
+            <div class="bar">
+              <div class="label">패치 관리</div>
+              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}% 등록
+              </div>
+            </div>
+            <div class="bar">
+              <div class="label">로그 관리</div>
+              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}% 등록
+              </div>
+            </div>
+
+            <div class="bar">
+              <div class="label">기능 관리</div>
+              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}% 등록
+              </div>
+            </div>
         </div>
       </div>
 
@@ -466,7 +506,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    width: 100%;
+    max-width: 100%;
     align-items: center;
   }
   .critical-weaknesses .bar-chart {

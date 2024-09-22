@@ -98,6 +98,15 @@
     return parseInt((totalY / allItems.length).toFixed(2));
   }
 
+  const calculateSecurityLevelByGroup = (target_group_securitypoint, group) => {
+        const filteredItems = Object.entries(target_group_securitypoint)
+            .filter(([key]) => group.includes(key))
+            .flatMap(([, items]) => items);
+        
+        const totalY = filteredItems.reduce((sum, item) => sum + item.y, 0);
+        return parseInt((totalY / filteredItems.length).toFixed(2)); 
+    };
+
 </script>
 
 <main>
@@ -254,9 +263,11 @@
       <div class="security-level-section">
         <div class="third_cont">
           <div>
-            <p>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</p>
-            <p>유닉스: {securityLevel.unix}%</p>
-            <p>윈도우: {securityLevel.windows}%</p>
+            <h4>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</h4>
+            <p>Network: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'NETWORK')}%</p>
+            <p>Security: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'SECURITY')}%</p>
+            <p>Unix: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'UNIX')}%</p>
+            <p>Windows: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'WINDOWS')}%</p>
           </div>
         </div>
         <div class="bar-charts2">

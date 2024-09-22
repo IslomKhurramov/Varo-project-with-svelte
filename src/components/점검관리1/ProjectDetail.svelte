@@ -7,13 +7,21 @@
   import moment from "moment";
 
   let projectDetails = {};
-  let loading = true;
-  let errorMessage = null;
+
+  let totalPercentage = 0;
 
   onMount(async () => {
     try {
       projectDetails = await getPlanDetailInformation(projectIndex);
       console.log("Fetched Project Details:", projectDetails);
+      // Step 1: Calculate the sum of the y values
+      const totalY = projectDetails?.target_securitypoint.reduce((sum, item) => sum + item.y, 0);
+
+      // Step 2: Calculate the maximum possible value
+      const maxY = projectDetails.target_securitypoint?.length * 100; // 100 for each item
+
+      // Step 3: Calculate the percentage
+      totalPercentage = (totalY / maxY) * 100;
     } catch (err) {
       await errorAlert(err?.message);
       navigate(window.location?.pathname == '/' ? '/page1' : '/')
@@ -21,14 +29,8 @@
   });
 
   // Mock Data for demonstration purposes
-  let projectTitle = "프로젝트1 어쩌고 저쩌고...";
-  let targetGroups = "자산그룹1 (총 28대)";
   let inspectionDetails = "유닉스: 11대, 윈도우 20대, 맥: 10대";
-  let producer = "홍길동";
   let progress = "점검진행률: 진행완료 (28/28대, 100% 결과 수집)";
-  let startDate = "2024년 7월 11일";
-  let endDate = "2024년 7월 12일";
-  let method = "정기점검 (또는 긴급점검)";
   let overallSecurityLevel = 80;
 
   // Data for charts
@@ -49,14 +51,6 @@
     { name: "취약점2", value: 38 },
   ];
 
-  // Pie chart data
-  let pieData = [
-    { label: "전체등록현황", value: 45, color: "#4caf50" },
-    { label: "NETWORK", value: 35, color: "#ffeb3b" },
-    { label: "DBMS", value: 20, color: "#f44336" },
-  ];
-
-  // Function to calculate the path for the pie slices
   function calculatePieSlice(value, total, radius, startAngle) {
     const angle = (value / total) * 2 * Math.PI;
     const x1 = radius * Math.cos(startAngle);
@@ -137,24 +131,20 @@
           <div class="pie-chart">
             <div class="chart-label">전체등록현황</div>
             <svg width="120" height="120" viewBox="-60 -60 120 120">
-              {#each pieData as { value, color }, i (i)}
-                <path
-                  d="{calculatePieSlice(
-                    value,
-                    100,
-                    60,
-                    pieData
-                      .slice(0, i)
-                      .reduce(
-                        (acc, slice) => acc + (slice.value / 100) * 2 * Math.PI,
-                        0
-                      )
-                  )}"
-                  fill="{color}"
-                ></path>
-              {/each}
+              <path
+                d={calculatePieSlice(totalPercentage, 100, 60, 0)}
+                fill={"#4caf50"}
+              ></path>
+              <path
+                d={calculatePieSlice(100 - totalPercentage, 100, 60, (totalPercentage / 100) * 2 * Math.PI)}
+                fill="lightgrey" 
+              ></path>
+              <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="20" fill="black">
+                {totalPercentage}%
+              </text>
             </svg>
           </div>
+
           <div class="bar-charts">
             {#if projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}
               <div class="bar">

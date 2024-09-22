@@ -7,22 +7,50 @@
   import ThirdMenu from "./SwiperMenu/ThirdMenu.svelte";
   import FourthMenu from "./SwiperMenu/FourthMenu.svelte";
   import FifthMenu from "./SwiperMenu/FifthMenu.svelte";
-
+  import { assetDeatilInfo } from "../../services/page2/asset.store";
+  import { allAssetList } from "../../services/page2/asset.store";
+  import { getDetailInformationOfAsset } from "../../services/page2/assetService";
   let currentPage = null;
   let activeMenu = null;
   let swiperInstance;
   let slides = [];
+  let swiperContainer;
+  let uuid_asset = ""; // Store the clicked UUID
+  let assetDetail = {};
 
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
   };
+  /******************************************************/
+  async function assetListDetail(uuid) {
+    try {
+      const response = await getDetailInformationOfAsset(uuid);
 
+      // Check if the response is successful
+      if (response) {
+        // Log the detailed data of the asset
+        console.log("Detail of asset:", response);
+        assetDetail = response; // Store the asset details
+      } else {
+        console.error("Failed to get asset details.");
+      }
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+      console.error(`Error fetching asset details: ${err.message}`);
+    }
+  }
+
+  // Handle the UUID click and fetch the asset details
+  function handleAssetClick(uid) {
+    uuid_asset = uid;
+    console.log("UUID", uuid_asset);
+    assetListDetail(uuid_asset); // Fetch asset details when a slide is clicked
+  }
+  /****************************************************/
   for (let i = 1; i <= 30; i++) {
     slides.push(`자산${i}`);
   }
-
-  let swiperContainer;
 
   onMount(() => {
     swiperInstance = new Swiper(swiperContainer, {
@@ -53,8 +81,14 @@
     <img src="./images/left.png" alt="left" />
     <div bind:this="{swiperContainer}" class="swiper-container">
       <div class="swiper-wrapper">
-        {#each slides as slide}
-          <div class="swiper-slide">{slide}</div>
+        {#each $allAssetList as asset}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div
+            class="swiper-slide"
+            on:click="{() => handleAssetClick(asset.ass_uuid)}"
+          >
+            {asset.ast_hostname}
+          </div>
         {/each}
       </div>
       <div class="swiper-pagination"></div>

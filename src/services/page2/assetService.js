@@ -89,3 +89,21 @@ export const getAllAssetLists = async () => {
     }
   };
   
+  /**ASSET DETAIL INFORMATION */
+
+
+  export const getDetailInformationOfAsset = async (uuid) => {
+    try {
+      const response = await axios.post(`${serverApi}/api/getDetailInformationOfAsset/`, {
+        asset_uuid: uuid,
+      });
+  
+      if (response.data.RESULT === "OK") {
+        return response.data.CODE;  // Return the data from the API
+      } else {
+        throw new Error(`Error Code on getDetailInformationOfAsset: ${response.data.CODE}`);
+      }
+    } catch (error) {
+      throw new Error(`Failed to fetch asset detail: ${error.message}`);
+    }
+  };

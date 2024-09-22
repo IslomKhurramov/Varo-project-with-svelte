@@ -180,21 +180,34 @@
             <div class="first_col">
               <div class="first_col_1">
                 <p>보안점수</p>
-                <div
-                  class="box_number {asset.asset_point_history[0]
-                    .ast_security_point < 50
-                    ? 'low'
-                    : asset.asset_point_history[0].ast_security_point < 80
-                      ? 'medium'
-                      : 'high'}"
-                >
-                  {asset.asset_point_history[0].ast_security_point}%
-                </div>
 
+                <!-- Display the valid security point, or "Not Assessed" if no valid score -->
+                {#if asset.asset_point_history?.[0]?.ast_security_point}
+                  <div
+                    class="box_number {asset.asset_point_history?.[0]
+                      ?.ast_security_point < 50
+                      ? 'low'
+                      : asset.asset_point_history?.[0]?.ast_security_point < 80
+                        ? 'medium'
+                        : 'high'}"
+                  >
+                    {asset.asset_point_history?.[0]?.ast_security_point}%
+                  </div>
+                {:else}
+                  <div
+                    class="box_number {asset.asset_point_history?.[0]
+                      ?.ast_security_point < 50
+                      ? 'low'
+                      : asset.asset_point_history?.[0]?.ast_security_point < 80
+                        ? 'medium'
+                        : 'high'}"
+                  >
+                    NULL
+                  </div>
+                {/if}
                 <p>
                   <span style="font-weight: bold; white-space: nowrap;">
-                    {asset.asset_group[0].asg_index__asg_title}
-                    <!-- Asset Group -->
+                    {asset.asset_group?.[0]?.asg_index__asg_title}
                   </span>
                 </p>
               </div>
@@ -206,9 +219,9 @@
                   </span>
                 </div>
                 <div>
-                  <span style="font-weight: bold;"
-                    >{formatDate(asset.ast_lastconnect)}</span
-                  >
+                  <span style="font-weight: bold;">
+                    {formatDate(asset.ast_lastconnect)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -217,32 +230,27 @@
               <p>
                 운영체제: <span style="font-weight: bold;">
                   {asset.ast_os}
-                  <!-- Operating System -->
                 </span>
               </p>
               <p>
                 자산명: <span style="font-weight: bold;">
                   {asset.ast_hostname}
-                  <!-- Asset Name -->
                 </span>
               </p>
               <p>
                 아이피주소: <span style="font-weight: bold;">
                   {asset.ast_ipaddr}
-                  <!-- IP Address -->
                 </span>
               </p>
               <p>
                 점검대상: <span style="font-weight: bold;">
-                  {asset.asset_point_history[0]
-                    .ast_uuid__ast_target__cct_target}
-                  <!-- Inspection Target -->
+                  {asset.asset_point_history?.[0]
+                    ?.ast_uuid__ast_target__cct_target}
                 </span>
               </p>
               <p>
                 에이전트설치여부: <span style="font-weight: bold;">
                   {asset.ast_agent_installed ? "설치됨" : "설치 안됨"}
-                  <!-- Agent Installation -->
                 </span>
               </p>
             </div>

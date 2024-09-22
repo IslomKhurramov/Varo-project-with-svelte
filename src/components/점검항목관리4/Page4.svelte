@@ -391,6 +391,7 @@
                   />
                 {:else}
                   <!-- Normal mode: render the checklist name -->
+                  <!-- svelte-ignore a11y-invalid-attribute -->
                   <a href="#">
                     {checklist.ccg_group}
                   </a>

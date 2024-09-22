@@ -1,4 +1,5 @@
 <script>
+  import { assetDeatilInfo } from "../../../services/page2/asset.store";
   let currentData = null;
   let activeData = null;
 
@@ -6,6 +7,11 @@
     currentData = page;
     activeData = menu;
   };
+
+  // Reactive subscription to assetDeatilInfo store
+  $: assetDetails =
+    $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
+  $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
 
   let data = [];
   for (let i = 1; i <= 100; i++) {
@@ -39,48 +45,68 @@
 </script>
 
 <main>
-  <div class="button_container">
-    <button>자산그룹이동 </button>
-    <button>정보수정</button>
-    <button>등록승인 / 등록해제 </button>
-    <button>자산삭제</button>
-  </div>
-  <div class="table_container">
-    <table>
-      <tr>
-        <th>분류그룹</th>
-        <th>INFRA</th>
-        <th>자산코드</th>
-        <th>SW-001</th>
-        <th>용도</th>
-        <th>L2스위치</th>
-        <th>자산모델</th>
-        <th>C9200CX-12P-2X2G</th>
-        <th>점검대상</th>
-        <th>NETWORK</th>
-        <th>호스트명</th>
-        <th>User_L2_51</th>
-      </tr>
-      {#each data as asset}
+  {#if Object.keys(assetDetails).length > 0}
+    <div class="table_container">
+      <table>
         <tr>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.logContent}</td>
-          <td>{asset.performer}</td>
-          <td>{asset.date}</td>
-          <td>{asset.note}</td>
+          <th>아이피주소</th>
+          <td>{assetDetails.ast_ipaddr}</td>
+          <th>IP추적처리</th>
+          <td>{assetDetails.ast_ipaddrs}</td>
+          <th>자산코드</th>
+          <td>{assetDetails.ast_code}</td>
+          <th>용도</th>
+          <td>{assetDetails.ast_usage}</td>
         </tr>
-      {/each}
-    </table>
-  </div>
+        <tr>
+          <th>제조사</th>
+          <td>{assetDetails.ast_brand}</td>
+          <th>운영체제</th>
+          <td>{assetDetails.ast_os}</td>
+          <th>모델</th>
+          <td>{assetDetails.ast_model}</td>
+          <th>점검대상</th>
+          <td>NETWORK</td>
+        </tr>
+        <tr>
+          <th>호스트명</th>
+          <td>{assetDetails.ast_hostname}</td>
+          <th>위치</th>
+          <td>{assetDetails.ast_location}</td>
+          <th>운영팀</th>
+          <td>{assetDetails.ast_operator_team}</td>
+          <th>관리자</th>
+          <td>{assetDetails.ast_operator_person}</td>
+        </tr>
+        <tr>
+          <th>관리전화</th>
+          <td>{assetDetails.ast_operator_phone}</td>
+          <th>기밀성</th>
+          <td>{assetDetails.ast_confidentiality}</td>
+          <th>무결성</th>
+          <td>{assetDetails.ast_integrity}</td>
+          <th>가용성</th>
+          <td>{assetDetails.ast_availability}</td>
+        </tr>
+        <tr>
+          <th>보안점수</th>
+          <td>{assetDetails.ast_security_point}</td>
+          <th>등급</th>
+          <td>{assetDetails.ast_security_level}</td>
+          <th>ISMS인증</th>
+          <td>{assetDetails.ast_isms_target ? "True" : "False"}</td>
+          <th>활성화여부</th>
+          <td>{assetDetails.ast_activate ? "활성화상태" : "비활성화"}</td>
+        </tr>
+      </table>
+    </div>
+  {:else}
+    <div class="empty-state-message">
+      <h3>Please select an asset to see details</h3>
+    </div>
+  {/if}
   <div class="input_container">
-    <div class="input"><input type="text" /></div>
+    <textarea rows="3" cols="100" placeholder="비고란"></textarea>
     <div class="input_buttons">
       <button style="background: #007bff;">수정하기</button>
       <button style="background: #dc3545;">비활성하기</button>
@@ -91,57 +117,71 @@
     <div class="header">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectData(pageData[0].data1, '운영체제정보')}"
+        on:click="{() =>
+          selectData(assetDetails.system_info?.osinfo || [], '운영체제정보')}"
         class="{activeData === '운영체제정보' ? 'active' : ''}"
       >
         운영체제정보
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectData(pageData[0].data2, '  설치된')}"
-        class="{activeData === '  설치된' ? 'active' : ''}"
+        on:click="{() =>
+          selectData(
+            assetDetails.system_info?.installedprog || [],
+            '설치된 프로그램 목록'
+          )}"
+        class="{activeData === '설치된 프로그램 목록' ? 'active' : ''}"
       >
         설치된 프로그램 목록
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectData(pageData[0].data3, '프로세스목록')}"
+        on:click="{() =>
+          selectData(assetDetails.system_info?.process || [], '프로세스목록')}"
         class="{activeData === '프로세스목록' ? 'active' : ''}"
       >
         프로세스목록
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectData(pageData[0].data4, '네트워크')}"
-        class="{activeData === '네트워크' ? 'active' : ''}"
+        on:click="{() =>
+          selectData(
+            assetDetails.system_info?.process_network || [],
+            '네트워크 정보'
+          )}"
+        class="{activeData === '네트워크 정보' ? 'active' : ''}"
       >
         네트워크 정보
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectData(pageData[0].data5, 'DLL')}"
-        class="{activeData === 'DLL' ? 'active' : ''}"
+        on:click="{() =>
+          selectData(assetDetails.system_info?.dlls || [], 'DLL 정보')}"
+        class="{activeData === 'DLL 정보' ? 'active' : ''}"
       >
         DLL 정보
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectData(pageData[0].data6, '파일해시')}"
-        class="{activeData === '파일해시' ? 'active' : ''}"
-      >
-        파일해시
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data7, '패치내역')}"
+        on:click="{() =>
+          selectData(assetDetails.system_info?.patchstatus || [], '패치내역')}"
         class="{activeData === '패치내역' ? 'active' : ''}"
       >
         패치내역/대상
       </h3>
     </div>
-    {#if currentData}
+
+    {#if currentData && currentData.length > 0}
       <div class="last_container">
-        <p>{currentData}</p>
+        <ul>
+          {#each currentData as dataItem}
+            <li>{JSON.stringify(dataItem)}</li>
+          {/each}
+        </ul>
+      </div>
+    {:else}
+      <div class="empty_state">
+        <p>No information available for this tab</p>
       </div>
     {/if}
   </div>
@@ -158,34 +198,6 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
-  .button_container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-
-  .button_container button {
-    background-color: #0056b3; /* Darker Blue */
-    color: #ffffff;
-
-    width: 130px;
-    height: 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .button_container button:hover {
-    background-color: #002244;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
 
   .table_container {
     display: flex;
@@ -198,7 +210,7 @@
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    border: 1px solid #dddddd;
   }
 
   table {
@@ -211,30 +223,36 @@
 
   th,
   td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
+    padding: 8px;
+    border: 1px solid #ddd;
     text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
+  }
+
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
   }
 
   th {
-    background-color: #005fa3; /* Header background color */
-    color: #ffffff; /* Header text color */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: #333;
   }
 
   tr:hover {
     background-color: #e0f7fa; /* Soft hover effect */
   }
 
+  /* Optional styling for better visual appeal */
+  td {
+    background-color: #fff;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f9f9f9; /* Light gray for alternate rows */
+  }
   .input_container {
     display: flex;
     flex-direction: column;
@@ -244,6 +262,10 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #dddddd;
+  }
+  .input_container textarea {
+    margin: 6px;
+    width: 99%;
   }
 
   .input_buttons {
@@ -271,27 +293,6 @@
     background-color: #0056b3;
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .input {
-    margin-bottom: 10px;
-    padding: 20px;
-  }
-
-  .input input {
-    width: 100%;
-    height: 45px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #cccccc;
-    font-size: 14px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease;
-  }
-
-  .input input:focus {
-    border-color: #007bff;
-    outline: none;
   }
 
   .header {
@@ -352,11 +353,39 @@
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
+    border: 1px solid #dddddd;
     margin-bottom: 40px;
     width: 100%;
   }
-  .last_container p {
+  .empty_state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+  }
+  .empty-state-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; /* Adjust the height based on your design */
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    color: #555; /* Text color */
+  }
+
+  .empty-state-message h3 {
+    font-size: 18px;
+    color: #007bff;
+    font-weight: bold;
+    text-align: center;
   }
 </style>

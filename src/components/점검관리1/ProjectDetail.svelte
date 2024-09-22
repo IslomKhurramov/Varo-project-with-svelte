@@ -271,36 +271,36 @@
           </div>
         </div>
         <div class="bar-charts2">
-            <div class="bar">
+            <div class="bar bar-second">
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리") - 10}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}% 
+              </div>
               <div class="label">계정 관리</div>
-              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}% 등록
-              </div>
             </div>
-            <div class="bar">
+            <div class="bar bar-second">
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리") - 10}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}% 
+              </div>
               <div class="label">접근 관리</div>
-              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}% 등록
-              </div>
             </div>
-            <div class="bar">
+            <div class="bar bar-second">
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리") - 10}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}% 
+              </div>
               <div class="label">패치 관리</div>
-              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}% 등록
-              </div>
             </div>
-            <div class="bar">
-              <div class="label">로그 관리</div>
-              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}% 등록
+            <div class="bar bar-second">
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리") - 10}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}% 
               </div>
+              <div class="label">로그 관리</div>
             </div>
 
-            <div class="bar">
-              <div class="label">기능 관리</div>
-              <div class="bar-fill2" style="width: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}% 등록
+            <div class="bar bar-second">
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리") - 10}%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}% 
               </div>
+              <div class="label">기능 관리</div>
             </div>
         </div>
       </div>
@@ -452,7 +452,7 @@
 
   .pie-chart {
     width: 30%; /* Reduced size */
-    height: 80px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -469,7 +469,14 @@
   .bar-charts2 {
     flex-grow: 1;
     padding-left: 10px;
-    width: 70%; /* Reduced padding */
+    width: 70%; 
+   
+  }
+
+  .bar-charts2 {
+    height: 300px;
+    display: flex;
+    flex-direction: row;
   }
 
   .bar {
@@ -479,33 +486,47 @@
     margin-bottom: 5px; /* Reduced margin */
   }
 
+  .bar-second {
+    margin-right: 50px;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
   .bar .label {
     width: 60px; /* Reduced width */
     font-weight: bold;
     font-size: 12px; /* Adjusted font size */
     color: #555;
+    text-align: center;
   }
 
   .bar .bar-fill {
-    height: 15px; /* Reduced height */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 30px; /* Reduced height */
     background-color: #4caf50;
     color: white;
     text-align: right;
-    padding-right: 3px; /* Reduced padding */
+    padding-right: 10px; /* Reduced padding */
     line-height: 15px;
     border-radius: 5px;
     font-size: 12px; /* Adjusted font size */
   }
 
   .bar .bar-fill2 {
-    height: 15px; /* Reduced height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px; 
+    width: 70px;
     background-color: #2196f3;
     color: white;
     text-align: right;
-    padding-right: 3px; /* Reduced padding */
+    padding-right: 3px; 
     line-height: 15px;
     border-radius: 5px;
-    font-size: 12px; /* Adjusted font size */
+    font-size: 12px; 
   }
 
   .security-level-section p {

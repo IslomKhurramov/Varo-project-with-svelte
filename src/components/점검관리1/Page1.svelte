@@ -6,8 +6,6 @@
   import { userData } from "../../stores/user.store";
   import { getAllPlanLists } from "../../services/page1/planInfoService";
   import { setDeletePlan } from "../../services/page1/newInspection";
-  console.log("PAGE 1 ");
-  console.log("USER DATA => ", $userData);
 
   let currentView = "default";
   let currentPage = null;
@@ -19,7 +17,6 @@
   let selectedProjectIndex = null;
 
   onMount(async () => {
-    console.log("onMount RUNNING")
     try {
       projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array
@@ -38,7 +35,6 @@
     activeMenu = project;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
-    console.log("INDEX::", selectedProjectIndex);
   };
 
   const addProject = () => {

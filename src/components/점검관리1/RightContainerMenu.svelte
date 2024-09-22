@@ -14,10 +14,6 @@
     currentPage = page;
     activeMenu = menu;
   };
-
-  $: {
-    console.log("projectIndex:", projectIndex)
-  }
 </script>
 
 <div class="container_page1">

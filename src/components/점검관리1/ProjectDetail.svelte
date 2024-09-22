@@ -1,32 +1,33 @@
 <script>
   import { getPlanDetailInformation } from "../../services/page1/projectDetail";
-  export let projectIndex;
-  import { onMount } from "svelte";
   import { errorAlert } from "../../shared/sweetAlert";
   import { navigate } from "svelte-routing";
   import moment from "moment";
+
+  export let projectIndex;
 
   let projectDetails = {};
 
   let totalPercentage = 0;
 
-  onMount(async () => {
+  $: if (projectIndex) {
+    updateProjectDetails();
+  }
+
+  async function updateProjectDetails() {
     try {
+      console.log("projectIndex:", projectIndex);
       projectDetails = await getPlanDetailInformation(projectIndex);
       console.log("Fetched Project Details:", projectDetails);
-      // Step 1: Calculate the sum of the y values
+
       const totalY = projectDetails?.target_securitypoint.reduce((sum, item) => sum + item.y, 0);
-
-      // Step 2: Calculate the maximum possible value
-      const maxY = projectDetails.target_securitypoint?.length * 100; // 100 for each item
-
-      // Step 3: Calculate the percentage
+      const maxY = projectDetails.target_securitypoint?.length * 100;
       totalPercentage = (totalY / maxY) * 100;
     } catch (err) {
       await errorAlert(err?.message);
-      navigate(window.location?.pathname == '/' ? '/page1' : '/')
-    } 
-  });
+      navigate(window.location?.pathname == '/' ? '/page1' : '/');
+    }
+  }
 
   // Mock Data for demonstration purposes
   let inspectionDetails = "유닉스: 11대, 윈도우 20대, 맥: 10대";

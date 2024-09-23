@@ -52,19 +52,6 @@
   let networkRegistration = 65;
   let dbmsRegistration = 85;
 
-  let securityLevel = {
-    overall: 80,
-    unix: 30,
-    windows: 50,
-  };
-
-  let criticalWeaknesses = [
-    { name: "계정관리", value: 10 },
-    { name: "서비스관리", value: 40 },
-    { name: "취약점1", value: 38 },
-    { name: "취약점2", value: 38 },
-  ];
-
   function calculatePieSlice(value, total, radius, startAngle) {
     const angle = (value / total) * 2 * Math.PI;
     const x1 = radius * Math.cos(startAngle);
@@ -88,14 +75,20 @@
         .map(item => item.y);
 
     const totalY = accountManagementYs.reduce((sum, value) => sum + value, 0);
-    return parseInt((totalY / accountManagementYs.length).toFixed(2)); 
+    const data = (totalY / accountManagementYs.length).toFixed(2)
+    
+    const returndata = isNaN(data) ? 0 : parseInt(data);
+    console.log("returndata:", returndata);
+    return returndata
   };
 
   const calculateAllSecurityLevel = (target_group_securitypoint) => {
     const allItems = Object.values(target_group_securitypoint).flat();
     const totalY = allItems.reduce((sum, item) => sum + item.y, 0);
+
+    const data = (totalY / allItems.length).toFixed(2)
     
-    return parseInt((totalY / allItems.length).toFixed(2));
+    return isNaN(data) ? 0 : parseInt(data);
   }
 
   const calculateSecurityLevelByGroup = (target_group_securitypoint, group) => {
@@ -104,7 +97,8 @@
             .flatMap(([, items]) => items);
         
         const totalY = filteredItems.reduce((sum, item) => sum + item.y, 0);
-        return parseInt((totalY / filteredItems.length).toFixed(2)); 
+        const data = (totalY / filteredItems.length).toFixed(2)
+        return isNaN(data) ? 0 : parseInt(data);
     };
 
 </script>
@@ -263,42 +257,42 @@
       <div class="security-level-section">
         <div class="third_cont">
           <div>
-            <h4>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</h4>
-            <p>Network: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'NETWORK')}%</p>
-            <p>Security: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'SECURITY')}%</p>
-            <p>Unix: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'UNIX')}%</p>
-            <p>Windows: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'WINDOWS')}%</p>
+            <h2>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint) }%</h2>
+            <h4>Network: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'NETWORK')}%</h4>
+            <h4>Security: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'SECURITY')}%</h4>
+            <h4>Unix: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'UNIX')}%</h4>
+            <h4>Windows: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'WINDOWS')}%</h4>
           </div>
         </div>
         <div class="bar-charts2">
             <div class="bar bar-second">
-              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리") - 10}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}% 
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리") == 0 ? 1 : calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리") - 10  }%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리") == 0 ? '' : `${calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "계정 관리")}%`}
               </div>
               <div class="label">계정 관리</div>
             </div>
             <div class="bar bar-second">
-              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리") - 10}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}% 
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리") == 0 ? 1 : calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리") - 10  }%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리") == 0 ? '' : `${calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "접근 관리")}%`}
               </div>
               <div class="label">접근 관리</div>
             </div>
             <div class="bar bar-second">
-              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리") - 10}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}% 
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리") == 0 ? 1 : calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리") - 10  }%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리") == 0 ? '' : `${calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "패치 관리")}%`}
               </div>
               <div class="label">패치 관리</div>
             </div>
             <div class="bar bar-second">
-              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리") - 10}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}% 
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리") == 0 ? 1 : calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리") - 10  }%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리") == 0 ? '' : `${calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "로그 관리")}%`}
               </div>
               <div class="label">로그 관리</div>
             </div>
 
             <div class="bar bar-second">
-              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리") - 10}%;">
-                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}% 
+              <div class="bar-fill2" style="height: {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리") == 0 ? 1 : calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리") - 10 }%;">
+                {calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리") == 0 ? '' : `${calculateSecurityStatistic(projectDetails?.target_group_securitypoint, "기능 관리")}%`}
               </div>
               <div class="label">기능 관리</div>
             </div>
@@ -306,12 +300,40 @@
       </div>
 
       <!-- Critical Weaknesses Section -->
+     
       <h2>[주요 취약점]</h2>
       <div class="critical-weaknesses">
-        <div class="bar-chart">
-          <p>대상 / 점검그룹 / 점검항목 / 위험도</p>
+        {#if projectDetails?.vuln_list?.length !== 0}
+        <div class="table_container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 5%;">번호</th>
+                <th style="width: 20%;">대상</th>
+                <th style="width: 15%;">점검그룹</th>
+                <th style="width: 30%;">점검항목</th>
+                <th style="width: 15%;">위험도</th>
+              </tr>
+            </thead>
+            <tbody>
+            {#each projectDetails?.vuln_list as vuln, index}
+                <tr>
+                  <td>{index + 1}</td>
+                  <td>{vuln?.cct_index__cct_target}</td>
+                  <td>{vuln?.ccr_item_no__ccc_item_group}</td>
+                  <td>{vuln?.ccr_item_no__ccc_item_title}</td>
+                  <td>{vuln?.ccr_item_no__ccc_item_level}</td>
+                  
+                </tr>
+              {/each} 
+            </tbody>
+          </table>
         </div>
+        {:else}
+          <h1>주요 취약점 미등록</h1>
+        {/if}
       </div>
+      
     </div>
     {/if}
   </div>
@@ -545,5 +567,44 @@
     padding: 5px; /* Reduced padding */
     color: #555;
     font-size: 12px; /* Adjusted font size */
+  }
+
+  .critical-weaknesses .table_container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 500px;
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  th,
+  td {
+    border: 1px solid #dddddd;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: #005fa3;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #e0f7fa;
   }
 </style>

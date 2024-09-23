@@ -6,7 +6,6 @@
   import moment from "moment";
   import ModalDynamic from "../../shared/ModalDynamic.svelte";
   import ResultPopUp from "./ResultPopup.svelte";
-  import Modal from "../../shared/Modal.svelte";
 
   export let projectIndex;
 
@@ -34,23 +33,12 @@
 
       // assets info data fetch
       assetsInfo = await getCCEResultUploadStatus(projectIndex);
-      console.log("assetsInfo:", assetsInfo)
 
     } catch (err) {
       await errorAlert(err?.message);
       navigate(window.location?.pathname == '/' ? '/page1' : '/');
     }
   }
-
-  // Mock Data for demonstration purposes
-  let inspectionDetails = "유닉스: 11대, 윈도우 20대, 맥: 10대";
-  let progress = "점검진행률: 진행완료 (28/28대, 100% 결과 수집)";
-  let overallSecurityLevel = 80;
-
-  // Data for charts
-  let unixRegistration = 45;
-  let networkRegistration = 65;
-  let dbmsRegistration = 85;
 
   function calculatePieSlice(value, total, radius, startAngle) {
     const angle = (value / total) * 2 * Math.PI;
@@ -184,7 +172,7 @@
                 modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'UNIX')
               }}">
                 <div class="label">UNIX</div>
-                <div class="bar-fill" style="width: {unixRegistration}%;">
+                <div class="bar-fill" style="width: {projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'UNIX')[0]?.['y']}% 등록
                 </div>
               </div>
@@ -196,7 +184,7 @@
                 modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'NETWORK')
               }}">
                 <div class="label">NETWORK</div>
-                <div class="bar-fill" style="width: {networkRegistration}%;">
+                <div class="bar-fill" style="width: {projectDetails.target_securitypoint.filter(ele => ele.label === 'NETWORK')[0]?.['y']}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'NETWORK')[0]?.['y']}% 등록
                 </div>
               </div>
@@ -208,7 +196,7 @@
                 modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'DBMS')
               }}">
                 <div class="label">DBMS</div>
-                <div class="bar-fill" style="width: {dbmsRegistration}%;">
+                <div class="bar-fill" style="width: {projectDetails.target_securitypoint.filter(ele => ele.label === 'DBMS')[0]?.['y']}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'DBMS')[0]?.['y']}% 등록
                 </div>
               </div>
@@ -220,7 +208,7 @@
                 modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'SECURITY')
               }}">
                 <div class="label">SECURITY</div>
-                <div class="bar-fill" style="width: {dbmsRegistration}%;">
+                <div class="bar-fill" style="width: {projectDetails.target_securitypoint.filter(ele => ele.label === 'SECURITY')[0]?.['y']}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'SECURITY')[0]?.['y']}% 등록
                 </div>
               </div>
@@ -232,7 +220,7 @@
                 modalData = assetsInfo['assets_info'].filter(asset => asset.ast_uuid__ast_target__cct_target === 'SECURITY')
               }}">
                 <div class="label">WINDOWS</div>
-                <div class="bar-fill" style="width: {dbmsRegistration}%;">
+                <div class="bar-fill" style="width: {projectDetails.target_securitypoint.filter(ele => ele.label === 'WINDOWS')[0]?.['y']}%;">
                   {projectDetails.target_securitypoint.filter(ele => ele.label === 'WINDOWS')[0]?.['y']}% 등록
                 </div>
               </div>

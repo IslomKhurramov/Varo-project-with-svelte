@@ -123,7 +123,7 @@
           <div class="percentage1">
             <p><strong>보안수준</strong></p>
             <div class="security-level">
-              <div class="score">{overallSecurityLevel}%</div>
+              <div class="score">{calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</div>
             </div>
           </div>
         </div>
@@ -132,10 +132,10 @@
             <p>제목: {projectDetails?.ccp_title}</p>
             <p>점검방법: {projectDetails?.recheck  == 0 ? '신규점겅검' : '이행점검'}</p>
             <p>점검대상: {projectDetails?.asg_index__asg_title}</p>
-            <p>{inspectionDetails}</p>
+            <!-- <p>{inspectionDetails}</p> -->
             <p>점검항목: {projectDetails?.ccp_ruleset__ccg_group}</p>
             <p>생성자: {projectDetails?.plan_planer_info__user_name}</p>
-            <p>진행상태: -</p>
+            <p>진행상태: {projectDetails?.ccp_b_finalized ? '완료' : '진행 중'}</p>
             <p>점검일시: {moment(projectDetails?.plan_start_date).format('YYYY MM DD')} ~ { moment(projectDetails?.plan_end_date).format('YYYY MM DD')}</p>
             <p>점검실행: {projectDetails?.plan_execution_type ? '반복실행' : '즉시실행'}</p>
             <p>주기: {projectDetails?.plan_execute_interval_term}</p>
@@ -257,7 +257,7 @@
       <div class="security-level-section">
         <div class="third_cont">
           <div>
-            <h2>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint) }%</h2>
+            <h2>전체보안수준: {calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</h2>
             <h4>Network: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'NETWORK')}%</h4>
             <h4>Security: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'SECURITY')}%</h4>
             <h4>Unix: {calculateSecurityLevelByGroup(projectDetails?.target_group_securitypoint, 'UNIX')}%</h4>
@@ -506,6 +506,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 5px; /* Reduced margin */
+    cursor: pointer;
   }
 
   .bar-second {

@@ -144,11 +144,6 @@
             <p>조치일정: {moment(projectDetails?.fix_start_date).format('YYYY MM DD')} ~ { moment(projectDetails?.fix_end_date).format('YYYY MM DD')}</p>
             {/if}
             <p>조치담당자: {projectDetails?.fix_conductor_info_id} </p>
-            <p>{progress}</p>
-           
-            
-            
-            
           </div>
           <div class="actions">
             <button>결과등록</button>

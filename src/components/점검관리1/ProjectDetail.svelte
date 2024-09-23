@@ -123,7 +123,7 @@
           <div class="percentage1">
             <p><strong>보안수준</strong></p>
             <div class="security-level">
-              <div class="score">{calculateAllSecurityLevel(projectDetails?.target_group_securitypoint)}%</div>
+              <div class="score">{projectDetails?.ccp_security_point > 0 ? projectDetails?.ccp_security_point  : 0}%</div>
             </div>
           </div>
         </div>

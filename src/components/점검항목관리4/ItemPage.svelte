@@ -298,6 +298,8 @@
     padding: 10px;
     text-align: left;
     vertical-align: middle;
+    word-wrap: break-word;
+    white-space: pre-wrap;
   }
 
   th {

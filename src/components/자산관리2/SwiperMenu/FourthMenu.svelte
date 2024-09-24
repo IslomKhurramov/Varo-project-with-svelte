@@ -1,7 +1,50 @@
 <script>
   import { getAllPlanLists } from "../../../services/page1/planInfoService";
+  import { assetDeatilInfo } from "../../../services/page2/asset.store";
   import { onMount } from "svelte";
+  let plantoSHow = [];
+  let planInfo = [];
+  let allVulns = [];
+  let filteredVulns = [];
 
+  $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
+
+  // Automatically update plantoSHow and gather all vulns when cceHistory changes
+  $: if (cceHistory.length > 0) {
+    plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
+
+    // Gather all vulns from plantoSHow and set as default
+    allVulns = [];
+    plantoSHow.forEach((historyItem) => {
+      if (historyItem.vulns && historyItem.vulns.length > 0) {
+        allVulns.push(...historyItem.vulns);
+      }
+    });
+
+    filteredVulns = [...allVulns];
+  }
+
+  let selectedProject = "";
+  let selectedTarget = "";
+  let selectedHost = "";
+  let selectedItem = "";
+  let selectedResult = "";
+  let selectedViewOption = "상세보기";
+
+  function searchResults() {
+    filteredVulns = allVulns.filter((vuln) => {
+      const projectMatch =
+        selectedProject === "" ||
+        vuln?.ccp_index__ccp_title === selectedProject;
+      const targetMatch =
+        selectedTarget === "" || vuln?.cct_index__cct_target === selectedTarget;
+      const resultMatch =
+        selectedResult === "" || vuln?.ccr_item_result === selectedResult;
+
+      return projectMatch && targetMatch && resultMatch;
+    });
+  }
+  /**********************************************************/
   let planData = {};
   let planArray = []; // Declare planArray here so it can be used in the template
   let loading = true;
@@ -22,6 +65,7 @@
     }
   });
   /*****************************/
+
   let dataTable1 = [];
   for (let i = 1; i <= 100; i++) {
     dataTable1.push({
@@ -62,64 +106,122 @@
 <main class="container1">
   <div class="table_container">
     <table>
-      <tr>
-        <th>넘버</th>
-        <th>프로젝트명</th>
-        <th>점검항목</th>
-        <th>생성일</th>
-        <th>프로젝트보안수준</th>
-        <th>점검대상 / 자산보안수준</th>
-      </tr>
-
-      {#each planArray as data}
+      <thead>
         <tr>
-          <td>{data?.ccp_index}</td>
-          <td>{data?.ccp_title}</td>
-          <td>{data?.ccp_ruleset__ccg_group}</td>
-          <td>{data?.ccp_ruleset__ccg_group}</td>
-          <td>{data?.ccp_security_point}</td>
-          <td>{data?.asset}</td>
+          <th>넘버</th>
+          <th>프로젝트명</th>
+          <th>점검항목</th>
+          <th>생성일</th>
+          <th>프로젝트보안수준</th>
+          <th>점검대상 / 자산보안수준</th>
         </tr>
-      {/each}
+      </thead>
+      <tbody>
+        <!-- Check if cceHistory contains any data -->
+        {#if plantoSHow.length > 0}
+          {#each plantoSHow as historyItem, index}
+            {#if historyItem.plans}
+              <tr>
+                <td>{index + 1}</td>
+                <td>{historyItem.plans.ccp_index__ccp_title}</td>
+                <td>{historyItem.plans.asg_index__asg_title}</td>
+                <td>{historyItem.plans.ast_uuid__ast_target__cct_target}</td>
+                <td>{historyItem.plans.ast_uuid}</td>
+                <td
+                  >{historyItem.plans
+                    .ast_uuid__ast_target__cct_target}({historyItem.plans
+                    .ast_security_point})</td
+                >
+              </tr>
+            {/if}
+          {/each}
+        {:else}
+          <tr>
+            <td colspan="6">No data available</td>
+          </tr>
+        {/if}
+      </tbody>
     </table>
   </div>
   <div class="container">
     <div class="firstLine">
       <div class="dropdown-group">
+        <!-- 프로젝트 (Project) -->
         <div class="dropdown-container">
           <label for="project">프로젝트:</label>
-          <select id="project">
-            <option value="수리과터스트2">수리과터스트2</option>
+          <select id="project" bind:value="{selectedProject}">
+            <option value="">전체</option>
+            <!-- 전체 means "All" -->
+            {#each plantoSHow as historyItem}
+              {#if historyItem.vulns && historyItem.vulns[0]}
+                <option value="{historyItem.vulns[0]?.ccp_index__ccp_title}">
+                  {historyItem.vulns[0]?.ccp_index__ccp_title}
+                </option>
+              {/if}
+            {/each}
           </select>
         </div>
+
+        <!-- 점검대상 (Inspection Target) -->
         <div class="dropdown-container">
           <label for="target">점검대상:</label>
-          <select id="target">
-            <option value="수리과터스트2">수리과터스트2</option>
+          <select id="target" bind:value="{selectedTarget}">
+            <option value="">전체</option>
+            {#each plantoSHow as historyItem}
+              {#if historyItem.vulns && historyItem.vulns[0]}
+                <option value="{historyItem.vulns[0]?.cct_index__cct_target}">
+                  {historyItem.vulns[0]?.cct_index__cct_target}
+                </option>
+              {/if}
+            {/each}
           </select>
         </div>
+
+        <!-- 점검항목 (Inspection Item) -->
         <div class="dropdown-container">
-          <label for="host">호스트:</label>
-          <select id="host">
-            <option value="수리과터스트2">수리과터스트2</option>
+          <label for="item">점검항목:</label>
+          <select id="item" bind:value="{selectedItem}">
+            <option value="">전체</option>
+            {#each plantoSHow as historyItem}
+              {#if historyItem.vulns}
+                {#each historyItem.vulns as vuln}
+                  <option value="{vuln?.ccr_item_no__ccc_item_title}">
+                    {vuln?.ccr_item_no__ccc_item_title}
+                  </option>
+                {/each}
+              {/if}
+            {/each}
           </select>
         </div>
+
+        <!-- 점검결과 (Inspection Result) -->
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
-          <select id="result">
-            <option value="수리과터스트2">수리과터스트2</option>
+          <select id="result" bind:value="{selectedResult}">
+            <option value="">전체</option>
+            <option value="양호">양호</option>
+            <option value="취약">취약</option>
           </select>
         </div>
+
+        <!-- 보기옵션 (View Options) -->
         <div class="dropdown-container">
           <label for="viewOption">보기옵션:</label>
-          <select id="viewOption">
-            <option value="수리과터스트2">수리과터스트2</option>
+          <select id="viewOption" bind:value="{selectedViewOption}">
+            <option value="상세보기">상세보기</option>
+            <!-- Detailed view -->
+            <option value="간략보기">간략보기</option>
+            <!-- Summary view -->
           </select>
         </div>
       </div>
+
+      <!-- Button Group -->
       <div class="button-group">
-        <button class="firstlineButton">조회하기</button>
-        <button class="firstlineButton">보안점수확점</button>
+        <button class="firstlineButton" on:click="{searchResults}">
+          조회하기
+        </button>
+        <button class="firstlineButton"> 보안점수확정 </button>
       </div>
     </div>
 
@@ -144,7 +246,7 @@
       </p>
     </div>
 
-    <div class="table_container">
+    <div class="table_container table2">
       <table>
         <thead>
           <tr>
@@ -154,35 +256,35 @@
             <th style="width: 30%;">점검항목</th>
             <th style="width: 15%;">시스템상태</th>
             <th style="width: 10%;">점검결과</th>
-            <th style="width: 5%;">결과변경</th>
           </tr>
         </thead>
         <tbody>
-          {#each hostInfo as host}
+          {#if filteredVulns.length > 0}
+            {#each filteredVulns as vuln, vulnIndex}
+              <tr>
+                <td>{vulnIndex + 1}</td>
+                <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
+                <td>
+                  [{vuln?.ccr_item_no__ccc_item_no ||
+                    "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
+                    "No Title"}
+                </td>
+                <td>
+                  <div class="checklist">
+                    <p>
+                      {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
+                    </p>
+                  </div>
+                </td>
+                <td>{vuln?.ccr_item_status || "No Status"}</td>
+                <td>{vuln?.ccr_item_result || "No Result"}</td>
+              </tr>
+            {/each}
+          {:else}
             <tr>
-              <td>{host.number}</td>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
-                >{host.name}</td
-              >
-              <td>{host.item}</td>
-              <td>
-                <div class="checklist">
-                  <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
-                  <p>양호: {host.checklist.good || "데이터 없음"}</p>
-                </div>
-              </td>
-              <td>{host.system}</td>
-              <td>{host.instectionResult}</td>
-              <td>
-                <select>
-                  <option value="양호">양호</option>
-                  <option value="해당">해당</option>
-                </select>
-                <button class="save_button">변경</button>
-              </td>
+              <td colspan="6">No data available</td>
             </tr>
-          {/each}
+          {/if}
         </tbody>
       </table>
     </div>
@@ -195,7 +297,6 @@
     flex-direction: column;
     background-color: #f7f9fb;
     padding: 10px;
-    margin-bottom: 40px;
     font-family: "Arial", sans-serif;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -204,7 +305,7 @@
   .table_container {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 300px;
+    height: auto;
     width: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -225,7 +326,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
   }
 
   .dropdown-group {
@@ -272,7 +372,6 @@
   .secondLine {
     display: flex;
     align-items: center;
-    padding: 10px;
     gap: 10px;
     background-color: #f4f4f4;
     border-radius: 5px;
@@ -303,8 +402,19 @@
     padding-bottom: 10px;
   }
 
+  .table2 {
+    height: 500px;
+    width: 100%; /* Full width of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Center the table */
+  }
+
   table {
     width: 100%;
+    table-layout: fixed; /* Make sure columns don't stretch unexpectedly */
     border-collapse: collapse;
     font-size: 12px;
   }
@@ -314,7 +424,8 @@
     border: 1px solid #dddddd;
     padding: 10px;
     text-align: left;
-    white-space: nowrap;
+    white-space: pre-wrap; /* Ensures the text wraps within the cells */
+    word-wrap: break-word; /* Forces text to break if it's too long */
   }
 
   th {
@@ -334,9 +445,8 @@
   tbody tr:hover {
     background-color: #e0f7fa;
   }
-
   .checklist p {
-    margin: 0;
+    white-space: pre-wrap;
   }
 
   .save_button {

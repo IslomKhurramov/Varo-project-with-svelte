@@ -16,10 +16,8 @@
   let modalData = null;
 
   $: {
-    console.log("selectedPlan:", selectedPlan);
     console.log("resultStatus:", resultStatus);
-    console.log("resultStatus:", resultStatus?.assets_info?.length !== 0);
-    console.log("resultErrors:", resultErrors?.assets_info?.length);
+    console.log("resultErrors:", resultErrors);
   }
 
   $: if (selectedPlan) {
@@ -102,21 +100,21 @@
             <span class="span_at"
               >JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)</span
             >
-            <input class="upload" type="file" />
+            <input class="upload" type="file" accept=".json" multiple />
             <button class="save_button">저장</button>
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
             <p class="button2">네트워크설정파일</p>
             <span class="span_at">설정파일(TXT) 파일 업로드</span>
-            <input class="upload" type="file" />
+            <input class="upload" type="file" accept=".txt" multiple />
             <button class="save_button">저장</button>
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
             <p class="button2">정보보호시스템</p>
             <span class="span_at">인터뷰파일(EXCEL) 파일 업로드</span>
-            <input class="upload" type="file" />
+            <input class="upload" type="file" accept=".xls,.xlsx" multiple />
             <button class="save_button">저장</button>
           </div>
         </div>

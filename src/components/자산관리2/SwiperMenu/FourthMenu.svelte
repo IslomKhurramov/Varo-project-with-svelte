@@ -265,8 +265,9 @@
                 <td>{vulnIndex + 1}</td>
                 <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
                 <td>
-                  [{vuln?.ccr_item_no__ccc_item_no || "No Item No"}]
-                  {vuln?.ccr_item_no__ccc_item_title || "No Title"}
+                  [{vuln?.ccr_item_no__ccc_item_no ||
+                    "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
+                    "No Title"}
                 </td>
                 <td>
                   <div class="checklist">

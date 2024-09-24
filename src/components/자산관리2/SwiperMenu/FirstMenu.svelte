@@ -30,18 +30,6 @@
       note: "길동이",
     });
   }
-
-  const pageData = [
-    {
-      data1: "This is data for Second Menu",
-      data2: "This is data for Third Menu",
-      data3: "This is data for Fourth Menu",
-      data4: "This is data for Second Menu",
-      data5: "This is data for Third Menu",
-      data6: "This is data for Fourth Menu",
-      data7: "This is data for Second Menu",
-    },
-  ];
 </script>
 
 <main>

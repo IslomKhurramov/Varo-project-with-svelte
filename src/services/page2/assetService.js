@@ -110,3 +110,27 @@ export const getDetailInformationOfAsset = async (uuid) => {
     throw new Error(`Failed to fetch asset detail: ${error.message}`);
   }
 };
+/******ASSET GROUP CHANGE***** */
+
+export const setAssetGroupChange = async (uuid,current_group_index,next_group_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setAssetGroupChange/`,
+      {
+        ass_uuid: uuid,
+        current_group_index:current_group_index,
+        next_group_index:next_group_index
+      },
+    );
+
+    if (response.data.RESULT === "OK") {
+      return response.data.CODE; // Return the data from the API
+    } else {
+      throw new Error(
+        `Error Code on setAssetGroupChange: ${response.data.CODE}`,
+      );
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch asset detail: ${error.message}`);
+  }
+};

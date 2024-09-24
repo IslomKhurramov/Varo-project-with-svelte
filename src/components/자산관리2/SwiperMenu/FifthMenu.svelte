@@ -1,47 +1,21 @@
 <script>
-  let data = [];
-  for (let i = 1; i <= 100; i++) {
-    data.push({
-      number: "길동이",
-      projectNO: `프로젝트${i}`,
-      assetName: "AAAAAA",
-      cassification: "ERROR-099",
-      logContent: "실행과정",
-      performer: "길동이",
-      date: "2024-12-11 ",
-      note: "길동이",
-      logContent: "실행과정에서 ",
-      performer: "길동이",
-      date: "2024-12-11 ",
-      note: "길동이",
-    });
-  }
+  import { assetDeatilInfo } from "../../../services/page2/asset.store";
+  let plantoSHow = [];
+  let allVulns = [];
+  // Reactive subscription to assetDeatilInfo store
+  $: assetDetails =
+    $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
+  $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
+  // Automatically update plantoSHow and gather all vulns when cceHistory changes
+  $: if (cceHistory.length > 0) {
+    plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
 
-  let dataTable1 = [];
-  for (let i = 1; i <= 100; i++) {
-    dataTable1.push({
-      number: i.toString(),
-      projectNO: `Final Test Project`,
-      assetName: "21년 기반시설 점검 가이드라인",
-      cassification: "2024-07-07 12:07:07",
-      logContent: "결과미확점",
-      performer: "SECURITY(90.78)",
-    });
-  }
-
-  let hostInfo = [];
-  for (let i = 1; i <= 10; i++) {
-    hostInfo.push({
-      number: i.toString(),
-      name: `User_L2_51${i}`,
-      item: "[N-01] 패스워드 설정",
-      checklist: {
-        vulnerability:
-          "기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은 경우",
-        good: "기본 패스워드를 변경한 경우",
-      },
-      system: "계정목록(동일패스워드 없음)",
-      instectionResult: "양호",
+    // Gather all vulns from plantoSHow and set as default
+    allVulns = [];
+    plantoSHow.forEach((historyItem) => {
+      if (historyItem.vulns && historyItem.vulns.length > 0) {
+        allVulns.push(...historyItem.vulns);
+      }
     });
   }
 </script>
@@ -49,101 +23,107 @@
 <main>
   <div class="header">
     <p>[자산상세정보]</p>
-    <button class="download"> Excel다운로드 </button>
   </div>
-  <div class="table_container" style="margin-top: 0px;">
-    <table>
-      <tr>
-        <th>분류그룹</th>
-        <th>INFRA</th>
-        <th>자산코드</th>
-        <th>SW-001</th>
-        <th>용도</th>
-        <th>L2스위치</th>
-        <th>자산모델</th>
-        <th>C9200CX-12P-2X2G</th>
-        <th>점검대상</th>
-        <th>NETWORK</th>
-        <th>호스트명</th>
-        <th>User_L2_51</th>
-      </tr>
-      {#each data as asset}
+
+  {#if Object.keys(assetDetails).length > 0}
+    <div class="table_container table1">
+      <table>
         <tr>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.logContent}</td>
-          <td>{asset.performer}</td>
-          <td>{asset.date}</td>
-          <td>{asset.note}</td>
+          <th>아이피주소</th>
+          <td>{assetDetails.ast_ipaddr}</td>
+          <th>IP추적처리</th>
+          <td>{assetDetails.ast_ipaddrs}</td>
+          <th>자산코드</th>
+          <td>{assetDetails.ast_code}</td>
+          <th>용도</th>
+          <td>{assetDetails.ast_usage}</td>
         </tr>
-      {/each}
-    </table>
-  </div>
-  <div class="table_container">
-    <table>
-      <tr>
-        <th>넘버</th>
-        <th>프로젝트명</th>
-        <th>점검항목</th>
-        <th>생성일</th>
-        <th>프로젝트보안수준</th>
-        <th>점검대상 / 자산보안수준</th>
-      </tr>
-      {#each dataTable1 as data}
         <tr>
-          <td>{data.number}</td>
-          <td>{data.projectNO}</td>
-          <td>{data.assetName}</td>
-          <td>{data.cassification}</td>
-          <td>{data.logContent}</td>
-          <td>{data.performer}</td>
+          <th>제조사</th>
+          <td>{assetDetails.ast_brand}</td>
+          <th>운영체제</th>
+          <td>{assetDetails.ast_os}</td>
+          <th>모델</th>
+          <td>{assetDetails.ast_model}</td>
+          <th>점검대상</th>
+          <td>NETWORK</td>
         </tr>
-      {/each}
-    </table>
-  </div>
-  <div class="table_container">
-    <table>
-      <tr>
-        <th>남버</th>
-        <th>호스트명</th>
-        <th>항목</th>
-        <th>점검항목</th>
-        <th>시스템상태</th>
-        <th>점검결과</th>
-      </tr>
-      {#each hostInfo as host}
         <tr>
-          <td>{host.number}</td>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <td style="cursor: pointer;" on:click={() => (showModal = true)}
-            >{host.name}</td
-          >
-          <td>{host.item}</td>
-          <td>
-            <div style="display: flex; flex-direction:column">
-              {#if host.checklist && host.checklist.vulnerability}
-                <p>취약: {host.checklist.vulnerability}</p>
-              {:else}
-                <p>취약: 데이터 없음</p>
-              {/if}
-              {#if host.checklist && host.checklist.good}
-                <p>양호: {host.checklist.good}</p>
-              {:else}
-                <p>양호: 데이터 없음</p>
-              {/if}
-            </div>
-          </td>
-          <td>{host.system}</td>
-          <td>{host.instectionResult}</td>
+          <th>호스트명</th>
+          <td>{assetDetails.ast_hostname}</td>
+          <th>위치</th>
+          <td>{assetDetails.ast_location}</td>
+          <th>운영팀</th>
+          <td>{assetDetails.ast_operator_team}</td>
+          <th>관리자</th>
+          <td>{assetDetails.ast_operator_person}</td>
         </tr>
-      {/each}
-    </table>
+        <tr>
+          <th>관리전화</th>
+          <td>{assetDetails.ast_operator_phone}</td>
+          <th>기밀성</th>
+          <td>{assetDetails.ast_confidentiality}</td>
+          <th>무결성</th>
+          <td>{assetDetails.ast_integrity}</td>
+          <th>가용성</th>
+          <td>{assetDetails.ast_availability}</td>
+        </tr>
+        <tr>
+          <th>보안점수</th>
+          <td>{assetDetails.ast_security_point}</td>
+          <th>등급</th>
+          <td>{assetDetails.ast_security_level}</td>
+          <th>ISMS인증</th>
+          <td>{assetDetails.ast_isms_target ? "True" : "False"}</td>
+          <th>활성화여부</th>
+          <td>{assetDetails.ast_activate ? "활성화상태" : "비활성화"}</td>
+        </tr>
+      </table>
+    </div>
+  {:else}
+    <div class="empty-state-message">
+      <h3>Please select an asset to see details</h3>
+    </div>
+  {/if}
+  <div class="table_container table2">
+    {#if allVulns.length > 0}
+      <div class="table_container table2">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 5%;">번호</th>
+              <th style="width: 20%;">호스트명</th>
+              <th style="width: 15%;">항목</th>
+              <th style="width: 30%;">점검항목</th>
+              <th style="width: 15%;">시스템상태</th>
+              <th style="width: 10%;">점검결과</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each allVulns as vuln, vulnIndex}
+              <tr>
+                <td>{vulnIndex + 1}</td>
+                <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
+                <td>
+                  [{vuln?.ccr_item_no__ccc_item_no ||
+                    "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
+                    "No Title"}
+                </td>
+                <td>
+                  <div class="checklist">
+                    <p>
+                      {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
+                    </p>
+                  </div>
+                </td>
+                <td>{vuln?.ccr_item_status || "No Status"}</td>
+                <td>{vuln?.ccr_item_result || "No Result"}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    {/if}
   </div>
 </main>
 
@@ -171,23 +151,45 @@
     height: 41px;
   }
 
-  .download {
-    background-color: #28a745; /* Primary button color */
-    color: #ffffff;
-    width: 100px;
-    height: 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
+  .empty-state-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 250px; /* Adjust the height for better visibility */
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    color: #555;
+    padding: 20px; /* Add some padding */
   }
-  .download:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
+  .empty-state-message h3 {
+    font-size: 22px; /* Increase the size */
+    color: #007bff;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0; /* Add some spacing */
   }
+
+  .empty-state-message p {
+    font-size: 16px; /* Normal size for description */
+    color: #777;
+    text-align: center;
+  }
+
+  .empty-state-message i {
+    font-size: 50px; /* Add a large icon */
+    color: #ddd; /* Gray color for the icon */
+    margin-bottom: 10px;
+  }
+
+  /* If using FontAwesome or similar icon fonts */
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
+
   .table_container {
     display: flex;
     justify-content: center;
@@ -209,10 +211,18 @@
     background: #ffffff;
     font-size: 12px;
   }
-
+  .table2 {
+    height: 500px;
+    width: 100%; /* Full width of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Center the table */
+  }
   th,
   td {
-    border: 1px solid #000000;
+    border: 1px solid #ccc;
     padding: 12px 15px; /* Increased padding for better spacing */
     text-align: left;
     vertical-align: middle; /* Ensure content is vertically centered */
@@ -227,12 +237,26 @@
     text-transform: uppercase; /* Uppercase text for header */
     font-size: 12px;
   }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+  .table1 th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: #333;
+  }
+  .table1 tr:hover {
+    background-color: #e0f7fa; /* Soft hover effect */
   }
 
-  tr:hover {
+  /* Optional styling for better visual appeal */
+  .table1 td {
+    background-color: #fff;
+  }
+  .table1 tr:nth-child(even) td {
+    background-color: #f9f9f9; /* Light gray for alternate rows */
+  }
+  .table1 tr:nth-child(even) {
+    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+  }
+  .table1 tr:hover {
     background-color: #e0f7fa; /* Soft hover effect */
   }
 </style>

@@ -149,12 +149,12 @@
         <!-- 프로젝트 (Project) -->
         <div class="dropdown-container">
           <label for="project">프로젝트:</label>
-          <select id="project" bind:value="{selectedProject}">
+          <select id="project" bind:value={selectedProject}>
             <option value="">전체</option>
             <!-- 전체 means "All" -->
             {#each plantoSHow as historyItem}
               {#if historyItem.vulns && historyItem.vulns[0]}
-                <option value="{historyItem.vulns[0]?.ccp_index__ccp_title}">
+                <option value={historyItem.vulns[0]?.ccp_index__ccp_title}>
                   {historyItem.vulns[0]?.ccp_index__ccp_title}
                 </option>
               {/if}
@@ -165,11 +165,11 @@
         <!-- 점검대상 (Inspection Target) -->
         <div class="dropdown-container">
           <label for="target">점검대상:</label>
-          <select id="target" bind:value="{selectedTarget}">
+          <select id="target" bind:value={selectedTarget}>
             <option value="">전체</option>
             {#each plantoSHow as historyItem}
               {#if historyItem.vulns && historyItem.vulns[0]}
-                <option value="{historyItem.vulns[0]?.cct_index__cct_target}">
+                <option value={historyItem.vulns[0]?.cct_index__cct_target}>
                   {historyItem.vulns[0]?.cct_index__cct_target}
                 </option>
               {/if}
@@ -180,12 +180,12 @@
         <!-- 점검항목 (Inspection Item) -->
         <div class="dropdown-container">
           <label for="item">점검항목:</label>
-          <select id="item" bind:value="{selectedItem}">
+          <select id="item" bind:value={selectedItem}>
             <option value="">전체</option>
             {#each plantoSHow as historyItem}
               {#if historyItem.vulns}
                 {#each historyItem.vulns as vuln}
-                  <option value="{vuln?.ccr_item_no__ccc_item_title}">
+                  <option value={vuln?.ccr_item_no__ccc_item_title}>
                     {vuln?.ccr_item_no__ccc_item_title}
                   </option>
                 {/each}
@@ -197,7 +197,7 @@
         <!-- 점검결과 (Inspection Result) -->
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
-          <select id="result" bind:value="{selectedResult}">
+          <select id="result" bind:value={selectedResult}>
             <option value="">전체</option>
             <option value="양호">양호</option>
             <option value="취약">취약</option>
@@ -207,7 +207,7 @@
         <!-- 보기옵션 (View Options) -->
         <div class="dropdown-container">
           <label for="viewOption">보기옵션:</label>
-          <select id="viewOption" bind:value="{selectedViewOption}">
+          <select id="viewOption" bind:value={selectedViewOption}>
             <option value="상세보기">상세보기</option>
             <!-- Detailed view -->
             <option value="간략보기">간략보기</option>
@@ -218,7 +218,7 @@
 
       <!-- Button Group -->
       <div class="button-group">
-        <button class="firstlineButton" on:click="{searchResults}">
+        <button class="firstlineButton" on:click={searchResults}>
           조회하기
         </button>
         <button class="firstlineButton"> 보안점수확정 </button>
@@ -259,29 +259,29 @@
           </tr>
         </thead>
         <tbody>
-          {#each hostInfo as host}
+          {#if filteredVulns.length > 0}
+            {#each filteredVulns as vuln, vulnIndex}
+              <tr>
+                <td>{vulnIndex + 1}</td>
+                <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
+                <td>
+                  [{vuln?.ccr_item_no__ccc_item_no || "No Item No"}]
+                  {vuln?.ccr_item_no__ccc_item_title || "No Title"}
+                </td>
+                <td>
+                  <div class="checklist">
+                    <p>
+                      {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
+                    </p>
+                  </div>
+                </td>
+                <td>{vuln?.ccr_item_status || "No Status"}</td>
+                <td>{vuln?.ccr_item_result || "No Result"}</td>
+              </tr>
+            {/each}
+          {:else}
             <tr>
-              <td>{host.number}</td>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
-                >{host.name}</td
-              >
-              <td>{host.item}</td>
-              <td>
-                <div class="checklist">
-                  <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
-                  <p>양호: {host.checklist.good || "데이터 없음"}</p>
-                </div>
-              </td>
-              <td>{host.system}</td>
-              <td>{host.instectionResult}</td>
-              <td>
-                <select>
-                  <option value="양호">양호</option>
-                  <option value="해당">해당</option>
-                </select>
-                <button class="save_button">변경</button>
-              </td>
+              <td colspan="6">No data available</td>
             </tr>
           {/if}
         </tbody>

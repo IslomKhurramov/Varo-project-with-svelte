@@ -113,8 +113,8 @@
             <input
               type="checkbox"
               class="first_checkbox"
-              on:click="{toggleAll}"
-              checked="{allSelected}"
+              on:click={toggleAll}
+              checked={allSelected}
             />
             <p>전체선택</p>
           </div>
@@ -124,9 +124,9 @@
                 <input
                   type="checkbox"
                   class="card_checkbox"
-                  bind:group="{selected}"
-                  name="{asset}"
-                  value="{asset}"
+                  bind:group={selected}
+                  name={asset}
+                  value={asset}
                 />
                 <div class="img_container">
                   <!-- svelte-ignore a11y-img-redundant-alt -->

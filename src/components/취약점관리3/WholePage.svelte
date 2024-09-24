@@ -35,23 +35,19 @@
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>취약점정보</label>
-            <textarea bind:value="{actionMethod}" rows="3" readonly></textarea>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
           </div>
 
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>조치방법</label>
-            <textarea bind:value="{actionMethod}" rows="3" readonly></textarea>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
           </div>
 
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>관련자산</label>
-            <textarea
-              class="data3"
-              bind:value="{relatedAssets}"
-              rows="3"
-              readonly
+            <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
             ></textarea>
           </div>
 
@@ -89,7 +85,7 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치방법</label>
-              <select bind:value="{actionPlan}" class="select_input">
+              <select bind:value={actionPlan} class="select_input">
                 <option value="조치계획">조치계획</option>
                 <option value="대책수립">대책수립</option>
                 <option value="예외처리">예외처리</option>
@@ -100,7 +96,7 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>위험도</label>
-              <select bind:value="{riskLevel}">
+              <select bind:value={riskLevel}>
                 <option value="상">상</option>
                 <option value="중">중</option>
                 <option value="하">하</option>
@@ -113,7 +109,7 @@
               <input
                 class="input1"
                 type="text"
-                bind:value="{actionPlan}"
+                bind:value={actionPlan}
                 placeholder="조치일정을 입력하세요"
               />
             </div>
@@ -123,14 +119,14 @@
               <label>조치담당자</label>
               <input
                 type="text"
-                bind:value="{actionPlan}"
+                bind:value={actionPlan}
                 placeholder="조치담당자를 입력하세요"
               />
             </div>
           </div>
 
           <div class="action-footer">
-            <button class="list-button" on:click="{() => (showModal = true)}"
+            <button class="list-button" on:click={() => (showModal = true)}
               >등록된 운영/관리자 계정</button
             >
           </div>

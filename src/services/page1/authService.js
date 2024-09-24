@@ -11,7 +11,7 @@ export const login = async (email, password) => {
       },
       {
         withCredentials: true,
-      }
+      },
     );
     const data = response.data;
 
@@ -38,7 +38,7 @@ export const register = async (name, email, password, department) => {
         user_depart: department,
         user_rolltype: 1,
       },
-      { withCredentials: true }
+      { withCredentials: true },
     );
     const data = response.data;
 

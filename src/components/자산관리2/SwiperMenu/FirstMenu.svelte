@@ -117,55 +117,55 @@
     <div class="header">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() =>
-          selectData(assetDetails.system_info?.osinfo || [], '운영체제정보')}"
-        class="{activeData === '운영체제정보' ? 'active' : ''}"
+        on:click={() =>
+          selectData(assetDetails.system_info?.osinfo || [], "운영체제정보")}
+        class={activeData === "운영체제정보" ? "active" : ""}
       >
         운영체제정보
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() =>
+        on:click={() =>
           selectData(
             assetDetails.system_info?.installedprog || [],
-            '설치된 프로그램 목록'
-          )}"
-        class="{activeData === '설치된 프로그램 목록' ? 'active' : ''}"
+            "설치된 프로그램 목록",
+          )}
+        class={activeData === "설치된 프로그램 목록" ? "active" : ""}
       >
         설치된 프로그램 목록
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() =>
-          selectData(assetDetails.system_info?.process || [], '프로세스목록')}"
-        class="{activeData === '프로세스목록' ? 'active' : ''}"
+        on:click={() =>
+          selectData(assetDetails.system_info?.process || [], "프로세스목록")}
+        class={activeData === "프로세스목록" ? "active" : ""}
       >
         프로세스목록
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() =>
+        on:click={() =>
           selectData(
             assetDetails.system_info?.process_network || [],
-            '네트워크 정보'
-          )}"
-        class="{activeData === '네트워크 정보' ? 'active' : ''}"
+            "네트워크 정보",
+          )}
+        class={activeData === "네트워크 정보" ? "active" : ""}
       >
         네트워크 정보
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() =>
-          selectData(assetDetails.system_info?.dlls || [], 'DLL 정보')}"
-        class="{activeData === 'DLL 정보' ? 'active' : ''}"
+        on:click={() =>
+          selectData(assetDetails.system_info?.dlls || [], "DLL 정보")}
+        class={activeData === "DLL 정보" ? "active" : ""}
       >
         DLL 정보
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() =>
-          selectData(assetDetails.system_info?.patchstatus || [], '패치내역')}"
-        class="{activeData === '패치내역' ? 'active' : ''}"
+        on:click={() =>
+          selectData(assetDetails.system_info?.patchstatus || [], "패치내역")}
+        class={activeData === "패치내역" ? "active" : ""}
       >
         패치내역/대상
       </h3>

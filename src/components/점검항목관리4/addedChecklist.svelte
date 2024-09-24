@@ -14,9 +14,9 @@
     <h3>새로운 진단 그룹 생성</h3>
     <div>
       <label for="source-group">복사 대상:</label>
-      <select bind:value="{selectedChecklistForCopyId}" id="source-group">
+      <select bind:value={selectedChecklistForCopyId} id="source-group">
         {#each allChecklistArray as checklist}
-          <option value="{checklist.ccg_index}">{checklist.ccg_group}</option>
+          <option value={checklist.ccg_index}>{checklist.ccg_group}</option>
         {/each}
       </select>
     </div>
@@ -24,13 +24,13 @@
       <label for="new-group">신규 그룹명:</label>
       <input
         type="text"
-        bind:value="{newChecklistName}"
+        bind:value={newChecklistName}
         id="new-group"
         placeholder="새로운 진단 그룹명을 입력하세요"
       />
     </div>
     <div class="modal-actions">
-      <button class="pretty-button" on:click="{createNewChecklistGroup}"
+      <button class="pretty-button" on:click={createNewChecklistGroup}
         >저장하기</button
       >
     </div>

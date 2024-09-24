@@ -24,7 +24,7 @@
   // Generate colors
   let colors = quantize(
     (t) => interpolatePlasma(t * 0.7 + 0.3),
-    piedata.length
+    piedata.length,
   );
 
   // Create pie layout
@@ -135,17 +135,17 @@
           >
             {#each wedges as wedge, i}
               <path
-                fill="{colors[i]}"
-                d="{arcPath(wedge)}"
+                fill={colors[i]}
+                d={arcPath(wedge)}
                 stroke="white"
-                stroke-width="{strokeWidth}"
-                stroke-linejoin="{strokeLinejoin}"
+                stroke-width={strokeWidth}
+                stroke-linejoin={strokeLinejoin}
               ></path>
               <text
                 transform="translate({arcLabel.centroid(wedge)})"
                 dy=".35em"
                 text-anchor="middle"
-                font-size="{fontSize}"
+                font-size={fontSize}
                 fill="white"
               >
                 <tspan x="0" font-weight="bold">{piedata[i].ages}</tspan>
@@ -178,10 +178,10 @@
                 <g
                   class="tick"
                   transform="translate({scales[0].xScale(
-                    point.month
+                    point.month,
                   )},{height})"
                 >
-                  <text x="{scales[0].xScale.bandwidth() / 2}" y="-4">
+                  <text x={scales[0].xScale.bandwidth() / 2} y="-4">
                     {point.month}
                   </text>
                 </g>
@@ -190,11 +190,11 @@
             <g class="bars">
               {#each data1 as point}
                 <rect
-                  x="{scales[0].xScale(point.month)}"
-                  y="{scales[0].yScale(point.measures)}"
-                  width="{scales[0].xScale.bandwidth()}"
-                  height="{scales[0].yScale(0) -
-                    scales[0].yScale(point.measures)}"
+                  x={scales[0].xScale(point.month)}
+                  y={scales[0].yScale(point.measures)}
+                  width={scales[0].xScale.bandwidth()}
+                  height={scales[0].yScale(0) -
+                    scales[0].yScale(point.measures)}
                 ></rect>
               {/each}
             </g>
@@ -222,10 +222,10 @@
                 <g
                   class="tick"
                   transform="translate({scales[1].xScale(
-                    point.project
+                    point.project,
                   )},{height})"
                 >
-                  <text x="{scales[1].xScale.bandwidth() / 2}" y="-4">
+                  <text x={scales[1].xScale.bandwidth() / 2} y="-4">
                     {point.project}
                   </text>
                 </g>
@@ -234,11 +234,10 @@
             <g class="bars">
               {#each data2 as point}
                 <rect
-                  x="{scales[1].xScale(point.project)}"
-                  y="{scales[1].yScale(point.status)}"
-                  width="{scales[1].xScale.bandwidth()}"
-                  height="{scales[1].yScale(0) -
-                    scales[1].yScale(point.status)}"
+                  x={scales[1].xScale(point.project)}
+                  y={scales[1].yScale(point.status)}
+                  width={scales[1].xScale.bandwidth()}
+                  height={scales[1].yScale(0) - scales[1].yScale(point.status)}
                 ></rect>
               {/each}
             </g>
@@ -266,10 +265,10 @@
                 <g
                   class="tick"
                   transform="translate({scales[2].xScale(
-                    point.asset
+                    point.asset,
                   )},{height})"
                 >
-                  <text x="{scales[2].xScale.bandwidth() / 2}" y="-4">
+                  <text x={scales[2].xScale.bandwidth() / 2} y="-4">
                     {point.asset}
                   </text>
                 </g>
@@ -278,11 +277,11 @@
             <g class="bars">
               {#each data3 as point}
                 <rect
-                  x="{scales[2].xScale(point.asset)}"
-                  y="{scales[2].yScale(point.securityLevel)}"
-                  width="{scales[2].xScale.bandwidth()}"
-                  height="{scales[2].yScale(0) -
-                    scales[2].yScale(point.securityLevel)}"
+                  x={scales[2].xScale(point.asset)}
+                  y={scales[2].yScale(point.securityLevel)}
+                  width={scales[2].xScale.bandwidth()}
+                  height={scales[2].yScale(0) -
+                    scales[2].yScale(point.securityLevel)}
                 ></rect>
               {/each}
             </g>
@@ -310,10 +309,10 @@
                 <g
                   class="tick"
                   transform="translate({scales[3].xScale(
-                    point.asset
+                    point.asset,
                   )},{height})"
                 >
-                  <text x="{scales[3].xScale.bandwidth() / 2}" y="-4">
+                  <text x={scales[3].xScale.bandwidth() / 2} y="-4">
                     {point.asset}
                   </text>
                 </g>
@@ -322,11 +321,11 @@
             <g class="bars">
               {#each data4 as point}
                 <rect
-                  x="{scales[3].xScale(point.asset)}"
-                  y="{scales[3].yScale(point.registration)}"
-                  width="{scales[3].xScale.bandwidth()}"
-                  height="{scales[3].yScale(0) -
-                    scales[3].yScale(point.registration)}"
+                  x={scales[3].xScale(point.asset)}
+                  y={scales[3].yScale(point.registration)}
+                  width={scales[3].xScale.bandwidth()}
+                  height={scales[3].yScale(0) -
+                    scales[3].yScale(point.registration)}
                 ></rect>
               {/each}
             </g>

@@ -133,12 +133,12 @@
 <main>
   <div class="container">
     <div class="header_buttons">
-      <button on:click="{check}">요약보고서</button>
+      <button on:click={check}>요약보고서</button>
       <button>상세보고서 </button>
     </div>
     <div class="allselect">
       <div class="allSelectDiv">
-        <input type="checkbox" on:click="{toggleAll}" checked="{allSelected}" />
+        <input type="checkbox" on:click={toggleAll} checked={allSelected} />
         <strong class="selectButton">전체선택</strong>
       </div>
       <div class="color_group">
@@ -159,21 +159,21 @@
             <input
               type="checkbox"
               class="checkbox"
-              bind:group="{selected}"
-              name="{asset}"
-              value="{asset}"
+              bind:group={selected}
+              name={asset}
+              value={asset}
             />
 
             <div class="card_buttons">
               <button
                 class="blue"
-                on:click="{() => activateAsset(asset.ass_uuid)}"
+                on:click={() => activateAsset(asset.ass_uuid)}
               ></button>
-              <button class="red" on:click="{() => unActivate(asset.ass_uuid)}"
+              <button class="red" on:click={() => unActivate(asset.ass_uuid)}
               ></button>
             </div>
 
-            <button class="modal_button" on:click="{() => (showModal = true)}">
+            <button class="modal_button" on:click={() => (showModal = true)}>
               등록 미승인
             </button>
 

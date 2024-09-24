@@ -20,50 +20,50 @@
     <div class="middle_side">
       <Link
         to="/page1"
-        on:click="{() => (activeMenu = '점검관리')}"
-        class="{activeMenu === '점검관리' ? 'active' : ''}"
+        on:click={() => (activeMenu = "점검관리")}
+        class={activeMenu === "점검관리" ? "active" : ""}
       >
         <p>점검관리</p>
       </Link>
       <Link
         to="/page2"
-        on:click="{() => (activeMenu = '자산관리')}"
-        class="{activeMenu === '자산관리' ? 'active' : ''}"
+        on:click={() => (activeMenu = "자산관리")}
+        class={activeMenu === "자산관리" ? "active" : ""}
       >
         <p>자산관리</p>
       </Link>
       <Link
         to="/page3"
-        on:click="{() => (activeMenu = '취약점관리')}"
-        class="{activeMenu === '취약점관리' ? 'active' : ''}"
+        on:click={() => (activeMenu = "취약점관리")}
+        class={activeMenu === "취약점관리" ? "active" : ""}
       >
         <p>취약점관리</p>
       </Link>
       <Link
         to="/page4"
-        on:click="{() => (activeMenu = '점검항목관리')}"
-        class="{activeMenu === '점검항목관리' ? 'active' : ''}"
+        on:click={() => (activeMenu = "점검항목관리")}
+        class={activeMenu === "점검항목관리" ? "active" : ""}
       >
         <p>점검항목관리</p>
       </Link>
       <Link
         to="/page5"
-        on:click="{() => (activeMenu = '대시보드')}"
-        class="{activeMenu === '대시보드' ? 'active' : ''}"
+        on:click={() => (activeMenu = "대시보드")}
+        class={activeMenu === "대시보드" ? "active" : ""}
       >
         <p>대시보드</p>
       </Link>
       <Link
         to="/page6"
-        on:click="{() => (activeMenu = '환경설정')}"
-        class="{activeMenu === '환경설정' ? 'active' : ''}"
+        on:click={() => (activeMenu = "환경설정")}
+        class={activeMenu === "환경설정" ? "active" : ""}
       >
         <p>환경설정</p>
       </Link>
     </div>
     <div class="right_side">
       <img src="./images/user.png" alt="user" class="user_image" />
-      <Link to="/login" on:click="{() => (activeMenu = 'login')}">
+      <Link to="/login" on:click={() => (activeMenu = "login")}>
         <p>Login</p>
       </Link>
     </div>

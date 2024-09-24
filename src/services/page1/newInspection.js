@@ -6,7 +6,7 @@ export const postNewPlanInformation = async (planInfo) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/getNewPlanInformation/`,
-      planInfo
+      planInfo,
     );
     return response.data;
   } catch (error) {
@@ -23,7 +23,7 @@ export const setNewPlan = async (planData) => {
       planData,
       {
         withCredentials: true,
-      }
+      },
     );
     console.log("setNewPlan: RESPONSE:", response);
     if (response.data.RESULT === "ERROR") {
@@ -44,7 +44,7 @@ export const setDeletePlan = async (plan_index) => {
       {
         plan_index: plan_index,
       },
-      { withCredentials: true }
+      { withCredentials: true },
     );
     console.log("setDeletePlan response:", response);
     if (response.data.RESULT === "ERROR") {
@@ -102,7 +102,7 @@ export const getPlanCommandExcel = async (asset_group) => {
       {
         responseType: "blob", // Important for file downloads
         withCredentials: true, // If you're using session cookies
-      }
+      },
     );
 
     const url = window.URL.createObjectURL(new Blob([response.data]));

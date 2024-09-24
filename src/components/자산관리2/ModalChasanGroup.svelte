@@ -48,7 +48,7 @@
       .select(svgElement)
       .attr(
         "viewBox",
-        `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`
+        `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`,
       )
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
@@ -116,20 +116,20 @@
       <p class="options">3/6/9/12/전체</p>
     </div>
     <div class="second_line1">
-      <svg bind:this="{svg1}"></svg>
+      <svg bind:this={svg1}></svg>
       <p class="chart_title">전체자산 등록 추세</p>
     </div>
   </div>
   <div class="second_container">
     <div class="second_line2">
       <p>
-        <select bind:value="{selectedGroupIndex}" class="dropdown">
+        <select bind:value={selectedGroupIndex} class="dropdown">
           {#each chasanGroups as group}
-            <option value="{group.index}">{group.chasanGroup}</option>
+            <option value={group.index}>{group.chasanGroup}</option>
           {/each}
         </select>
       </p>
-      <svg bind:this="{svg2}"></svg>
+      <svg bind:this={svg2}></svg>
     </div>
   </div>
 </main>

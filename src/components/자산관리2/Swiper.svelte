@@ -72,13 +72,13 @@
 <main>
   <div class="swiper_container1">
     <img src="./images/left.png" alt="left" />
-    <div bind:this="{swiperContainer}" class="swiper-container">
+    <div bind:this={swiperContainer} class="swiper-container">
       <div class="swiper-wrapper">
         {#each $allAssetList as asset}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
             class="swiper-slide"
-            on:click="{() => handleAssetClick(asset.ass_uuid)}"
+            on:click={() => handleAssetClick(asset.ass_uuid)}
           >
             {asset.ast_hostname}
           </div>
@@ -99,21 +99,21 @@
   <div class="header">
     <div class="header_3menu">
       <h3
-        on:click="{() => selectPage(FirstMenu, '자산개요')}"
-        class="{activeMenu === '자산개요' ? 'active' : ''}"
+        on:click={() => selectPage(FirstMenu, "자산개요")}
+        class={activeMenu === "자산개요" ? "active" : ""}
       >
         자산개요
       </h3>
 
       <h3
-        on:click="{() => selectPage(FourthMenu, 'CCE점검이력')}"
-        class="{activeMenu === 'CCE점검이력' ? 'active' : ''}"
+        on:click={() => selectPage(FourthMenu, "CCE점검이력")}
+        class={activeMenu === "CCE점검이력" ? "active" : ""}
       >
         CCE점검이력
       </h3>
       <h3
-        on:click="{() => selectPage(FifthMenu, '자산현황보고서')}"
-        class="{activeMenu === '자산현황보고서' ? 'active' : ''}"
+        on:click={() => selectPage(FifthMenu, "자산현황보고서")}
+        class={activeMenu === "자산현황보고서" ? "active" : ""}
       >
         자산현황보고서
       </h3>
@@ -128,7 +128,7 @@
 
   {#if currentPage}
     <div class="right_menu">
-      <svelte:component this="{currentPage}" />
+      <svelte:component this={currentPage} />
     </div>
   {/if}
 </main>

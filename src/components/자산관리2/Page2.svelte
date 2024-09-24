@@ -93,7 +93,7 @@
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click="{showNewGroupInput}">그룹추가</p>
+        <p class="menu_button" on:click={showNewGroupInput}>그룹추가</p>
         <p class="menu_button">그룹삭제</p>
       </div>
 
@@ -107,8 +107,8 @@
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
-                  on:click="{() => selectPage(AssetCardsPage, group)}"
-                  class="{activeMenu === group ? 'active' : ''}"
+                  on:click={() => selectPage(AssetCardsPage, group)}
+                  class={activeMenu === group ? "active" : ""}
                 >
                   <i class="fa fa-user-o" aria-hidden="true"></i>
                   {group.asg_title}
@@ -117,7 +117,7 @@
               <div>
                 <button
                   class="asset_button"
-                  on:click="{() => selectPage(AssetManagement, '자산관리')}"
+                  on:click={() => selectPage(AssetManagement, "자산관리")}
                   >자산관리</button
                 >
               </div>
@@ -129,15 +129,15 @@
             <input
               type="text"
               placeholder="Enter Group Name"
-              bind:value="{newGroupName}"
-              bind:this="{inputRef}"
+              bind:value={newGroupName}
+              bind:this={inputRef}
               class="editable_input"
             />
             <div>
-              <button class="asset_button save" on:click="{addNewGroup}"
+              <button class="asset_button save" on:click={addNewGroup}
                 >Save</button
               >
-              <button class="asset_button cancel" on:click="{cancelNewGroup}"
+              <button class="asset_button cancel" on:click={cancelNewGroup}
                 >Cancel</button
               >
             </div>
@@ -149,7 +149,7 @@
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button on:click="{toggleView}" class="toggle_button">
+        <button on:click={toggleView} class="toggle_button">
           <span class="arrow">&#9662;</span>
         </button>
         <form action="/action_page.php" class="form_select">
@@ -196,14 +196,14 @@
         <p>자산명</p>
         <p>엑셀저장</p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p on:click="{() => (showModal = true)}">등록현황</p>
+        <p on:click={() => (showModal = true)}>등록현황</p>
         <p>이력관리</p>
       </div>
     </header>
 
     <div class="swiper_container">
       {#if currentPage}
-        <svelte:component this="{currentPage}" />
+        <svelte:component this={currentPage} />
       {:else if currentView === "newView"}
         {#key currentView}
           <Swiper />

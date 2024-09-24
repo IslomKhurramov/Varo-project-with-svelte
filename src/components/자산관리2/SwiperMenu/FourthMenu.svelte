@@ -259,30 +259,29 @@
           </tr>
         </thead>
         <tbody>
-          {#if filteredVulns.length > 0}
-            {#each filteredVulns as vuln, vulnIndex}
-              <tr>
-                <td>{vulnIndex + 1}</td>
-                <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
-                <td>
-                  [{vuln?.ccr_item_no__ccc_item_no ||
-                    "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
-                    "No Title"}
-                </td>
-                <td>
-                  <div class="checklist">
-                    <p>
-                      {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
-                    </p>
-                  </div>
-                </td>
-                <td>{vuln?.ccr_item_status || "No Status"}</td>
-                <td>{vuln?.ccr_item_result || "No Result"}</td>
-              </tr>
-            {/each}
-          {:else}
+          {#each hostInfo as host}
             <tr>
-              <td colspan="6">No data available</td>
+              <td>{host.number}</td>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
+                >{host.name}</td
+              >
+              <td>{host.item}</td>
+              <td>
+                <div class="checklist">
+                  <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
+                  <p>양호: {host.checklist.good || "데이터 없음"}</p>
+                </div>
+              </td>
+              <td>{host.system}</td>
+              <td>{host.instectionResult}</td>
+              <td>
+                <select>
+                  <option value="양호">양호</option>
+                  <option value="해당">해당</option>
+                </select>
+                <button class="save_button">변경</button>
+              </td>
             </tr>
           {/if}
         </tbody>

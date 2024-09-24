@@ -1,4 +1,5 @@
 <script>
+  import moment from "moment";
   import { getAllPlanLists } from "../services/page1/planInfoService";
   import { onMount } from "svelte";
   import { utils, writeFile } from "xlsx";
@@ -18,9 +19,8 @@
   onMount(async () => {
     try {
       projectData = await getAllPlanLists();
-      projectArray = Object.values(projectData); // Convert object to array
+      projectArray = Object.values(projectData);
       filteredProjects = projectArray;
-      // Initialize filtered projects with all projects
     } catch (err) {
       error = err.message;
     } finally {
@@ -37,7 +37,7 @@
         (selectedScheduleRange === "" ||
           doesProjectMatchScheduleRange(
             project.ccp_cdate,
-            selectedScheduleRange
+            selectedScheduleRange,
           )) &&
         (selectedOS === "" || doesProjectMatchOS(project, selectedOS)) &&
         (selectedAgentStatus === "" ||
@@ -100,8 +100,8 @@
     <!-- Select for filtering by project status -->
     <div class="select_container">
       <select
-        bind:value="{selectedStatus}"
-        on:change="{filterProjects}"
+        bind:value={selectedStatus}
+        on:change={filterProjects}
         class="select_input"
       >
         <option value="">프로젝트명</option>
@@ -113,8 +113,8 @@
     <!-- Select for filtering by schedule range -->
     <div class="select_container">
       <select
-        bind:value="{selectedScheduleRange}"
-        on:change="{filterProjects}"
+        bind:value={selectedScheduleRange}
+        on:change={filterProjects}
         class="select_input"
       >
         <option value="">일정범위</option>
@@ -126,8 +126,8 @@
     <!-- Select for filtering by operating system (derived from asset type) -->
     <div class="select_container">
       <select
-        bind:value="{selectedOS}"
-        on:change="{filterProjects}"
+        bind:value={selectedOS}
+        on:change={filterProjects}
         class="select_input"
       >
         <option value="">운영체제</option>
@@ -140,8 +140,8 @@
     <!-- Select for filtering by agent status -->
     <div class="select_container">
       <select
-        bind:value="{selectedAgentStatus}"
-        on:change="{filterProjects}"
+        bind:value={selectedAgentStatus}
+        on:change={filterProjects}
         class="select_input"
       >
         <option value="">결과등록상태</option>
@@ -152,8 +152,8 @@
   </form>
 
   <div class="headerButton">
-    <button on:click="{downloadProgram}"> 프로그램다운로드 </button>
-    <button on:click="{downloadExcel}"> 엑셀다운로드 </button>
+    <button on:click={downloadProgram}> 프로그램다운로드 </button>
+    <button on:click={downloadExcel}> 엑셀다운로드 </button>
   </div>
 </header>
 
@@ -170,20 +170,28 @@
             <div class="firstCol">
               <p>보안점수</p>
               <div class="percentage">
-                <p class="box_number">{project.ccp_security_point}%</p>
+                <p class="box_number">
+                  {project?.ccp_security_point > 0
+                    ? project?.ccp_security_point
+                    : 0}%
+                </p>
               </div>
             </div>
             <div class="secondCol">
               <p>제목: {project.ccp_title}</p>
-              <p>점검대상: {project.asset?.SECURITY ?? "N/A"}</p>
-              <p>생성자: {project.user_index__user_name}</p>
+              <p>점검대상: {project.asg_index__asg_title}</p>
+              <p>생성자: {project.plan_planer_info__user_name}</p>
             </div>
             <div class="thirdCol">
-              <p>진행상태: {project.ccp_b_finalized ? "완료됨" : "진행 중"}</p>
+              <p>진행상태: {project?.ccp_b_finalized ? "완료" : "진행 중"}</p>
               <p>
-                점검일시: {new Date(project.ccp_cdate).toLocaleDateString()}
+                점검일시: {moment(project?.plan_start_date).format(
+                  "YYYY MM DD",
+                )} ~ {moment(project?.plan_end_date).format("YYYY MM DD")}
               </p>
-              <p>점검방법: {project.ccp_ruleset__ccg_group}</p>
+              <p>
+                점검방법: {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
+              </p>
             </div>
           </div>
           <div class="buttons">

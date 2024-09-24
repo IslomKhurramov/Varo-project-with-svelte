@@ -59,7 +59,7 @@
       <tbody>
         {#each tableData as row}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <tr on:click="{() => openModal(row)}">
+          <tr on:click={() => openModal(row)}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <td on:click|stopPropagation><input type="checkbox" /></td>
             <td>{row.id}</td>

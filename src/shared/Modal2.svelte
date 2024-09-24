@@ -9,9 +9,9 @@
 <!-- First Modal -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <dialog
-  bind:this="{dialog}"
-  on:close="{() => (showModalSecond = false)}"
-  on:click|self="{() => dialog.close()}"
+  bind:this={dialog}
+  on:close={() => (showModalSecond = false)}
+  on:click|self={() => dialog.close()}
 >
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-autofocus -->
@@ -21,7 +21,7 @@
     <slot />
     <hr />
     <!-- svelte-ignore a11y-autofocus -->
-    <button autofocus on:click="{() => dialog.close()}">Close</button>
+    <button autofocus on:click={() => dialog.close()}>Close</button>
   </div>
 </dialog>
 

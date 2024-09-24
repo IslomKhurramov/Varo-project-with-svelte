@@ -22,8 +22,8 @@
         <tr>
           <th>서버</th>
           <td style="display: flex; flex-direction:row gap:10px">
-            <input type="text" bind:value="{serverIP}" placeholder="IP" />
-            <input type="text" bind:value="{port}" placeholder="PORT" />
+            <input type="text" bind:value={serverIP} placeholder="IP" />
+            <input type="text" bind:value={port} placeholder="PORT" />
           </td>
         </tr>
         <tr>
@@ -31,7 +31,7 @@
           <td
             ><input
               type="text"
-              bind:value="{clientName}"
+              bind:value={clientName}
               placeholder="고객사명"
             /></td
           >
@@ -41,35 +41,35 @@
           <td
             ><input
               type="text"
-              bind:value="{clientLogo}"
+              bind:value={clientLogo}
               placeholder="고객사로고"
             /></td
           >
         </tr>
         <tr>
           <th>에이전트 연결 주기</th>
-          <td><input type="number" bind:value="{agentConnectInterval}" /></td>
+          <td><input type="number" bind:value={agentConnectInterval} /></td>
         </tr>
         <tr>
           <th>기타 설정</th>
-          <td><input type="number" bind:value="{otherField}" /></td>
+          <td><input type="number" bind:value={otherField} /></td>
         </tr>
         <tr>
           <th>위험도</th>
           <td>
             <div class="risk-levels">
               <button
-                class="{riskLevel === '상' ? 'active' : ''}"
-                on:click="{() => (riskLevel = '상')}">상</button
+                class={riskLevel === "상" ? "active" : ""}
+                on:click={() => (riskLevel = "상")}>상</button
               >
               <input type="number" placeholder="3" />
               <button
-                class="{riskLevel === '중' ? 'active' : ''}"
-                on:click="{() => (riskLevel = '중')}">중</button
+                class={riskLevel === "중" ? "active" : ""}
+                on:click={() => (riskLevel = "중")}>중</button
               ><input type="number" placeholder="3" />
               <button
-                class="{riskLevel === '하' ? 'active' : ''}"
-                on:click="{() => (riskLevel = '하')}">하</button
+                class={riskLevel === "하" ? "active" : ""}
+                on:click={() => (riskLevel = "하")}>하</button
               ><input type="number" placeholder="3" />
             </div>
           </td>
@@ -81,7 +81,7 @@
               <label class="radio-label">
                 <input
                   type="radio"
-                  bind:group="{mailServerOption}"
+                  bind:group={mailServerOption}
                   value="local"
                 />
                 로컬 메일 서버 사용 (스팸메일차단 주의)
@@ -89,7 +89,7 @@
               <label class="radio-label">
                 <input
                   type="radio"
-                  bind:group="{mailServerOption}"
+                  bind:group={mailServerOption}
                   value="remote"
                 />
                 원격 메일 서버 사용
@@ -103,12 +103,12 @@
             <td>
               <input
                 type="text"
-                bind:value="{remoteMailServer.ip}"
+                bind:value={remoteMailServer.ip}
                 placeholder="아이피"
               />
               <input
                 type="text"
-                bind:value="{remoteMailServer.port}"
+                bind:value={remoteMailServer.port}
                 placeholder="포트"
               />
             </td>
@@ -118,12 +118,12 @@
             <td>
               <input
                 type="text"
-                bind:value="{remoteMailServer.id}"
+                bind:value={remoteMailServer.id}
                 placeholder="아이디"
               />
               <input
                 type="password"
-                bind:value="{remoteMailServer.password}"
+                bind:value={remoteMailServer.password}
                 placeholder="패스워드"
               />
             </td>

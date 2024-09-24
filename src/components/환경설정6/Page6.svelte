@@ -22,57 +22,57 @@
     <div class="header">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(FirstMenu, '시스템기본설정')}"
-        class="{activeMenu === '시스템기본설정' ? 'active' : ''}"
+        on:click={() => selectPage(FirstMenu, "시스템기본설정")}
+        class={activeMenu === "시스템기본설정" ? "active" : ""}
       >
         시스템기본설정
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(SeconMenu, '시스템동기화')}"
-        class="{activeMenu === '시스템동기화' ? 'active' : ''}"
+        on:click={() => selectPage(SeconMenu, "시스템동기화")}
+        class={activeMenu === "시스템동기화" ? "active" : ""}
       >
         시스템동기화
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(ThirdMenu, '라이센스관리')}"
-        class="{activeMenu === '라이센스관리' ? 'active' : ''}"
+        on:click={() => selectPage(ThirdMenu, "라이센스관리")}
+        class={activeMenu === "라이센스관리" ? "active" : ""}
       >
         라이센스관리
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(FourthMenu, '데이터백업')}"
-        class="{activeMenu === '데이터백업' ? 'active' : ''}"
+        on:click={() => selectPage(FourthMenu, "데이터백업")}
+        class={activeMenu === "데이터백업" ? "active" : ""}
       >
         데이터백업
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(FifthMenu, '시스템초기화')}"
-        class="{activeMenu === '시스템초기화' ? 'active' : ''}"
+        on:click={() => selectPage(FifthMenu, "시스템초기화")}
+        class={activeMenu === "시스템초기화" ? "active" : ""}
       >
         시스템초기화
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(SixthMenu, '로그분석')}"
-        class="{activeMenu === '로그분석' ? 'active' : ''}"
+        on:click={() => selectPage(SixthMenu, "로그분석")}
+        class={activeMenu === "로그분석" ? "active" : ""}
       >
         로그분석
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(SeventhMenu, '업데이트')}"
-        class="{activeMenu === '업데이트' ? 'active' : ''}"
+        on:click={() => selectPage(SeventhMenu, "업데이트")}
+        class={activeMenu === "업데이트" ? "active" : ""}
       >
         업데이트
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
-        on:click="{() => selectPage(EightMenu, '사용자관리')}"
-        class="{activeMenu === '사용자관리' ? 'active' : ''}"
+        on:click={() => selectPage(EightMenu, "사용자관리")}
+        class={activeMenu === "사용자관리" ? "active" : ""}
       >
         사용자관리
       </h3>
@@ -81,7 +81,7 @@
 
   <div class="right_menu">
     {#if currentPage}
-      <svelte:component this="{currentPage}" />
+      <svelte:component this={currentPage} />
     {/if}
   </div>
 </div>

@@ -10,10 +10,8 @@ export const getPlanDetailInformation = async (index) => {
       },
       {
         withCredentials: true,
-      }
+      },
     );
-
-    console.log("getPlanDetailInformation: ", response);
 
     if (response?.data?.RESULT == "ERROR")
       throw new Error("Something went wrong!");

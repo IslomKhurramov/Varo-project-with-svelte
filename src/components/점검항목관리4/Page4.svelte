@@ -81,7 +81,7 @@
       loading = storeLoading;
       allChecklistArray = data;
       error = storeError;
-    }
+    },
   );
 
   // Fetch the checklist data once
@@ -96,7 +96,7 @@
     try {
       const response = await setNewChecklistGroup(
         selectedChecklistForCopyId,
-        newChecklistName
+        newChecklistName,
       );
 
       if (response.success) {
@@ -179,10 +179,10 @@
 
         // Update local state without re-fetching
         allChecklistArray = allChecklistArray.filter(
-          (checklist) => checklist.ccg_index !== checklistId
+          (checklist) => checklist.ccg_index !== checklistId,
         );
         createdChecklists = createdChecklists.filter(
-          (checklist) => checklist.ccg_index !== checklistId
+          (checklist) => checklist.ccg_index !== checklistId,
         );
 
         // Reset the last created checklist ID after deletion
@@ -201,7 +201,7 @@
     if (selectedCategory && allChecklistArray.length > 0) {
       // Flatten the checklist array and filter by category
       filteredData = allChecklistArray.flatMap(
-        (item) => item[selectedCategory] || []
+        (item) => item[selectedCategory] || [],
       );
 
       // Map the filtered data to extract `ccc_item_no`
@@ -244,7 +244,7 @@
         allChecklistArray = allChecklistArray.map((checklist) =>
           checklist.ccg_index === checklistId
             ? { ...checklist, ccg_group: editedName }
-            : checklist
+            : checklist,
         );
 
         window.location.reload();
@@ -263,7 +263,7 @@
     selectedChecklist,
     selectedCategory,
     item_no,
-    selectedRisk
+    selectedRisk,
   ) {
     // Check if selectedChecklist is null or undefined before proceeding
     if (!selectedChecklist) {
@@ -302,7 +302,7 @@
         ccg_index,
         category,
         item_number,
-        riskLevel
+        riskLevel,
       );
 
       console.log("SEARCH RESPONSE:", response);
@@ -340,7 +340,7 @@
   <div class="container_aside">
     <aside>
       <div class="add_delete_container">
-        <button class="menu_button" on:click="{addProject}">그룹추가</button>
+        <button class="menu_button" on:click={addProject}>그룹추가</button>
         <button class="menu_button">그룹삭제</button>
       </div>
 
@@ -351,15 +351,15 @@
           <p>Error: {error}</p>
         {:else}
           {#each allChecklistArray as checkList (checkList.ccg_index)}
-            <div class="project_button" bind:this="{activeChecklistElement}">
+            <div class="project_button" bind:this={activeChecklistElement}>
               <div class="icon_title">
                 <img src="./images/file.png" alt="project" />
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
-                  on:click|preventDefault="{() =>
-                    selectPage(ItemPage, checkList)}"
-                  class="{activeMenu === checkList ? 'active' : ''}"
+                  on:click|preventDefault={() =>
+                    selectPage(ItemPage, checkList)}
+                  class={activeMenu === checkList ? "active" : ""}
                 >
                   {checkList.ccg_group ? checkList.ccg_group : "No group info"}
                 </a>
@@ -367,10 +367,10 @@
               <div style="display: flex; flex-direction:column">
                 <button
                   class="menu_button1 copy"
-                  on:click="{() => {
+                  on:click={() => {
                     showModal = true;
                     selectedChecklistForCopyId = checkList.ccg_index;
-                  }}">복사</button
+                  }}>복사</button
                 >
               </div>
             </div>
@@ -386,7 +386,7 @@
                   <!-- Edit mode: render input field -->
                   <input
                     type="text"
-                    bind:value="{editedChecklistName}"
+                    bind:value={editedChecklistName}
                     placeholder="Edit name"
                   />
                 {:else}
@@ -403,29 +403,26 @@
                   <!-- Show Save/Cancel buttons in edit mode -->
                   <button
                     class="menu_button1 save"
-                    on:click="{() =>
-                      editChecklist(checklist.ccg_index, editedChecklistName)}"
+                    on:click={() =>
+                      editChecklist(checklist.ccg_index, editedChecklistName)}
                   >
                     Save
                   </button>
-                  <button
-                    class="menu_button1 cancel"
-                    on:click="{cancelEditing}"
-                  >
+                  <button class="menu_button1 cancel" on:click={cancelEditing}>
                     Cancel
                   </button>
                 {:else}
                   <!-- Normal mode: show Edit, Copy, Delete buttons -->
                   <button
                     class="menu_button1 edit"
-                    on:click="{() =>
-                      startEditing(checklist.ccg_index, checklist.ccg_group)}"
+                    on:click={() =>
+                      startEditing(checklist.ccg_index, checklist.ccg_group)}
                   >
                     Edit
                   </button>
                   <button
                     class="menu_button1 delete"
-                    on:click="{() => deleteChecklist(checklist.ccg_index)}"
+                    on:click={() => deleteChecklist(checklist.ccg_index)}
                   >
                     Delete
                   </button>
@@ -446,8 +443,8 @@
               name="asset_group"
               id="asset_group"
               class="select_input"
-              bind:value="{selectedCategory}"
-              on:change="{filterData}"
+              bind:value={selectedCategory}
+              on:change={filterData}
             >
               <option value="점검대상">점검대상</option>
               <option value="UNIX">UNIX</option>
@@ -466,12 +463,12 @@
               placeholder="입력 점검항목"
               type="text"
               class="select_input"
-              bind:value="{item_no}"
+              bind:value={item_no}
             />
           </div>
           <div class="select_container">
             <select
-              bind:value="{selectedRisk}"
+              bind:value={selectedRisk}
               name="agent_status"
               id="agent_status"
               class="select_input"
@@ -487,13 +484,13 @@
       <div class="header_button">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p
-          on:click="{() =>
+          on:click={() =>
             searchItem(
               selectedChecklist,
               selectedCategory,
               item_no,
-              selectedRisk
-            )}"
+              selectedRisk,
+            )}
         >
           조회
         </p>
@@ -504,16 +501,16 @@
     {#if showSlide}
       <div class="swiper_container1">
         <img src="./images/left.png" alt="left" />
-        <div bind:this="{swiperContainer}" class="swiper-container">
+        <div bind:this={swiperContainer} class="swiper-container">
           <div class="swiper-wrapper">
             {#each slides as slide}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="swiper-slide"
-                on:click="{() => {
+                on:click={() => {
                   showModalSecond = true;
                   selectedSlide = slide;
-                }}"
+                }}
               >
                 {slide.ccc_item_no}
               </div>
@@ -533,7 +530,7 @@
     <div class="swiper_container">
       <div class="swiper_container">
         <svelte:component
-          this="{currentPage}"
+          this={currentPage}
           {allChecklistArray}
           {filteredData}
           {selectedCategory}

@@ -162,7 +162,7 @@
             <tr>
               <td>{host.number}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td style="cursor: pointer;" on:click="{() => (showModal = true)}"
+              <td style="cursor: pointer;" on:click={() => (showModal = true)}
                 >{host.name}</td
               >
               <td>{host.item}</td>

@@ -33,15 +33,15 @@
 
 <div class="tabs">
   <button
-    class:active="{activeTab === 'action'}"
-    on:click="{() => (activeTab = 'action')}"
+    class:active={activeTab === "action"}
+    on:click={() => (activeTab = "action")}
     class="tab"
   >
     액션등록
   </button>
   <button
-    class:active="{activeTab === 'protocol'}"
-    on:click="{() => (activeTab = 'protocol')}"
+    class:active={activeTab === "protocol"}
+    on:click={() => (activeTab = "protocol")}
     class="tab"
   >
     기본프로토콜
@@ -56,7 +56,7 @@
       <input
         type="checkbox"
         id="actionToggle"
-        bind:checked="{actionActive}"
+        bind:checked={actionActive}
         class="toggle-switch"
       />
       <button class="save-button">저장하기</button>

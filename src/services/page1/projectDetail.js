@@ -10,7 +10,7 @@ export const getPlanDetailInformation = async (index) => {
       },
       {
         withCredentials: true,
-      }
+      },
     );
 
     if (response?.data?.RESULT == "ERROR")

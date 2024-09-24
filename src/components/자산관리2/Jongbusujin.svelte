@@ -50,7 +50,7 @@
   <div class="container">
     <div class="container_h3">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3 on:click="{toggleHistory}">이력확인</h3>
+      <h3 on:click={toggleHistory}>이력확인</h3>
     </div>
 
     <div class="second_container">
@@ -68,7 +68,7 @@
         <tr>
           <th>명령구분</th>
           <td>
-            <select bind:value="{commandType}">
+            <select bind:value={commandType}>
               <option>에이전트 시스템 정보수집</option>
             </select>
           </td>
@@ -89,7 +89,7 @@
         <tr>
           <th>시간지정</th>
           <td>
-            <select bind:value="{scheduleType}">
+            <select bind:value={scheduleType}>
               <option>예약실행</option>
             </select>
           </td>
@@ -101,19 +101,19 @@
               <label
                 >시작일시: <input
                   type="datetime-local"
-                  bind:value="{repeatStartTime}"
+                  bind:value={repeatStartTime}
                 /></label
               >
               <label
                 >종료일시: <input
                   type="datetime-local"
-                  bind:value="{repeatEndTime}"
+                  bind:value={repeatEndTime}
                 /></label
               >
               <label
                 >반복주기: <input
                   type="number"
-                  bind:value="{repeatInterval}"
+                  bind:value={repeatInterval}
                   min="0"
                 /> 분</label
               >
@@ -123,10 +123,10 @@
         <tr>
           <th>명령구분</th>
           <td>
-            <select bind:value="{systemCommand}">
+            <select bind:value={systemCommand}>
               <option>윈도우 PowerShell</option>
             </select>
-            <textarea rows="4" bind:value="{systemCommand}"></textarea>
+            <textarea rows="4" bind:value={systemCommand}></textarea>
           </td>
         </tr>
         <tr>
@@ -142,12 +142,12 @@
           <th>검색조건</th>
           <td>
             <label
-              >경로지정: <input type="text" bind:value="{searchPath}" /></label
+              >경로지정: <input type="text" bind:value={searchPath} /></label
             >
             <label
               >확장자지정: <input
                 type="text"
-                bind:value="{fileExtensions}"
+                bind:value={fileExtensions}
               /></label
             >
             <div class="checkbox-group">
@@ -161,7 +161,7 @@
   </div>
 
   {#if showHistory}
-    <div class="history_box" bind:this="{historyBox}">
+    <div class="history_box" bind:this={historyBox}>
       <table>
         <tr class="first_line">
           <th>넘버</th>

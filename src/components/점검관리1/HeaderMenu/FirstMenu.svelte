@@ -2,44 +2,57 @@
   <div class="header">
     <button>등록현황조회</button>
     <button>에러내역확인</button>
-    <button>등록결과조회</button>
+    <!-- <button>등록결과조회</button> -->
   </div>
 
   <div class="table_center">
     <div class="table_container">
       <p class="word">점검결과등록</p>
       <div class="first_line">
-        <p class="button1 width">자동</p>
-        <p class="button2 width">에이전트결과</p>
-        <input
-          class="input"
-          placeholder="점검대상 200대중 180대 업로드 완료 (등록현황을 그래픽으로 표현)"
-          readonly
-        />
-        <button class="save_button">등록내역확인</button>
+        <p class="button2 width">프로젝트명</p>
+        <div class="row">
+          <select class="dropdown">
+            <option value="" selected disabled>신규점검/이행점검</option>
+            <option value="0">신규점검</option>
+            <option value="1">이행점검</option>
+          </select>
+        </div>
       </div>
       <p class="word">수동</p>
       <div class="secondLine">
         <div class="thirdCol">
           <div class="first_line">
-            <p class="button2">에이전트결과</p>
+            <p class="button1 width">자동</p>
+            <p class="button2 width">에이전트결과</p>
+            <input
+              class="input"
+              placeholder="점검대상 200대중 180대 업로드 완료 (등록현황을 그래픽으로 표현)"
+              readonly
+            />
+            <button class="save_button">등록내역확인</button>
+          </div>
+          <div class="first_line">
+            <p class="button1 width">수동</p>
+            <p class="button2">점겸결과파일</p>
             <span class="span_at"
               >JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)</span
             >
             <input class="upload" type="file" />
-            <button class="save_button">등록내역확인</button>
+            <button class="save_button">저장</button>
           </div>
           <div class="first_line">
+            <p class="button1 width">수동</p>
             <p class="button2">네트워크설정파일</p>
             <span class="span_at">설정파일(TXT) 파일 업로드</span>
             <input class="upload" type="file" />
-            <button class="save_button">등록내역확인</button>
+            <button class="save_button">저장</button>
           </div>
           <div class="first_line">
+            <p class="button1 width">수동</p>
             <p class="button2">정보보호시스템</p>
             <span class="span_at">인터뷰파일(EXCEL) 파일 업로드</span>
             <input class="upload" type="file" />
-            <button class="save_button">등록내역확인</button>
+            <button class="save_button">저장</button>
           </div>
         </div>
       </div>
@@ -203,5 +216,37 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+
+  .row {
+    width: 70%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .label {
+    flex-shrink: 0;
+    width: 150px;
+    padding: 5px 0;
+    text-align: left;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .dropdown {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    appearance: none;
+    background-color: #fff;
+  }
+
+  .dropdown:focus {
+    border-color: #2980b9;
+    outline: none;
   }
 </style>

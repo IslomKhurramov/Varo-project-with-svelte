@@ -10,26 +10,26 @@
 <div class="container">
   <div class="header">
     <span>등록승인</span>
-    <select bind:value="{approved}">
-      <option value="{true}">등록승인</option>
-      <option value="{false}">등록미승인</option>
+    <select bind:value={approved}>
+      <option value={true}>등록승인</option>
+      <option value={false}>등록미승인</option>
     </select>
   </div>
 
   <div class="checkbox-group">
-    <input type="checkbox" bind:checked="{osUnix}" />
+    <input type="checkbox" bind:checked={osUnix} />
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>UNIX</label>
   </div>
 
   <div class="checkbox-group">
-    <input type="checkbox" bind:checked="{osWindows}" />
+    <input type="checkbox" bind:checked={osWindows} />
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>WINDOWS</label>
   </div>
 
   <div class="checkbox-group">
-    <input type="checkbox" bind:checked="{dbmsSelected}" />
+    <input type="checkbox" bind:checked={dbmsSelected} />
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>DBMS</label>
   </div>
@@ -63,13 +63,13 @@
   {/if}
 
   <div class="checkbox-group">
-    <input type="checkbox" bind:checked="{webChecked}" />
+    <input type="checkbox" bind:checked={webChecked} />
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>WEB</label>
   </div>
 
   <div class="checkbox-group">
-    <input type="checkbox" bind:checked="{wasChecked}" />
+    <input type="checkbox" bind:checked={wasChecked} />
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>WAS</label>
   </div>

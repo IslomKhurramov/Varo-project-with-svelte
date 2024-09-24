@@ -67,8 +67,8 @@
       <tbody>
         {#each tasks as task (task.id)}
           <tr
-            class:selected="{task.id === selectedTaskId}"
-            on:click="{() => selectTask(task.id)}"
+            class:selected={task.id === selectedTaskId}
+            on:click={() => selectTask(task.id)}
           >
             <td>{task.id}</td>
             <td>{task.command}</td>

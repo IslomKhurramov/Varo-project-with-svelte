@@ -27,7 +27,7 @@
   <div on:click|stopPropagation>
     <slot name="header" />
     <slot />
-    <button  on:click={() => dialog.close()}>닫기</button>
+    <button on:click={() => dialog.close()}>닫기</button>
   </div>
 </dialog>
 

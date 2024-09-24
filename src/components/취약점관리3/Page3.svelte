@@ -35,16 +35,16 @@
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click="{() => toggleList('project')}">
+        <p class="menu_button" on:click={() => toggleList("project")}>
           프로젝트별
         </p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click="{() => toggleList('asset')}">자산별</p>
+        <p class="menu_button" on:click={() => toggleList("asset")}>자산별</p>
       </div>
       <div>
         <p
           class="switch_button1"
-          on:click="{() => selectPage(WholePage, '전체')}"
+          on:click={() => selectPage(WholePage, "전체")}
         >
           전체
         </p>
@@ -59,8 +59,8 @@
               <!-- svelte-ignore a11y-invalid-attribute -->
               <a
                 href="javascript:void(0)"
-                on:click="{() => selectPage(MainPageProject, project)}"
-                class="{activeMenu === project ? 'active' : ''}"
+                on:click={() => selectPage(MainPageProject, project)}
+                class={activeMenu === project ? "active" : ""}
               >
                 <i class="fa fa-folder-open" aria-hidden="true"></i>
                 {project}
@@ -77,8 +77,8 @@
               <!-- svelte-ignore a11y-invalid-attribute -->
               <a
                 href="javascript:void(0)"
-                on:click="{() => selectPage(MainPageAsset, asset)}"
-                class="{activeMenu === asset ? 'active' : ''}"
+                on:click={() => selectPage(MainPageAsset, asset)}
+                class={activeMenu === asset ? "active" : ""}
               >
                 <i class="fa fa-database" aria-hidden="true"></i>
                 {asset}
@@ -93,7 +93,7 @@
   <div class="right_menu">
     <header class="header">
       <div class="header_option">
-        <button on:click="{toggleView}" class="toggle_button">
+        <button on:click={toggleView} class="toggle_button">
           <span class="arrow">&#9662;</span>
         </button>
         <form action="/action_page.php" class="form_select">
@@ -145,7 +145,7 @@
       {#if currentView === "default"}
         <MainPageProject />
       {:else if currentPage}
-        <svelte:component this="{currentPage}" />
+        <svelte:component this={currentPage} />
       {/if}
     </div>
   </div>

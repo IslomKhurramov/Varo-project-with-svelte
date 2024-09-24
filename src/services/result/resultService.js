@@ -10,7 +10,7 @@ export const getCCEResultUploadStatus = async (plan_index) => {
       },
       {
         withCredentials: true,
-      }
+      },
     );
 
     if (response?.data?.RESULT == "ERROR")

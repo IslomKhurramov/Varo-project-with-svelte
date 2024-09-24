@@ -1,7 +1,7 @@
 <script>
   import { login, register } from "../../services/page1/authService";
   import { navigate } from "svelte-routing";
-  import { userData } from '../../stores/user.store';
+  import { userData } from "../../stores/user.store";
 
   //for LOGIN
   let containerActive = false;
@@ -13,45 +13,42 @@
   let username = "";
   let emailSignUp = "";
   let passwordSignUp = "";
-  let confirmPasswordSignUp = ""; 
+  let confirmPasswordSignUp = "";
   let department = "";
   let errorMessageSignUp = "";
   let successMessageSignUp = "";
-  
 
   //FUNCTION SighUp
 
   const handleRegister = async () => {
     try {
-
-      console.log("username:", username)
-      console.log("emailSignUp:", emailSignUp)
-      console.log("passwordSignUp:", passwordSignUp)
-      console.log("confirmPasswordSignUp:", confirmPasswordSignUp)
-      console.log("department:", department)
+      console.log("username:", username);
+      console.log("emailSignUp:", emailSignUp);
+      console.log("passwordSignUp:", passwordSignUp);
+      console.log("confirmPasswordSignUp:", confirmPasswordSignUp);
+      console.log("department:", department);
 
       // if (!username || !emailSignUp || !passwordSignUp || !confirmPasswordSignUp || department) {
       //   throw new Error('Please fulfill all inputs!')
       // }
 
-        if (passwordSignUp !== confirmPasswordSignUp) {
-          throw new Error("Passwords don't match")
-        }
+      if (passwordSignUp !== confirmPasswordSignUp) {
+        throw new Error("Passwords don't match");
+      }
 
-        const response = await register(
-          username,
-          emailSignUp,
-          passwordSignUp,
-          department
-        );
-        console.log("REGISTER:", response);
-        
-        successMessageSignUp = "Registration successful! Redirecting to login...";
-        errorMessageSignUp = "";
+      const response = await register(
+        username,
+        emailSignUp,
+        passwordSignUp,
+        department,
+      );
+      console.log("REGISTER:", response);
 
-        // Redirect to login page after 2 seconds
-        setTimeout(() => navigate("/login"), 2000);
-       
+      successMessageSignUp = "Registration successful! Redirecting to login...";
+      errorMessageSignUp = "";
+
+      // Redirect to login page after 2 seconds
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       errorMessageSignUp = err?.message;
       successMessageSignUp = "";
@@ -68,10 +65,9 @@
         userInfo: "data",
       });
 
-      navigate("/"); 
-   
-    } catch(err) {
-      errorMessage = err?.message
+      navigate("/");
+    } catch (err) {
+      errorMessage = err?.message;
     }
   };
 
@@ -86,7 +82,7 @@
 
 <div class="container {containerActive ? 'active' : ''}" id="container">
   <div class="form-container sign-up">
-    <form on:submit|preventDefault="{handleRegister}">
+    <form on:submit|preventDefault={handleRegister}>
       <h1>Create Account</h1>
       <div class="social-icons">
         <!-- svelte-ignore a11y-invalid-attribute -->
@@ -99,29 +95,29 @@
         <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
       </div>
       <span>or use your email for registration</span>
-      <input type="text" placeholder="Name" bind:value="{username}" required />
+      <input type="text" placeholder="Name" bind:value={username} required />
       <input
         type="email"
         placeholder="Email"
-        bind:value="{emailSignUp}"
+        bind:value={emailSignUp}
         required
       />
       <input
         type="password"
         placeholder="Password"
-        bind:value="{passwordSignUp}"
+        bind:value={passwordSignUp}
         required
       />
       <input
         type="password"
         placeholder="Confirm Password"
-        bind:value="{confirmPasswordSignUp}"
+        bind:value={confirmPasswordSignUp}
         required
       />
       <input
         type="department"
         placeholder="Department"
-        bind:value="{department}"
+        bind:value={department}
         required
       />
 
@@ -137,7 +133,7 @@
   </div>
 
   <div class="form-container sign-in">
-    <form on:submit|preventDefault="{handleLogin}">
+    <form on:submit|preventDefault={handleLogin}>
       <h1>Sign In</h1>
       <div class="social-icons">
         <!-- svelte-ignore a11y-invalid-attribute -->
@@ -150,8 +146,8 @@
         <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
       </div>
       <span>or use your email and password</span>
-      <input type="email" placeholder="Email" bind:value="{email}" />
-      <input type="password" placeholder="Password" bind:value="{password}" />
+      <input type="email" placeholder="Email" bind:value={email} />
+      <input type="password" placeholder="Password" bind:value={password} />
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a href="#">Forgot Your Password?</a>
       <button type="submit">Sign In</button>
@@ -166,14 +162,14 @@
       <div class="toggle-panel toggle-left">
         <h1>Welcome Back!</h1>
         <p>Enter your personal details to use all of the site's features</p>
-        <button class="hidden" on:click="{loginClick}">Login</button>
+        <button class="hidden" on:click={loginClick}>Login</button>
       </div>
       <div class="toggle-panel toggle-right">
         <h1>Hello, Friend!</h1>
         <p>
           Register with your personal details to use all of the site's features
         </p>
-        <button class="hidden" on:click="{registerClick}">Sign Up</button>
+        <button class="hidden" on:click={registerClick}>Sign Up</button>
       </div>
     </div>
   </div>

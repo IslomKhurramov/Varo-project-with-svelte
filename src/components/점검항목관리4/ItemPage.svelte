@@ -42,7 +42,7 @@
   // Function to delete selected items
   async function deleteSelectedItem() {
     const selectedItems = $filteredChecklistData.filter((item) =>
-      selected.includes(item)
+      selected.includes(item),
     );
 
     if (selectedItems.length === 0) {
@@ -61,7 +61,7 @@
 
         // Update filteredChecklistData by removing deleted items
         filteredChecklistData.update((data) =>
-          data.filter((item) => !arrayIndexes.includes(item.ccc_index))
+          data.filter((item) => !arrayIndexes.includes(item.ccc_index)),
         );
 
         // Clear the selected array
@@ -117,10 +117,10 @@
           {#if searchResult.length > 0}
             {#each searchResult as item, index}
               <tr
-                on:click="{() => {
+                on:click={() => {
                   selected = item;
                   showModal = true;
-                }}"
+                }}
               >
                 <td>{index + 1}</td>
                 <td>{selectedCategory}</td>
@@ -141,9 +141,9 @@
       <div class="reset">
         <button
           class="reset_button"
-          on:click="{() => {
+          on:click={() => {
             isSearchActive = false;
-          }}">테이블 재설정</button
+          }}>테이블 재설정</button
         >
       </div>
     {:else}
@@ -178,11 +178,11 @@
     <div class="control-buttons">
       <input
         type="checkbox"
-        on:click="{selectAll}"
-        checked="{allSelected}"
+        on:click={selectAll}
+        checked={allSelected}
       /><strong> 전체선택 </strong>
 
-      <button on:click="{deleteSelectedItem}">선택항목삭제</button>
+      <button on:click={deleteSelectedItem}>선택항목삭제</button>
     </div>
   {/if}
   <div class="table2">
@@ -205,19 +205,19 @@
         {#if $filteredChecklistData.length > 0}
           {#each $filteredChecklistData as item, index}
             <tr
-              on:click="{() => {
+              on:click={() => {
                 selectedItem = item;
                 showModal = true;
-              }}"
+              }}
             >
               {#if isNewlyCreatedChecklist}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <td on:click|stopPropagation
                   ><input
                     type="checkbox"
-                    bind:group="{selected}"
-                    value="{item}"
-                    name="{item}"
+                    bind:group={selected}
+                    value={item}
+                    name={item}
                   /></td
                 >
               {/if}
@@ -232,7 +232,7 @@
           {/each}
         {:else}
           <tr
-            ><td colspan="{isNewlyCreatedChecklist ? '8' : '7'}"
+            ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
               >점검대상 선택해 주세요</td
             ></tr
           >

@@ -34,7 +34,7 @@
 <div class="container">
   <!-- Sidebar toggle button -->
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="toggle" on:click="{toggleSidebar}">
+  <div class="toggle" on:click={toggleSidebar}>
     <span class="top_line common"></span>
     <span class="middle_line common"></span>
     <span class="bottom_line common"></span>
@@ -47,40 +47,40 @@
       <!-- Navigation links -->
       <a
         href="javascript:void(0)"
-        on:click="{() => togglePage(Page1, '점검관리')}"
-        class="{activeMenu === '점검관리' ? 'active' : ''}"
+        on:click={() => togglePage(Page1, "점검관리")}
+        class={activeMenu === "점검관리" ? "active" : ""}
       >
         <i class="fa fa-user-o" aria-hidden="true"></i>
         점검관리
       </a>
       <a
         href="javascript:void(0)"
-        on:click="{() => togglePage(Page2, '자산관리')}"
-        class="{activeMenu === '자산관리' ? 'active' : ''}"
+        on:click={() => togglePage(Page2, "자산관리")}
+        class={activeMenu === "자산관리" ? "active" : ""}
       >
         <i class="fa fa-laptop" aria-hidden="true"></i>
         자산관리
       </a>
       <a
         href="javascript:void(0)"
-        on:click="{() => togglePage(Page3, '취약점관리')}"
-        class="{activeMenu === '취약점관리' ? 'active' : ''}"
+        on:click={() => togglePage(Page3, "취약점관리")}
+        class={activeMenu === "취약점관리" ? "active" : ""}
       >
         <i class="fa fa-clone" aria-hidden="true"></i>
         취약점관리
       </a>
       <a
         href="javascript:void(0)"
-        on:click="{() => togglePage(Page2, '점검항목관리')}"
-        class="{activeMenu === '점검항목관리' ? 'active' : ''}"
+        on:click={() => togglePage(Page2, "점검항목관리")}
+        class={activeMenu === "점검항목관리" ? "active" : ""}
       >
         <i class="fa fa-star-o" aria-hidden="true"></i>
         점검항목관리
       </a>
       <a
         href="javascript:void(0)"
-        on:click="{() => togglePage(Page2, '환경설정')}"
-        class="{activeMenu === '환경설정' ? 'active' : ''}"
+        on:click={() => togglePage(Page2, "환경설정")}
+        class={activeMenu === "환경설정" ? "active" : ""}
       >
         <i class="fa fa-trash-o" aria-hidden="true"></i>
         환경설정
@@ -101,7 +101,7 @@
   <!-- Main content area -->
   {#if currentPage}
     <div class="right_menu">
-      <svelte:component this="{currentPage}" />
+      <svelte:component this={currentPage} />
     </div>
   {/if}
 </div>

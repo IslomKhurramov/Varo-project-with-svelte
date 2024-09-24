@@ -38,8 +38,8 @@
       {#each accounts as account}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <li
-          class:selected="{selectedAccounts.includes(account.id)}"
-          on:click="{() => handleAccountSelection(account)}"
+          class:selected={selectedAccounts.includes(account.id)}
+          on:click={() => handleAccountSelection(account)}
         >
           <span>{account.name} - {account.role}</span>
           {#if selectedAccounts.includes(account.id)}
@@ -48,7 +48,7 @@
         </li>
       {/each}
     </ul>
-    <button class="button confirm" on:click="{confirmSelection}">
+    <button class="button confirm" on:click={confirmSelection}>
       Confirm Selection
     </button>
   {:else}

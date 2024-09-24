@@ -54,12 +54,12 @@
       <div class="filter">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label>Filter by OS:</label>
-        <select bind:value="{filterCriteria}">
+        <select bind:value={filterCriteria}>
           <option value="">All</option>
           <option value="Windows">Windows</option>
           <option value="UNIX">UNIX</option>
         </select>
-        <button on:click="{searchAssets}">Search</button>
+        <button on:click={searchAssets}>Search</button>
       </div>
     </div>
 
@@ -68,12 +68,12 @@
       <div class="command-section">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label>Command:</label>
-        <select bind:value="{selectedCommand}">
+        <select bind:value={selectedCommand}>
           <option value="임의 명령수행">임의 명령수행</option>
           <!-- Add more command options if needed -->
         </select>
 
-        <textarea bind:value="{commandOutput}" placeholder="Enter command..."
+        <textarea bind:value={commandOutput} placeholder="Enter command..."
         ></textarea>
       </div>
 
@@ -82,12 +82,10 @@
         <label>Comparison Keyword:</label>
         <input
           type="text"
-          bind:value="{keyword}"
+          bind:value={keyword}
           placeholder="Enter keyword..."
         />
-        <button style="width: 120px;" on:click="{executeCommand}"
-          >Execute</button
-        >
+        <button style="width: 120px;" on:click={executeCommand}>Execute</button>
       </div>
     </div>
 
@@ -96,8 +94,8 @@
         <input
           type="checkbox"
           class="first_checkbox"
-          on:click="{toggleAll}"
-          checked="{allSelected}"
+          on:click={toggleAll}
+          checked={allSelected}
         />
         <p>전체선택</p>
       </div>
@@ -107,9 +105,9 @@
             <input
               type="checkbox"
               class="card_checkbox"
-              bind:group="{selected}"
-              name="{asset}"
-              value="{asset}"
+              bind:group={selected}
+              name={asset}
+              value={asset}
             />
             <div class="img_container">
               <!-- svelte-ignore a11y-img-redundant-alt -->

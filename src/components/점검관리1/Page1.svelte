@@ -20,7 +20,6 @@
     try {
       projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array
-
     } catch (err) {
       error = err.message;
     } finally {
@@ -29,29 +28,29 @@
   });
 
   $: {
-    console.log("+currentView:", currentView)
+    console.log("+currentView:", currentView);
   }
 
   /**********************************/
 
   const selectPage = (page, project) => {
-    console.log("+selectPage Running!!")
+    console.log("+selectPage Running!!");
     currentPage = page;
     activeMenu = project;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
-    tabMenu = "no"
+    tabMenu = "no";
   };
 
   const deleteProject = async () => {
     try {
       if (projectArray.length > 0) {
-        const lastProject = projectArray[projectArray.length - 1]
+        const lastProject = projectArray[projectArray.length - 1];
         await setDeletePlan(lastProject.ccp_index);
-        projectArray = projectArray.slice(0, -1); 
+        projectArray = projectArray.slice(0, -1);
       }
     } catch (err) {
-      console.log("ERROR deleteProject:", err)
+      console.log("ERROR deleteProject:", err);
     }
   };
 
@@ -66,10 +65,10 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p on:click="{() => selectPage(AddPorject, 'add')}" class="menu_button">
+        <p on:click={() => selectPage(AddPorject, "add")} class="menu_button">
           신규점검
         </p>
-        <p class="menu_button" on:click="{deleteProject}">이력삭제</p>
+        <p class="menu_button" on:click={deleteProject}>이력삭제</p>
       </div>
 
       <div class="project_container">
@@ -84,8 +83,8 @@
               <!-- svelte-ignore a11y-invalid-attribute -->
               <a
                 href="javascript:void(0)"
-                on:click="{() => selectPage(RightContainerMenu, asset)}"
-                class="{activeMenu === asset ? 'active' : ''}"
+                on:click={() => selectPage(RightContainerMenu, asset)}
+                class={activeMenu === asset ? "active" : ""}
               >
                 <i class="fa fa-folder-open" aria-hidden="true"></i>
                 {asset.ccp_title}
@@ -101,9 +100,9 @@
       <RightConainer />
     {:else if currentPage}
       <svelte:component
-        this="{currentPage}"
-        projectIndex="{selectedProjectIndex}"
-        currentPage={currentPage}
+        this={currentPage}
+        projectIndex={selectedProjectIndex}
+        {currentPage}
         bind:tabMenu
       />
     {/if}

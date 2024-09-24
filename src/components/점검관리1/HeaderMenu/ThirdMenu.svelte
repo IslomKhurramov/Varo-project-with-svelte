@@ -9,9 +9,9 @@
 <main>
   <div class="container">
     <div class="buttons">
-      <button on:click="{() => showReport('summary')}">요약 보고서생성</button>
-      <button on:click="{() => showReport('detailed')}">상세 보고서생성</button>
-      <button on:click="{() => showReport('target')}"
+      <button on:click={() => showReport("summary")}>요약 보고서생성</button>
+      <button on:click={() => showReport("detailed")}>상세 보고서생성</button>
+      <button on:click={() => showReport("target")}
         >점검대상별 보고서 생성</button
       >
     </div>

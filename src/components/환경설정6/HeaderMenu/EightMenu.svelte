@@ -67,7 +67,7 @@
 
   function saveChanges() {
     users = users.map((user) =>
-      user.id === selectedUser.id ? { ...userInfo } : user
+      user.id === selectedUser.id ? { ...userInfo } : user,
     );
     selectedUser = null;
   }
@@ -102,8 +102,8 @@
       <tbody>
         {#each users as user (user.id)}
           <tr
-            on:click="{() => selectUser(user)}"
-            class:selected="{user === selectedUser}"
+            on:click={() => selectUser(user)}
+            class:selected={user === selectedUser}
           >
             <td>{user.id}</td>
             <td>{user.email}</td>
@@ -112,7 +112,7 @@
             <td>{user.department}</td>
             <td>{user.contact}</td>
             <td>
-              <button on:click|stopPropagation="{() => deleteUser(user.id)}"
+              <button on:click|stopPropagation={() => deleteUser(user.id)}
                 >삭제/변경</button
               >
             </td>
@@ -122,7 +122,7 @@
     </table>
 
     <div class="actions">
-      <button on:click="{addUser}">계정추가</button>
+      <button on:click={addUser}>계정추가</button>
     </div>
 
     {#if selectedUser}
@@ -131,14 +131,14 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="tab {activeTab === 'info' ? 'active' : ''}"
-          on:click="{() => showTab('info')}"
+          on:click={() => showTab("info")}
         >
           정보변경
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="tab {activeTab === 'password' ? 'active' : ''}"
-          on:click="{() => showTab('password')}"
+          on:click={() => showTab("password")}
         >
           비밀번호변경
         </div>
@@ -146,18 +146,18 @@
 
       <div class="tab-content {activeTab === 'info' ? 'active' : ''}" id="info">
         <h3>사용자 정보 변경 (User Information Modification)</h3>
-        <form on:submit|preventDefault="{saveChanges}">
+        <form on:submit|preventDefault={saveChanges}>
           <div class="form-group">
             <label for="username">사용자이름</label>
-            <input id="username" type="text" bind:value="{userInfo.name}" />
+            <input id="username" type="text" bind:value={userInfo.name} />
           </div>
           <div class="form-group">
             <label for="email">이메일</label>
-            <input id="email" type="email" bind:value="{userInfo.email}" />
+            <input id="email" type="email" bind:value={userInfo.email} />
           </div>
           <div class="form-group">
             <label for="department">부서</label>
-            <select id="department" bind:value="{userInfo.department}">
+            <select id="department" bind:value={userInfo.department}>
               <option value="Sales">Sales</option>
               <option value="Marketing">Marketing</option>
               <option value="Support">Support</option>
@@ -165,7 +165,7 @@
           </div>
           <div class="form-group">
             <label for="role">유저권한</label>
-            <select id="role" bind:value="{userInfo.role}">
+            <select id="role" bind:value={userInfo.role}>
               <option value="관리자권한">관리자권한</option>
               <option value="운영자권한">운영자권한</option>
               <option value="뷰어">뷰어</option>
@@ -173,7 +173,7 @@
           </div>
           <div class="form-group">
             <label for="question">임시질문</label>
-            <select id="question" bind:value="{userInfo.question}">
+            <select id="question" bind:value={userInfo.question}>
               <option value="animal">Favourite animal</option>
               <option value="food">Favourite food</option>
               <option value="pet">Name of your pet</option>
@@ -181,7 +181,7 @@
           </div>
           <div class="form-actions">
             <button type="submit">Submit</button>
-            <button type="reset" on:click="{resetForm}">Reset</button>
+            <button type="reset" on:click={resetForm}>Reset</button>
           </div>
         </form>
       </div>
@@ -191,7 +191,7 @@
         id="password"
       >
         <h3>비밀번호 변경 (Password Change)</h3>
-        <form on:submit|preventDefault="{saveChanges}">
+        <form on:submit|preventDefault={saveChanges}>
           <div class="form-group">
             <label for="current-password">현재비밀번호</label>
             <input id="current-password" type="password" />
@@ -206,7 +206,7 @@
           </div>
           <div class="form-actions">
             <button type="submit">Submit</button>
-            <button type="reset" on:click="{resetForm}">Reset</button>
+            <button type="reset" on:click={resetForm}>Reset</button>
           </div>
         </form>
       </div>

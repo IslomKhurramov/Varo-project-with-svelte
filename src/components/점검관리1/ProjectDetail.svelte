@@ -57,7 +57,6 @@
   }
 
   const calculateSecurityStatistic = (target_group_securitypoint, group) => {
-    console.log("target_group_securitypoint:", target_group_securitypoint)
     const accountManagementYs = Object.values(target_group_securitypoint).flat()
         .filter(item => item.label === group)
         .map(item => item.y);
@@ -66,7 +65,6 @@
     const data = (totalY / accountManagementYs.length).toFixed(2)
     
     const returndata = isNaN(data) ? 0 : parseInt(data);
-    console.log("returndata:", returndata);
     return returndata
   };
 
@@ -93,15 +91,7 @@
 
 <main>
   <div class="main-container">
-    <div>
-      <!-- {#if loading}
-        <p>Loading...</p>
-      {:else if errorMessage}
-        <p>Error: {errorMessage}</p>
-      {:else}
-        <p>Project Details: {JSON.stringify(projectDetails)}</p>
-      {/if} -->
-    </div>
+   
     {#if projectDetails?.ccp_title}
     <div class="container">
       <!-- Overview Section -->

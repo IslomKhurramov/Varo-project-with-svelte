@@ -13,8 +13,6 @@ export const getCCEResultUploadStatus = async (plan_index) => {
       }
     );
 
-    console.log("getCCEResultUploadStatus: ", response);
-
     if (response?.data?.RESULT == "ERROR")
       throw new Error("Something went wrong!");
 

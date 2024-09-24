@@ -13,8 +13,6 @@ export const getPlanDetailInformation = async (index) => {
       }
     );
 
-    console.log("getPlanDetailInformation: ", response);
-
     if (response?.data?.RESULT == "ERROR")
       throw new Error("Something went wrong!");
 

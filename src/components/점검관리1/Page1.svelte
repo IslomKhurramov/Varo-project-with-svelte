@@ -3,7 +3,6 @@
   import AddPorject from "../AddPorject.svelte";
   import RightConainer from "../RightConainer.svelte";
   import { onMount } from "svelte";
-  import { userData } from "../../stores/user.store";
   import { getAllPlanLists } from "../../services/page1/planInfoService";
   import { setDeletePlan } from "../../services/page1/newInspection";
 
@@ -28,18 +27,18 @@
     }
   });
 
+  $: {
+    console.log("+currentView:", currentView)
+  }
+
   /**********************************/
 
   const selectPage = (page, project) => {
+    console.log("+selectPage Running!!")
     currentPage = page;
     activeMenu = project;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
-  };
-
-  const addProject = () => {
-    const newProjectNumber = projectArray.length + 1;
-    projectArray = [...projectArray, `프로젝트 ${newProjectNumber}`];
   };
 
   const deleteProject = async () => {
@@ -98,6 +97,7 @@
       <svelte:component
         this="{currentPage}"
         projectIndex="{selectedProjectIndex}"
+        currentPage={currentPage}
       />
     {/if}
   </div>

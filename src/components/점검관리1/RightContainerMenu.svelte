@@ -60,6 +60,9 @@
   </div>
 
   <div class="right_menu">
+    <!-- {#if activeMenu === '점검결과등록'}
+    <svelte:component this="{FirstMenu}" />
+    {/if} -->
     {#if currentPage}
       <svelte:component this="{currentPage}" />
     {:else}

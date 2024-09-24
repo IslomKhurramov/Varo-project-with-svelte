@@ -7,43 +7,50 @@
   import ProjectDetail from "./ProjectDetail.svelte";
 
   export let projectIndex;
+  // export let tabMenu = null;
   let currentPage = null;
-  let activeMenu = null;
+  export let tabMenu = null;
 
   const selectPage = (page, menu) => {
     currentPage = page;
-    activeMenu = menu;
+    tabMenu = menu;
   };
+
+  $: {
+    console.log("activeMenu:", tabMenu);
+    
+  }
 </script>
 
 <div class="container_page1">
   <div class="navbar">
     <div class="header">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click="{() => selectPage(FirstMenu, '점검결과등록')}"
-        class="{activeMenu === '점검결과등록' ? 'active' : ''}"
+        class="{tabMenu === '점검결과등록' ? 'active' : ''}"
       >
         점검결과등록
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click="{() => selectPage(SecondMenu, '점검결과조회')}"
-        class="{activeMenu === '점검결과조회' ? 'active' : ''}"
+        class="{tabMenu === '점검결과조회' ? 'active' : ''}"
       >
         점검결과조회
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click="{() => selectPage(ThirdMenu, '보고서생성')}"
-        class="{activeMenu === '보고서생성' ? 'active' : ''}"
+        class="{tabMenu === '보고서생성' ? 'active' : ''}"
       >
         보고서생성
       </h3>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click="{() => selectPage(FourthMenu, '수행로그')}"
-        class="{activeMenu === '수행로그' ? 'active' : ''}"
+        class="{tabMenu === '수행로그' ? 'active' : ''}"
       >
         수행로그
       </h3>
@@ -52,7 +59,7 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click="{() => selectPage(FifthMenu, '프로그램다운로드')}"
-        class="{activeMenu === '프로그램다운로드' ? 'active' : ''}"
+        class="{tabMenu === '프로그램다운로드' ? 'active' : ''}"
       >
         프로그램다운로드
       </h3>
@@ -63,7 +70,7 @@
     <!-- {#if activeMenu === '점검결과등록'}
     <svelte:component this="{FirstMenu}" />
     {/if} -->
-    {#if currentPage}
+    {#if tabMenu !== 'no'}
       <svelte:component this="{currentPage}" />
     {:else}
       <ProjectDetail {projectIndex} />

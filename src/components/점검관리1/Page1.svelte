@@ -14,6 +14,7 @@
   let loading = true;
   let error = null;
   let selectedProjectIndex = null;
+  let tabMenu = null;
 
   onMount(async () => {
     try {
@@ -39,6 +40,7 @@
     activeMenu = project;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
+    tabMenu = "no"
   };
 
   const deleteProject = async () => {
@@ -52,6 +54,10 @@
       console.log("ERROR deleteProject:", err)
     }
   };
+
+  $: {
+    console.log("TAB PAGE: ", tabMenu);
+  }
 </script>
 
 <div class="container">
@@ -98,6 +104,7 @@
         this="{currentPage}"
         projectIndex="{selectedProjectIndex}"
         currentPage={currentPage}
+        bind:tabMenu
       />
     {/if}
   </div>

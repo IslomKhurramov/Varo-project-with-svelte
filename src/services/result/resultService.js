@@ -22,3 +22,25 @@ export const getCCEResultUploadStatus = async (plan_index) => {
     throw error;
   }
 };
+
+export const getUploadedResultErrors = async (plan_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getUploadedResultErrors/`,
+      {
+        plan_index: plan_index,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    if (response?.data?.RESULT == "ERROR")
+      throw new Error("Something went wrong!");
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error getUploadedResultErrors:", error);
+    throw error;
+  }
+};

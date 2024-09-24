@@ -1,25 +1,35 @@
 <script>
-  export let showModal; // boolean
-  export let modalWidth; // default width if not passed
+  export let showModal;
+  export let modalWidth;
+  export let modalHeight;
   export let showModalSecond;
   export let showModalRegisteredAdmin;
 
-  let dialog; // HTMLDialogElement
-  let dialogSecond; // HTMLDialogElement for the second modal
-  let dialogThird; // HTMLDialogElement for the third modal
+  let dialog;
+  let dialogSecond;
+  let dialogThird;
 
   $: {
     console.log("modalWidth: ", modalWidth);
   }
 
-  $: if (dialog && showModal) dialog.showModal();
+  function scrollToTop(dialogElement) {
+    if (dialogElement) {
+      dialogElement.scrollTop = 0; // Reset scroll position
+    }
+  }
+
+  $: if (dialog && showModal) {
+    dialog.showModal();
+    scrollToTop(dialog);
+  }
   $: if (dialogSecond && showModalSecond) dialogSecond.showModal();
   $: if (dialogThird && showModalRegisteredAdmin) dialogThird.showModal();
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <dialog
-  style="width: {modalWidth}%"
+  style="width: {modalWidth}%; height: {modalHeight}%"
   bind:this={dialog}
   on:close={() => (showModal = false)}
   on:click|self={() => dialog.close()}

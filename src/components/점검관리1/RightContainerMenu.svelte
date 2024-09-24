@@ -24,7 +24,6 @@
   <div class="navbar">
     <div class="header">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click={() => selectPage(FirstMenu, "결과등록")}
         class={tabMenu === "결과등록" ? "active" : ""}

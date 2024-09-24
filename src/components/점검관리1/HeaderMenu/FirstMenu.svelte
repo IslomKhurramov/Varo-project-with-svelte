@@ -1,26 +1,91 @@
+<script>
+  import { onMount } from "svelte";
+  import { getPlanLists } from "../../../services/page1/newInspection";
+  import {
+    getCCEResultUploadStatus,
+    getUploadedResultErrors,
+  } from "../../../services/result/resultService";
+  import ModalDynamic from "../../../shared/ModalDynamic.svelte";
+  import ResultPopup from "../ResultPopup.svelte";
+
+  let planList = [];
+  let selectedPlan = null;
+  let resultStatus = null;
+  let resultErrors = null;
+  let showModal = false;
+  let modalData = null;
+
+  $: {
+    console.log("selectedPlan:", selectedPlan);
+    console.log("resultStatus:", resultStatus);
+    console.log("resultStatus:", resultStatus?.assets_info?.length !== 0);
+    console.log("resultErrors:", resultErrors?.assets_info?.length);
+  }
+
+  $: if (selectedPlan) {
+    (async () => {
+      try {
+        resultStatus = await getCCEResultUploadStatus(selectedPlan);
+        resultErrors = await getUploadedResultErrors(selectedPlan);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    })();
+  }
+
+  onMount(async () => {
+    try {
+      planList = await getPlanLists();
+    } catch (err) {
+      console.error("Error loading asset groups:", error);
+    }
+  });
+</script>
+
 <div class="container_page">
   <div class="header">
-    <button>등록현황조회</button>
-    <button>에러내역확인</button>
+    {#if resultStatus?.assets_info?.length > 0}
+      <button
+        on:click={() => {
+          showModal = true;
+          modalData = resultStatus?.assets_info;
+        }}>등록현황조회</button
+      >
+    {:else}
+      <button style="background-color:  #33333342;">등록현황조회</button>
+    {/if}
+
+    {#if resultErrors?.assets_info?.length > 0}
+      <button
+        onclick={() => {
+          showModal = true;
+          modalData = resultErrors;
+        }}>에러내역확인</button
+      >
+    {:else}
+      <button style="background-color:  #33333342;">에러내역확인</button>
+    {/if}
+
     <!-- <button>등록결과조회</button> -->
   </div>
 
   <div class="table_center">
     <div class="table_container">
-      <p class="word">점검결과등록</p>
-      <div class="first_line">
-        <p class="button2 width">프로젝트명</p>
-        <div class="row">
-          <select class="dropdown">
-            <option value="" selected disabled>신규점검/이행점검</option>
-            <option value="0">신규점검</option>
-            <option value="1">이행점검</option>
-          </select>
-        </div>
-      </div>
-      <p class="word">수동</p>
       <div class="secondLine">
         <div class="thirdCol">
+          <div class="first_line">
+            <p class="button2 width">프로젝트명</p>
+            <div class="row">
+              <select class="dropdown" bind:value={selectedPlan}>
+                <option value="" selected disabled>선택</option>
+                {#if planList}
+                  {#each planList as plan}
+                    <option value={plan.ccp_index}>{plan.ccp_title}</option>
+                  {/each}
+                {/if}
+              </select>
+            </div>
+          </div>
           <div class="first_line">
             <p class="button1 width">자동</p>
             <p class="button2 width">에이전트결과</p>
@@ -59,6 +124,16 @@
     </div>
   </div>
 </div>
+
+{#if modalData}
+  <ModalDynamic
+    bind:showModal
+    modalWidth={60}
+    modalHeight={modalData?.length > 10 ? 70 : null}
+  >
+    <ResultPopup bind:modalData />
+  </ModalDynamic>
+{/if}
 
 <style>
   /* Main Container */

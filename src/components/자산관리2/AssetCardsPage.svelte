@@ -182,7 +182,7 @@
                 <p>보안점수</p>
 
                 <!-- Display the valid security point, or "Not Assessed" if no valid score -->
-                {#if asset.asset_point_history?.[0]?.ast_security_point}
+                {#if asset.asset_point_history?.[0]?.ast_security_point > 0}
                   <div
                     class="box_number {asset.asset_point_history?.[0]
                       ?.ast_security_point < 50
@@ -202,7 +202,7 @@
                         ? 'medium'
                         : 'high'}"
                   >
-                    NULL
+                    0%
                   </div>
                 {/if}
                 <p>
@@ -259,12 +259,16 @@
       {/if}
     </div>
   </div>
-  <Modal bind:showModal>
+  <Modal bind:showModal class="dialog">
     <ModalCard />
   </Modal>
 </main>
 
 <style>
+  .dialog {
+    transform: translate(-50%, -50%);
+    animation: fadeIn 0.3s ease;
+  }
   /* Main container for the card layout */
   .container {
     max-width: 100%;

@@ -109,9 +109,11 @@
                   href="#"
                   on:click={() => selectPage(AssetCardsPage, group)}
                   class={activeMenu === group ? "active" : ""}
+                  title={group.asg_title}
                 >
                   <i class="fa fa-user-o" aria-hidden="true"></i>
-                  {group.asg_title}
+                  <span class="truncate-text">{group.asg_title}</span>
+                  <!-- Truncated text -->
                 </a>
               </div>
               <div>
@@ -246,7 +248,7 @@
     background-color: #f7f9fb; /* Use white background for cleanliness */
     color: #343a40;
     padding: 20px;
-    width: 300px;
+    width: 250px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -430,6 +432,7 @@
       transform 0.3s ease;
     cursor: pointer;
     border-bottom: 1px solid #cbcbcb;
+    border-radius: 15px;
   }
 
   .header_button p {
@@ -513,5 +516,50 @@
   }
   .cancel {
     background-color: #e74c3c;
+  }
+  /* Truncate text with ellipsis */
+  .truncate-text {
+    display: inline-block;
+    max-width: 100px; /* Adjust as per your layout */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+
+  /* Tooltip styling */
+  .project_button a[title] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .project_button a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .project_button a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
   }
 </style>

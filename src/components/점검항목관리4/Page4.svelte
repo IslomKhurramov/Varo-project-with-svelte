@@ -17,7 +17,6 @@
     checklistStore,
     fetchChecklistData,
   } from "../../services/page4/checklistStore";
-  import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -101,6 +100,8 @@
 
       if (response.success) {
         // Fetch the updated checklist data
+        showModal = false;
+        sweetAlert("Checklist created successfully!");
         await refreshChecklistData();
         lastCreatedChecklistId = selectedChecklist.ccg_index;
 
@@ -175,7 +176,7 @@
       const response = await setDeleteChecklistGroup(checklistId);
 
       if (response.success) {
-        successAlert("Checklist deleted successfully!");
+        alert("Checklist deleted successfully!");
 
         // Update local state without re-fetching
         allChecklistArray = allChecklistArray.filter(
@@ -267,7 +268,7 @@
   ) {
     // Check if selectedChecklist is null or undefined before proceeding
     if (!selectedChecklist) {
-      errorAlert("Please select a checklist item.");
+      alert("Please select a checklist item.");
       return;
     }
 
@@ -278,22 +279,22 @@
 
     // Check for empty fields before making the search request
     if (!ccg_index) {
-      errorAlert("Please select a valid checklist item.");
+      alert("Please select a valid checklist item.");
       return;
     }
 
     if (category === "점검대상") {
-      errorAlert("Please choose a category.");
+      alert("Please choose a category.");
       return;
     }
 
     if (!item_number) {
-      errorAlert("Please input the item number.");
+      alert("Please input the item number.");
       return;
     }
 
     if (riskLevel === "위험도") {
-      errorAlert("Please choose a risk level.");
+      alert("Please choose a risk level.");
       return;
     }
 
@@ -360,8 +361,14 @@
                   on:click|preventDefault={() =>
                     selectPage(ItemPage, checkList)}
                   class={activeMenu === checkList ? "active" : ""}
+                  title={checkList.ccg_group}
                 >
-                  {checkList.ccg_group ? checkList.ccg_group : "No group info"}
+                  <i class="fa fa-user-o" aria-hidden="true"></i>
+                  <span class="truncate-text">
+                    {checkList.ccg_group
+                      ? checkList.ccg_group
+                      : "No group info"}</span
+                  >
                 </a>
               </div>
               <div style="display: flex; flex-direction:column">
@@ -543,17 +550,47 @@
       </div>
     </div>
   </div>
-  <Modal bind:showModal>
-    <AddedChecklist
-      {createNewChecklistGroup}
-      {allChecklistArray}
-      bind:newChecklistName
-      bind:selectedChecklistForCopyId
-    />
-  </Modal>
+
   <Modal2 bind:showModalSecond>
     <ModalSwiper {selectedSlide} {selectedCategory} />
   </Modal2>
+  {#if showModal}
+    <dialog open on:close={() => (showModal = false)}>
+      <div class="modal-content">
+        <div class="modal">
+          <h3>새로운 진단 그룹 생성</h3>
+          <div>
+            <label for="source-group">복사 대상:</label>
+            <select bind:value={selectedChecklistForCopyId} id="source-group">
+              {#each allChecklistArray as checklist}
+                <option value={checklist.ccg_index}
+                  >{checklist.ccg_group}</option
+                >
+              {/each}
+            </select>
+          </div>
+          <div>
+            <label for="new-group">신규 그룹명:</label>
+            <input
+              type="text"
+              bind:value={newChecklistName}
+              id="new-group"
+              placeholder="새로운 진단 그룹명을 입력하세요"
+            />
+          </div>
+          <div class="modal-buttons">
+            <button class="primary-button" on:click={createNewChecklistGroup}
+              >저장하기</button
+            >
+            <button
+              class="secondary-button"
+              on:click={() => (showModal = false)}>Cancel</button
+            >
+          </div>
+        </div>
+      </div>
+    </dialog>
+  {/if}
 </main>
 
 <style>
@@ -606,7 +643,7 @@
     background-color: #f7f9fb; /* Use white background for cleanliness */
     color: #343a40;
     padding: 20px;
-    width: 300px;
+    width: 250px;
     display: flex;
     flex-direction: column;
     border-radius: 20px;
@@ -643,8 +680,9 @@
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
-    margin-top: 5px;
+    margin-top: 15px;
     border-radius: 15px;
+    border-bottom: 1px solid #cbcbcb;
   }
 
   .project_container {
@@ -937,5 +975,165 @@
 
   .swiper-button-next {
     right: -50px;
+  }
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+  }
+  /***MODAL */
+  /* Modal content container */
+  .modal-content {
+    text-align: center;
+  }
+
+  /* Styled select dropdown */
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    transition: border 0.2s ease;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: #54b3d6;
+  }
+  .modal-content input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    transition: border 0.2s ease;
+  }
+
+  /* Paragraph showing the selected group */
+  p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  /* Modal buttons */
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .primary-button {
+    background-color: #54b3d6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-button:hover {
+    background-color: #48a2bf;
+  }
+
+  .secondary-button {
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .secondary-button:hover {
+    background-color: #e0e0e0;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @keyframes fadeInBackdrop {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  /***************************************/
+  /* Truncate text with ellipsis */
+  .truncate-text {
+    display: inline-block;
+    max-width: 100px; /* Adjust as per your layout */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+
+  /* Tooltip styling */
+  .project_button a[title] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .project_button a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .project_button a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
   }
 </style>

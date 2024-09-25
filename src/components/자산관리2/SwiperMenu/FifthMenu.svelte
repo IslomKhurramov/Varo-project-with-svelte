@@ -175,18 +175,6 @@
     margin: 10px 0; /* Add some spacing */
   }
 
-  .empty-state-message p {
-    font-size: 16px; /* Normal size for description */
-    color: #777;
-    text-align: center;
-  }
-
-  .empty-state-message i {
-    font-size: 50px; /* Add a large icon */
-    color: #ddd; /* Gray color for the icon */
-    margin-bottom: 10px;
-  }
-
   /* If using FontAwesome or similar icon fonts */
   @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
 

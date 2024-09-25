@@ -3,10 +3,6 @@
   export let allChecklistArray;
   export let newChecklistName = "";
   export let selectedChecklistForCopyId = null; // The selected checklist's ID
-
-  function checkSelection() {
-    console.log("DATACREATE:", selectedChecklistForCopyId, newChecklistName);
-  }
 </script>
 
 <div class="modal-overlay">

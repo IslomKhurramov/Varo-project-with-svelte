@@ -3,11 +3,12 @@
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
   import { onMount } from "svelte";
   let plantoSHow = [];
-  let planInfo = [];
   let allVulns = [];
   let filteredVulns = [];
+  let detailofAsset = [];
 
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
+  $: DetailOfAsset = $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0] : [];
 
   // Automatically update plantoSHow and gather all vulns when cceHistory changes
   $: if (cceHistory.length > 0) {
@@ -22,6 +23,20 @@
     });
 
     filteredVulns = [...allVulns];
+  }
+  /**************************************************************************/
+  $: if (
+    DetailOfAsset.asset &&
+    Array.isArray(DetailOfAsset.asset) &&
+    DetailOfAsset.asset.length > 0
+  ) {
+    // Directly assign the asset data to detailofAsset
+    detailofAsset = DetailOfAsset.asset; // No need to map, just take the entire array
+    console.log("detail of asset", detailofAsset);
+  }
+  function check() {
+    console.log("detail of asset", detailofAsset);
+    console.log("detail of asset2", DetailOfAsset);
   }
 
   let selectedProject = "";
@@ -91,7 +106,7 @@
     <table>
       <thead>
         <tr>
-          <th>넘버</th>
+          <th on:click={check}>넘버</th>
           <th>프로젝트명</th>
           <th>점검항목</th>
           <th>생성일</th>

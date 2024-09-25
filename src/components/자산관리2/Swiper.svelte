@@ -13,8 +13,10 @@
   import {
     getDetailInformationOfAsset,
     setAssetGroupChange,
+    setAssetActivate,
+    setAssetUnActivate,
   } from "../../services/page2/assetService";
-  import { errorAlert } from "../../shared/sweetAlert";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
   let selectedGroupIndex = "";
   let showModal = false;
@@ -44,6 +46,7 @@
       console.error(`Error fetching asset details: ${err.message}`);
     }
   }
+
   /***************************************************************************/
   // Handle the UUID click and fetch the asset details
   function handleAssetClick(uid, asset) {
@@ -77,6 +80,72 @@
       }
     };
   });
+
+  /**************UnActivate**************************************/
+
+  async function unactivate() {
+    const asset = $allAssetList.find((a) => a.ass_uuid === uuid_asset);
+    console.log("ast_activate", asset);
+    if (!asset.ast_activate) {
+      errorAlert("The asset is already unactivated.");
+      return; // Stop execution, don't call the API
+    }
+
+    try {
+      const unActivating = await setAssetUnActivate(uuid_asset);
+
+      if (unActivating.success) {
+        successAlert("The asset has been successfully unactivated!");
+
+        // Update the asset's activation status directly in the store
+        allAssetList.update((assets) => {
+          return assets.map((a) => {
+            if (a.ass_uuid === uuid_asset) {
+              return { ...a, ast_activate: false }; // Mark asset as unactivated
+            }
+            return a;
+          });
+        });
+      } else if (unActivating.alreadyUnactivated) {
+        errorAlert("The asset is already unactivated.");
+      } else {
+        throw new Error(unActivating.CODE);
+      }
+    } catch (err) {
+      alert(`Error on unactivating Asset! ${err.message}`);
+    }
+  }
+
+  /**************Activate**************************************/
+  async function activateAsset() {
+    const asset = $allAssetList.find((a) => a.ass_uuid === uuid_asset);
+    if (asset.ast_activate) {
+      errorAlert("The asset is already activated.");
+      return;
+    }
+
+    try {
+      const activating = await setAssetActivate(uuid_asset);
+
+      if (activating.success) {
+        successAlert("The asset has been successfully activated!");
+
+        // Update the asset's activation status in the store
+        allAssetList.update((assets) => {
+          return assets.map((a) => {
+            if (a.ass_uuid === uuid_asset) {
+              return { ...a, ast_activate: true }; // Mark asset as activated
+            }
+            return a;
+          });
+        });
+      }
+    } catch (err) {
+      alert(`Error on activating Asset! ${err.message}`);
+    }
+  }
+
+  /*****************************************************************/
   /******************************************************************/
   async function assetGroupChange() {
     if (uuid_asset === "") {
@@ -156,10 +225,10 @@
       </h3>
     </div>
     <div class="button_container">
-      <button>자산그룹이동 </button>
+      <button on:click={() => (showModal = true)}>자산그룹이동 </button>
       <button>정보수정</button>
-      <button on:click={() => (showModal = true)}>등록승인 / 등록해제 </button>
-      <button>자산삭제</button>
+      <button on:click={activateAsset}>등록승인/등록해제 </button>
+      <button on:click={unactivate}>자산삭제</button>
     </div>
   </div>
 

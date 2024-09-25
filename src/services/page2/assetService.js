@@ -124,7 +124,7 @@ export const setAssetGroupChange = async (uuid,current_group_index,next_group_in
     );
 
     if (response.data.RESULT === "OK") {
-      return response.data.CODE; // Return the data from the API
+      return {success:true} // Return the data from the API
     } else {
       throw new Error(
         `Error Code on setAssetGroupChange: ${response.data.CODE}`,

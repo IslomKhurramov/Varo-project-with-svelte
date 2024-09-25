@@ -6,13 +6,24 @@
   import FourthMenu from "./SwiperMenu/FourthMenu.svelte";
   import FifthMenu from "./SwiperMenu/FifthMenu.svelte";
   import { assetDeatilInfo } from "../../services/page2/asset.store";
-  import { allAssetList } from "../../services/page2/asset.store";
-  import { getDetailInformationOfAsset } from "../../services/page2/assetService";
+  import {
+    allAssetList,
+    allAssetGroupList,
+  } from "../../services/page2/asset.store";
+  import {
+    getDetailInformationOfAsset,
+    setAssetGroupChange,
+  } from "../../services/page2/assetService";
+  import { errorAlert } from "../../shared/sweetAlert";
+
+  let selectedGroupIndex = "";
+  let showModal = false;
   let currentPage = null;
   let activeMenu = null;
   let swiperInstance;
   let swiperContainer;
-  let uuid_asset = ""; // Store the clicked UUID
+  let uuid_asset = "";
+  let asset_group_index = "";
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -23,11 +34,8 @@
     try {
       const response = await getDetailInformationOfAsset(uuid);
 
-      // Check if the response is successful
       if (response) {
-        // Log the detailed data of the asset
-        assetDeatilInfo.set(Object.values(response)); // Store the asset details
-        console.log("Detail of asset:", $assetDeatilInfo);
+        assetDeatilInfo.set(Object.values(response));
       } else {
         console.error("Failed to get asset details.");
       }
@@ -36,12 +44,14 @@
       console.error(`Error fetching asset details: ${err.message}`);
     }
   }
-
+  /***************************************************************************/
   // Handle the UUID click and fetch the asset details
-  function handleAssetClick(uid) {
+  function handleAssetClick(uid, asset) {
     uuid_asset = uid;
-    console.log("UUID", uuid_asset);
-    assetListDetail(uuid_asset); // Fetch asset details when a slide is clicked
+    if (asset.asset_group && asset.asset_group.length > 0) {
+      asset_group_index = asset.asset_group[0].asg_index;
+    }
+    assetListDetail(uuid_asset);
   }
   /****************************************************/
 
@@ -67,6 +77,33 @@
       }
     };
   });
+  /******************************************************************/
+  async function assetGroupChange() {
+    if (uuid_asset === "") {
+      errorAlert("Please select asset");
+    }
+    try {
+      const response = await setAssetGroupChange(
+        uuid_asset,
+        asset_group_index,
+        selectedGroupIndex,
+      );
+
+      if (response.success) {
+        showModal = false;
+        sweetAlert("Group changed successfully!");
+      } else {
+        errorAlert("Please select asset!");
+      }
+    } catch (err) {
+      console.error(`Error fetching asset details: ${err.message}`);
+    }
+  }
+  /**********************************************************************/
+  function handleGroupChange(event) {
+    selectedGroupIndex = event.target.value;
+  }
+  /***********************************************************************/
 </script>
 
 <main>
@@ -78,7 +115,7 @@
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
             class="swiper-slide"
-            on:click={() => handleAssetClick(asset.ass_uuid)}
+            on:click={() => handleAssetClick(asset.ass_uuid, asset)}
           >
             {asset.ast_hostname}
           </div>
@@ -121,7 +158,7 @@
     <div class="button_container">
       <button>자산그룹이동 </button>
       <button>정보수정</button>
-      <button>등록승인 / 등록해제 </button>
+      <button on:click={() => (showModal = true)}>등록승인 / 등록해제 </button>
       <button>자산삭제</button>
     </div>
   </div>
@@ -130,6 +167,32 @@
     <div class="right_menu">
       <svelte:component this={currentPage} />
     </div>
+  {/if}
+
+  {#if showModal}
+    <dialog open on:close={() => (showModal = false)}>
+      <div class="modal-content">
+        <h2>Change Group Index</h2>
+        <label for="group-select">Select Group:</label>
+        <select id="group-select" on:change={handleGroupChange}>
+          {#each $allAssetGroupList as group}
+            <option
+              value={group.asg_index}
+              selected={group.asg_index == selectedGroupIndex}
+            >
+              {group.asg_index} - {group.asg_title}
+            </option>
+          {/each}
+        </select>
+        <p>Selected Group Index: {selectedGroupIndex}</p>
+        <div class="modal-buttons">
+          <button class="primary-button" on:click={assetGroupChange}>OK</button>
+          <button class="secondary-button" on:click={() => (showModal = false)}
+            >Cancel</button
+          >
+        </div>
+      </div>
+    </dialog>
   {/if}
 </main>
 
@@ -290,5 +353,117 @@
   /* Right Menu Styles */
   .right_menu {
     margin-top: 20px;
+  }
+
+  /****Modal Container*/
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Modal content container */
+  .modal-content {
+    text-align: center;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  /* Styled select dropdown */
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    transition: border 0.2s ease;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: #54b3d6;
+  }
+
+  /* Paragraph showing the selected group */
+  p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  /* Modal buttons */
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .primary-button {
+    background-color: #54b3d6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-button:hover {
+    background-color: #48a2bf;
+  }
+
+  .secondary-button {
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .secondary-button:hover {
+    background-color: #e0e0e0;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @keyframes fadeInBackdrop {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>

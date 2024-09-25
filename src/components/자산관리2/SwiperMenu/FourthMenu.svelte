@@ -40,30 +40,13 @@
         selectedTarget === "" || vuln?.cct_index__cct_target === selectedTarget;
       const resultMatch =
         selectedResult === "" || vuln?.ccr_item_result === selectedResult;
-
-      return projectMatch && targetMatch && resultMatch;
+      const hostMatch =
+        selectedItem === "" || vuln?.ast_hostname === selectedItem;
+      return projectMatch && targetMatch && resultMatch && hostMatch;
     });
   }
   /**********************************************************/
-  let planData = {};
-  let planArray = []; // Declare planArray here so it can be used in the template
-  let loading = true;
-  let error = null;
 
-  onMount(async () => {
-    try {
-      console.log("DATA FUNCTION");
-      planData = await getAllPlanLists();
-      console.log("Plan Data:", planData);
-      planArray = Object.values(planData); // Convert object to array
-    } catch (err) {
-      error = err.message;
-      console.log("ERR:::", error);
-    } finally {
-      loading = false;
-      console.log("LOADING", loading);
-    }
-  });
   /*****************************/
 
   let dataTable1 = [];
@@ -179,14 +162,14 @@
 
         <!-- 점검항목 (Inspection Item) -->
         <div class="dropdown-container">
-          <label for="item">점검항목:</label>
+          <label for="item">호스트:</label>
           <select id="item" bind:value={selectedItem}>
             <option value="">전체</option>
             {#each plantoSHow as historyItem}
               {#if historyItem.vulns}
                 {#each historyItem.vulns as vuln}
-                  <option value={vuln?.ccr_item_no__ccc_item_title}>
-                    {vuln?.ccr_item_no__ccc_item_title}
+                  <option value={vuln?.ast_hostname}>
+                    {vuln?.ast_hostname}
                   </option>
                 {/each}
               {/if}

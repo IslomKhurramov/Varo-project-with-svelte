@@ -10,6 +10,17 @@
   $: if (dialog && showModal) dialog.showModal();
   $: if (dialogSecond && showModalSecond) dialogSecond.showModal();
   $: if (dialogThird && showModalRegisteredAdmin) dialogThird.showModal();
+
+  // Function to handle the success action, close modal and emit custom event
+  function handleSuccessAndClose() {
+    // Simulate a successful action
+    const successEvent = new CustomEvent("success", {
+      detail: { message: "Success!" },
+    });
+    dialog.close(); // Close the modal
+    showModal = false; // Ensure modal doesn't reopen on reactive updates
+    dispatchEvent(successEvent); // Emit the success event
+  }
 </script>
 
 <!-- First Modal -->

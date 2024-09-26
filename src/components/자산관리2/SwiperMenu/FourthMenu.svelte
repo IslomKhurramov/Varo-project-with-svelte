@@ -2,16 +2,30 @@
   import { getAllPlanLists } from "../../../services/page1/planInfoService";
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
   import { onMount } from "svelte";
+
   let plantoSHow = [];
   let allVulns = [];
   let filteredVulns = [];
   let detailofAsset = [];
+  let projectData = [];
+  let assetData = [];
+  let vulnerabilityData = [];
 
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: DetailOfAsset = $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0] : [];
-
-  // Automatically update plantoSHow and gather all vulns when cceHistory changes
+  /************************/
+  // Extract project data and vulns from cceHistory
   $: if (cceHistory.length > 0) {
+    plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
+
+    // Gather all vulns from plantoSHow and set as default
+    allVulns = [];
+    plantoSHow.forEach((historyItem) => {
+      if (historyItem.vulns && historyItem.vulns.length > 0) {
+        allVulns.push(...historyItem.vulns);
+      }
+    });
+
     plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
 
     // Gather all vulns from plantoSHow and set as default
@@ -24,26 +38,29 @@
 
     filteredVulns = [...allVulns];
   }
-  /**************************************************************************/
+  // detailOfAsset (asset) ******************************************************************
   $: if (
     DetailOfAsset.asset &&
     Array.isArray(DetailOfAsset.asset) &&
     DetailOfAsset.asset.length > 0
   ) {
-    // Directly assign the asset data to detailofAsset
-    detailofAsset = DetailOfAsset.asset; // No need to map, just take the entire array
+    detailofAsset = DetailOfAsset.asset;
     console.log("detail of asset", detailofAsset);
   }
+  /**************************************************************************/
+
+  /********************************************************/
   function check() {
-    console.log("detail of asset", detailofAsset);
+    console.log("cceHistory", cceHistory);
     console.log("detail of asset2", DetailOfAsset);
+    console.log("projectData", projectData);
   }
 
   let selectedProject = "";
   let selectedTarget = "";
   let selectedHost = "";
-  let selectedItem = "";
   let selectedResult = "";
+  let selectedCheckList = "";
   let selectedViewOption = "상세보기";
 
   function searchResults() {
@@ -56,8 +73,24 @@
       const resultMatch =
         selectedResult === "" || vuln?.ccr_item_result === selectedResult;
       const hostMatch =
-        selectedItem === "" || vuln?.ast_hostname === selectedItem;
-      return projectMatch && targetMatch && resultMatch && hostMatch;
+        selectedHost === "" || detailofAsset[0]?.ast_hostname === selectedHost; // Use hostname from detailofAsset
+      const checkListMatch =
+        selectedCheckList === "" ||
+        vuln?.ccr_item_no__ccc_item_title === selectedCheckList;
+      const viewOptionMatch =
+        selectedViewOption === "" || // Handle the logic for detailed vs. summary view
+        (selectedViewOption === "상세보기" && vuln?.isDetailed) ||
+        (selectedViewOption === "간략보기" && !vuln?.isDetailed);
+
+      // Ensure all conditions must match
+      return (
+        projectMatch &&
+        targetMatch &&
+        resultMatch &&
+        hostMatch &&
+        checkListMatch &&
+        viewOptionMatch
+      );
     });
   }
   /**********************************************************/
@@ -123,13 +156,23 @@
                 <td>{index + 1}</td>
                 <td>{historyItem.plans.ccp_index__ccp_title}</td>
                 <td>{historyItem.plans.asg_index__asg_title}</td>
-                <td>{historyItem.plans.ast_uuid__ast_target__cct_target}</td>
-                <td>{historyItem.plans.ast_uuid}</td>
                 <td
-                  >{historyItem.plans
-                    .ast_uuid__ast_target__cct_target}({historyItem.plans
-                    .ast_security_point})</td
+                  >{new Date(
+                    detailofAsset[0]?.ast_createdate,
+                  ).toLocaleDateString()}</td
                 >
+                <td>{detailofAsset[0]?.ast_security_point}</td>
+                {#if historyItem.plans.ast_security_point === "-1"}
+                  <td
+                    >{historyItem.plans.ast_uuid__ast_target__cct_target}(0)</td
+                  >
+                {:else}
+                  <td
+                    >{historyItem.plans
+                      .ast_uuid__ast_target__cct_target}({historyItem.plans
+                      .ast_security_point})</td
+                  >
+                {/if}
               </tr>
             {/if}
           {/each}
@@ -150,12 +193,10 @@
           <select id="project" bind:value={selectedProject}>
             <option value="">전체</option>
             <!-- 전체 means "All" -->
-            {#each plantoSHow as historyItem}
-              {#if historyItem.vulns && historyItem.vulns[0]}
-                <option value={historyItem.vulns[0]?.ccp_index__ccp_title}>
-                  {historyItem.vulns[0]?.ccp_index__ccp_title}
-                </option>
-              {/if}
+            {#each projectData as project}
+              <option value={project.projectName}>
+                {project.projectName}
+              </option>
             {/each}
           </select>
         </div>
@@ -165,29 +206,23 @@
           <label for="target">점검대상:</label>
           <select id="target" bind:value={selectedTarget}>
             <option value="">전체</option>
-            {#each plantoSHow as historyItem}
-              {#if historyItem.vulns && historyItem.vulns[0]}
-                <option value={historyItem.vulns[0]?.cct_index__cct_target}>
-                  {historyItem.vulns[0]?.cct_index__cct_target}
-                </option>
-              {/if}
+            {#each projectData as project}
+              <option value={project.inspectionTarget}>
+                {project.inspectionTarget}
+              </option>
             {/each}
           </select>
         </div>
 
-        <!-- 점검항목 (Inspection Item) -->
+        <!-- 호스트 (Host) Dropdown -->
         <div class="dropdown-container">
           <label for="item">호스트:</label>
-          <select id="item" bind:value={selectedItem}>
+          <select id="item" bind:value={selectedHost}>
             <option value="">전체</option>
-            {#each plantoSHow as historyItem}
-              {#if historyItem.vulns}
-                {#each historyItem.vulns as vuln}
-                  <option value={vuln?.ast_hostname}>
-                    {vuln?.ast_hostname}
-                  </option>
-                {/each}
-              {/if}
+            {#each vulnerabilityData as vuln}
+              <option value={vuln.hostName}>
+                {vuln.hostName}
+              </option>
             {/each}
           </select>
         </div>
@@ -198,7 +233,22 @@
           <select id="result" bind:value={selectedResult}>
             <option value="">전체</option>
             <option value="양호">양호</option>
+            <!-- Good -->
             <option value="취약">취약</option>
+            <!-- Vulnerable -->
+          </select>
+        </div>
+
+        <!-- 점검항목 (Check List) -->
+        <div class="dropdown-container">
+          <label for="viewOption">점검항목:</label>
+          <select id="viewOption" bind:value={selectedCheckList}>
+            <option value="">전체</option>
+            {#each vulnerabilityData as vuln}
+              <option value={vuln.item}>
+                {vuln.item}
+              </option>
+            {/each}
           </select>
         </div>
 
@@ -226,7 +276,7 @@
     <div class="secondLine">
       <div>
         <p class="bold-text">프로젝트 전체 보안수준:</p>
-        <p>{projectsData[0].name}</p>
+        <p>{detailofAsset?.ast_hostname}</p>
       </div>
       <div>
         <p class="bold-text">결과미확정, 점검대상:</p>
@@ -261,7 +311,7 @@
             {#each filteredVulns as vuln, vulnIndex}
               <tr>
                 <td>{vulnIndex + 1}</td>
-                <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
+                <td>{detailofAsset[0]?.ast_hostname || "No Title"}</td>
                 <td>
                   [{vuln?.ccr_item_no__ccc_item_no ||
                     "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||

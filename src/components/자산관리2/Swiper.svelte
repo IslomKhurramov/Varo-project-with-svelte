@@ -15,9 +15,9 @@
     setAssetGroupChange,
     setAssetActivate,
     setAssetUnActivate,
+    setAssetInformationUpdate,
   } from "../../services/page2/assetService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
-  import Modal2 from "../../shared/Modal2.svelte";
   import ModalEdit from "./SwiperMenu/ModalEdit.svelte";
   let showModalSecond = false;
   let selectedGroupIndex = "";
@@ -32,6 +32,70 @@
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
+  };
+  /*************************************************************************/
+  // Reactive subscription to assetDeatilInfo store
+  $: assetDetails =
+    $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
+
+  let formData = {
+    ass_uuid: "",
+    ast_group: "",
+    ast_code: "",
+    ast_usage: "",
+    ast_model: "",
+    ast_brand: "",
+    ast_os: "",
+    ast_ostype: "",
+    ast_application: "",
+    ast_version: "",
+    ast_url: "",
+    ast_hostname: "",
+    ast_real_hostname: "",
+    ast_macaddress: "",
+    ast_ipaddr: "",
+    ast_ipaddrs: "",
+    ast_real_ipaddr: "",
+    ast_location: "",
+    ast_manager_team: "",
+    ast_manager_person: "",
+    ast_operator_team: "",
+    ast_operator_person: "",
+    ast_operator_phone: "",
+    ast_isms_target: "",
+    ast_confidentiality: "",
+    ast_integrity: "",
+    ast_availability: "",
+    ast_security_point: "",
+    ast_security_level: "",
+    ast_etc: "",
+    ast_approve_status: "",
+    ast_activate: "",
+    ast_agent_installed: "",
+  };
+  function cancel() {
+    showModalSecond = false;
+  }
+
+  // Only populate formData if it's uninitialized
+  $: if (Object.keys(assetDetails).length > 0 && !formData.ass_uuid) {
+    formData = { ...assetDetails };
+    console.log("Loaded asset details:", assetDetails);
+  }
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    try {
+      const response = await setAssetInformationUpdate(formData);
+      if (response.success) {
+        showModalSecond = false;
+        successAlert("Data updated successfully");
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      errorMessage = `Failed to update asset information: ${error.message}`;
+      successMessage = "";
+    }
   };
   /******************************************************/
   async function assetListDetail(uuid) {
@@ -266,16 +330,30 @@
     </dialog>
   {/if}
 
-  <Modal2 bind:showModalSecond>
-    <ModalEdit />
-  </Modal2>
+  {#if showModalSecond}
+    <div class="dialog2" open on:close={() => (showModalSecond = false)}>
+      <ModalEdit
+        {showModalSecond}
+        {handleSubmit}
+        {formData}
+        {assetDetails}
+        {cancel}
+      />
+    </div>
+  {/if}
 </main>
 
 <style>
   main {
     width: 100%;
   }
-
+  .dialog2 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
   /* Swiper Styles */
   .swiper-container {
     width: 100%;

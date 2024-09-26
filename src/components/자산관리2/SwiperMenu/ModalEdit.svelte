@@ -3,65 +3,11 @@
   import { setAssetInformationUpdate } from "../../../services/page2/assetService";
   import { successAlert } from "../../../shared/sweetAlert";
 
-  // Reactive subscription to assetDeatilInfo store
-  $: assetDetails =
-    $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
-
-  let formData = {
-    ass_uuid: "",
-    ast_group: "",
-    ast_code: "",
-    ast_usage: "",
-    ast_model: "",
-    ast_brand: "",
-    ast_os: "",
-    ast_ostype: "",
-    ast_application: "",
-    ast_version: "",
-    ast_url: "",
-    ast_hostname: "",
-    ast_real_hostname: "",
-    ast_macaddress: "",
-    ast_ipaddr: "",
-    ast_ipaddrs: "",
-    ast_real_ipaddr: "",
-    ast_location: "",
-    ast_manager_team: "",
-    ast_manager_person: "",
-    ast_operator_team: "",
-    ast_operator_person: "",
-    ast_operator_phone: "",
-    ast_isms_target: "",
-    ast_confidentiality: "",
-    ast_integrity: "",
-    ast_availability: "",
-    ast_security_point: "",
-    ast_security_level: "",
-    ast_etc: "",
-    ast_approve_status: "",
-    ast_activate: "",
-    ast_agent_installed: "",
-  };
-
-  // Only populate formData if it's uninitialized
-  $: if (Object.keys(assetDetails).length > 0 && !formData.ass_uuid) {
-    formData = { ...assetDetails };
-    console.log("Loaded asset details:", assetDetails);
-  }
-  // Function to handle form submission
-  const handleSubmit = async () => {
-    try {
-      const response = await setAssetInformationUpdate(formData);
-      if (response.success) {
-        successAlert("Data updated successfully");
-      } else {
-        throw new Error();
-      }
-    } catch (error) {
-      errorMessage = `Failed to update asset information: ${error.message}`;
-      successMessage = "";
-    }
-  };
+  export let showModalSecond;
+  export let handleSubmit;
+  export let formData;
+  export let assetDetails;
+  export let cancel;
 </script>
 
 <main>
@@ -169,12 +115,24 @@
         ></textarea>
         <div class="group_agent_info">
           {#if formData.ast_agent_installed}
-            <div><span>에이전트설치여부:</span> installed</div>
+            <div class="info-item installed">
+              <span class="label">에이전트설치여부:</span>
+              <span class="value">Installed</span>
+            </div>
           {:else}
-            <div><span>에이전트설치여부:</span>not installed</div>
+            <div class="info-item not-installed">
+              <span class="label">에이전트설치여부:</span>
+              <span class="value">Not Installed</span>
+            </div>
           {/if}
-          <div><span>등록승인여부:</span> {formData.ast_approve_status}</div>
-          <div><span>맥주소:</span> {formData.ast_macaddress || "없음"}</div>
+          <div class="info-item">
+            <span class="label">등록승인여부:</span>
+            <span class="value">{formData.ast_approve_status}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">맥주소:</span>
+            <span class="value">{formData.ast_macaddress || "없음"}</span>
+          </div>
         </div>
         <div class="button_container">
           <div class="input_buttons">
@@ -185,7 +143,12 @@
               on:click={() => (formData = { ...assetDetails })}>Reset</button
             >
           </div>
-          <button>Cancel</button>
+          <button
+            on:click={(event) => {
+              event.preventDefault();
+              cancel();
+            }}>Cancel</button
+          >
         </div>
       </div>
     </form>
@@ -308,5 +271,41 @@
     flex-direction: row;
     gap: 10px;
     font-size: 12px;
+  }
+  .group_agent_info {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 16px; /* Padding for spacing */
+    max-width: 400px; /* Set a max width for cleaner design */
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0; /* Spacing between items */
+    border-bottom: 1px solid #e0e0e0; /* Divider between items */
+  }
+
+  .label {
+    font-weight: 600; /* Slightly bold labels */
+    color: #495057; /* Dark gray label color */
+  }
+
+  .value {
+    font-weight: 400; /* Normal weight for value text */
+    color: #212529; /* Darker color for values */
+  }
+
+  /* Style variations for installed/not installed */
+  .installed .value {
+    color: #28a745; /* Green color for installed */
+    font-weight: 600; /* Bold text */
+  }
+
+  .not-installed .value {
+    color: #dc3545; /* Red color for not installed */
+    font-weight: 600; /* Bold text */
   }
 </style>

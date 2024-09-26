@@ -2,6 +2,7 @@
   import { getPlanLists } from "../../../services/page1/newInspection";
   import { getAuditNLog } from "../../../services/logs/logsService";
   import moment from "moment";
+  import { onMount } from "svelte";
 
   export let performanceLog = [];
 
@@ -15,20 +16,12 @@
 
   /*
  {
-            "his_index": 5,
-            "logging_type_index_id": 2,
-            "his_type": "login",
-            "ccp_index": 7,
-            "asset_group": "",
-            "ast_uuid": "b204d00a-29cb-4fd6-94c6-ac73a77a1616",
-            "checklist_index": 1,
-            "result_index": 1228,
-            "his_orig_data": "로그인 성공",
-            "his_new_data": "",
-            "his_udate": "2024-09-15T07:04:13.597Z",
-            "his_order_user": "admin",
-            "his_full_data": "{'type': 'audit', 'where': 'login', 'from_what': '로그인 성공', 'to_what': '', 'who': 'admin'}"
-        }
+    "plan_index": "7",
+    "asset_name": "",
+    "order_user": "admin",
+    "search_start_date": "2024-01-01",
+    "search_end_date": "2024-12-12"
+}
   */
 
   for (let i = 1; i <= 100; i++) {
@@ -47,14 +40,18 @@
   let projects;
   let logData = [];
 
-  const initialData = async () => {
+  onMount(async () => {
     projects = await getPlanLists();
     logData = await getAuditNLog(search);
-    console.log("logData:", logData);
+  });
+
+  const searchDataHandler = async () => {
+    logData = await getAuditNLog(search);
   };
 
   $: {
-    initialData();
+    console.log("logData:", logData);
+    console.log("search:", search);
   }
 </script>
 
@@ -63,7 +60,7 @@
     <div class="dropdown-group">
       <div class="dropdown-container">
         <label for="project">프로젝트:</label>
-        <select id="project">
+        <select id="project" bind:value={search.plan_index}>
           <option value="" selected disabled>선택</option>
           {#if projects}
             {#each projects as plan}
@@ -74,21 +71,21 @@
       </div>
       <div class="dropdown-container">
         <label for="target">수행자:</label>
-        <select id="target">
+        <select id="target" bind:value={search.order_user}>
           <option value="" selected disabled>선택</option>
         </select>
       </div>
       <div class="dropdown-container">
         <label for="target">날짜:</label>
         <div>
-          <input type="date" />
+          <input type="date" bind:value={search.search_start_date} />
           ~
-          <input type="date" />
+          <input type="date" bind:value={search.search_end_date} />
         </div>
       </div>
     </div>
     <div class="button-group">
-      <button class="firstlineButton">검색</button>
+      <button class="firstlineButton" on:click={searchDataHandler}>검색</button>
       <button class="firstlineButton">엑셀저장</button>
     </div>
   </div>

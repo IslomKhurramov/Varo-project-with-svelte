@@ -1,13 +1,21 @@
 <script>
+  import {
+    getUserExist,
+    setPasswordReset,
+  } from "./../../services/login/loginService.js";
   import { login, register } from "../../services/page1/authService";
   import { navigate } from "svelte-routing";
   import { userData } from "../../stores/user.store";
+  import { successAlert, errorAlert } from "../../shared/sweetAlert";
 
   //for LOGIN
   let containerActive = false;
+  let tabMenu = "login";
   let email = "";
   let password = "";
   let errorMessage = "";
+
+  let find_user = "";
 
   //for SignUp
   let username = "";
@@ -71,6 +79,34 @@
     }
   };
 
+  const findUser = async () => {
+    try {
+      if (!find_user) throw new Error("이메일 입력하지 않았습니다");
+      const result = await getUserExist(find_user);
+
+      await successAlert(result);
+      tabMenu = "login";
+    } catch (err) {
+      errorMessage = err?.message;
+    } finally {
+      find_user = "";
+    }
+  };
+
+  const resetPassword = async () => {
+    try {
+      if (!find_user) throw new Error("이메일 입력하지 않았습니다");
+      const result = await setPasswordReset(find_user);
+
+      await successAlert(result);
+      tabMenu = "login";
+    } catch (err) {
+      errorMessage = err?.message;
+    } finally {
+      find_user = "";
+    }
+  };
+
   const registerClick = () => {
     containerActive = true;
   };
@@ -78,6 +114,10 @@
   const loginClick = () => {
     containerActive = false;
   };
+
+  $: {
+    console.log(tabMenu);
+  }
 </script>
 
 <div class="container {containerActive ? 'active' : ''}" id="container">
@@ -133,28 +173,68 @@
   </div>
 
   <div class="form-container sign-in">
-    <form on:submit|preventDefault={handleLogin}>
-      <h1>Sign In</h1>
-      <div class="social-icons">
+    {#if tabMenu === "find_user"}
+      <form on:submit|preventDefault={findUser}>
+        <h1>이메일을 입력해 주세요</h1>
+        <input type="email" placeholder="Email" bind:value={find_user} />
+        <div>
+          <button
+            on:click={() => {
+              tabMenu = "login";
+              find_user = "";
+            }}>back</button
+          >
+          <button>send</button>
+        </div>
+        {#if errorMessage}
+          <p class="error">{errorMessage}</p>
+        {/if}
+      </form>
+    {:else if tabMenu === "reset_password"}
+      <form on:submit|preventDefault={resetPassword}>
+        <h1>이메일을 입력해 주세요</h1>
+        <input type="email" placeholder="Email" bind:value={find_user} />
+        <div>
+          <button
+            on:click={() => {
+              tabMenu = "login";
+              find_user = "";
+            }}>back</button
+          >
+          <button>send</button>
+        </div>
+        {#if errorMessage}
+          <p class="error">{errorMessage}</p>
+        {/if}
+      </form>
+    {:else}
+      <form on:submit|preventDefault={handleLogin}>
+        <h1>Sign In</h1>
+        <div class="social-icons">
+          <!-- svelte-ignore a11y-invalid-attribute -->
+          <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a
+          >
+          <!-- svelte-ignore a11y-invalid-attribute -->
+          <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+          <!-- svelte-ignore a11y-invalid-attribute -->
+          <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+          <!-- svelte-ignore a11y-invalid-attribute -->
+          <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+        <span>or use your email and password</span>
+        <input type="email" placeholder="Email" bind:value={email} />
+        <input type="password" placeholder="Password" bind:value={password} />
         <!-- svelte-ignore a11y-invalid-attribute -->
-        <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
-        <!-- svelte-ignore a11y-invalid-attribute -->
-        <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-        <!-- svelte-ignore a11y-invalid-attribute -->
-        <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
-        <!-- svelte-ignore a11y-invalid-attribute -->
-        <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
-      </div>
-      <span>or use your email and password</span>
-      <input type="email" placeholder="Email" bind:value={email} />
-      <input type="password" placeholder="Password" bind:value={password} />
-      <!-- svelte-ignore a11y-invalid-attribute -->
-      <a href="#">Forgot Your Password?</a>
-      <button type="submit">Sign In</button>
-      {#if errorMessage}
-        <p class="error">{errorMessage}</p>
-      {/if}
-    </form>
+        <div>
+          <a on:click={() => (tabMenu = "find_user")}>아이디찾기</a>
+          <a on:click={() => (tabMenu = "reset_password")}>비밀번호초기화</a>
+        </div>
+        <button type="submit">Sign In</button>
+        {#if errorMessage}
+          <p class="error">{errorMessage}</p>
+        {/if}
+      </form>
+    {/if}
   </div>
 
   <div class="toggle-container">

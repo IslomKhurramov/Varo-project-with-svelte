@@ -6,6 +6,7 @@
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
+
   // Automatically update plantoSHow and gather all vulns when cceHistory changes
   $: if (cceHistory.length > 0) {
     plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
@@ -103,7 +104,7 @@
             {#each allVulns as vuln, vulnIndex}
               <tr>
                 <td>{vulnIndex + 1}</td>
-                <td>{vuln?.ccp_index__ccp_title || "No Title"}</td>
+                <td>{assetDetails.ast_hostname || "No Title"}</td>
                 <td>
                   [{vuln?.ccr_item_no__ccc_item_no ||
                     "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||

@@ -236,6 +236,7 @@
             <!-- Good -->
             <option value="취약">취약</option>
             <!-- Vulnerable -->
+            <option value="수동점검">수동점검</option>
           </select>
         </div>
 

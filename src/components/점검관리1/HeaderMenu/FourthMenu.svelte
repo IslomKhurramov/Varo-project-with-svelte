@@ -1,7 +1,35 @@
 <script>
   import { getPlanLists } from "../../../services/page1/newInspection";
+  import { getAuditNLog } from "../../../services/logs/logsService";
+  import moment from "moment";
 
   export let performanceLog = [];
+
+  const search = {
+    plan_index: "",
+    asset_name: "",
+    order_user: "",
+    search_start_date: "",
+    search_end_date: "",
+  };
+
+  /*
+ {
+            "his_index": 5,
+            "logging_type_index_id": 2,
+            "his_type": "login",
+            "ccp_index": 7,
+            "asset_group": "",
+            "ast_uuid": "b204d00a-29cb-4fd6-94c6-ac73a77a1616",
+            "checklist_index": 1,
+            "result_index": 1228,
+            "his_orig_data": "로그인 성공",
+            "his_new_data": "",
+            "his_udate": "2024-09-15T07:04:13.597Z",
+            "his_order_user": "admin",
+            "his_full_data": "{'type': 'audit', 'where': 'login', 'from_what': '로그인 성공', 'to_what': '', 'who': 'admin'}"
+        }
+  */
 
   for (let i = 1; i <= 100; i++) {
     performanceLog.push({
@@ -17,9 +45,12 @@
   }
 
   let projects;
+  let logData = [];
 
   const initialData = async () => {
     projects = await getPlanLists();
+    logData = await getAuditNLog(search);
+    console.log("logData:", logData);
   };
 
   $: {
@@ -51,12 +82,13 @@
         <label for="target">날짜:</label>
         <div>
           <input type="date" />
+          ~
           <input type="date" />
         </div>
       </div>
-      <button class="firstlineButton">검색</button>
     </div>
     <div class="button-group">
+      <button class="firstlineButton">검색</button>
       <button class="firstlineButton">엑셀저장</button>
     </div>
   </div>
@@ -74,18 +106,20 @@
       </tr>
     </thead>
     <tbody>
-      {#each performanceLog as asset}
-        <tr>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.logContent}</td>
-          <td>{asset.performer}</td>
-          <td>{asset.date}</td>
-          <td>{asset.note}</td>
-        </tr>
-      {/each}
+      {#if logData.length !== 0}
+        {#each logData as data, index}
+          <tr>
+            <td>{index + 1}</td>
+            <td>{data.ccp_index}</td>
+            <td>{data.ast_uuid}</td>
+            <td>{"분류코드"}</td>
+            <td>{data.his_orig_data}</td>
+            <td>{data.his_order_user}</td>
+            <td>{moment(data.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
+            <td>{"-"}</td>
+          </tr>
+        {/each}
+      {/if}
     </tbody>
   </table>
 </main>
@@ -157,13 +191,14 @@
     width: 100%;
     padding: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 10px;
     box-sizing: border-box;
   }
 
   .dropdown-group {
+    margin-right: 20px;
     display: flex;
     gap: 40px;
     flex-wrap: wrap;

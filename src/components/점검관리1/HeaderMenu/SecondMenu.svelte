@@ -80,7 +80,7 @@
           <label for="result">점검항목:</label>
           <select id="result">
             <option value="" selected disabled>선택</option>
-            {#if planOptions.checklist_group}
+            {#if planOptions?.checklist_group}
               {#each planOptions.checklist_group as item}
                 <option value={item.ccg_index}>{item.ccg_group}</option>
               {/each}
@@ -90,11 +90,7 @@
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
           <select id="result">
-            {#if planOptions.checklist_group}
-              {#each planOptions.checklist_group as item}
-                <option value={item.ccg_index}>{item.ccg_group}</option>
-              {/each}
-            {/if}
+            <option>점검결과</option>
           </select>
         </div>
         <div class="dropdown-container">

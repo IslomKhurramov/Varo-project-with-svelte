@@ -1,4 +1,6 @@
 <script>
+  import { getPlanLists } from "../../../services/page1/newInspection";
+
   export let performanceLog = [];
 
   for (let i = 1; i <= 100; i++) {
@@ -13,9 +15,51 @@
       note: "",
     });
   }
+
+  let projects;
+
+  const initialData = async () => {
+    projects = await getPlanLists();
+  };
+
+  $: {
+    initialData();
+  }
 </script>
 
 <main>
+  <div class="firstLine">
+    <div class="dropdown-group">
+      <div class="dropdown-container">
+        <label for="project">프로젝트:</label>
+        <select id="project">
+          <option value="" selected disabled>선택</option>
+          {#if projects}
+            {#each projects as plan}
+              <option value={plan.ccp_index}>{plan.ccp_title}</option>
+            {/each}
+          {/if}
+        </select>
+      </div>
+      <div class="dropdown-container">
+        <label for="target">수행자:</label>
+        <select id="target">
+          <option value="" selected disabled>선택</option>
+        </select>
+      </div>
+      <div class="dropdown-container">
+        <label for="target">날짜:</label>
+        <div>
+          <input type="date" />
+          <input type="date" />
+        </div>
+      </div>
+      <button class="firstlineButton">검색</button>
+    </div>
+    <div class="button-group">
+      <button class="firstlineButton">엑셀저장</button>
+    </div>
+  </div>
   <table>
     <thead>
       <tr class="first_line">
@@ -50,7 +94,8 @@
   main {
     width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 
     margin-bottom: 40px;
     border-radius: 10px;
@@ -106,5 +151,56 @@
 
   tbody tr:last-child td {
     border-bottom: none;
+  }
+
+  .firstLine {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+
+  .dropdown-group {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .dropdown-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .dropdown-container label {
+    font-weight: bold;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .firstlineButton {
+    background-color: #0056b3;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .firstlineButton:hover {
+    background-color: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
 </style>

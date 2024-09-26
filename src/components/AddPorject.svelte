@@ -69,7 +69,7 @@
         plan_name: projectName,
         plan_recheck: parseInt(selectedType),
         plan_recheck_plan_index: parseInt(recheckplanIndex ?? 0),
-        asset_group_index: parseInt(selectedCheckList),
+        // asset_group_index: parseInt(selectedCheckList),
         checklist_index: parseInt(selectedAssetList),
         plan_planer_info: parseInt(selectedPersons),
         plan_start_date: moment(startDate).format("YYYY-MM-DD h:mm:ss"),
@@ -85,6 +85,9 @@
         fix_conductor_info: parseInt(conductorInfo),
         assessment_command: inspectionInformation,
       };
+
+      if (parseInt(selectedType) === 0)
+        sendData.asset_group_index = parseInt(selectedCheckList);
       console.log("submitNewPlan: sendData:", sendData);
 
       const formData = new FormData();
@@ -187,21 +190,22 @@
         </div>
       {/if}
 
-      <!-- Inspection Target -->
-      <div class="row">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
+      {#if selectedType === "0"}
+        <div class="row">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
 
-        <label class="label blue-label">점검대상</label>
-        <select class="dropdown" bind:value={selectedCheckList}>
-          <option value="" selected disabled>자산 그룹목록</option>
+          <label class="label blue-label">점검대상</label>
+          <select class="dropdown" bind:value={selectedCheckList}>
+            <option value="" selected disabled>자산 그룹목록</option>
 
-          {#if planOptions.asset_group}
-            {#each planOptions.asset_group as asset}
-              <option value={asset.asg_index}>{asset.asg_title}</option>
-            {/each}
-          {/if}
-        </select>
-      </div>
+            {#if planOptions.asset_group}
+              {#each planOptions.asset_group as asset}
+                <option value={asset.asg_index}>{asset.asg_title}</option>
+              {/each}
+            {/if}
+          </select>
+        </div>
+      {/if}
 
       <!-- Checklist -->
       <div class="row">

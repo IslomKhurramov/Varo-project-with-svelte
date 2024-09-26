@@ -1,4 +1,8 @@
 <script>
+  import {
+    getOptionsForNewPlan,
+    getPlanLists,
+  } from "../../../services/page1/newInspection";
   import Modal from "../../../shared/Modal.svelte";
   import ModalPage from "../ModalPage.svelte";
 
@@ -26,6 +30,18 @@
       instectionResult: "양호",
     });
   }
+
+  let projects;
+  let planOptions;
+
+  const initialData = async () => {
+    projects = await getPlanLists();
+    planOptions = await getOptionsForNewPlan();
+  };
+
+  $: {
+    initialData();
+  }
 </script>
 
 <body>
@@ -35,13 +51,23 @@
         <div class="dropdown-container">
           <label for="project">프로젝트:</label>
           <select id="project">
-            <option value="수리과터스트2">수리과터스트2</option>
+            <option value="" selected disabled>선택</option>
+            {#if projects}
+              {#each projects as plan}
+                <option value={plan.ccp_index}>{plan.ccp_title}</option>
+              {/each}
+            {/if}
           </select>
         </div>
         <div class="dropdown-container">
           <label for="target">점검대상:</label>
           <select id="target">
-            <option value="수리과터스트2">수리과터스트2</option>
+            <option value="" selected disabled>선택</option>
+            {#if planOptions?.asset_group}
+              {#each planOptions.asset_group as asset}
+                <option value={asset.asg_index}>{asset.asg_title}</option>
+              {/each}
+            {/if}
           </select>
         </div>
         <div class="dropdown-container">
@@ -51,9 +77,24 @@
           </select>
         </div>
         <div class="dropdown-container">
+          <label for="result">점검항목:</label>
+          <select id="result">
+            <option value="" selected disabled>선택</option>
+            {#if planOptions.checklist_group}
+              {#each planOptions.checklist_group as item}
+                <option value={item.ccg_index}>{item.ccg_group}</option>
+              {/each}
+            {/if}
+          </select>
+        </div>
+        <div class="dropdown-container">
           <label for="result">점검결과:</label>
           <select id="result">
-            <option value="수리과터스트2">수리과터스트2</option>
+            {#if planOptions.checklist_group}
+              {#each planOptions.checklist_group as item}
+                <option value={item.ccg_index}>{item.ccg_group}</option>
+              {/each}
+            {/if}
           </select>
         </div>
         <div class="dropdown-container">

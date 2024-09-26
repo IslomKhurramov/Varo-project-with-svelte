@@ -17,7 +17,9 @@
     setAssetUnActivate,
   } from "../../services/page2/assetService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
-
+  import Modal2 from "../../shared/Modal2.svelte";
+  import ModalEdit from "./SwiperMenu/ModalEdit.svelte";
+  let showModalSecond = false;
   let selectedGroupIndex = "";
   let showModal = false;
   let currentPage = null;
@@ -226,7 +228,7 @@
     </div>
     <div class="button_container">
       <button on:click={() => (showModal = true)}>자산그룹이동 </button>
-      <button>정보수정</button>
+      <button on:click={() => (showModalSecond = true)}>정보수정</button>
       <button on:click={activateAsset}>등록승인/등록해제 </button>
       <button on:click={unactivate}>자산삭제</button>
     </div>
@@ -263,6 +265,10 @@
       </div>
     </dialog>
   {/if}
+
+  <Modal2 bind:showModalSecond>
+    <ModalEdit />
+  </Modal2>
 </main>
 
 <style>

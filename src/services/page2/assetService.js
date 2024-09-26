@@ -112,22 +112,113 @@ export const getDetailInformationOfAsset = async (uuid) => {
 };
 /******ASSET GROUP CHANGE***** */
 
-export const setAssetGroupChange = async (uuid,current_group_index,next_group_index) => {
+export const setAssetGroupChange = async (
+  uuid,
+  current_group_index,
+  next_group_index,
+) => {
   try {
+    const response = await axios.post(`${serverApi}/api/setAssetGroupChange/`, {
+      ass_uuid: uuid,
+      current_group_index: current_group_index,
+      next_group_index: next_group_index,
+    });
+
+    if (response.data.RESULT === "OK") {
+      return { success: true }; // Return the data from the API
+    } else {
+      throw new Error(
+        `Error Code on setAssetGroupChange: ${response.data.CODE}`,
+      );
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch asset detail: ${error.message}`);
+  }
+};
+
+/************* ASSET INFORMATION UPDATE*************** */
+export const setAssetInformationUpdate = async (assetInfo) => {
+  try {
+    const {
+      ass_uuid,
+      ast_group,
+      ast_code,
+      ast_usage,
+      ast_model,
+      ast_brand,
+      ast_os,
+      ast_ostype,
+      ast_application,
+      ast_version,
+      ast_url,
+      ast_hostname,
+      ast_real_hostname,
+      ast_macaddress,
+      ast_ipaddr,
+      ast_ipaddrs,
+      ast_real_ipaddr,
+      ast_location,
+      ast_manager_team,
+      ast_manager_person,
+      ast_operator_team,
+      ast_operator_person,
+      ast_operator_phone,
+      ast_isms_target,
+      ast_confidentiality,
+      ast_integrity,
+      ast_availability,
+      ast_security_point,
+      ast_security_level,
+      ast_etc,
+      ast_approve_status,
+      ast_activate,
+      ast_agent_installed,
+    } = assetInfo;
     const response = await axios.post(
-      `${serverApi}/api/setAssetGroupChange/`,
+      `${serverApi}/api/setAssetInformationUpdate/`,
       {
-        ass_uuid: uuid,
-        current_group_index:current_group_index,
-        next_group_index:next_group_index
+        ass_uuid,
+        ast_group,
+        ast_code,
+        ast_usage,
+        ast_model,
+        ast_brand,
+        ast_os,
+        ast_ostype,
+        ast_application,
+        ast_version,
+        ast_url,
+        ast_hostname,
+        ast_real_hostname,
+        ast_macaddress,
+        ast_ipaddr,
+        ast_ipaddrs,
+        ast_real_ipaddr,
+        ast_location,
+        ast_manager_team,
+        ast_manager_person,
+        ast_operator_team,
+        ast_operator_person,
+        ast_operator_phone,
+        ast_isms_target,
+        ast_confidentiality,
+        ast_integrity,
+        ast_availability,
+        ast_security_point,
+        ast_security_level,
+        ast_etc,
+        ast_approve_status,
+        ast_activate,
+        ast_agent_installed,
       },
     );
 
     if (response.data.RESULT === "OK") {
-      return {success:true} // Return the data from the API
+      return { success: true }; // Return the data from the API
     } else {
+      console.error(`API Error:`, response.data); // Log the full response for debugging
       throw new Error(
-        `Error Code on setAssetGroupChange: ${response.data.CODE}`,
+        `Error Code on setAssetInformationUpdate: ${response.data.CODE}`,
       );
     }
   } catch (error) {

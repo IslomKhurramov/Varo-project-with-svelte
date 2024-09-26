@@ -44,3 +44,23 @@ export const getUploadedResultErrors = async (plan_index) => {
     throw error;
   }
 };
+
+export const getViewPlanResults = async (search) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getViewPlanResults/`,
+      search,
+      {
+        withCredentials: true,
+      },
+    );
+
+    if (response?.data?.RESULT == "ERROR")
+      throw new Error("Something went wrong!");
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error getViewPlanResults:", error);
+    throw error;
+  }
+};

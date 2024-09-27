@@ -10,47 +10,42 @@
   let projectData = [];
   let assetData = [];
   let vulnerabilityData = [];
+  let targetCounts = {};
 
+  // Reactive block to set cceHistory and DetailOfAsset
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: DetailOfAsset = $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0] : [];
-  /************************/
+
   // Extract project data and vulns from cceHistory
-  $: if (cceHistory.length > 0) {
-    plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
+  $: {
+    if (cceHistory.length > 0) {
+      plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans
 
-    // Gather all vulns from plantoSHow and set as default
-    allVulns = [];
-    plantoSHow.forEach((historyItem) => {
-      if (historyItem.vulns && historyItem.vulns.length > 0) {
-        allVulns.push(...historyItem.vulns);
+      // Gather all vulnerabilities from plantoSHow
+      allVulns = plantoSHow.flatMap((historyItem) => historyItem.vulns || []);
+
+      // Set filteredVulns to allVulns initially
+      filteredVulns = [...allVulns];
+
+      targetCounts = {};
+      if (plantoSHow.length > 0) {
+        plantoSHow.forEach((targets) => {
+          const target = targets.plans.ast_uuid__ast_target__cct_target;
+          if (target) {
+            targetCounts[target] = (targetCounts[target] || 0) + 1;
+          }
+        });
       }
-    });
-
-    plantoSHow = cceHistory.map((item) => Object.values(item)[0]); // Extract plans from each item
-
-    // Gather all vulns from plantoSHow and set as default
-    allVulns = [];
-    plantoSHow.forEach((historyItem) => {
-      if (historyItem.vulns && historyItem.vulns.length > 0) {
-        allVulns.push(...historyItem.vulns);
-      }
-    });
-
-    filteredVulns = [...allVulns];
+    }
   }
-  // detailOfAsset (asset) ******************************************************************
-  $: if (
-    DetailOfAsset.asset &&
-    Array.isArray(DetailOfAsset.asset) &&
-    DetailOfAsset.asset.length > 0
-  ) {
+
+  // Set detail of asset
+  $: if (DetailOfAsset.asset && Array.isArray(DetailOfAsset.asset)) {
     detailofAsset = DetailOfAsset.asset;
-    console.log("detail of asset", detailofAsset);
+    console.log("Detail of asset:", detailofAsset);
   }
-  /**************************************************************************/
 
-  /********************************************************/
-
+  // Variables for filtering
   let selectedProject = "";
   let selectedTarget = "";
   let selectedHost = "";
@@ -58,64 +53,43 @@
   let selectedCheckList = "";
   let selectedViewOption = "상세보기";
 
+  // Function to filter vulnerabilities
   function searchResults() {
     filteredVulns = allVulns.filter((vuln) => {
       const projectMatch =
-        selectedProject === "" ||
-        vuln?.ccp_index__ccp_title === selectedProject;
+        selectedProject === "" || vuln.ccp_index__ccp_title === selectedProject;
       const targetMatch =
-        selectedTarget === "" || vuln?.cct_index__cct_target === selectedTarget;
+        selectedTarget === "" || vuln.cct_index__cct_target === selectedTarget;
       const resultMatch =
-        selectedResult === "" || vuln?.ccr_item_result === selectedResult;
+        selectedResult === "" || vuln.ccr_item_result === selectedResult;
       const hostMatch =
-        selectedHost === "" || detailofAsset[0]?.ast_hostname === selectedHost; // Use hostname from detailofAsset
+        selectedHost === "" || detailofAsset[0]?.ast_hostname === selectedHost;
       const checkListMatch =
         selectedCheckList === "" ||
-        vuln?.ccr_item_no__ccc_item_title === selectedCheckList;
-      const viewOptionMatch =
-        selectedViewOption === "" || // Handle the logic for detailed vs. summary view
-        (selectedViewOption === "상세보기" && vuln?.isDetailed) ||
-        (selectedViewOption === "간략보기" && !vuln?.isDetailed);
+        vuln.ccr_item_no__ccc_item_title === selectedCheckList;
 
-      // Ensure all conditions must match
       return (
         projectMatch &&
         targetMatch &&
         resultMatch &&
         hostMatch &&
-        checkListMatch &&
-        viewOptionMatch
+        checkListMatch
       );
     });
   }
-  /**********************************************************/
-
-  /*****************************/
   // Count occurrences of each target
-  let targetCounts = {};
-
-  // Create a reactive block to count targets when plantoSHow changes
-  $: {
-    targetCounts = {};
-
-    if (plantoSHow.length > 0) {
-      plantoSHow.forEach((targets) => {
-        const target = targets.plans.ast_uuid__ast_target__cct_target;
-        if (target) {
-          targetCounts[target] = (targetCounts[target] || 0) + 1;
-        }
-      });
-    }
-  }
-  // Function to convert targetCounts into an array for easier rendering (if needed)
-  const getTargetEntries = () => {
+  let getTargetEntries;
+  // Function to convert targetCounts into an array for rendering
+  $: getTargetEntries = () => {
     return Object.entries(targetCounts);
   };
+
+  // Check function for debugging
   function check() {
-    console.log("cceHistory", cceHistory);
-    console.log("detail of asset2", DetailOfAsset);
-    console.log("projectData", projectData);
-    console.log("countedTargets", countedTargets);
+    console.log("plantoshow:", plantoSHow);
+    console.log("Detail of Asset:", DetailOfAsset);
+    console.log("Project Data:", projectData);
+    console.log("Target Counts:", targetCounts); // Use targetCounts here
   }
 </script>
 
@@ -183,9 +157,9 @@
           <select id="project" bind:value={selectedProject}>
             <option value="">전체</option>
             <!-- 전체 means "All" -->
-            {#each projectData as project}
-              <option value={project.projectName}>
-                {project.projectName}
+            {#each plantoSHow as project}
+              <option value={project.plans.ccp_index__ccp_title}>
+                {project.plans.ccp_index__ccp_title}
               </option>
             {/each}
           </select>
@@ -196,11 +170,14 @@
           <label for="target">점검대상:</label>
           <select id="target" bind:value={selectedTarget}>
             <option value="">전체</option>
-            {#each projectData as project}
-              <option value={project.inspectionTarget}>
-                {project.inspectionTarget}
-              </option>
-            {/each}
+            <option value="WINDOWS">WINDOWS</option>
+            <option value="PC">PC</option>
+            <option value="NETWORK">NETWORK</option>
+            <option value="DBMS">DBMS</option>
+            <option value="WEB">WEB</option>
+            <option value="WAS">WAS</option>
+            <option value="CLOUD">CLOUD</option>
+            <option value="SECURITY">SECURITY</option>
           </select>
         </div>
 
@@ -217,7 +194,6 @@
           </select>
         </div>
 
-        <!-- 점검결과 (Inspection Result) -->
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
           <select id="result" bind:value={selectedResult}>
@@ -278,11 +254,9 @@
         {#if Object.keys(targetCounts).length > 0}
           {#each getTargetEntries() as [target, count]}
             <p>{target} {count}개</p>
-            <!-- Display the target and its count -->
           {/each}
         {:else}
           <p>No targets available</p>
-          <!-- Message when there are no counted targets -->
         {/if}
       </div>
       <div>

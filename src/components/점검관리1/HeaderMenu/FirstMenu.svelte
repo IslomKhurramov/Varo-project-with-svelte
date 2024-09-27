@@ -35,7 +35,7 @@
     try {
       planList = await getPlanLists();
     } catch (err) {
-      console.error("Error loading asset groups:", error);
+      console.error("Error loading asset groups:", err);
     }
   });
 </script>

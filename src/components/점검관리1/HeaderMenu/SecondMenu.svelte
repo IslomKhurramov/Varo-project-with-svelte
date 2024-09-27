@@ -1,10 +1,12 @@
 <script>
+  import { onMount } from "svelte";
   import {
     getOptionsForNewPlan,
     getPlanLists,
   } from "../../../services/page1/newInspection";
   import Modal from "../../../shared/Modal.svelte";
   import ModalPage from "../ModalPage.svelte";
+  import { getViewPlanResults } from "../../../services/result/resultService";
 
   let showModal = false;
   let projectsData = [
@@ -31,16 +33,29 @@
     });
   }
 
+  let search = {
+    plan_index: "",
+    assessment_target: "",
+    hostname: "",
+    checklist_item_no: "",
+    check_result: "",
+    show_option: "",
+  };
   let projects;
   let planOptions;
+  let resultData;
 
-  const initialData = async () => {
+  onMount(async () => {
     projects = await getPlanLists();
     planOptions = await getOptionsForNewPlan();
+  });
+
+  const searchDataHandler = async () => {
+    resultData = await getViewPlanResults(search);
   };
 
   $: {
-    initialData();
+    console.log("resultData:", resultData);
   }
 </script>
 
@@ -101,7 +116,9 @@
         </div>
       </div>
       <div class="button-group">
-        <button class="firstlineButton">조회하기</button>
+        <button class="firstlineButton" on:click={searchDataHandler}
+          >조회하기</button
+        >
         <button class="firstlineButton">보안점수확점</button>
       </div>
     </div>

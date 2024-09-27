@@ -50,11 +50,6 @@
   /**************************************************************************/
 
   /********************************************************/
-  function check() {
-    console.log("cceHistory", cceHistory);
-    console.log("detail of asset2", DetailOfAsset);
-    console.log("projectData", projectData);
-  }
 
   let selectedProject = "";
   let selectedTarget = "";
@@ -96,41 +91,31 @@
   /**********************************************************/
 
   /*****************************/
+  // Count occurrences of each target
+  let targetCounts = {};
 
-  let dataTable1 = [];
-  for (let i = 1; i <= 100; i++) {
-    dataTable1.push({
-      number: i.toString(),
-      projectNO: `Final Test Project`,
-      assetName: "21년 기반시설 점검 가이드라인",
-      cassification: "2024-07-07 12:07:07",
-      logContent: "결과미확점",
-      performer: "SECURITY(90.78)",
-    });
+  // Create a reactive block to count targets when plantoSHow changes
+  $: {
+    targetCounts = {};
+
+    if (plantoSHow.length > 0) {
+      plantoSHow.forEach((targets) => {
+        const target = targets.plans.ast_uuid__ast_target__cct_target;
+        if (target) {
+          targetCounts[target] = (targetCounts[target] || 0) + 1;
+        }
+      });
+    }
   }
-
-  let projectsData = [
-    {
-      name: "수리과터스트2",
-      inspectionTarget: "NETWORK",
-      inspectionDateAndTime: "2020.12.15",
-    },
-  ];
-
-  let hostInfo = [];
-  for (let i = 1; i <= 10; i++) {
-    hostInfo.push({
-      number: i.toString(),
-      name: `User_L2_51${i}`,
-      item: "[N-01] 패스워드 설정",
-      checklist: {
-        vulnerability:
-          "기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은 경우",
-        good: "기본 패스워드를 변경한 경우",
-      },
-      system: "계정목록(동일패스워드 없음)",
-      instectionResult: "양호",
-    });
+  // Function to convert targetCounts into an array for easier rendering (if needed)
+  const getTargetEntries = () => {
+    return Object.entries(targetCounts);
+  };
+  function check() {
+    console.log("cceHistory", cceHistory);
+    console.log("detail of asset2", DetailOfAsset);
+    console.log("projectData", projectData);
+    console.log("countedTargets", countedTargets);
   }
 </script>
 
@@ -157,12 +142,17 @@
                 <td>{historyItem.plans.ccp_index__ccp_title}</td>
                 <td>{historyItem.plans.asg_index__asg_title}</td>
                 <td
-                  >{new Date(
-                    detailofAsset[0]?.ast_createdate,
-                  ).toLocaleDateString()}</td
+                  >{new Date(detailofAsset[0]?.ast_createdate).toLocaleString(
+                    "ko-KR",
+                  )}</td
                 >
-                <td>{detailofAsset[0]?.ast_security_point}</td>
-                {#if historyItem.plans.ast_security_point === "-1"}
+
+                {#if detailofAsset[0]?.ast_security_point === -1}
+                  <td>0</td>
+                {:else}
+                  <td>{detailofAsset[0]?.ast_security_point}</td>
+                {/if}
+                {#if historyItem.plans.ast_security_point === -1}
                   <td
                     >{historyItem.plans.ast_uuid__ast_target__cct_target}(0)</td
                   >
@@ -277,15 +267,29 @@
     <div class="secondLine">
       <div>
         <p class="bold-text">프로젝트 전체 보안수준:</p>
-        <p>{detailofAsset?.ast_hostname}</p>
+        {#if detailofAsset[0]?.ast_security_point === -1}
+          <p>0</p>
+        {:else}
+          <p>{detailofAsset[0]?.ast_security_point}</p>
+        {/if}
       </div>
       <div>
-        <p class="bold-text">결과미확정, 점검대상:</p>
-        <p>{projectsData[0].inspectionTarget}</p>
+        <p class="bold-text">점검대상:</p>
+        {#if Object.keys(targetCounts).length > 0}
+          {#each getTargetEntries() as [target, count]}
+            <p>{target} {count}개</p>
+            <!-- Display the target and its count -->
+          {/each}
+        {:else}
+          <p>No targets available</p>
+          <!-- Message when there are no counted targets -->
+        {/if}
       </div>
       <div>
         <p class="bold-text">점검일시:</p>
-        <p>{projectsData[0].inspectionDateAndTime}</p>
+        <p>
+          {new Date(detailofAsset[0]?.ast_createdate).toLocaleString("ko-KR")}
+        </p>
       </div>
     </div>
 

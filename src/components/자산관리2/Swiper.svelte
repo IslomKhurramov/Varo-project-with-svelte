@@ -353,6 +353,10 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    position: fixed;
+    top: 60%;
+    left: 55%;
+    transform: translate(-50%, -50%);
   }
   /* Swiper Styles */
   .swiper-container {

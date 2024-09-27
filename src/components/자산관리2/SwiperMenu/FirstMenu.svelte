@@ -6,13 +6,14 @@
   const selectData = (page, menu) => {
     currentData = page;
     activeData = menu;
+    console.log("data selected", page);
   };
 
   // Reactive subscription to assetDeatilInfo store
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
-
+  $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
   let data = [];
   for (let i = 1; i <= 100; i++) {
     data.push({
@@ -106,7 +107,10 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click={() =>
-          selectData(assetDetails.system_info?.osinfo || [], "운영체제정보")}
+          selectData(
+            assetHistory[0]?.system_info?.osinfo || [],
+            "운영체제정보",
+          )}
         class={activeData === "운영체제정보" ? "active" : ""}
       >
         운영체제정보
@@ -115,7 +119,7 @@
       <h3
         on:click={() =>
           selectData(
-            assetDetails.system_info?.installedprog || [],
+            assetHistory[0].system_info?.installedprog || [],
             "설치된 프로그램 목록",
           )}
         class={activeData === "설치된 프로그램 목록" ? "active" : ""}
@@ -125,7 +129,10 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click={() =>
-          selectData(assetDetails.system_info?.process || [], "프로세스목록")}
+          selectData(
+            assetHistory[0].system_info?.process || [],
+            "프로세스목록",
+          )}
         class={activeData === "프로세스목록" ? "active" : ""}
       >
         프로세스목록
@@ -134,7 +141,7 @@
       <h3
         on:click={() =>
           selectData(
-            assetDetails.system_info?.process_network || [],
+            assetHistory[0].system_info?.process_network || [],
             "네트워크 정보",
           )}
         class={activeData === "네트워크 정보" ? "active" : ""}
@@ -144,7 +151,7 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click={() =>
-          selectData(assetDetails.system_info?.dlls || [], "DLL 정보")}
+          selectData(assetHistory[0].system_info?.dlls || [], "DLL 정보")}
         class={activeData === "DLL 정보" ? "active" : ""}
       >
         DLL 정보
@@ -152,7 +159,10 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <h3
         on:click={() =>
-          selectData(assetDetails.system_info?.patchstatus || [], "패치내역")}
+          selectData(
+            assetHistory[0].system_info?.patchstatus || [],
+            "패치내역",
+          )}
         class={activeData === "패치내역" ? "active" : ""}
       >
         패치내역/대상
@@ -161,11 +171,22 @@
 
     {#if currentData && currentData.length > 0}
       <div class="last_container">
-        <ul>
-          {#each currentData as dataItem}
-            <li>{JSON.stringify(dataItem)}</li>
-          {/each}
-        </ul>
+        <table border="1" cellpadding="10" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each Object.entries(currentData[0]) as [key, value]}
+              <tr>
+                <td>{key}</td>
+                <td>{value}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       </div>
     {:else}
       <div class="empty_state">

@@ -1,17 +1,34 @@
 <script>
+  import { getPlanReportLists } from "./../../../services/report/reportService.js";
   import { getPlanLists } from "../../../services/page1/newInspection";
   import { onMount } from "svelte";
 
   let selectedPlan = null;
   let planList = [];
+  let planReports = null;
 
   onMount(async () => {
     try {
       planList = await getPlanLists();
     } catch (err) {
-      console.error("Error loading asset groups:", err);
+      console.error("Error loading plan list:", err);
     }
   });
+
+  const getReportData = async () => {
+    if (!selectedPlan) return;
+    try {
+      planReports = await getPlanReportLists(selectedPlan);
+    } catch (err) {
+      console.error("Error loading report data:", err);
+    }
+  };
+
+  $: {
+    if (selectedPlan) {
+      getReportData();
+    }
+  }
 </script>
 
 <main>
@@ -45,11 +62,14 @@
               </div>
               <div class="bottom">
                 <div>
-                  <h5>파일 (엑셀)</h5>
+                  <h5>취약점분석퍙기보고서 (엑셀)</h5>
                 </div>
                 <div>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
+                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
+                    {#each planReports?.v_excel as report}
+                      <h5>{report}</h5>
+                    {/each}
+                  {/if}
                 </div>
                 <div>
                   <button class="save_button">보고서생성</button>
@@ -71,15 +91,14 @@
               </div>
               <div class="bottom">
                 <div>
-                  <h5>파일 (엑셀)</h5>
+                  <h5>취약점분석퍙기보고서 (엑셀)</h5>
                 </div>
                 <div>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
+                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
+                    {#each planReports?.v_excel as report}
+                      <h5>{report}</h5>
+                    {/each}
+                  {/if}
                 </div>
                 <div>
                   <button class="save_button">보고서생성</button>
@@ -88,15 +107,14 @@
               </div>
               <div class="bottom word">
                 <div>
-                  <h5>파일 (엑셀)</h5>
+                  <h5>파취약점분석퍙기보고서 (워드)</h5>
                 </div>
                 <div>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
-                  <h5>파일 (엑셀)</h5>
+                  {#if planReports?.v_word && planReports?.v_word?.length !== 0}
+                    {#each planReports?.v_word as report}
+                      <h5>{report}</h5>
+                    {/each}
+                  {/if}
                 </div>
                 <div>
                   <button class="save_button">보고서생성</button>

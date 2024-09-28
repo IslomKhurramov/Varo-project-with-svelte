@@ -6,10 +6,11 @@
     getOptionsForNewPlan,
     getPlanCommandExcel,
     getPlanLists,
+    setNewSystemCommand,
   } from "../services/page1/newInspection"; // Only one service is needed
   import moment from "moment";
   import { navigate, useLocation } from "svelte-routing";
-  import { errorAlert } from "../shared/sweetAlert";
+  import { errorAlert, successAlert } from "../shared/sweetAlert";
   import { getAssetGroup } from "../services/page2/assetService";
 
   let loading = true;
@@ -195,9 +196,27 @@
     assetInsertData.search_target = splitData.join(",").replace(/^,/, "");
   };
 
-  $: {
-    console.log("+assetInsertData: ", assetInsertData);
-  }
+  const submitNewSystemCommand = async () => {
+    try {
+      assetInsertData.start_date = moment(assetInsertData.start_date).format(
+        "YYYY-MM-DD h:mm:ss",
+      );
+      assetInsertData.end_date = moment(assetInsertData.end_date).format(
+        "YYYY-MM-DD h:mm:ss",
+      );
+
+      console.log("assetInsertData:", assetInsertData);
+
+      const response = await setNewSystemCommand(assetInsertData);
+
+      await successAlert(response.CODE);
+
+      navigate(window.location?.pathname == "/" ? "/page1" : "/");
+    } catch (error) {
+      console.error("Error submitNewSystemCommand new plan:", error);
+      errorAlert(error?.message);
+    }
+  };
 </script>
 
 <div class="container">
@@ -426,6 +445,7 @@
                 name="asset_group"
                 id="asset_group"
                 class="select_input"
+                required
                 bind:value={assetInsertData.target_group}
               >
                 <option selected disabled value=""
@@ -443,7 +463,7 @@
         <tr>
           <th>명령구분</th>
           <td>
-            <select bind:value={assetInsertData.command_type}>
+            <select bind:value={assetInsertData.command_type} required>
               <option value="">선택</option>
               <option value="1">시스템 정보수집</option>
               <option value="2">임의 명령수행</option>
@@ -510,7 +530,7 @@
         <tr>
           <th>시간지정</th>
           <td>
-            <select bind:value={assetInsertData.reserved}>
+            <select bind:value={assetInsertData.reserved} required>
               <option value="">선택</option>
               <option value="1">예약실행</option>
               <option value="0">즉시실행</option>
@@ -524,6 +544,7 @@
               <label
                 >시작일시: <input
                   type="datetime-local"
+                  required
                   bind:value={assetInsertData.start_date}
                 /></label
               >
@@ -540,12 +561,13 @@
                   bind:value={assetInsertData.repeat_interval}
                   min="0"
                   placeholder="0"
+                  required
                 />
               </label>
 
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>반복주기:</label>
-              <select bind:value={assetInsertData.repeat_term}>
+              <select bind:value={assetInsertData.repeat_term} required>
                 <option value="" selected disabled>시/일/주/월/년</option>
                 <option value="hours">시</option>
                 <option value="days">일</option>
@@ -651,7 +673,9 @@
         </tr>
       </table>
       <!-- Single Button to Submit the Plan -->
-      <button class="button blue-button">저장하기</button>
+      <button class="button blue-button" on:click={submitNewSystemCommand}
+        >저장하기</button
+      >
     </div>
   {/if}
 </div>

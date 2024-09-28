@@ -249,3 +249,14 @@ export const setAssetRegisterChange = async (uuid, approve_status) => {
     throw new Error(`Failed to fetch asset detail: ${error.message}`);
   }
 };
+/****** get TARGET SYSTEMLIST *******************/
+export const getTargetSystemLists = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getTargetSystemLists/`);
+    console.log("assetGroups:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching getAllAssetLists :", error);
+    throw error;
+  }
+};

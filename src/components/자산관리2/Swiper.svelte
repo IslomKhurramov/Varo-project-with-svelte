@@ -406,6 +406,7 @@
     top: 60%;
     left: 55%;
     transform: translate(-50%, -50%);
+    animation: fadeIn 0.3s ease;
   }
   /* Swiper Styles */
   .swiper-container {

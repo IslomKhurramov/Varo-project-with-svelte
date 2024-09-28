@@ -6,10 +6,12 @@
     getOptionsForNewPlan,
     getPlanCommandExcel,
     getPlanLists,
+    setNewSystemCommand,
   } from "../services/page1/newInspection"; // Only one service is needed
   import moment from "moment";
   import { navigate, useLocation } from "svelte-routing";
-  import { errorAlert } from "../shared/sweetAlert";
+  import { errorAlert, successAlert } from "../shared/sweetAlert";
+  import { getAssetGroup } from "../services/page2/assetService";
 
   let loading = true;
   let error = null;
@@ -48,6 +50,22 @@
   let repealRule = "";
   let conductorInfo = "";
   let recheckplanIndex = null;
+
+  // SECOND DATA
+  const assetInsertData = {
+    target_group: "",
+    command_type: "",
+    target: "",
+    command_str: "",
+    search_path: "",
+    search_extension: "",
+    search_target: "",
+    reserved: "",
+    start_date: "",
+    end_date: "",
+    repeat_interval: "",
+    repeat_term: "",
+  };
 
   $: if (ruleType === "1") {
     repealRule = `${projectName} {}`;
@@ -105,7 +123,6 @@
     }
   };
 
-  /******ASSET GROUPS DATA*/
   onMount(async () => {
     loading = true;
     try {
@@ -113,11 +130,14 @@
       console.log("planOptions:", planOptions);
 
       planList = await getPlanLists();
+
+      assetGroup = await getAssetGroup();
+      console.log("assetGroup:", assetGroup);
     } catch (err) {
       error = err.message;
       console.error("Error loading asset groups:", error);
     } finally {
-      loading = false; // Ensure loading is set to false once complete
+      loading = false;
     }
   });
 
@@ -134,7 +154,69 @@
     console.log(inspectionInformation);
   };
 
-  console.log("schedule:", schedule);
+  const changeTarget = (target, isChecked, type) => {
+    console.log("type:", type);
+    if (type === "checkbox") {
+      let splitData = assetInsertData.target.split(",");
+
+      console.log("splidData:", splitData);
+
+      if (isChecked) {
+        if (!splitData.includes(target)) {
+          splitData.push(target);
+        }
+      } else {
+        splitData = splitData.filter((char) => char !== target);
+      }
+
+      assetInsertData.target = splitData.join(",").replace(/^,/, "");
+    } else {
+      let splitData = assetInsertData.target.split(",");
+
+      splitData = splitData.filter(
+        (char) => char !== "powershell" && char !== "batchscript",
+      );
+      splitData.push(target);
+
+      assetInsertData.target = splitData.join(",").replace(/^,/, "");
+    }
+  };
+
+  const changeSearchTarget = (target, isChecked) => {
+    let splitData = assetInsertData.search_target.split(",");
+
+    if (isChecked) {
+      if (!splitData.includes(target)) {
+        splitData.push(target);
+      }
+    } else {
+      splitData = splitData.filter((char) => char !== target);
+    }
+
+    assetInsertData.search_target = splitData.join(",").replace(/^,/, "");
+  };
+
+  const submitNewSystemCommand = async () => {
+    try {
+      assetInsertData.start_date = moment(assetInsertData.start_date).format(
+        "YYYY-MM-DD h:mm:ss",
+      );
+      assetInsertData.end_date = moment(assetInsertData.end_date).format(
+        "YYYY-MM-DD h:mm:ss",
+      );
+
+      console.log("assetInsertData:", assetInsertData);
+
+      const response = await setNewSystemCommand(assetInsertData);
+
+      await successAlert(response.CODE);
+
+      navigate(window.location?.pathname == "/" ? "/page1" : "/");
+    } catch (error) {
+      console.error("Error submitNewSystemCommand new plan:", error);
+      errorAlert(error?.message);
+    }
+  };
 </script>
 
 <div class="container">
@@ -356,26 +438,36 @@
     <div class="second_container">
       <table>
         <tr>
-          <th>명령구분</th>
+          <th>대상</th>
           <td>
-            {#if loading}
-              <p>Loading...</p>
-            {:else if error}
-              <p>Error: {error}</p>
-            {:else if assetGroup}
-              <select name="asset_group" id="asset_group" class="select_input">
-                {#each assetGroup as asset}
-                  <option value="network_security">{asset.assetName}</option>
+            {#if assetGroup?.CODE?.length !== 0}
+              <select
+                name="asset_group"
+                id="asset_group"
+                class="select_input"
+                required
+                bind:value={assetInsertData.target_group}
+              >
+                <option selected disabled value=""
+                  >전체에이전트 / 자산그룹</option
+                >
+                <option value="ALL">전체에이전트</option>
+
+                {#each assetGroup?.CODE as asset}
+                  <option value={asset.asg_index}>{asset.asg_title}</option>
                 {/each}
               </select>
-            {/if}</td
-          >
+            {/if}
+          </td>
         </tr>
         <tr>
           <th>명령구분</th>
           <td>
-            <select bind:value={commandType}>
-              <option>에이전트 시스템 정보수집</option>
+            <select bind:value={assetInsertData.command_type} required>
+              <option value="">선택</option>
+              <option value="1">시스템 정보수집</option>
+              <option value="2">임의 명령수행</option>
+              <option value="3">파일 정보 검색</option>
             </select>
           </td>
         </tr>
@@ -383,20 +475,65 @@
           <th>수집대상</th>
           <td>
             <div class="checkbox-group">
-              <label><input type="checkbox" /> 시스템기본정보</label>
-              <label><input type="checkbox" /> 프로세스 정보</label>
-              <label><input type="checkbox" /> 네트워크 연결정보</label>
-              <label><input type="checkbox" /> 로딩된 DLL 정보</label>
-              <label><input type="checkbox" /> 설치된 프로그램 목록 정보</label>
-              <label><input type="checkbox" /> 패치 내역 정보</label>
+              <!-- TARGET -->
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("basic", e.target.checked, "checkbox");
+                  }}
+                /> 시스템기본정보</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("process", e.target.checked, "checkbox");
+                  }}
+                /> 프로세스 정보</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("network", e.target.checked, "checkbox");
+                  }}
+                /> 네트워크 연결정보</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("dll", e.target.checked, "checkbox");
+                  }}
+                /> 로딩된 DLL 정보</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("program", e.target.checked, "checkbox");
+                  }}
+                /> 설치된 프로그램 목록 정보</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("patch", e.target.checked, "checkbox");
+                  }}
+                /> 패치 내역 정보</label
+              >
             </div>
           </td>
         </tr>
         <tr>
           <th>시간지정</th>
           <td>
-            <select bind:value={scheduleType}>
-              <option>예약실행</option>
+            <select bind:value={assetInsertData.reserved} required>
+              <option value="">선택</option>
+              <option value="1">예약실행</option>
+              <option value="0">즉시실행</option>
             </select>
           </td>
         </tr>
@@ -407,40 +544,94 @@
               <label
                 >시작일시: <input
                   type="datetime-local"
-                  bind:value={repeatStartTime}
+                  required
+                  bind:value={assetInsertData.start_date}
                 /></label
               >
               <label
                 >종료일시: <input
                   type="datetime-local"
-                  bind:value={repeatEndTime}
+                  bind:value={assetInsertData.end_date}
                 /></label
               >
               <label
-                >반복주기: <input
+                >반복주기:
+                <input
                   type="number"
-                  bind:value={repeatInterval}
+                  bind:value={assetInsertData.repeat_interval}
                   min="0"
-                /> 분</label
-              >
+                  placeholder="0"
+                  required
+                />
+              </label>
+
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label>반복주기:</label>
+              <select bind:value={assetInsertData.repeat_term} required>
+                <option value="" selected disabled>시/일/주/월/년</option>
+                <option value="hours">시</option>
+                <option value="days">일</option>
+                <option value="weeks">주</option>
+                <option value="months">월</option>
+                <option value="years">년</option>
+              </select>
             </div>
           </td>
         </tr>
-        <tr>
+        <tr style="margin-top: 15px;">
           <th>명령구분</th>
           <td>
-            <select bind:value={systemCommand}>
-              <option>윈도우 PowerShell</option>
+            <select>
+              <option selected value="">임의 명령수행</option>
             </select>
-            <textarea rows="4" bind:value={systemCommand}></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th>명령어</th>
+          <td>
+            <select
+              on:change={(e) => {
+                changeTarget(e.target.value, null, "select");
+              }}
+            >
+              <!-- TARGET +  -->
+              <option selected disabled value="">선택</option>
+              <option value="powershell">PowerShell</option>
+              <option value="batchscript">Batchscript</option>
+            </select>
+            <textarea rows="4" bind:value={assetInsertData.command_str}
+            ></textarea>
+          </td>
+        </tr>
+        <tr style="margin-top: 15px;">
+          <th>명령구분</th>
+          <td>
+            <select>
+              <option selected value="">파일 정보 검색</option>
+            </select>
           </td>
         </tr>
         <tr>
           <th>수집대상</th>
           <td>
             <div class="checkbox-group">
-              <label><input type="checkbox" /> 리눅스 시스템</label>
-              <label><input type="checkbox" /> 윈도우 시스템</label>
+              <!-- TARGET -->
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("linux", e.target.checked, "checkbox");
+                  }}
+                />리눅스 시스템</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeTarget("windows", e.target.checked, "checkbox");
+                  }}
+                />윈도우 시스템</label
+              >
             </div>
           </td>
         </tr>
@@ -448,23 +639,43 @@
           <th>검색조건</th>
           <td>
             <label
-              >경로지정: <input type="text" bind:value={searchPath} /></label
+              >경로지정: <input
+                type="text"
+                bind:value={assetInsertData.search_path}
+              /></label
             >
             <label
               >확장자지정: <input
                 type="text"
-                bind:value={fileExtensions}
+                bind:value={assetInsertData.search_extension}
               /></label
             >
             <div class="checkbox-group">
-              <label><input type="checkbox" /> 데이터베이스</label>
-              <label><input type="checkbox" /> 에이전트</label>
+              <!--  // search_target -->
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeSearchTarget("database", e.target.checked);
+                  }}
+                /> 데이터베이스</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  on:change={(e) => {
+                    changeSearchTarget("agent", e.target.checked);
+                  }}
+                /> 에이전트</label
+              >
             </div>
           </td>
         </tr>
       </table>
       <!-- Single Button to Submit the Plan -->
-      <button class="button blue-button">저장하기</button>
+      <button class="button blue-button" on:click={submitNewSystemCommand}
+        >저장하기</button
+      >
     </div>
   {/if}
 </div>

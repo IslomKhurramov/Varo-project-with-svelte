@@ -72,8 +72,20 @@
                   {/if}
                 </div>
                 <div>
-                  <button class="save_button">보고서생성</button>
-                  <button class="save_button">보고서삭제</button>
+                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
+                    <button
+                      class="save_button"
+                      disabled={!planReports?.v_excel?.length}
+                    >
+                      보고서생성
+                    </button>
+                    <button
+                      class="save_button"
+                      disabled={!planReports?.v_excel?.length}
+                    >
+                      보고서삭제
+                    </button>
+                  {/if}
                 </div>
               </div>
             </div>
@@ -101,8 +113,20 @@
                   {/if}
                 </div>
                 <div>
-                  <button class="save_button">보고서생성</button>
-                  <button class="save_button">보고서삭제</button>
+                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
+                    <button
+                      class="save_button"
+                      disabled={!planReports?.v_excel?.length}
+                    >
+                      보고서생성
+                    </button>
+                    <button
+                      class="save_button"
+                      disabled={!planReports?.v_excel?.length}
+                    >
+                      보고서삭제
+                    </button>
+                  {/if}
                 </div>
               </div>
               <div class="bottom word">
@@ -117,8 +141,20 @@
                   {/if}
                 </div>
                 <div>
-                  <button class="save_button">보고서생성</button>
-                  <button class="save_button">보고서삭제</button>
+                  {#if planReports?.v_word && planReports?.v_word?.length !== 0}
+                    <button
+                      class="save_button"
+                      disabled={!planReports?.v_word?.length}
+                    >
+                      보고서생성
+                    </button>
+                    <button
+                      class="save_button"
+                      disabled={!planReports?.v_word?.length}
+                    >
+                      보고서삭제
+                    </button>
+                  {/if}
                 </div>
               </div>
             </div>
@@ -302,5 +338,9 @@
     padding-top: 10px;
     margin-top: 10px;
     border-top: 1px solid #ddddde;
+  }
+
+  button:disabled {
+    background-color: #838383;
   }
 </style>

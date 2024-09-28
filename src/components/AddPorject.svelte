@@ -363,7 +363,9 @@
           <td>
             {#if assetGroup?.CODE?.length !== 0}
               <select name="asset_group" id="asset_group" class="select_input">
-                <option selected disabled>선택</option>
+                <option selected disabled>전체에이전트 / 자산그룹</option>
+                <option value="ALL">전체에이전트</option>
+
                 {#each assetGroup?.CODE as asset}
                   <option value={asset.asg_index}>{asset.asg_title}</option>
                 {/each}
@@ -374,18 +376,10 @@
         <tr>
           <th>명령구분</th>
           <td>
-            {#if false}
-              <select name="asset_group" id="asset_group" class="select_input">
-                <option value="network_security">{"asset.assetName"}</option>
-              </select>
-            {/if}
-          </td>
-        </tr>
-        <tr>
-          <th>명령구분</th>
-          <td>
             <select bind:value={commandType}>
-              <option>에이전트 시스템 정보수집</option>
+              <option value="1">시스템 정보수집</option>
+              <option value="2">임의 명령수행</option>
+              <option value="3">파일 정보 검색</option>
             </select>
           </td>
         </tr>
@@ -406,7 +400,8 @@
           <th>시간지정</th>
           <td>
             <select bind:value={scheduleType}>
-              <option>예약실행</option>
+              <option class="1">예약실행</option>
+              <option value="0">즉시실행</option>
             </select>
           </td>
         </tr>
@@ -427,30 +422,54 @@
                 /></label
               >
               <label
-                >반복주기: <input
-                  type="number"
-                  bind:value={repeatInterval}
-                  min="0"
-                /> 분</label
-              >
+                >반복주기:
+                <input type="number" bind:value={repeatInterval} min="0" />
+              </label>
+
+              <label>주기:</label>
+              <select>
+                <option value="" selected disabled>시/일/주/월/년</option>
+                <option value="hours">시</option>
+                <option value="days">일</option>
+                <option value="weeks">주</option>
+                <option value="months">월</option>
+                <option value="years">년</option>
+              </select>
             </div>
           </td>
         </tr>
-        <tr>
+        <tr style="margin-top: 15px;">
           <th>명령구분</th>
           <td>
             <select bind:value={systemCommand}>
-              <option>윈도우 PowerShell</option>
+              <option>임의 명령수행</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>명령어</th>
+          <td>
+            <select bind:value={systemCommand}>
+              <option value="powerShell">PowerShell</option>
+              <option value="batchscript">Batchscript</option>
             </select>
             <textarea rows="4" bind:value={systemCommand}></textarea>
+          </td>
+        </tr>
+        <tr style="margin-top: 15px;">
+          <th>명령구분</th>
+          <td>
+            <select bind:value={systemCommand}>
+              <option>파일 정보 검색</option>
+            </select>
           </td>
         </tr>
         <tr>
           <th>수집대상</th>
           <td>
             <div class="checkbox-group">
-              <label><input type="checkbox" /> 리눅스 시스템</label>
-              <label><input type="checkbox" /> 윈도우 시스템</label>
+              <label><input type="checkbox" />리눅스 시스템</label>
+              <label><input type="checkbox" />윈도우 시스템</label>
             </div>
           </td>
         </tr>

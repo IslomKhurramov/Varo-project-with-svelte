@@ -10,6 +10,7 @@
   import moment from "moment";
   import { navigate, useLocation } from "svelte-routing";
   import { errorAlert } from "../shared/sweetAlert";
+  import { getAssetGroup } from "../services/page2/assetService";
 
   let loading = true;
   let error = null;
@@ -105,7 +106,6 @@
     }
   };
 
-  /******ASSET GROUPS DATA*/
   onMount(async () => {
     loading = true;
     try {
@@ -113,11 +113,14 @@
       console.log("planOptions:", planOptions);
 
       planList = await getPlanLists();
+
+      assetGroup = await getAssetGroup();
+      console.log("assetGroup:", assetGroup);
     } catch (err) {
       error = err.message;
       console.error("Error loading asset groups:", error);
     } finally {
-      loading = false; // Ensure loading is set to false once complete
+      loading = false;
     }
   });
 
@@ -356,20 +359,27 @@
     <div class="second_container">
       <table>
         <tr>
-          <th>명령구분</th>
+          <th>대상</th>
           <td>
-            {#if loading}
-              <p>Loading...</p>
-            {:else if error}
-              <p>Error: {error}</p>
-            {:else if assetGroup}
+            {#if assetGroup?.CODE?.length !== 0}
               <select name="asset_group" id="asset_group" class="select_input">
-                {#each assetGroup as asset}
-                  <option value="network_security">{asset.assetName}</option>
+                <option selected disabled>선택</option>
+                {#each assetGroup?.CODE as asset}
+                  <option value={asset.asg_index}>{asset.asg_title}</option>
                 {/each}
               </select>
-            {/if}</td
-          >
+            {/if}
+          </td>
+        </tr>
+        <tr>
+          <th>명령구분</th>
+          <td>
+            {#if false}
+              <select name="asset_group" id="asset_group" class="select_input">
+                <option value="network_security">{"asset.assetName"}</option>
+              </select>
+            {/if}
+          </td>
         </tr>
         <tr>
           <th>명령구분</th>

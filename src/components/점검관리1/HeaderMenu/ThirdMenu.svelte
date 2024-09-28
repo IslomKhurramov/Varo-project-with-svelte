@@ -1,7 +1,11 @@
 <script>
-  import { getPlanReportLists } from "./../../../services/report/reportService.js";
+  import {
+    getPlanReportLists,
+    setMakeExcelWordFullReport,
+  } from "./../../../services/report/reportService.js";
   import { getPlanLists } from "../../../services/page1/newInspection";
   import { onMount } from "svelte";
+  import { errorAlert, successAlert } from "../../../shared/sweetAlert.js";
 
   let selectedPlan = null;
   let planList = [];
@@ -21,6 +25,17 @@
       planReports = await getPlanReportLists(selectedPlan);
     } catch (err) {
       console.error("Error loading report data:", err);
+    }
+  };
+
+  const setMakeFullReport = async (data) => {
+    try {
+      const response = await setMakeExcelWordFullReport(data);
+
+      await successAlert(response.CODE);
+    } catch (error) {
+      console.error("Error setMakeExcelWordFullReport :", error);
+      errorAlert(error?.message);
     }
   };
 
@@ -76,6 +91,12 @@
                     <button
                       class="save_button"
                       disabled={!planReports?.v_excel?.length}
+                      on:click={() =>
+                        setMakeFullReport({
+                          plan_index: selectedPlan,
+                          report_type: "v_excel",
+                          report_target: "ALL",
+                        })}
                     >
                       보고서생성
                     </button>
@@ -117,6 +138,12 @@
                     <button
                       class="save_button"
                       disabled={!planReports?.v_excel?.length}
+                      on:click={() =>
+                        setMakeFullReport({
+                          plan_index: selectedPlan,
+                          report_type: "v_excel",
+                          report_target: "ALL",
+                        })}
                     >
                       보고서생성
                     </button>
@@ -145,6 +172,12 @@
                     <button
                       class="save_button"
                       disabled={!planReports?.v_word?.length}
+                      on:click={() =>
+                        setMakeFullReport({
+                          plan_index: selectedPlan,
+                          report_type: "v_word",
+                          report_target: "ALL",
+                        })}
                     >
                       보고서생성
                     </button>

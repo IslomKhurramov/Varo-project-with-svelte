@@ -64,3 +64,24 @@ export const getViewPlanResults = async (search) => {
     throw error;
   }
 };
+
+export const setUploadPlanResult = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setUploadPlanResult/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("setUploadPlanResult RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setUploadPlanResult:", error);
+    throw error;
+  }
+};

@@ -4,9 +4,19 @@
   import {
     getCCEResultUploadStatus,
     getUploadedResultErrors,
+    setUploadPlanResult,
   } from "../../../services/result/resultService";
   import ModalDynamic from "../../../shared/ModalDynamic.svelte";
   import ResultPopup from "../ResultPopup.svelte";
+  import { errorAlert, successAlert } from "../../../shared/sweetAlert";
+
+  // inputs & files
+  let jsonInput;
+  let txtInput;
+  let excelInput;
+  let jsonFiles = [];
+  let txtFiles = [];
+  let excelFiles = [];
 
   let planList = [];
   let selectedPlan = null;
@@ -38,6 +48,33 @@
       console.error("Error loading asset groups:", err);
     }
   });
+
+  const submitNewSystemCommand = async (target, files) => {
+    try {
+      console.log("files", files, typeof files);
+      const formData = new FormData();
+
+      formData.append("plan_index", selectedPlan);
+      formData.append("target_system", target);
+
+      files.forEach((file) => {
+        formData.append("result_files", file);
+      });
+
+      const response = await setUploadPlanResult(formData);
+
+      await successAlert(response.CODE);
+
+      // navigate(window.location?.pathname == "/" ? "/page1" : "/");
+    } catch (error) {
+      console.error("Error submitNewSystemCommand new plan:", error);
+      errorAlert(error?.message);
+    }
+  };
+
+  $: {
+    console.log("jsonFiles:", jsonFiles);
+  }
 </script>
 
 <div class="container_page">
@@ -97,28 +134,95 @@
           <div class="first_line">
             <p class="button1 width">수동</p>
             <p class="button2">점겸결과파일</p>
-            <span class="span_at"
-              >JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)</span
+            <span class="span_at">
+              {jsonFiles && jsonFiles.length
+                ? `${jsonFiles.length} files uploaded`
+                : " JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)"}
+            </span>
+            <input
+              bind:this={jsonInput}
+              on:change={(event) => {
+                jsonFiles = Array.from(event.target.files);
+              }}
+              class="upload"
+              type="file"
+              accept=".json"
+              multiple
+              hidden
+            />
+            <button
+              class="save_button"
+              on:click={() => {
+                jsonInput.click();
+              }}>파일업로드</button
             >
-            <!-- <input class="upload" type="file" accept=".json" multiple /> -->
-            <button class="save_button">파일업로드</button>
-            <button class="save_button">저장</button>
+            <button
+              class="save_button"
+              on:click={() => submitNewSystemCommand("JSON", jsonFiles)}
+              >저장</button
+            >
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
             <p class="button2">네트워크설정파일</p>
-            <span class="span_at">설정파일(TXT) 파일 업로드</span>
-            <!-- <input class="upload" type="file" accept=".txt" multiple /> -->
-            <button class="save_button">파일업로드</button>
-            <button class="save_button">저장</button>
+            <span class="span_at">
+              {txtFiles && txtFiles.length
+                ? `${txtFiles.length} files uploaded`
+                : "설정파일(TXT) 파일 업로드"}
+            </span>
+            <input
+              bind:this={txtInput}
+              on:change={(event) => {
+                txtFiles = Array.from(event.target.files);
+              }}
+              class="upload"
+              type="file"
+              accept=".txt"
+              multiple
+              hidden
+            />
+            <button
+              class="save_button"
+              on:click={() => {
+                txtInput.click();
+              }}>파일업로드</button
+            >
+            <button
+              class="save_button"
+              on:click={() => submitNewSystemCommand("TXT", txtFiles)}
+              >저장</button
+            >
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
             <p class="button2">정보보호시스템</p>
-            <span class="span_at">인터뷰파일(EXCEL) 파일 업로드</span>
-            <!-- <input class="upload" type="file" accept=".xls,.xlsx" multiple /> -->
-            <button class="save_button">파일업로드</button>
-            <button class="save_button">저장</button>
+            <span class="span_at">
+              {excelFiles && excelFiles.length
+                ? `${excelFiles.length} files uploaded`
+                : "인터뷰파일(EXCEL) 파일 업로드"}
+            </span>
+            <input
+              bind:this={excelInput}
+              on:change={(event) => {
+                excelFiles = Array.from(event.target.files);
+              }}
+              class="upload"
+              type="file"
+              accept=".xls,.xlsx"
+              multiple
+              hidden
+            />
+            <button
+              class="save_button"
+              on:click={() => {
+                excelInput.click();
+              }}>파일업로드</button
+            >
+            <button
+              class="save_button"
+              on:click={() => submitNewSystemCommand("EXCEL", excelFiles)}
+              >저장</button
+            >
           </div>
         </div>
       </div>

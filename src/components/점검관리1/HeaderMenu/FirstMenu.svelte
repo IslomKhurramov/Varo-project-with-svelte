@@ -9,6 +9,7 @@
   import ModalDynamic from "../../../shared/ModalDynamic.svelte";
   import ResultPopup from "../ResultPopup.svelte";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert";
+  import ResultErrorPopup from "../ResultErrorPopup.svelte";
 
   // inputs & files
   let jsonInput;
@@ -23,7 +24,9 @@
   let resultStatus = null;
   let resultErrors = null;
   let showModal = false;
+  let showErrorModal = false;
   let modalData = null;
+  let modalErrorData = null;
 
   $: {
     console.log("resultStatus:", resultStatus);
@@ -73,7 +76,8 @@
   };
 
   $: {
-    console.log("jsonFiles:", jsonFiles);
+    console.log("resultErrors:", resultErrors);
+    console.log("showModal:", showModal);
   }
 </script>
 
@@ -84,19 +88,23 @@
         on:click={() => {
           showModal = true;
           modalData = resultStatus?.assets_info;
-        }}>등록현황조회</button
+        }}
       >
+        등록현황조회
+      </button>
     {:else}
       <button style="background-color:  #33333342;">등록현황조회</button>
     {/if}
 
-    {#if resultErrors?.assets_info?.length > 0}
+    {#if resultErrors?.length > 0}
       <button
-        onclick={() => {
-          showModal = true;
-          modalData = resultErrors;
-        }}>에러내역확인</button
+        on:click={() => {
+          showErrorModal = true;
+          modalErrorData = resultErrors;
+        }}
       >
+        에러내역확인
+      </button>
     {:else}
       <button style="background-color:  #33333342;">에러내역확인</button>
     {/if}
@@ -254,6 +262,16 @@
     modalHeight={modalData?.length > 10 ? 70 : null}
   >
     <ResultPopup bind:modalData />
+  </ModalDynamic>
+{/if}
+
+{#if modalErrorData}
+  <ModalDynamic
+    bind:showModal={showErrorModal}
+    modalWidth={80}
+    modalHeight={modalErrorData?.length > 10 ? 70 : null}
+  >
+    <ResultErrorPopup bind:modalErrorData />
   </ModalDynamic>
 {/if}
 

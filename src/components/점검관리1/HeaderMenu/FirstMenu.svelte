@@ -129,7 +129,9 @@
               placeholder="점검대상 200대중 180대 업로드 완료 (등록현황을 그래픽으로 표현)"
               readonly
             />
-            <button class="save_button">등록내역확인</button>
+            <button class="save_button" disabled={!selectedPlan}>
+              등록내역확인
+            </button>
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
@@ -154,13 +156,18 @@
               class="save_button"
               on:click={() => {
                 jsonInput.click();
-              }}>파일업로드</button
+              }}
+              disabled={!selectedPlan}
             >
+              파일업로드
+            </button>
             <button
               class="save_button"
               on:click={() => submitNewSystemCommand("JSON", jsonFiles)}
-              >저장</button
+              disabled={!selectedPlan || !jsonFiles.length}
             >
+              저장
+            </button>
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
@@ -185,13 +192,18 @@
               class="save_button"
               on:click={() => {
                 txtInput.click();
-              }}>파일업로드</button
+              }}
+              disabled={!selectedPlan}
             >
+              파일업로드
+            </button>
             <button
               class="save_button"
               on:click={() => submitNewSystemCommand("TXT", txtFiles)}
-              >저장</button
+              disabled={!selectedPlan || !txtFiles.length}
             >
+              저장
+            </button>
           </div>
           <div class="first_line">
             <p class="button1 width">수동</p>
@@ -216,13 +228,18 @@
               class="save_button"
               on:click={() => {
                 excelInput.click();
-              }}>파일업로드</button
+              }}
+              disabled={!selectedPlan}
             >
+              파일업로드
+            </button>
             <button
               class="save_button"
               on:click={() => submitNewSystemCommand("EXCEL", excelFiles)}
-              >저장</button
+              disabled={!selectedPlan || !excelFiles.length}
             >
+              저장
+            </button>
           </div>
         </div>
       </div>
@@ -428,5 +445,9 @@
   .dropdown:focus {
     border-color: #2980b9;
     outline: none;
+  }
+
+  button:disabled {
+    background-color: #838383;
   }
 </style>

@@ -1,9 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import {
-    getOptionsForNewPlan,
-    getPlanLists,
-  } from "../../../services/page1/newInspection";
   import Modal from "../../../shared/Modal.svelte";
   import ModalPage from "../ModalPage.svelte";
   import {
@@ -53,6 +49,7 @@
   let results;
 
   // data
+  let fullResultData;
   let resultData;
   let modalData;
 
@@ -61,7 +58,8 @@
   });
 
   const searchDataHandler = async () => {
-    resultData = await getViewPlanResults(search);
+    fullResultData = await getViewPlanResults(search);
+    changeDataCount(100);
   };
 
   const selectPlan = async (plan_index) => {
@@ -94,9 +92,15 @@
     }
   };
 
+  const changeDataCount = (count) => {
+    if (count == 0) {
+      resultData = fullResultData;
+    } else {
+      resultData = fullResultData.slice(0, parseInt(count));
+    }
+  };
+
   $: {
-    console.log("search:", search);
-    console.log("resultData:", resultData);
   }
 </script>
 
@@ -184,7 +188,7 @@
       </div>
     </div>
 
-    <div class="secondLine">
+    <!-- <div class="secondLine">
       <div>
         <p class="bold-text">프로젝트 전체 보안수준:</p>
         <p>{projectsData[0].name}</p>
@@ -197,11 +201,18 @@
         <p class="bold-text">점검일시:</p>
         <p>{projectsData[0].inspectionDateAndTime}</p>
       </div>
-    </div>
+    </div> -->
 
     <div class="thirdLine">
       <p class="bold-text">
-        Show <select><option value="">100</option></select> entries
+        Show <select on:change={(e) => changeDataCount(e.target.value)}>
+          <option value="100"> 100 </option>
+          <option value="200"> 200 </option>
+          <option value="300"> 300 </option>
+          <option value="400"> 400 </option>
+          <option value="500"> 500 </option>
+          <option value="0"> 전체 </option>
+        </select> entries
       </p>
     </div>
 
@@ -249,7 +260,7 @@
                 </td>
                 <td>
                   <p>
-                    {data.ccr_item_status}
+                    {@html data.ccr_item_status}
                   </p>
                 </td>
                 <td>
@@ -310,7 +321,7 @@
   .table_container {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 500px;
+    height: auto;
     width: 100%;
   }
   .container {

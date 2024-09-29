@@ -54,6 +54,7 @@
 
   // data
   let resultData;
+  let modalData;
 
   onMount(async () => {
     searchFilters = await getViewPlanResultSearch();
@@ -208,11 +209,12 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 5%;">번호</th>
+            <th style="width: 1%;">번호</th>
             <th style="width: 5%;">호스트명</th>
             <th style="width: 10%;">항목</th>
             <th style="width: 30%;">점검항목</th>
-            <th style="width: 30%;">시스템상태</th>
+            <th style="width: 15%;">점검대상</th>
+            <th style="width: 15%;">시스템상태</th>
             <th style="width: 5%;">점검결과</th>
             <th style="width: 10%;">결과변경</th>
           </tr>
@@ -225,7 +227,10 @@
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <td
                   style="cursor: pointer;"
-                  on:click={() => (showModal = true)}
+                  on:click={() => {
+                    modalData = data;
+                    showModal = true;
+                  }}
                 >
                   {data?.ast_uuid__ass_uuid__ast_hostname}
                 </td>
@@ -234,8 +239,13 @@
                 </td>
                 <td>
                   <div class="checklist">
-                    <p>{data?.ccr_item_no__ccc_item_criteria}</p>
+                    <p>{@html data?.ccr_item_no__ccc_item_criteria}</p>
                   </div>
+                </td>
+                <td>
+                  <p>
+                    {data.ccr_item_no__ccc_target_system}
+                  </p>
                 </td>
                 <td>
                   <p>
@@ -286,7 +296,7 @@
 
   <div>
     <Modal bind:showModal>
-      <ModalPage />
+      <ModalPage {modalData} />
     </Modal>
   </div>
 </body>

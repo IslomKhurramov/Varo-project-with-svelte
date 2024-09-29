@@ -1,75 +1,110 @@
 <script>
-  let hostData = [
-    {
-      name: "A16()",
-      ipadd: "192.168.01.1",
-      time: "2024.07.07 1:31 오후",
-    },
-  ];
-
-  let projectsData = [
-    {
-      checklist: "[ U -53 ] 사용자 shell 점검",
-      itemGroup: "[ UNIX ] 계정 관리",
-      inspectionCriteria: "하",
-      riskLevel: {
-        vulnerability:
-          " 로그인이 필요하지 않은 계정에 /bin/false(/sbin/nologin) 쉘이 부여되어 있는 경우 ",
-        good: " 로그인이 필요하지 않은 계정에 /bin/false(/sbin/nologin) 쉘이 부여되어 있는 경우 ",
-      },
-      modifyInspectionResults: "",
-      inspectionStatus: "2020.12.15",
-      evidenceImage: "사용하지 않는 계정에 쉘이 적용되어 있지 않음",
-      improve:
-        "로그인이 필요하지 않은 계정에 대해 /bin/false(/sbin/nologin) 쉘 부여",
-      inprovement:
-        "일반적으로 로그인이 불필요한 계정 daemon, bin, sys, adm, listen, nobody, nobody4, noaccess, diag, operator, games, gopher 등 일반적으로 UID 100 이하 60000 이상의 시 스템 계정 해당",
-    },
-  ];
+  export let modalData;
 </script>
 
 <div class="modal">
-  <div class="first_header">
-    <p>[Hostname]: <strong>{hostData[0].name}</strong></p>
-    <p>[IpAddress]: <strong>{hostData[0].ipadd}</strong></p>
-    <p>[점검일시]: <strong>{hostData[0].time}</strong></p>
-  </div>
   <button class="modify-button">결과변경하기</button>
   <table>
     <tr>
       <th>점검항목</th>
-      <td>{projectsData[0].checklist}</td>
+      <td
+        >[{modalData?.ccr_item_no__ccc_item_no}] {modalData?.ccr_item_no__ccc_item_title}</td
+      >
+    </tr>
+    <tr>
+      <th>점검대상</th>
+      <td>
+        {modalData?.ccr_item_no__ccc_target_system}
+      </td>
     </tr>
     <tr>
       <th>항목그룹</th>
-      <td>{projectsData[0].itemGroup}</td>
-    </tr>
-    <tr>
-      <th>점검기준</th>
-      <td>{projectsData[0].inspectionCriteria}</td>
+      <td
+        >[{modalData?.ast_uuid__ast_target__cct_target}] {modalData?.ccr_item_no__ccc_item_group}</td
+      >
     </tr>
     <tr>
       <th>위험도</th>
+      <td>{modalData?.ccr_item_no__ccc_item_level}</td>
+    </tr>
+    <tr>
+      <th>점검기준</th>
       <td class="lineCol">
-        <div>양호: <span>{projectsData[0].riskLevel.good}</span></div>
-        <div>취약: <span>{projectsData[0].riskLevel.vulnerability}</span></div>
+        <div>
+          양호: <span> {@html modalData?.ccr_item_no__ccc_item_criteria} </span>
+        </div>
       </td>
     </tr>
+    <tr>
+      <th>점검내용</th>
+      <td class="lineCol">
+        <div>
+          <span> {modalData?.ccr_item_no__ccc_check_content} </span>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th>점검목적</th>
+      <td class="lineCol">
+        <div>
+          <span> {modalData?.ccr_item_no__ccc_check_purpose} </span>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th>보안위협</th>
+      <td class="lineCol">
+        <div>
+          <span> {modalData?.ccr_item_no__ccc_security_threat} </span>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th>영향도</th>
+      <td class="lineCol">
+        <div>
+          <span> {modalData?.ccr_item_no__ccc_impact} </span>
+        </div>
+      </td>
+    </tr>
+
     <tr>
       <th>점검결과수정</th>
       <td class="line5">
         <div class="line5">
           <p>점검결과:</p>
           <select>
-            <option value="양호">양호</option>
-            <option value="취약">취약</option>
+            <option
+              value="양호"
+              selected={modalData?.ccr_item_result === "양호"}
+            >
+              양호
+            </option>
+            <option
+              value="취약"
+              selected={modalData?.ccr_item_result === "취약"}
+            >
+              취약
+            </option>
+            <option
+              value="예외처리"
+              selected={modalData?.ccr_item_result === "예외처리"}
+            >
+              예외처리
+            </option>
+            <option
+              value="해당없음"
+              selected={modalData?.ccr_item_result === "해당없음"}
+            >
+              해당없음
+            </option>
           </select>
         </div>
         <div class="line5">
-          <p>점검결과:</p>
+          <p>수정범위:</p>
           <select>
-            <option value="양호">양호</option>
-            <option value="취약">취약</option>
+            <option value="전체항목">해당항목만</option>
+            <option value="전체항목">전체항목</option>
           </select>
         </div>
         <p>(점검현황/점검결과 적용됨)</p>
@@ -77,7 +112,7 @@
     </tr>
     <tr>
       <th>점검현황</th>
-      <td>{projectsData[0].evidenceImage}</td>
+      <td>{modalData?.ccr_item_status}</td>
     </tr>
     <tr>
       <th>증적이미지</th>
@@ -88,11 +123,11 @@
     </tr>
     <tr>
       <th>개선방법</th>
-      <td>{projectsData[0].improve}</td>
+      <td>{modalData?.ccr_item_no__ccc_mitigation_method}</td>
     </tr>
     <tr>
       <th>개선예시</th>
-      <td>{projectsData[0].inprovement}</td>
+      <td>{@html modalData?.ccr_item_no__ccc_mitigation_example}</td>
     </tr>
   </table>
 </div>

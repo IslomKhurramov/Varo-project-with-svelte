@@ -45,10 +45,6 @@
     show_option: "",
   };
 
-  let projects;
-  let planOptions;
-  let resultData;
-
   // search
   let searchFilters;
   let targets;
@@ -56,10 +52,10 @@
   let checklist;
   let results;
 
-  onMount(async () => {
-    projects = await getPlanLists();
-    planOptions = await getOptionsForNewPlan();
+  // data
+  let resultData;
 
+  onMount(async () => {
     searchFilters = await getViewPlanResultSearch();
   });
 
@@ -68,30 +64,38 @@
   };
 
   const selectPlan = async (plan_index) => {
-    targets = searchFilters?.targets?.find((target) => target[plan_index])[
-      plan_index
-    ];
-    results = searchFilters?.results?.find((result) => result[plan_index])[
-      plan_index
-    ];
+    if (plan_index) {
+      targets = searchFilters?.targets?.find((target) => target[plan_index])[
+        plan_index
+      ];
+      results = searchFilters?.results?.find((result) => result[plan_index])[
+        plan_index
+      ];
+    }
   };
 
   const selectTarget = async (target) => {
-    assets = searchFilters?.assets
-      .find((asset) => asset[search?.plan_index])
-      [search?.plan_index][target].split(",")
-      .map((host) => host.trim());
+    if (target) {
+      assets = searchFilters?.assets
+        .find((asset) => asset[search?.plan_index])
+        [search?.plan_index][target].split(",")
+        .map((host) => host.trim());
 
-    checklist = searchFilters?.checklist
-      .find((list) => list[search?.plan_index])
-      [search?.plan_index][target].split(",")
-      .map((data) => data.trim());
+      checklist = searchFilters?.checklist
+        .find((list) => list[search?.plan_index])
+        [search?.plan_index][target].split(",")
+        .map((data) => data.trim());
+    } else {
+      assets = null;
+      checklist = null;
+      search.hostname = "";
+      search.checklist_item_no = "";
+    }
   };
 
   $: {
     console.log("search:", search);
-    console.log("targets:", targets);
-    console.log("assets:", assets);
+    console.log("resultData:", resultData);
   }
 </script>
 
@@ -121,7 +125,7 @@
             bind:value={search["assessment_target"]}
             on:change={(e) => selectTarget(e.target.value)}
           >
-            <option value="" selected disabled>선택</option>
+            <option value="" selected>선택</option>
             {#if targets && targets.length !== 0}
               {#each targets as target}
                 <option value={target}>{target}</option>
@@ -132,7 +136,7 @@
         <div class="dropdown-container">
           <label for="host">호스트:</label>
           <select id="host" bind:value={search["hostname"]}>
-            <option value="" selected disabled>선택</option>
+            <option value="" selected>선택</option>
             {#if assets && assets.length !== 0}
               {#each assets as asset}
                 <option value={asset}>{asset}</option>
@@ -143,7 +147,7 @@
         <div class="dropdown-container">
           <label for="result">점검항목:</label>
           <select id="result" bind:value={search["checklist_item_no"]}>
-            <option value="" selected disabled>선택</option>
+            <option value="" selected>선택</option>
             {#if checklist && checklist.length !== 0}
               {#each checklist as check}
                 <option value={check}>{check}</option>
@@ -154,7 +158,7 @@
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
           <select id="result" bind:value={search["check_result"]}>
-            <option value="" selected disabled>선택</option>
+            <option value="" selected>선택</option>
             {#if results && results.length !== 0}
               {#each results as result}
                 <option value={result?.ccr_item_result}
@@ -205,40 +209,54 @@
         <thead>
           <tr>
             <th style="width: 5%;">번호</th>
-            <th style="width: 20%;">호스트명</th>
-            <th style="width: 15%;">항목</th>
+            <th style="width: 5%;">호스트명</th>
+            <th style="width: 10%;">항목</th>
             <th style="width: 30%;">점검항목</th>
-            <th style="width: 15%;">시스템상태</th>
-            <th style="width: 10%;">점검결과</th>
-            <th style="width: 5%;">결과변경</th>
+            <th style="width: 30%;">시스템상태</th>
+            <th style="width: 5%;">점검결과</th>
+            <th style="width: 10%;">결과변경</th>
           </tr>
         </thead>
         <tbody>
-          {#each hostInfo as host}
-            <tr>
-              <td>{host.number}</td>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td style="cursor: pointer;" on:click={() => (showModal = true)}
-                >{host.name}</td
-              >
-              <td>{host.item}</td>
-              <td>
-                <div class="checklist">
-                  <p>취약: {host.checklist.vulnerability || "데이터 없음"}</p>
-                  <p>양호: {host.checklist.good || "데이터 없음"}</p>
-                </div>
-              </td>
-              <td>{host.system}</td>
-              <td>{host.instectionResult}</td>
-              <td>
-                <select>
-                  <option value="양호">양호</option>
-                  <option value="해당">해당</option>
-                </select>
-                <button class="save_button">변경</button>
-              </td>
-            </tr>
-          {/each}
+          {#if resultData && resultData?.length !== 0}
+            {#each resultData as data, index}
+              <tr>
+                <td>{index + 1}</td>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td
+                  style="cursor: pointer;"
+                  on:click={() => (showModal = true)}
+                >
+                  {data?.ast_uuid__ass_uuid__ast_hostname}
+                </td>
+                <td>
+                  [{data?.ccr_item_no__ccc_item_no}] {data?.ccr_item_no__ccc_item_title}
+                </td>
+                <td>
+                  <div class="checklist">
+                    <p>{data?.ccr_item_no__ccc_item_criteria}</p>
+                  </div>
+                </td>
+                <td>
+                  <p>
+                    {data.ccr_item_status}
+                  </p>
+                </td>
+                <td>
+                  <span class={data.ccr_item_result}
+                    >{data.ccr_item_result}</span
+                  >
+                </td>
+                <td>
+                  <select>
+                    <option value="양호">양호</option>
+                    <option value="해당">해당</option>
+                  </select>
+                  <button class="save_button">변경</button>
+                </td>
+              </tr>
+            {/each}
+          {/if}
         </tbody>
       </table>
     </div>
@@ -366,8 +384,6 @@
   td {
     border: 1px solid #dddddd;
     padding: 10px;
-    text-align: left;
-    white-space: nowrap;
   }
 
   th {
@@ -378,6 +394,12 @@
     position: sticky;
     top: 0;
     z-index: 1;
+  }
+
+  td {
+    word-wrap: break-word;
+    max-width: 150px;
+    text-align: center;
   }
 
   tbody tr:nth-child(even) {
@@ -409,5 +431,12 @@
     background-color: #247e39;
     transform: translateY(-2px);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  span.수동점검 {
+    color: blue;
+  }
+  span.취약 {
+    color: red;
   }
 </style>

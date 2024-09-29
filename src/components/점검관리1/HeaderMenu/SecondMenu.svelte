@@ -6,16 +6,35 @@
     getViewPlanResults,
     getViewPlanResultSearch,
     setResultChanged,
+    setSpecificItemResultsChange,
   } from "../../../services/result/resultService";
+  import { errorAlert, successAlert } from "../../../shared/sweetAlert";
 
   let showModal = false;
-  let projectsData = [
-    {
-      name: "수리과터스트2",
-      inspectionTarget: "NETWORK",
-      inspectionDateAndTime: "2020.12.15",
-    },
-  ];
+  let insertData = {};
+
+  export const changeDataHandler = async (data) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("plan_index", data?.plan_index);
+      formData.append("result_index", data?.result_index);
+      formData.append("checklist_index", data?.checklist_index);
+      if (data?.change_result)
+        formData.append("change_result", data?.change_result);
+      formData.append("change_option", data?.change_option);
+      if (data?.change_status_text)
+        formData.append("change_status_text", data?.change_status_text);
+      if (data?.change_evidence_file)
+        formData.append("change_evidence_file", data?.change_evidence_file);
+
+      const result = await setSpecificItemResultsChange(formData);
+      alert(result);
+    } catch (err) {
+      console.error("Error changeItemResult:", err);
+      alert(err?.message);
+    }
+  };
   export let hostInfo = [];
 
   for (let i = 1; i <= 10; i++) {
@@ -327,8 +346,13 @@
   </div>
 
   <div>
-    <Modal bind:showModal>
-      <ModalPage {modalData} />
+    <Modal bind:showModal bind:insertData>
+      <ModalPage
+        bind:modalData
+        bind:insertData
+        planIndex={search?.plan_index}
+        {changeDataHandler}
+      />
     </Modal>
   </div>
 </body>

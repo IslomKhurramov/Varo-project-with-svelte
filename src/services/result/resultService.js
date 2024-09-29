@@ -126,3 +126,24 @@ export const setResultChanged = async (data) => {
     throw error;
   }
 };
+
+export const setSpecificItemResultsChange = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setSpecificItemResultsChange/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("setSpecificItemResultsChange RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setSpecificItemResultsChange:", error);
+    throw error;
+  }
+};

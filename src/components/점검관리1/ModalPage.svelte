@@ -1,9 +1,18 @@
 <script>
+  import { setSpecificItemResultsChange } from "../../services/result/resultService";
+
   export let modalData;
+  export let planIndex;
+  export let insertData;
+  export let changeDataHandler;
+
+  $: {
+    console.log("insertData:", insertData);
+    console.log("modalData:", insertData);
+  }
 </script>
 
 <div class="modal">
-  <button class="modify-button">결과변경하기</button>
   <table>
     <tr>
       <th>점검항목</th>
@@ -73,7 +82,10 @@
       <td class="line5">
         <div class="line5">
           <p>점검결과:</p>
-          <select>
+          <select
+            value={modalData?.ccr_item_result}
+            on:change={(e) => (insertData.change_result = e.target.value)}
+          >
             <option
               value="양호"
               selected={modalData?.ccr_item_result === "양호"}
@@ -112,13 +124,29 @@
     </tr>
     <tr>
       <th>점검현황</th>
-      <td>{modalData?.ccr_item_status}</td>
+      <td>
+        <textarea
+          name=""
+          id=""
+          rows="5"
+          cols="50"
+          on:change={(e) => (insertData.change_status_text = e.target.value)}
+          >{modalData?.ccr_item_status}</textarea
+        >
+      </td>
     </tr>
     <tr>
       <th>증적이미지</th>
       <td class="line7">
-        <div>[파일변경]:</div>
-        <input type="file" />
+        <div>
+          [{modalData?.evidence_file?.length !== 0 &&
+            modalData?.evidence_file[0]?.ccs_image}]:
+        </div>
+        <input
+          type="file"
+          on:change={(e) =>
+            (insertData.change_evidence_file = e.target.files[0])}
+        />
       </td>
     </tr>
     <tr>
@@ -130,6 +158,22 @@
       <td>{@html modalData?.ccr_item_no__ccc_mitigation_example}</td>
     </tr>
   </table>
+  <button
+    class="modify-button"
+    style="float: right;"
+    on:click={() =>
+      changeDataHandler({
+        plan_index: planIndex,
+        result_index: modalData?.ccr_index,
+        checklist_index: modalData?.ccr_item_no__ccc_index,
+        change_result: insertData?.change_result,
+        change_option: "ONE",
+        change_status_text: insertData?.change_status_text,
+        change_evidence_file: insertData?.change_evidence_file,
+      })}
+  >
+    저장하기
+  </button>
 </div>
 
 <style>
@@ -137,7 +181,7 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
     max-width: 700px;
     margin: 20px auto;
     font-family: Arial, sans-serif;
@@ -157,7 +201,6 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
     font-size: 12px;
     transition:
       background-color 0.3s ease,

@@ -6,7 +6,10 @@
   } from "../../../services/page1/newInspection";
   import Modal from "../../../shared/Modal.svelte";
   import ModalPage from "../ModalPage.svelte";
-  import { getViewPlanResults } from "../../../services/result/resultService";
+  import {
+    getViewPlanResults,
+    getViewPlanResultSearch,
+  } from "../../../services/result/resultService";
 
   let showModal = false;
   let projectsData = [
@@ -41,21 +44,54 @@
     check_result: "",
     show_option: "",
   };
+
   let projects;
   let planOptions;
   let resultData;
 
+  // search
+  let searchFilters;
+  let targets;
+  let assets;
+  let checklist;
+  let results;
+
   onMount(async () => {
     projects = await getPlanLists();
     planOptions = await getOptionsForNewPlan();
+
+    searchFilters = await getViewPlanResultSearch();
   });
 
   const searchDataHandler = async () => {
     resultData = await getViewPlanResults(search);
   };
 
+  const selectPlan = async (plan_index) => {
+    targets = searchFilters?.targets?.find((target) => target[plan_index])[
+      plan_index
+    ];
+    results = searchFilters?.results?.find((result) => result[plan_index])[
+      plan_index
+    ];
+  };
+
+  const selectTarget = async (target) => {
+    assets = searchFilters?.assets
+      .find((asset) => asset[search?.plan_index])
+      [search?.plan_index][target].split(",")
+      .map((host) => host.trim());
+
+    checklist = searchFilters?.checklist
+      .find((list) => list[search?.plan_index])
+      [search?.plan_index][target].split(",")
+      .map((data) => data.trim());
+  };
+
   $: {
-    console.log("resultData:", resultData);
+    console.log("search:", search);
+    console.log("targets:", targets);
+    console.log("assets:", assets);
   }
 </script>
 
@@ -65,10 +101,14 @@
       <div class="dropdown-group">
         <div class="dropdown-container">
           <label for="project">프로젝트:</label>
-          <select id="project">
+          <select
+            id="project"
+            bind:value={search["plan_index"]}
+            on:change={(e) => selectPlan(e.target.value)}
+          >
             <option value="" selected disabled>선택</option>
-            {#if projects}
-              {#each projects as plan}
+            {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+              {#each searchFilters?.plans as plan}
                 <option value={plan.ccp_index}>{plan.ccp_title}</option>
               {/each}
             {/if}
@@ -76,36 +116,52 @@
         </div>
         <div class="dropdown-container">
           <label for="target">점검대상:</label>
-          <select id="target">
+          <select
+            id="target"
+            bind:value={search["assessment_target"]}
+            on:change={(e) => selectTarget(e.target.value)}
+          >
             <option value="" selected disabled>선택</option>
-            {#if planOptions?.asset_group}
-              {#each planOptions.asset_group as asset}
-                <option value={asset.asg_index}>{asset.asg_title}</option>
+            {#if targets && targets.length !== 0}
+              {#each targets as target}
+                <option value={target}>{target}</option>
               {/each}
             {/if}
           </select>
         </div>
         <div class="dropdown-container">
           <label for="host">호스트:</label>
-          <select id="host">
-            <option value="수리과터스트2">수리과터스트2</option>
+          <select id="host" bind:value={search["hostname"]}>
+            <option value="" selected disabled>선택</option>
+            {#if assets && assets.length !== 0}
+              {#each assets as asset}
+                <option value={asset}>{asset}</option>
+              {/each}
+            {/if}
           </select>
         </div>
         <div class="dropdown-container">
           <label for="result">점검항목:</label>
-          <select id="result">
+          <select id="result" bind:value={search["checklist_item_no"]}>
             <option value="" selected disabled>선택</option>
-            {#if planOptions?.checklist_group}
-              {#each planOptions.checklist_group as item}
-                <option value={item.ccg_index}>{item.ccg_group}</option>
+            {#if checklist && checklist.length !== 0}
+              {#each checklist as check}
+                <option value={check}>{check}</option>
               {/each}
             {/if}
           </select>
         </div>
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
-          <select id="result">
-            <option>점검결과</option>
+          <select id="result" bind:value={search["check_result"]}>
+            <option value="" selected disabled>선택</option>
+            {#if results && results.length !== 0}
+              {#each results as result}
+                <option value={result?.ccr_item_result}
+                  >{result?.ccr_item_result}</option
+                >
+              {/each}
+            {/if}
           </select>
         </div>
         <div class="dropdown-container">

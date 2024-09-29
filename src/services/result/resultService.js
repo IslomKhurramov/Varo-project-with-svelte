@@ -85,3 +85,23 @@ export const setUploadPlanResult = async (data) => {
     throw error;
   }
 };
+
+export const getViewPlanResultSearch = async () => {
+  try {
+    const response = await axios.get(
+      `${serverApi}/api/getViewPlanResultsSearch/`,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("getViewPlanResultsSearch RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error getViewPlanResultsSearch:", error);
+    throw error;
+  }
+};

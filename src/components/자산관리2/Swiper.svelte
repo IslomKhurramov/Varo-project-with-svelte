@@ -16,6 +16,7 @@
     setAssetActivate,
     setAssetUnActivate,
     setAssetInformationUpdate,
+    setAssetRegisterChange,
   } from "../../services/page2/assetService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import ModalEdit from "./SwiperMenu/ModalEdit.svelte";
@@ -28,10 +29,13 @@
   let swiperContainer;
   let uuid_asset = "";
   let asset_group_index = "";
+  let isProcessing = false;
+  let approve_status = "";
 
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
+    console.log("assetdetail", assetDetails);
   };
   /*************************************************************************/
   // Reactive subscription to assetDeatilInfo store
@@ -117,10 +121,12 @@
   // Handle the UUID click and fetch the asset details
   function handleAssetClick(uid, asset) {
     uuid_asset = uid;
+    approve_status = asset.ast_approve_status;
     if (asset.asset_group && asset.asset_group.length > 0) {
       asset_group_index = asset.asset_group[0].asg_index;
     }
     assetListDetail(uuid_asset);
+    console.log("approve status", approve_status);
   }
   /****************************************************/
 
@@ -150,11 +156,9 @@
   /**************UnActivate**************************************/
 
   async function unactivate() {
-    const asset = $allAssetList.find((a) => a.ass_uuid === uuid_asset);
-    console.log("ast_activate", asset);
-    if (!asset.ast_activate) {
-      errorAlert("The asset is already unactivated.");
-      return; // Stop execution, don't call the API
+    if (!uuid_asset) {
+      alert("Asset UUID is missing!");
+      return;
     }
 
     try {
@@ -163,6 +167,7 @@
       if (unActivating.success) {
         successAlert("The asset has been successfully unactivated!");
 
+        assetDetails.ast_activate = false;
         // Update the asset's activation status directly in the store
         allAssetList.update((assets) => {
           return assets.map((a) => {
@@ -184,9 +189,8 @@
 
   /**************Activate**************************************/
   async function activateAsset() {
-    const asset = $allAssetList.find((a) => a.ass_uuid === uuid_asset);
-    if (asset.ast_activate) {
-      errorAlert("The asset is already activated.");
+    if (!uuid_asset) {
+      alert("Asset UUID is missing!");
       return;
     }
 
@@ -196,6 +200,7 @@
       if (activating.success) {
         successAlert("The asset has been successfully activated!");
 
+        assetDetails.ast_activate = true;
         // Update the asset's activation status in the store
         allAssetList.update((assets) => {
           return assets.map((a) => {
@@ -239,6 +244,42 @@
     selectedGroupIndex = event.target.value;
   }
   /***********************************************************************/
+
+  async function assetRegisterChange() {
+    if (uuid_asset === "") {
+      errorAlert("Please select an asset");
+      return;
+    }
+    const newApproveStatus = approve_status === 0 ? 1 : 0;
+    try {
+      const response = await setAssetRegisterChange(
+        uuid_asset,
+        newApproveStatus,
+      );
+
+      if (response.RESULT === "OK") {
+        successAlert("Asset register changed successfully!");
+
+        // Update the asset's approval status in the store
+        allAssetList.update((assets) => {
+          return assets.map((a) => {
+            if (a.ass_uuid === uuid_asset) {
+              return { ...a, ast_approve_status: newApproveStatus }; // Update to new status
+            }
+            return a; // Return unchanged asset
+          });
+        });
+
+        // Update local approval status to reflect the new status
+        approve_status = newApproveStatus; // Update local status
+        assetDetails.ast_approve_status = newApproveStatus; // Also update assetDetails
+      } else {
+        throw new Error("Failed to change asset register status");
+      }
+    } catch (err) {
+      alert(`Error: ${err.message || "An unknown error occurred."}`);
+    }
+  }
 </script>
 
 <main>
@@ -293,8 +334,16 @@
     <div class="button_container">
       <button on:click={() => (showModal = true)}>자산그룹이동 </button>
       <button on:click={() => (showModalSecond = true)}>정보수정</button>
-      <button on:click={activateAsset}>등록승인/등록해제 </button>
-      <button on:click={unactivate}>자산삭제</button>
+      {#if approve_status === 0}
+        <button on:click={assetRegisterChange}>등록승인</button>
+      {:else}
+        <button on:click={assetRegisterChange}>등록해제</button>
+      {/if}
+      {#if !assetDetails.ast_activate}
+        <button on:click={activateAsset}>자산삭제</button>
+      {:else}
+        <button on:click={unactivate}>자산삭제</button>
+      {/if}
     </div>
   </div>
 
@@ -357,6 +406,7 @@
     top: 60%;
     left: 55%;
     transform: translate(-50%, -50%);
+    animation: fadeIn 0.3s ease;
   }
   /* Swiper Styles */
   .swiper-container {

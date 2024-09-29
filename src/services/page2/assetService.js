@@ -225,3 +225,38 @@ export const setAssetInformationUpdate = async (assetInfo) => {
     throw new Error(`Failed to fetch asset detail: ${error.message}`);
   }
 };
+
+/******setAssetRegisterChange****************** */
+
+export const setAssetRegisterChange = async (uuid, approve_status) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setAssetRegisterChange/`,
+      {
+        asset_uuid: uuid,
+        approve_status: approve_status,
+      },
+    );
+
+    if (response.data.RESULT === "OK") {
+      return response.data; // Return the data from the API
+    } else {
+      throw new Error(
+        `Error Code on setAssetRegisterChange: ${response.data.CODE}`,
+      );
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch asset detail: ${error.message}`);
+  }
+};
+/****** get TARGET SYSTEMLIST *******************/
+export const getTargetSystemLists = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getTargetSystemLists/`);
+    console.log("assetGroups:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching getAllAssetLists :", error);
+    throw error;
+  }
+};

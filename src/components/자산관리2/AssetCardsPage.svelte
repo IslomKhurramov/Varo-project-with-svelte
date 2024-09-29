@@ -1,17 +1,22 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalCard from "./ModalCard.svelte";
-  import { allAssetList } from "../../services/page2/asset.store";
+  import {
+    allAssetList,
+    targetSystemList,
+  } from "../../services/page2/asset.store";
   import {
     setAssetActivate,
     setAssetUnActivate,
     getAllAssetLists,
+    getTargetSystemLists,
   } from "../../services/page2/assetService";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
   import { onMount } from "svelte";
 
   let showModal = false;
   let selected = [];
+  let selectedAsset = [];
 
   let allSelected;
   $: allAssetList.subscribe((data) => {
@@ -26,6 +31,7 @@
   }
   function check() {
     console.log("SELECTED", selected);
+    console.log("TARGETLIST", $targetSystemList);
   }
 
   /************************************************************/
@@ -41,8 +47,21 @@
       alert(`Error getting AllAssetList ${err.message}`);
     }
   }
+  /*******************************************************************/
+  async function targetList() {
+    try {
+      const response = await getTargetSystemLists();
+
+      if (response.RESULT === "OK") {
+        targetSystemList.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      alert(`Error getting AllAssetList ${err.message}`);
+    }
+  }
 
   onMount(() => {
+    targetList();
     assetList();
   });
 
@@ -128,6 +147,9 @@
   }
 
   /**********************************************************************/
+  function cancel() {
+    showModal = false;
+  }
 </script>
 
 <main>
@@ -173,7 +195,13 @@
               ></button>
             </div>
 
-            <button class="modal_button" on:click={() => (showModal = true)}>
+            <button
+              class="modal_button"
+              on:click={() => {
+                showModal = true;
+                selectedAsset = asset;
+              }}
+            >
               등록 미승인
             </button>
 
@@ -259,13 +287,27 @@
       {/if}
     </div>
   </div>
-  <Modal bind:showModal class="dialog">
-    <ModalCard />
-  </Modal>
+  {#if showModal}
+    <div class="dialog2" open on:close={() => (showModal = false)}>
+      <ModalCard {cancel} {selectedAsset} />
+    </div>
+  {/if}
 </main>
 
 <style>
   .dialog {
+    transform: translate(-50%, -50%);
+    animation: fadeIn 0.3s ease;
+  }
+  .dialog2 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    position: fixed;
+    top: 50%;
+    left: 55%;
     transform: translate(-50%, -50%);
     animation: fadeIn 0.3s ease;
   }

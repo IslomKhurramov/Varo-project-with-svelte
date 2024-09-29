@@ -249,8 +249,30 @@
                 </td>
                 <td>
                   <select>
-                    <option value="양호">양호</option>
-                    <option value="해당">해당</option>
+                    <option
+                      value="양호"
+                      selected={data?.ccr_item_result === "양호"}
+                    >
+                      양호
+                    </option>
+                    <option
+                      value="취약"
+                      selected={data?.ccr_item_result === "취약"}
+                    >
+                      취약
+                    </option>
+                    <option
+                      value="예외처리"
+                      selected={data?.ccr_item_result === "예외처리"}
+                    >
+                      예외처리
+                    </option>
+                    <option
+                      value="해당없음"
+                      selected={data?.ccr_item_result === "해당없음"}
+                    >
+                      해당없음
+                    </option>
                   </select>
                   <button class="save_button">변경</button>
                 </td>

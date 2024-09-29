@@ -105,3 +105,24 @@ export const getViewPlanResultSearch = async () => {
     throw error;
   }
 };
+
+export const setResultChanged = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setResultChanged/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("setResultChanged RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setResultChanged:", error);
+    throw error;
+  }
+};

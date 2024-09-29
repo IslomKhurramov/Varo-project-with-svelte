@@ -5,6 +5,7 @@
   import {
     getViewPlanResults,
     getViewPlanResultSearch,
+    setResultChanged,
   } from "../../../services/result/resultService";
 
   let showModal = false;
@@ -63,6 +64,12 @@
   };
 
   const selectPlan = async (plan_index) => {
+    search.assessment_target = "";
+    search.hostname = "";
+    search.checklist_item_no = "";
+    search.check_result = "";
+    search.show_option = "";
+
     if (plan_index) {
       targets = searchFilters?.targets?.find((target) => target[plan_index])[
         plan_index
@@ -100,8 +107,14 @@
     }
   };
 
-  $: {
-  }
+  const changeItemResult = async (data) => {
+    try {
+      await setResultChanged(data);
+      searchDataHandler();
+    } catch (err) {
+      console.error("Error changeItemResult:", err);
+    }
+  };
 </script>
 
 <body>
@@ -173,12 +186,12 @@
             {/if}
           </select>
         </div>
-        <div class="dropdown-container">
+        <!-- <div class="dropdown-container">
           <label for="viewOption">보기옵션:</label>
           <select id="viewOption">
             <option value="수리과터스트2">수리과터스트2</option>
           </select>
-        </div>
+        </div> -->
       </div>
       <div class="button-group">
         <button class="firstlineButton" on:click={searchDataHandler}
@@ -269,7 +282,16 @@
                   >
                 </td>
                 <td>
-                  <select>
+                  <select
+                    on:change={(e) =>
+                      changeItemResult({
+                        plan_index: search.plan_index,
+                        result_index: data?.ccr_index,
+                        checklist_index: data?.ccr_item_no__ccc_index,
+                        change_result: e.target.value,
+                        change_option: "ONE",
+                      })}
+                  >
                     <option
                       value="양호"
                       selected={data?.ccr_item_result === "양호"}
@@ -295,7 +317,6 @@
                       해당없음
                     </option>
                   </select>
-                  <button class="save_button">변경</button>
                 </td>
               </tr>
             {/each}

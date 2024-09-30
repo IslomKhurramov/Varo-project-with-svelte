@@ -1,10 +1,14 @@
 <script>
   import { getPlanLists } from "../../../services/page1/newInspection";
-  import { getAuditNLog } from "../../../services/logs/logsService";
+  import {
+    getAuditNLog,
+    getPlanFilter,
+  } from "../../../services/logs/logsService";
   import moment from "moment";
   import { onMount } from "svelte";
 
   let projects;
+  let searchFilters;
   let logData = [];
   const search = {
     plan_index: "",
@@ -15,8 +19,7 @@
   };
 
   onMount(async () => {
-    projects = await getPlanLists();
-    logData = await getAuditNLog(search);
+    searchFilters = await getPlanFilter();
   });
 
   const searchDataHandler = async () => {
@@ -36,8 +39,8 @@
         <label for="project">프로젝트:</label>
         <select id="project" bind:value={search.plan_index}>
           <option value="" selected disabled>선택</option>
-          {#if projects}
-            {#each projects as plan}
+          {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+            {#each searchFilters?.plans as plan}
               <option value={plan.ccp_index}>{plan.ccp_title}</option>
             {/each}
           {/if}
@@ -46,7 +49,12 @@
       <div class="dropdown-container">
         <label for="target">수행자:</label>
         <select id="target" bind:value={search.order_user}>
-          <option value="" selected disabled>선택</option>
+          <option value="" selected>선택</option>
+          {#if searchFilters?.users && searchFilters?.users?.length !== 0}
+            {#each searchFilters?.users as user}
+              <option value={user.user_name}>{user.user_name}</option>
+            {/each}
+          {/if}
         </select>
       </div>
       <div class="dropdown-container">

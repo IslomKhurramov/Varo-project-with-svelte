@@ -31,14 +31,6 @@
 
   const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-  // Sample data for the first chart
-  let data1 = [
-    { subCategory: "Asset Value1", value: 20 },
-    { subCategory: "Asset Value2", value: 15 },
-    { subCategory: "Asset Level1", value: 40 },
-    { subCategory: "Asset Level2", value: 35 },
-  ];
-
   // Draw the bar chart
   function drawBarChart(svgElement, dataset) {
     d3.select(svgElement).selectAll("*").remove(); // Clear previous chart content
@@ -102,7 +94,22 @@
       .text((d) => d.value);
   }
 
-  // Get selected group data
+  // Extract total values for the first chart
+  function getTotalValues() {
+    const assetData = $assetRegisterStatus;
+    if (assetData && assetData.total) {
+      return assetData.total.map((item) => {
+        const key = Object.keys(item)[0]; // Get the first key (3, 6, 9, 12)
+        return {
+          subCategory: key,
+          value: Number(item[key]) || 0, // Convert string to number
+        };
+      });
+    }
+    return [];
+  }
+
+  // Get selected group data for the second chart
   function getSelectedGroupData(index) {
     const assetData = $assetRegisterStatus;
     if (assetData && assetData.groups) {
@@ -122,10 +129,11 @@
   }
 
   // On mount, draw the initial charts
-  onMount(() => {
-    drawBarChart(svg1, data1);
+  $: if ($assetRegisterStatus) {
+    // Draw both charts with available data when assetRegisterStatus is updated
+    drawBarChart(svg1, getTotalValues());
     drawBarChart(svg2, getSelectedGroupData(selectedGroupIndex));
-  });
+  }
 
   // Reactively update the second chart when the selected group changes
   $: if (svg2) {

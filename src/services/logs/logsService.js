@@ -18,7 +18,24 @@ export const getAuditNLog = async (search) => {
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getCCEResultUploadStatus:", error);
+    console.error("Error getAuditNLog:", error);
+    throw error;
+  }
+};
+
+export const getPlanFilter = async (search) => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getPlanFilter/`, {
+      withCredentials: true,
+    });
+
+    console.log("getPlanFilter response:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error getPlanFilter:", error);
     throw error;
   }
 };

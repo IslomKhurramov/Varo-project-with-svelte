@@ -1,10 +1,15 @@
 <script>
   import { getPlanLists } from "../../../services/page1/newInspection";
-  import { getAuditNLog } from "../../../services/logs/logsService";
+  import {
+    getAuditNLog,
+    getPlanFilter,
+  } from "../../../services/logs/logsService";
   import moment from "moment";
   import { onMount } from "svelte";
+  import Tooltip from "../../../shared/Tooltip.svelte";
 
   let projects;
+  let searchFilters;
   let logData = [];
   const search = {
     plan_index: "",
@@ -15,8 +20,7 @@
   };
 
   onMount(async () => {
-    projects = await getPlanLists();
-    logData = await getAuditNLog(search);
+    searchFilters = await getPlanFilter();
   });
 
   const searchDataHandler = async () => {
@@ -36,8 +40,8 @@
         <label for="project">프로젝트:</label>
         <select id="project" bind:value={search.plan_index}>
           <option value="" selected disabled>선택</option>
-          {#if projects}
-            {#each projects as plan}
+          {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+            {#each searchFilters?.plans as plan}
               <option value={plan.ccp_index}>{plan.ccp_title}</option>
             {/each}
           {/if}
@@ -46,7 +50,12 @@
       <div class="dropdown-container">
         <label for="target">수행자:</label>
         <select id="target" bind:value={search.order_user}>
-          <option value="" selected disabled>선택</option>
+          <option value="" selected>선택</option>
+          {#if searchFilters?.users && searchFilters?.users?.length !== 0}
+            {#each searchFilters?.users as user}
+              <option value={user.user_name}>{user.user_name}</option>
+            {/each}
+          {/if}
         </select>
       </div>
       <div class="dropdown-container">
@@ -81,13 +90,15 @@
         {#each logData as data, index}
           <tr>
             <td>{index + 1}</td>
-            <td>{data.ccp_index}</td>
-            <td>{data.ast_uuid}</td>
-            <td>{"분류코드"}</td>
-            <td>{data.his_orig_data}</td>
-            <td>{data.his_order_user}</td>
-            <td>{moment(data.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
-            <td>{"-"}</td>
+            <td>{data?.ccp_index}</td>
+            <td>{data?.ast_uuid}</td>
+            <td>{data?.his_type}</td>
+            <td>{data?.his_orig_data}</td>
+            <td>{data?.his_order_user}</td>
+            <td>{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
+            <td>
+              <Tooltip text={data?.his_full_data}>비고</Tooltip>
+            </td>
           </tr>
         {/each}
       {/if}
@@ -106,7 +117,6 @@
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #ccc;
-    overflow-y: auto;
     height: 600px;
     background-color: #f9f9f9;
   }

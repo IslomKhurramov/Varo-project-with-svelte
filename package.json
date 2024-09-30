@@ -29,6 +29,7 @@
     "vite": "^5.4.3"
   },
   "dependencies": {
+    "@smui/tooltip": "^7.0.0",
     "animejs": "^3.2.2",
     "axios": "^1.7.7",
     "chart.js": "^3.5.0",

@@ -6,6 +6,7 @@
   } from "../../../services/logs/logsService";
   import moment from "moment";
   import { onMount } from "svelte";
+  import Tooltip from "../../../shared/Tooltip.svelte";
 
   let projects;
   let searchFilters;
@@ -96,8 +97,7 @@
             <td>{data?.his_order_user}</td>
             <td>{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
             <td>
-              비고
-              <!-- {data?.his_full_data} -->
+              <Tooltip text={data?.his_full_data}>비고</Tooltip>
             </td>
           </tr>
         {/each}
@@ -117,7 +117,6 @@
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid #ccc;
-    overflow-y: auto;
     height: 600px;
     background-color: #f9f9f9;
   }

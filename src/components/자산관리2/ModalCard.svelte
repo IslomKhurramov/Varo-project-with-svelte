@@ -2,45 +2,157 @@
   import {
     assetDeatilInfo,
     targetSystemList,
+    allAssetList,
   } from "../../services/page2/asset.store";
-
+  import { get } from "svelte/store";
+  import { setAssetTargetRegister } from "../../services/page2/assetService";
+  import { successAlert } from "../../shared/sweetAlert";
   export let cancel;
   export let selectedAsset;
 
-  let osUnix = false;
-  let osWindows = false;
-  let dbmsSelected = false;
-  let webChecked = false;
-  let wasChecked = false;
-  function check() {
-    console.log("selected asset", selectedAsset);
+  let foundAsset = null;
+  let targetList = [];
+  let targets = [];
+  /********************************************************************/
+  function findSelectedAsset() {
+    const assets = $allAssetList;
+    foundAsset = assets.find(
+      (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
+    );
+    if (foundAsset) {
+      console.log("Found asset:", foundAsset);
+      // Initialize targets from selectedAsset's assessment_target_system
+      targets = $targetSystemList.map((target) => ({
+        ...target,
+        selected: foundAsset.assessment_target_system.includes(
+          target.cct_target,
+        ),
+        applied_system: target.applied_system || "",
+        pw: target.pw || "",
+        ip: target.ip || "",
+        port: target.port || "",
+        dbname: target.dbname || "",
+        usermode: target.usermode || "",
+        web_name: target.web_name || "",
+        was_name: target.was_name || "",
+        installed_path: target.installed_path || "",
+      }));
+    } else {
+      console.warn(
+        "Asset not found in allAssetList with UUID:",
+        selectedAsset.ass_uuid,
+      );
+    }
+  }
+  $: if (selectedAsset) {
+    findSelectedAsset();
+  }
+
+  $: if (selectedAsset && selectedAsset.assessment_target_system) {
+    targetList = selectedAsset.assessment_target_system;
+  }
+  /******************************************************************/
+  // Example function to format the target data based on type
+  function prepareTargetData() {
+    return targets
+      .filter((target) => target.selected)
+      .map((target) => {
+        const targetData = {};
+        switch (target.cct_target) {
+          case "UNIX":
+            targetData.UNIX = "-t linux";
+            break;
+          case "WINDOWS":
+            targetData.WINDOWS = "-t windows";
+            break;
+          case "DBMS":
+            targetData.DBMS = `-t ${target.applied_system} -u ${target.usermode} -p ${target.pw} -H ${target.ip} -P ${target.port} -D ${target.dbname}`;
+            break;
+          case "NETWORK":
+            targetData.NETWORK = `-u ${target.userid} -p ${target.pw} -H ${target.ip} -P ${target.port}`;
+            break;
+          case "WEB":
+            targetData.WEB = `-t ${target.web_name} -path ${target.installed_path}`;
+            break;
+          case "WAS":
+            targetData.WAS = `-t ${target.was_name} -path ${target.installed_path}`;
+            break;
+          case "PC":
+            targetData.PC = "-t pc";
+            break;
+          default:
+            break;
+        }
+        return targetData;
+      });
+  }
+  /******************************************************************/
+  async function submit(event) {
+    event.preventDefault();
+    if (!selectedAsset || !selectedAsset.ass_uuid) {
+      alert("No valid asset selected");
+      return;
+    }
+
+    try {
+      const preparedTargets = prepareTargetData();
+
+      const payload = {
+        asset_uuid: selectedAsset.ass_uuid,
+        targets: preparedTargets,
+      };
+
+      const response = await setAssetTargetRegister(
+        payload.asset_uuid,
+        payload.targets,
+      );
+
+      if (response.RESULT === "OK") {
+        successAlert("Target registered successfully!");
+        updateSelectedAsset(); // Sync the updated asset data
+        cancel(); // Close the form or reset it
+      }
+    } catch (error) {
+      // Handle errors during submission
+      console.error("Submission failed:", error);
+      alert("An error occurred while submitting the form: " + error.message);
+    }
+  }
+
+  /******************************************************************/
+  function updateSelectedAsset() {
+    const updatedAsset = $allAssetList.find(
+      (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
+    );
+
+    if (updatedAsset) {
+      Object.assign(selectedAsset, updatedAsset);
+      console.log("Updated selected asset:", selectedAsset);
+    } else {
+      console.warn("Asset not found in allAssetList");
+    }
   }
 </script>
 
-<div class="container">
+<!-- Form to display and edit the selected asset and its targets -->
+<form on:submit={submit} class="container">
   <div class="header_group">
     <div class="header">
-      <span on:click={check}>운영제체</span>
+      <span>운영제체</span>
       <div class="select">
-        <p>
-          {selectedAsset.assessment_target_system}
-        </p>
+        <p>{selectedAsset.assessment_target_system}</p>
       </div>
     </div>
     <div class="header">
       <span>자산명</span>
       <div class="select">
-        <p>
-          {selectedAsset.ast_hostname}
-        </p>
+        <p>{selectedAsset.ast_hostname}</p>
       </div>
     </div>
     <div class="header">
       <span>아이피주소</span>
       <div class="select">
-        <p>
-          {selectedAsset.ast_ipaddr}
-        </p>
+        <p>{selectedAsset.ast_ipaddr}</p>
       </div>
     </div>
     <div class="header">
@@ -52,176 +164,105 @@
     </div>
   </div>
 
-  <div class="checkbox-group">
-    <input type="checkbox" bind:checked={osUnix} id="osUnix" />
-    <label for="osUnix">UNIX</label>
-  </div>
-  {#if osUnix}
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBMS</label>
-      <input type="text" placeholder="MYSQL/ORACLE" />
+  <!-- Editable target systems from selectedAsset -->
+  {#each targets as target}
+    <div class="checkbox-group">
+      <input
+        type="checkbox"
+        bind:checked={target.selected}
+        id={target.cct_target}
+      />
+      <label for={target.cct_target}>{target.cct_target}</label>
     </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PW</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>IP</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PORT</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBNAME</label>
-      <input type="text" />
-    </div>
-  {/if}
 
-  <div class="checkbox-group">
-    <input type="checkbox" bind:checked={osWindows} id="osWindows" />
-    <label for="osWindows">WINDOWS</label>
-  </div>
-  {#if osWindows}
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBMS</label>
-      <input type="text" placeholder="MYSQL/ORACLE" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PW</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>IP</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PORT</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBNAME</label>
-      <input type="text" />
-    </div>
-  {/if}
-  <div class="checkbox-group">
-    <input type="checkbox" bind:checked={dbmsSelected} id="dbmsSelected" />
-    <label for="dbmsSelected">DBMS</label>
-  </div>
+    {#if target.selected}
+      {#if target.cct_target === "DBMS"}
+        <div class="input-group">
+          <label>Systems</label>
+          <input type="text" bind:value={target.applied_system} />
+        </div>
+        <div class="input-group">
+          <label>PW</label>
+          <input type="text" bind:value={target.pw} />
+        </div>
+        <div class="input-group">
+          <label>IP</label>
+          <input type="text" bind:value={target.ip} />
+        </div>
+        <div class="input-group">
+          <label>PORT</label>
+          <input type="text" bind:value={target.port} />
+        </div>
+        <div class="input-group">
+          <label>DBNAME</label>
+          <input type="text" bind:value={target.dbname} />
+        </div>
+        <div class="input-group">
+          <label>USERMODE</label>
+          <input type="text" bind:value={target.usermode} />
+        </div>
+      {/if}
 
-  {#if dbmsSelected}
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBMS</label>
-      <input type="text" placeholder="MYSQL/ORACLE" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PW</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>IP</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PORT</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBNAME</label>
-      <input type="text" />
-    </div>
-  {/if}
+      {#if target.cct_target === "NETWORK"}
+        <div class="input-group">
+          <label>IP</label>
+          <input type="text" bind:value={target.ip} />
+        </div>
+        <div class="input-group">
+          <label>PORT</label>
+          <input type="text" bind:value={target.port} />
+        </div>
+        <div class="input-group">
+          <label>UserID</label>
+          <input type="text" bind:value={target.userid} />
+        </div>
+        <div class="input-group">
+          <label>UserPW</label>
+          <input type="text" bind:value={target.pw} />
+        </div>
+      {/if}
 
-  <div class="checkbox-group">
-    <input type="checkbox" bind:checked={webChecked} id="webChecked" />
-    <label for="webChecked">WEB</label>
-  </div>
-  {#if webChecked}
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBMS</label>
-      <input type="text" placeholder="MYSQL/ORACLE" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PW</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>IP</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PORT</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBNAME</label>
-      <input type="text" />
-    </div>
-  {/if}
-  <div class="checkbox-group">
-    <input type="checkbox" bind:checked={wasChecked} id="wasChecked" />
-    <label for="wasChecked">WAS</label>
-  </div>
-  {#if wasChecked}
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBMS</label>
-      <input type="text" placeholder="MYSQL/ORACLE" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PW</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>IP</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>PORT</label>
-      <input type="text" />
-    </div>
-    <div class="input-group">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>DBNAME</label>
-      <input type="text" />
-    </div>
-  {/if}
+      {#if targetList.cct_target === "WEB" || targetList.cct_target === "WAS"}
+        <!-- WEB and WAS inputs -->
+        <div class="input-group">
+          <label>{targetList.cct_target} Name</label>
+          <input
+            type="text"
+            value={targetList.cct_target === "WEB"
+              ? targetList.web_name
+              : targetList.was_name}
+            on:input={(e) => {
+              if (targetList.cct_target === "WEB") {
+                targetList.web_name = e.target.value;
+              } else {
+                targetList.was_name = e.target.value;
+              }
+            }}
+          />
+        </div>
+        <div class="input-group">
+          <label>Installed Path</label>
+          <input type="text" bind:value={targetList.installed_path} />
+        </div>
+      {/if}
+    {/if}
+  {/each}
+
   <div class="button-group">
-    <button class="btn submit">Submit</button>
-    <button class="btn cancel" on:click|preventDefault={cancel}>Cancel</button>
+    <button class="btn submit" type="submit">Submit</button>
+    <button class="btn cancel" type="button" on:click|preventDefault={cancel}
+      >Cancel</button
+    >
   </div>
-</div>
+</form>
 
 <style>
+  /* CSS styles for the form and inputs */
   .container {
-    background-color: #ffffff; /* Clean white background */
-    padding: 15px; /* Reduced padding */
-    width: 300px; /* Smaller width */
-    border-radius: 10px; /* Slightly smaller radius */
+    background-color: #ffffff;
+    padding: 15px;
+    width: 300px;
+    border-radius: 10px;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   }
@@ -229,106 +270,72 @@
   .header_group {
     display: flex;
     flex-direction: column;
-    gap: 4px; /* Reduced gap */
+    gap: 4px;
   }
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px; /* Reduced padding */
-    background-color: #0056b3; /* Bootstrap primary color */
+    padding: 8px;
+    background-color: #0056b3;
     color: white;
-    border-radius: 6px; /* Smaller radius */
-    font-weight: bold;
-    font-size: 12px; /* Smaller font size */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
   }
 
-  .header span {
-    font-size: 12px; /* Smaller font size */
-  }
-
-  .checkbox-group {
-    margin-top: 4px; /* Reduced margin */
-    display: flex;
-    align-items: center;
-    font-size: 12px; /* Smaller font size */
-  }
-
-  .checkbox-group input[type="checkbox"] {
-    margin-right: 8px; /* Reduced margin */
-    accent-color: #0056b3; /* Bootstrap primary color */
+  .select {
+    margin: 8px 0;
   }
 
   .input-group {
     display: flex;
-    margin-top: 4px; /* Reduced margin */
+    margin-top: 4px;
     align-items: center;
   }
 
   .input-group label {
-    width: 60px; /* Reduced width */
-    font-size: 12px; /* Smaller font size */
+    width: 60px;
+    font-size: 12px;
     color: #333;
   }
 
-  .input-group input[type="text"] {
-    flex: 1;
-    padding: 6px; /* Reduced padding */
-    border: 1px solid #ccc;
-    border-radius: 6px; /* Smaller radius */
-    background-color: #f8f9fa; /* Light gray background */
-    color: #333;
-    font-size: 12px; /* Smaller font size */
-    transition: border-color 0.3s;
-  }
-
-  .input-group input[type="text"]:focus {
-    border-color: #0056b3; /* Highlight border on focus */
-    outline: none;
-  }
-
-  .select {
-    border-radius: 6px; /* Smaller radius */
-    border: 1px solid #ccc;
-    font-size: 12px; /* Smaller font size */
-    width: 160px; /* Reduced width */
-    height: 28px; /* Reduced height */
-    background-color: #fff;
-    color: #333;
+  .checkbox-group {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     text-align: center;
+    font-size: 12px;
   }
 
   .button-group {
     display: flex;
     justify-content: space-between;
-    margin-top: 15px; /* Reduced margin */
+    margin-top: 15px;
   }
 
   .btn {
-    padding: 8px 12px; /* Reduced padding */
+    padding: 8px 12px;
     border: none;
-    border-radius: 6px; /* Smaller radius */
+    border-radius: 6px;
     color: white;
-    font-size: 12px; /* Smaller font size */
+    font-size: 12px;
     cursor: pointer;
-    transition: background-color 0.3s;
   }
 
   .btn.submit {
-    background-color: #28a745; /* Bootstrap success color */
+    background-color: #28a745;
   }
 
   .btn.cancel {
-    background-color: #dc3545; /* Bootstrap danger color */
+    background-color: #dc3545;
   }
 
   .btn.submit:hover {
-    background-color: #218838; /* Darken on hover */
+    background-color: #218838;
   }
 
   .btn.cancel:hover {
-    background-color: #c82333; /* Darken on hover */
+    background-color: #c82333;
   }
 </style>

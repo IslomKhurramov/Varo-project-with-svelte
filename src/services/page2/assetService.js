@@ -260,3 +260,37 @@ export const getTargetSystemLists = async () => {
     throw error;
   }
 };
+export const setAssetTargetRegister = async (ass_uuid, targets) => {
+  try {
+    const payload = {
+      asset_uuid: ass_uuid, // Ensure it's a string
+      targets,
+    };
+
+    console.log(
+      "Sending asset target registration with payload:",
+      JSON.stringify(payload, null, 2),
+    );
+
+    const response = await axios.post(
+      `${serverApi}/api/setAssetTargetRegister/`,
+      payload,
+    );
+
+    console.log("API response:", JSON.stringify(response.data, null, 2));
+
+    if (response.data && response.data.RESULT === "OK") {
+      return response.data;
+    } else {
+      throw new Error(
+        `Error Code on setAssetTargetRegister: ${response.data.CODE}`,
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Error in setAssetTargetRegister:",
+      error.response ? error.response.data : error.message,
+    );
+    throw new Error(`Failed to register asset target: ${error.message}`);
+  }
+};

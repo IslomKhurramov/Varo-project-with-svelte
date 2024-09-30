@@ -4,8 +4,8 @@
   import moment from "moment";
   import { onMount } from "svelte";
 
-  export let performanceLog = [];
-
+  let projects;
+  let logData = [];
   const search = {
     plan_index: "",
     asset_name: "",
@@ -13,32 +13,6 @@
     search_start_date: "",
     search_end_date: "",
   };
-
-  /*
- {
-    "plan_index": "7",
-    "asset_name": "",
-    "order_user": "admin",
-    "search_start_date": "2024-01-01",
-    "search_end_date": "2024-12-12"
-}
-  */
-
-  for (let i = 1; i <= 100; i++) {
-    performanceLog.push({
-      number: i.toString(),
-      projectNO: `프로젝트${i}`,
-      assetName: "AAAAAA",
-      cassification: "ERROR-099",
-      logContent: "실행과정에서 에러발생 : SDFSDFSDFSDFSDFSDF",
-      performer: "길동이",
-      date: "2024-12-11 11:21:12",
-      note: "",
-    });
-  }
-
-  let projects;
-  let logData = [];
 
   onMount(async () => {
     projects = await getPlanLists();

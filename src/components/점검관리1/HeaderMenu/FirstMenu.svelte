@@ -3,12 +3,15 @@
   import { getPlanLists } from "../../../services/page1/newInspection";
   import {
     getCCEResultUploadStatus,
+    getResultUploadStatus,
     getUploadedResultErrors,
     setUploadPlanResult,
   } from "../../../services/result/resultService";
   import ModalDynamic from "../../../shared/ModalDynamic.svelte";
   import ResultPopup from "../ResultPopup.svelte";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert";
+  import ResultErrorPopup from "../ResultErrorPopup.svelte";
+  import ResultUploadStatusPopup from "../ResultUploadStatusPopup.svelte";
 
   // inputs & files
   let jsonInput;
@@ -22,19 +25,19 @@
   let selectedPlan = null;
   let resultStatus = null;
   let resultErrors = null;
+  let uploadStatus = null;
   let showModal = false;
+  let showErrorModal = false;
   let modalData = null;
-
-  $: {
-    console.log("resultStatus:", resultStatus);
-    console.log("resultErrors:", resultErrors);
-  }
+  let modalErrorData = null;
+  let uploadStatusModalData = null;
 
   $: if (selectedPlan) {
     (async () => {
       try {
         resultStatus = await getCCEResultUploadStatus(selectedPlan);
         resultErrors = await getUploadedResultErrors(selectedPlan);
+        uploadStatus = await getResultUploadStatus(selectedPlan);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -72,8 +75,17 @@
     }
   };
 
+  const getResultStatus = async () => {
+    try {
+      uploadStatusModalData = uploadStatus;
+    } catch (err) {
+      console.error("Error changeItemResult:", err);
+    }
+  };
+
   $: {
-    console.log("jsonFiles:", jsonFiles);
+    console.log("uploadStatus:", uploadStatus);
+    console.log("uploadStatusModalData:", uploadStatusModalData);
   }
 </script>
 
@@ -84,19 +96,23 @@
         on:click={() => {
           showModal = true;
           modalData = resultStatus?.assets_info;
-        }}>등록현황조회</button
+        }}
       >
+        등록현황조회
+      </button>
     {:else}
       <button style="background-color:  #33333342;">등록현황조회</button>
     {/if}
 
-    {#if resultErrors?.assets_info?.length > 0}
+    {#if resultErrors?.length > 0}
       <button
-        onclick={() => {
-          showModal = true;
-          modalData = resultErrors;
-        }}>에러내역확인</button
+        on:click={() => {
+          showErrorModal = true;
+          modalErrorData = resultErrors;
+        }}
       >
+        에러내역확인
+      </button>
     {:else}
       <button style="background-color:  #33333342;">에러내역확인</button>
     {/if}
@@ -126,10 +142,14 @@
             <p class="button2 width">에이전트결과</p>
             <input
               class="input"
-              placeholder="점검대상 200대중 180대 업로드 완료 (등록현황을 그래픽으로 표현)"
+              placeholder={`점검대상 ${uploadStatus?.total_asset_count ?? 0}대중 ${uploadStatus?.uploaded_asset_count ?? 0}대 업로드 완료`}
               readonly
             />
-            <button class="save_button" disabled={!selectedPlan}>
+            <button
+              class="save_button"
+              disabled={!selectedPlan}
+              on:click={getResultStatus}
+            >
               등록내역확인
             </button>
           </div>
@@ -254,6 +274,28 @@
     modalHeight={modalData?.length > 10 ? 70 : null}
   >
     <ResultPopup bind:modalData />
+  </ModalDynamic>
+{/if}
+
+{#if modalErrorData}
+  <ModalDynamic
+    bind:showModal={showErrorModal}
+    modalWidth={80}
+    modalHeight={modalErrorData?.length > 10 ? 70 : null}
+  >
+    <ResultErrorPopup bind:modalErrorData />
+  </ModalDynamic>
+{/if}
+
+{#if uploadStatusModalData}
+  <ModalDynamic
+    bind:showModal={uploadStatusModalData}
+    modalWidth={80}
+    modalHeight={uploadStatusModalData?.uploaded_status?.length > 10
+      ? 70
+      : null}
+  >
+    <ResultUploadStatusPopup bind:uploadStatusModalData />
   </ModalDynamic>
 {/if}
 

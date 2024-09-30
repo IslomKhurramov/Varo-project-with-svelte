@@ -16,7 +16,7 @@
 
   let showModal = false;
   let selected = [];
-  let selectedAsset = [];
+  let selectedAsset = null;
 
   let allSelected;
   $: allAssetList.subscribe((data) => {
@@ -195,16 +195,27 @@
               ></button>
             </div>
 
-            <button
-              class="modal_button"
-              on:click={() => {
-                showModal = true;
-                selectedAsset = asset;
-              }}
-            >
-              등록 미승인
-            </button>
-
+            {#if asset.asset_target_registered === "YES"}
+              <button
+                class="modal_button"
+                on:click={() => {
+                  showModal = true;
+                  selectedAsset = asset;
+                }}
+              >
+                등록 미승인
+              </button>
+            {:else}
+              <button
+                class="modal_button"
+                on:click={() => {
+                  showModal = true;
+                  selectedAsset = asset;
+                }}
+              >
+                등록 해제
+              </button>
+            {/if}
             <div class="first_col">
               <div class="first_col_1">
                 <p>보안점수</p>

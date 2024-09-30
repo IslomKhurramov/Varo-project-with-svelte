@@ -170,3 +170,26 @@ export const setFinalPlanSecurityPoint = async (plan_index) => {
     throw error;
   }
 };
+
+export const getResultUploadStatus = async (plan_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getResultUploadStatus/`,
+      {
+        plan_index: plan_index,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("getResultUploadStatus RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error getResultUploadStatus:", error);
+    throw error;
+  }
+};

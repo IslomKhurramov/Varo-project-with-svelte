@@ -40,10 +40,6 @@
     }
   };
 
-  $: {
-    console.log("resultData:", resultData);
-  }
-
   let search = {
     plan_index: "",
     assessment_target: "",

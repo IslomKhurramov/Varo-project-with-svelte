@@ -89,13 +89,16 @@
         {#each logData as data, index}
           <tr>
             <td>{index + 1}</td>
-            <td>{data.ccp_index}</td>
-            <td>{data.ast_uuid}</td>
-            <td>{"분류코드"}</td>
-            <td>{data.his_orig_data}</td>
-            <td>{data.his_order_user}</td>
-            <td>{moment(data.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
-            <td>{"-"}</td>
+            <td>{data?.ccp_index}</td>
+            <td>{data?.ast_uuid}</td>
+            <td>{data?.his_type}</td>
+            <td>{data?.his_orig_data}</td>
+            <td>{data?.his_order_user}</td>
+            <td>{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
+            <td>
+              비고
+              <!-- {data?.his_full_data} -->
+            </td>
           </tr>
         {/each}
       {/if}

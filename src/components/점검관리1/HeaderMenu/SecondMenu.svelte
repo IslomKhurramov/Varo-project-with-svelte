@@ -29,27 +29,18 @@
         formData.append("change_evidence_file", data?.change_evidence_file);
 
       const result = await setSpecificItemResultsChange(formData);
-      alert(result);
+      searchDataHandler();
+      successAlert(result);
+      showModal = false;
+      modalData = null;
     } catch (err) {
       console.error("Error changeItemResult:", err);
       alert(err?.message);
     }
   };
-  export let hostInfo = [];
 
-  for (let i = 1; i <= 10; i++) {
-    hostInfo.push({
-      number: i.toString(),
-      name: `User_L2_51${i}`,
-      item: "[N-01] 패스워드 설정",
-      checklist: {
-        vulnerability:
-          "기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은 경우",
-        good: "기본 패스워드를 변경한 경우",
-      },
-      system: "계정목록(동일패스워드 없음)",
-      instectionResult: "양호",
-    });
+  $: {
+    console.log("showModal:", showModal);
   }
 
   let search = {
@@ -271,7 +262,7 @@
                 <td
                   style="cursor: pointer;"
                   on:click={() => {
-                    modalData = data;
+                    modalData = { ...data };
                     showModal = true;
                   }}
                 >
@@ -312,6 +303,13 @@
                       })}
                   >
                     <option
+                      value=""
+                      disabled
+                      selected={data?.ccr_item_result === ""}
+                    >
+                      없음
+                    </option>
+                    <option
                       value="양호"
                       selected={data?.ccr_item_result === "양호"}
                     >
@@ -346,14 +344,16 @@
   </div>
 
   <div>
-    <Modal bind:showModal bind:insertData>
-      <ModalPage
-        bind:modalData
-        bind:insertData
-        planIndex={search?.plan_index}
-        {changeDataHandler}
-      />
-    </Modal>
+    {#if showModal}
+      <Modal bind:showModal bind:insertData>
+        <ModalPage
+          bind:modalData
+          bind:insertData
+          planIndex={search?.plan_index}
+          {changeDataHandler}
+        />
+      </Modal>
+    {/if}
   </div>
 </body>
 

@@ -7,8 +7,8 @@
   export let changeDataHandler;
 
   $: {
+    console.log("modalData:", modalData?.ccr_item_result);
     console.log("insertData:", insertData);
-    console.log("modalData:", insertData);
   }
 </script>
 
@@ -86,6 +86,7 @@
             value={modalData?.ccr_item_result}
             on:change={(e) => (insertData.change_result = e.target.value)}
           >
+            <option value="" disabled> 없음 </option>
             <option
               value="양호"
               selected={modalData?.ccr_item_result === "양호"}
@@ -161,6 +162,7 @@
   <button
     class="modify-button"
     style="float: right;"
+    disabled={Object.keys(insertData).length === 0}
     on:click={() =>
       changeDataHandler({
         plan_index: planIndex,
@@ -259,5 +261,9 @@
     border: 1px solid #ccc;
     padding: 5px;
     border-radius: 5px;
+  }
+
+  button:disabled {
+    background-color: #838383;
   }
 </style>

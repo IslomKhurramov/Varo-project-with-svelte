@@ -294,3 +294,25 @@ export const setAssetTargetRegister = async (ass_uuid, targets) => {
     throw new Error(`Failed to register asset target: ${error.message}`);
   }
 };
+/*********************************************************************************** */
+
+export const getAssetRegisterStatus = async (current_day) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getAssetRegisterStatus/`,
+      {
+        curr_day: current_day,
+      },
+    );
+
+    if (response.data.RESULT === "OK") {
+      return response.data; // Return the data from the API
+    } else {
+      throw new Error(
+        `Error Code on getAssetRegisterStatus: ${response.data.CODE}`,
+      );
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch asset detail: ${error.message}`);
+  }
+};

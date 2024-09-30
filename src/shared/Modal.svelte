@@ -8,10 +8,6 @@
   let dialogSecond; // HTMLDialogElement for the second modal
   let dialogThird; // HTMLDialogElement for the third modal
 
-  $: {
-    console.log("MODAL DATA", showModal);
-  }
-
   $: if (dialog && showModal) dialog.showModal();
   $: if (dialogSecond && showModalSecond) dialogSecond.showModal();
   $: if (dialogThird && showModalRegisteredAdmin) dialogThird.showModal();

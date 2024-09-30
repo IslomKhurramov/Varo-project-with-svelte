@@ -5,11 +5,6 @@
   export let planIndex;
   export let insertData;
   export let changeDataHandler;
-
-  $: {
-    console.log("modalData:", modalData?.ccr_item_result);
-    console.log("insertData:", insertData);
-  }
 </script>
 
 <div class="modal">

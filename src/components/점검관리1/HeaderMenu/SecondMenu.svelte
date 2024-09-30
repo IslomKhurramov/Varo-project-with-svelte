@@ -5,6 +5,7 @@
   import {
     getViewPlanResults,
     getViewPlanResultSearch,
+    setFinalPlanSecurityPoint,
     setResultChanged,
     setSpecificItemResultsChange,
   } from "../../../services/result/resultService";
@@ -40,7 +41,7 @@
   };
 
   $: {
-    console.log("showModal:", showModal);
+    console.log("resultData:", resultData);
   }
 
   let search = {
@@ -125,6 +126,18 @@
       console.error("Error changeItemResult:", err);
     }
   };
+
+  const clickSecyurityPoint = async (plan_index) => {
+    try {
+      if (!plan_index) return false;
+      const response = await setFinalPlanSecurityPoint(plan_index);
+      successAlert(response);
+      searchDataHandler();
+    } catch (err) {
+      console.error("Error changeItemResult:", err);
+      errorAlert(err?.message);
+    }
+  };
 </script>
 
 <body>
@@ -204,10 +217,16 @@
         </div> -->
       </div>
       <div class="button-group">
-        <button class="firstlineButton" on:click={searchDataHandler}
-          >조회하기</button
+        <button class="firstlineButton" on:click={searchDataHandler}>
+          조회하기
+        </button>
+        <button
+          class="firstlineButton"
+          disabled={!search?.plan_index || !resultData}
+          on:click={() => clickSecyurityPoint(search?.plan_index)}
         >
-        <button class="firstlineButton">보안점수확점</button>
+          보안점수확점
+        </button>
       </div>
     </div>
 
@@ -524,7 +543,12 @@
   span.수동점검 {
     color: blue;
   }
+
   span.취약 {
     color: red;
+  }
+
+  button:disabled {
+    background-color: #838383;
   }
 </style>

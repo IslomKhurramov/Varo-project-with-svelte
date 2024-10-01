@@ -43,9 +43,8 @@
   });
 
   $: {
-    if (plans?.plans?.length !== 0) {
-      console.log("plans:", plans?.plans?.[0]?.plan_target);
-    }
+    console.log("plans:", plans?.plans?.[0]?.plan_target);
+    console.log("activeMenu:", activeMenu);
   }
 </script>
 
@@ -77,7 +76,10 @@
               <div class="project_button">
                 <div
                   class="accordion_header"
-                  on:click={() => toggleAccordion(plan)}
+                  on:click={() => {
+                    toggleAccordion(plan);
+                    selectPage(MainPageProject, plan);
+                  }}
                 >
                   <img src="./images/projectGray.png" alt="project" />
                   <a
@@ -177,6 +179,7 @@
         </form>
       </div>
       <div class="header_button">
+        <button>조회</button>
         <p>엑셀다운로드</p>
       </div>
     </header>
@@ -430,6 +433,23 @@
     outline: none;
     box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
     border-color: #007acc;
+  }
+
+  .header_button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .header_button button {
+    margin-right: 15px;
+    background-color: #0056b3;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    height: 30px;
+    width: 120px;
+    cursor: pointer;
   }
 
   /* Header Buttons */

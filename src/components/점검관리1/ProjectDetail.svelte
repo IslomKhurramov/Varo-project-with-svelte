@@ -6,6 +6,13 @@
   import moment from "moment";
   import ModalDynamic from "../../shared/ModalDynamic.svelte";
   import ResultPopUp from "./ResultPopup.svelte";
+  import {
+    getOptionsForNewPlan,
+    getPlanLists,
+    setPlanChange,
+  } from "../../services/page1/newInspection";
+  import { getAssetGroup } from "../../services/page2/assetService";
+  import { onMount } from "svelte";
 
   export let projectIndex;
 
@@ -13,8 +20,48 @@
   let assetsInfo = null;
   let modalData = null;
 
+  let planOptions = [];
+  let planList = [];
+  let assetGroup = [];
+
   let totalPercentage = 0;
   let showModal = false;
+
+  let updateInfo = {
+    ccp_index: "",
+    ccp_title: "",
+    recheck: "",
+    recheck_pno: "",
+    ccp_ruleset: "",
+    asg_index: "",
+    plan_planer_info: "",
+    plan_start_date: "",
+    plan_end_date: "",
+    plan_execution_type: "",
+    plan_execute_interval_value: "",
+    plan_execute_interval_term: "",
+    plan_name_repeat_rule_type: "",
+    plan_name_repeat_rule: "",
+    fix_date_setup: "",
+    fix_start_date: "",
+    fix_end_date: "",
+    fix_conductor_info: "",
+    // assessment_command: ""
+  };
+
+  onMount(async () => {
+    try {
+      planOptions = await getOptionsForNewPlan();
+      console.log("planOptions:", planOptions);
+
+      planList = await getPlanLists();
+
+      assetGroup = await getAssetGroup();
+      console.log("assetGroup:", assetGroup);
+    } catch (err) {
+      console.error("Error loading asset groups:", err);
+    }
+  });
 
   $: if (projectIndex) {
     updateProjectDetails();
@@ -24,6 +71,33 @@
     try {
       console.log("projectIndex:", projectIndex);
       projectDetails = await getPlanDetailInformation(projectIndex);
+
+      updateInfo = {
+        ...updateInfo,
+        ccp_index: projectDetails?.ccp_index,
+        ccp_title: projectDetails?.ccp_title,
+        recheck: projectDetails?.recheck,
+        recheck_pno: projectDetails?.recheck_pno,
+        ccp_ruleset: projectDetails?.ccp_ruleset,
+        asg_index: projectDetails?.asg_index,
+        plan_planer_info: projectDetails?.plan_creator_user_index_id,
+        plan_start_date: moment(projectDetails?.plan_start_date).format(
+          "YYYY-MM-DD HH:mm:ss",
+        ),
+        plan_end_date: moment(projectDetails?.plan_end_date).format(
+          "YYYY-MM-DD HH:mm:ss",
+        ),
+        plan_execution_type: projectDetails?.plan_execution_type ? 1 : 0,
+        plan_execute_interval_value:
+          projectDetails?.plan_execute_interval_value,
+        plan_execute_interval_term: projectDetails?.plan_execute_interval_term,
+        plan_name_repeat_rule_type: projectDetails?.plan_name_repeat_rule_type,
+        plan_name_repeat_rule: projectDetails?.plan_name_repeat_rule,
+        fix_date_setup: projectDetails?.fix_date_setup ? 1 : 0,
+        fix_start_date: projectDetails?.fix_start_date,
+        fix_end_date: projectDetails?.fix_end_date,
+        fix_conductor_info: projectDetails?.fix_conductor_info_id,
+      };
 
       const totalY = projectDetails?.target_securitypoint.reduce(
         (sum, item) => sum + item.y,
@@ -39,6 +113,36 @@
       navigate(window.location?.pathname == "/" ? "/page1" : "/");
     }
   }
+
+  const updateInfoHandler = async (sendData) => {
+    try {
+      console.log("sendData:", sendData);
+
+      sendData.plan_start_date = moment(sendData?.plan_start_date).format(
+        "YYYY-MM-DD HH:mm:ss",
+      );
+      sendData.plan_end_date = moment(sendData?.plan_end_date).format(
+        "YYYY-MM-DD HH:mm:ss",
+      );
+      sendData.fix_start_date = moment(sendData?.fix_start_date).format(
+        "YYYY-MM-DD",
+      );
+      sendData.fix_end_date = moment(sendData?.fix_end_date).format(
+        "YYYY-MM-DD",
+      );
+
+      const formData = new FormData();
+
+      for (const key in sendData) {
+        formData.append(key, sendData[key]);
+      }
+
+      await setPlanChange(formData);
+    } catch (error) {
+      console.error("Error updateInfoHandler:", error);
+      errorAlert(error?.message);
+    }
+  };
 
   function calculatePieSlice(value, total, radius, startAngle) {
     const angle = (value / total) * 2 * Math.PI;
@@ -87,6 +191,10 @@
     const data = (totalY / filteredItems.length).toFixed(2);
     return isNaN(data) ? 0 : parseInt(data);
   };
+
+  $: {
+    console.log("updateInfo:", updateInfo);
+  }
 </script>
 
 <main>
@@ -110,55 +218,164 @@
           </div>
           <div class="first_cont2">
             <div class="project-details">
-              <p>제목: {projectDetails?.ccp_title}</p>
               <p>
-                점검방법: {projectDetails?.recheck == 0
-                  ? "신규점겅검"
-                  : "이행점검"}
+                제목: <input type="text" bind:value={updateInfo["ccp_title"]} />
               </p>
-              <p>점검대상: {projectDetails?.asg_index__asg_title}</p>
+
+              <p>
+                점검대상:
+                <!-- {projectDetails?.asg_index__asg_title} -->
+
+                <select bind:value={updateInfo["asg_index"]}>
+                  <option value="" selected disabled>자산 그룹목록</option>
+
+                  {#if planOptions.asset_group}
+                    {#each planOptions.asset_group as asset}
+                      <option value={asset.asg_index}>
+                        {asset.asg_title}
+                      </option>
+                    {/each}
+                  {/if}
+                </select>
+              </p>
               <!-- <p>{inspectionDetails}</p> -->
-              <p>점검항목: {projectDetails?.ccp_ruleset__ccg_group}</p>
-              <p>생성자: {projectDetails?.plan_planer_info__user_name}</p>
+              <p>
+                점검항목:
+
+                <select bind:value={updateInfo["ccp_ruleset"]}>
+                  <option value="" selected disabled>점검항목 목록</option>
+                  {#if planOptions.checklist_group}
+                    {#each planOptions.checklist_group as item}
+                      <option value={item.ccg_index}>
+                        {item.ccg_group}
+                      </option>
+                    {/each}
+                  {/if}
+                </select>
+              </p>
+              <p>
+                점검담당자:
+
+                <select bind:value={updateInfo["plan_planer_info"]}>
+                  <option value="" selected disabled>선택</option>
+                  {#if planOptions.member_group}
+                    {#each planOptions.member_group as member}
+                      <option value={member.user_index}>
+                        {member.user_name}
+                      </option>
+                    {/each}
+                  {/if}
+                </select>
+              </p>
               <p>
                 진행상태: {projectDetails?.ccp_b_finalized ? "완료" : "진행 중"}
               </p>
               <p>
-                점검일시: {moment(projectDetails?.plan_start_date).format(
-                  "YYYY MM DD",
-                )} ~ {moment(projectDetails?.plan_end_date).format(
-                  "YYYY MM DD",
-                )}
+                점검방법:
+                <select bind:value={updateInfo["recheck"]}>
+                  <option value={0}> 신규점겅검 </option>
+                  <option value={1}> 이행점검 </option>
+                </select>
               </p>
-              <p>
-                점검실행: {projectDetails?.plan_execution_type
-                  ? "반복실행"
-                  : "즉시실행"}
-              </p>
-              <p>주기: {projectDetails?.plan_execute_interval_term}</p>
-              <p>
-                생성 규칙: {projectDetails?.plan_name_repeat_rule_type == 0
-                  ? "현 점검 하위로 점검 자동 생성"
-                  : "반복실행시 마다 신규점검 자동 생성"}
-              </p>
-              {#if projectDetails?.fix_date_setup}
+              {#if updateInfo?.recheck === 1}
                 <p>
-                  조치일정: {moment(projectDetails?.fix_start_date).format(
-                    "YYYY MM DD",
-                  )} ~ {moment(projectDetails?.fix_end_date).format(
-                    "YYYY MM DD",
-                  )}
+                  이전점검:
+                  <select bind:value={updateInfo["recheck_pno"]}>
+                    <option value="" selected disabled>이전 점검플랜명</option>
+
+                    {#if planList}
+                      {#each planList as plan}
+                        <option value={plan.ccp_index}>
+                          {plan.ccp_title}
+                        </option>
+                      {/each}
+                    {/if}
+                  </select>
                 </p>
               {/if}
-              <p>조치담당자: {projectDetails?.fix_conductor_info_id}</p>
+              <p>
+                점검일시:
+                <!-- {moment(projectDetails?.plan_start_date).format("YYYY MM DD")} ~
+                {moment(projectDetails?.plan_end_date).format("YYYY MM DD")} -->
+                <!-- {projectDetails?.plan_start_date} -->
+                <input
+                  type="datetime-local"
+                  bind:value={updateInfo["plan_start_date"]}
+                />
+                ~
+                <input
+                  type="datetime-local"
+                  bind:value={updateInfo["plan_end_date"]}
+                />
+              </p>
+              <p>
+                점검스케쥴:
+
+                <select>
+                  <option
+                    value="0"
+                    selected={updateInfo?.plan_execution_type === true}
+                  >
+                    즉시실행
+                  </option>
+                  <option
+                    value="1"
+                    selected={updateInfo?.plan_execution_type === false}
+                  >
+                    반복실행
+                  </option>
+                </select>
+              </p>
+              {#if updateInfo?.fix_date_setup}
+                <p>
+                  조치일정:
+
+                  <input
+                    type="date"
+                    bind:value={updateInfo["fix_start_date"]}
+                  />
+                  ~
+                  <input type="date" bind:value={updateInfo["fix_end_date"]} />
+                </p>
+              {/if}
+              <p>
+                조치담당자:
+
+                <select bind:value={updateInfo["fix_conductor_info"]}>
+                  <option value="" selected disabled>선택</option>
+                  {#if planOptions.member_group}
+                    {#each planOptions.member_group as member}
+                      <option value={member.user_index}>
+                        {member.user_name}
+                      </option>
+                    {/each}
+                  {/if}
+                </select>
+              </p>
+              <p>
+                점검정보파일 재업로드: <input
+                  type="file"
+                  on:change={(e) => {
+                    updateInfo = {
+                      ...updateInfo,
+                      assessment_command: e.target.files[0],
+                    };
+                  }}
+                />
+              </p>
             </div>
-            <div class="actions">
+            <!-- <div class="actions">
               <button>결과등록</button>
               <button>결과조회</button>
               <button>변경</button>
               <button>삭제</button>
-            </div>
+            </div> -->
           </div>
+        </div>
+        <div class="actions">
+          <button on:click={() => updateInfoHandler(updateInfo)}>
+            변경저장
+          </button>
         </div>
 
         <!-- Registration Status Section -->
@@ -614,6 +831,10 @@
       inset 0 -1px 0.5px rgba(0, 0, 0, 0.1);
   }
 
+  .project-details {
+    width: 100%;
+  }
+
   .project-details p {
     margin: 3px 0; /* Reduced margin */
     font-size: 12px;
@@ -622,11 +843,13 @@
 
   .actions {
     display: flex;
-    flex-direction: column;
-    gap: 5px; /* Reduced gap */
+    flex-direction: row;
+    justify-content: center;
   }
 
   .actions button {
+    width: 90px;
+    height: 30px;
     padding: 6px 10px; /* Reduced padding */
     background-color: #4682b4;
     color: white;
@@ -784,5 +1007,10 @@
 
   tbody tr:hover {
     background-color: #e0f7fa;
+  }
+
+  input {
+    width: 25%;
+    outline: none;
   }
 </style>

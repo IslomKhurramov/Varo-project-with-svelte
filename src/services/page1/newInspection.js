@@ -36,6 +36,22 @@ export const setNewPlan = async (planData) => {
   }
 };
 
+export const setPlanChange = async (data) => {
+  try {
+    const response = await axios.post(`${serverApi}/api/setPlanChange/`, data, {
+      withCredentials: true,
+    });
+    console.log("setPlanChange: RESPONSE:", response);
+    if (response.data.RESULT === "ERROR") {
+      throw new Error(response.data.CODE);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error setPlanChange:", error);
+    throw error;
+  }
+};
+
 export const setNewSystemCommand = async (data) => {
   try {
     const response = await axios.post(

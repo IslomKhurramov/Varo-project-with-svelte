@@ -7,6 +7,22 @@
   export let cancel;
   export let selectedAsset;
 
+  let targets = {
+    UNIX: "",
+    WINDOWS: "",
+    DBMS: "",
+    PC: "",
+    NETWORK: "",
+    WEB: "",
+    WAS: "",
+  };
+
+  let dbmsValues = {
+    pw: "",
+    ip: "",
+    port: "",
+  };
+
   let targetData = {
     asset_uuid: selectedAsset.ass_uuid || "",
     targets: [],
@@ -47,21 +63,29 @@
       alert("Asset UUID is missing");
     }
 
-    try {
-      const response = await setAssetTargetRegister(
-        selectedAsset.ass_uuid,
-        targetData,
-      );
-      if (response.RESULT === "OK") {
-        successAlert("registered successfully");
-        console.log("RESPONSEDATA", response);
-      } else {
-        throw new Error();
-      }
-    } catch (err) {
-      console.error("Submission failed:", err);
-      alert("An error occurred while submitting the form: " + err.message);
-    }
+    targets.DBMS = `t dbms_name –u user –p ${dbmsValues.pw} –H ${dbmsValues.ip} –P ${dbmsValues.port} –D dbname –M mode`;
+
+    console.log("sendData:", targets);
+
+    // try {
+    //   const response = await setAssetTargetRegister(
+    //     selectedAsset.ass_uuid,
+    //     targetData,
+    //   );
+    //   if (response.RESULT === "OK") {
+    //     successAlert("registered successfully");
+    //     console.log("RESPONSEDATA", response);
+    //   } else {
+    //     throw new Error();
+    //   }
+    // } catch (err) {
+    //   console.error("Submission failed:", err);
+    //   alert("An error occurred while submitting the form: " + err.message);
+    // }
+  }
+
+  $: {
+    console.log("dbmsValues:", dbmsValues);
   }
 </script>
 
@@ -98,68 +122,73 @@
   <!-- Editable target systems from selectedAsset -->
   {#each targetData.targets as target, i}
     <div class="checkbox-group">
-      <input type="checkbox" bind:checked={target.selected} />
+      <input
+        type="checkbox"
+        on:change={(e) => {
+          targets.UNIX = e.target.checked ? "-t linux" : "";
+        }}
+      />
       <label>{target.cct_target}</label>
     </div>
 
-    {#if target.selected}
-      {#if target.cct_target === "NETWORK"}
-        <div class="input-group">
-          <label>IP</label>
-          <input type="text" bind:value={target.ip} />
-        </div>
-        <div class="input-group">
-          <label>PORT</label>
-          <input type="text" bind:value={target.port} />
-        </div>
-        <div class="input-group">
-          <label>USERID</label>
-          <input type="text" bind:value={target.username} />
-        </div>
-        <div class="input-group">
-          <label>USERPW</label>
-          <input type="text" bind:value={target.pw} />
-        </div>
-      {/if}
+    <!-- {#if target.selected} -->
+    {#if target.cct_target === "NETWORK"}
+      <div class="input-group">
+        <label>IP</label>
+        <input type="text" />
+      </div>
+      <div class="input-group">
+        <label>PORT</label>
+        <input type="text" />
+      </div>
+      <div class="input-group">
+        <label>USERID</label>
+        <input type="text" />
+      </div>
+      <div class="input-group">
+        <label>USERPW</label>
+        <input type="text" />
+      </div>
+      <!-- {/if} -->
 
-      {#if target.cct_target === "DBMS"}
-        <div class="input-group">
-          <label>DBNAME</label>
-          <input type="text" bind:value={target.dbname} />
-        </div>
-        <div class="input-group">
-          <label>USERMODE</label>
-          <input type="text" bind:value={target.mode} />
-        </div>
-        <div class="input-group">
-          <label>PW</label>
-          <input type="text" bind:value={target.pw} />
-        </div>
-        <div class="input-group">
-          <label>IP</label>
-          <input type="text" bind:value={target.ip} />
-        </div>
-        <div class="input-group">
-          <label>PORT</label>
-          <input type="text" bind:value={target.port} />
-        </div>
-      {/if}
+      <!-- {#if target.cct_target === "DBMS"} -->
+      <div class="input-group">
+        <label>DBNAME</label>
+        <input type="text" />
+      </div>
+      <div class="input-group">
+        <label>USERMODE</label>
+        <input type="text" />
+      </div>
+      <div class="input-group">
+        <label>PW</label>
+        <input type="text" bind:value={dbmsValues.pw} />
+      </div>
+      <div class="input-group">
+        <label>IP</label>
+        <input type="text" bind:value={dbmsValues.ip} />
+      </div>
+      <div class="input-group">
+        <label>PORT</label>
+        <input type="text" bind:value={dbmsValues.port} />
+      </div>
+      <!-- {/if} -->
 
-      {#if target.cct_target === "WEB" || target.cct_target === "WAS"}
-        <div class="input-group">
-          <label>APP NAME</label>
-          {#if target.cct_target === "WEB"}
-            <input type="text" bind:value={target.web_name} />
-          {/if}
-          {#if target.cct_target === "WAS"}
-            <input type="text" bind:value={target.was_name} />
-          {/if}
-        </div>
-        <div class="input-group">
-          <label>INSTALLED PATH</label>
-          <input type="text" bind:value={target.installed_path} />
-        </div>
-      {/if}
+      <!-- {#if target.cct_target === "WEB" || target.cct_target === "WAS"} -->
+      <div class="input-group">
+        <label>APP NAME</label>
+        {#if target.cct_target === "WEB"}
+          <input type="text" />
+        {/if}
+        {#if target.cct_target === "WAS"}
+          <input type="text" />
+        {/if}
+      </div>
+      <div class="input-group">
+        <label>INSTALLED PATH</label>
+        <input type="text" />
+      </div>
+      <!-- {/if} -->
     {/if}
   {/each}
 

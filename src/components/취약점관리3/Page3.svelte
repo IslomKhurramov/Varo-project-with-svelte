@@ -1,16 +1,20 @@
 <script>
+  import { getVulnsOfPlan } from "./../../services/vulns/vulnsService.js";
   import MainPageProject from "./MainPageProject.svelte";
   import MainPageAsset from "./MainPageAsset.svelte";
   import WholePage from "./WholePage.svelte";
+  import { onMount } from "svelte";
+  import { each } from "svelte/internal";
 
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
-
   let Project = ["프로젝트 1", "프로젝트 2", "프로젝트 3"];
   let Asset = ["자산 1", "자산 2", "자산 3"];
+  let showProject = true;
 
-  let showProject = true; // Initially show Project by default
+  // DATA
+  let plans = [];
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -26,6 +30,22 @@
 
   function toggleList(view) {
     showProject = view === "project";
+  }
+
+  let activePlan = null; // Track which plan is expanded
+
+  function toggleAccordion(plan) {
+    activePlan = activePlan === plan ? null : plan; // Toggle accordion
+  }
+
+  onMount(async () => {
+    plans = await getVulnsOfPlan();
+  });
+
+  $: {
+    if (plans?.plans?.length !== 0) {
+      console.log("plans:", plans?.plans?.[0]?.plan_target);
+    }
   }
 </script>
 
@@ -52,21 +72,41 @@
 
       {#if showProject}
         <div class="project_container">
-          {#each Project as project, index}
-            <div class="project_button">
-              <img src="./images/projectGray.png" alt="project" />
-              <!-- svelte-ignore missing-declaration -->
-              <!-- svelte-ignore a11y-invalid-attribute -->
-              <a
-                href="javascript:void(0)"
-                on:click={() => selectPage(MainPageProject, project)}
-                class={activeMenu === project ? "active" : ""}
-              >
-                <i class="fa fa-folder-open" aria-hidden="true"></i>
-                {project}
-              </a>
-            </div>
-          {/each}
+          {#if plans && plans?.plans && plans?.plans?.length !== 0}
+            {#each plans?.plans as plan, index}
+              <div class="project_button">
+                <div
+                  class="accordion_header"
+                  on:click={() => toggleAccordion(plan)}
+                >
+                  <img src="./images/projectGray.png" alt="project" />
+                  <a
+                    href="javascript:void(0)"
+                    class={activeMenu === plan ? "active" : ""}
+                  >
+                    <i class="fa fa-folder-open" aria-hidden="true"></i>
+                    {plan?.plan_title}
+                  </a>
+                  <span class="arrow">{activePlan === plan ? "▲" : "▼"}</span>
+                </div>
+
+                {#if activePlan === plan}
+                  {#each plan?.plan_target as target}
+                    <div class="accordion_content">
+                      {#each Object.entries(target) as [osType, hosts]}
+                        <div class="main_accordion">- {osType}</div>
+                        {#each hosts as host}
+                          <div class="second_accordion">
+                            - {host.ast_uuid__ass_uuid__ast_hostname}
+                          </div>
+                        {/each}
+                      {/each}
+                    </div>
+                  {/each}
+                {/if}
+              </div>
+            {/each}
+          {/if}
         </div>
       {:else}
         <div class="project_container">
@@ -158,6 +198,42 @@
     box-sizing: border-box;
     font-family: "Arial", sans-serif;
   }
+
+  .accordion_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease;
+  }
+
+  .accordion_header:hover {
+    background-color: #e0e0e0;
+  }
+
+  .accordion_content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-top: none;
+  }
+
+  .main_accordion {
+  }
+
+  .second_accordion {
+    padding-left: 20px;
+  }
+
+  .arrow {
+    font-size: 14px;
+    margin-left: auto;
+  }
+
   .right_menu {
     flex-grow: 1;
     margin: 10px 20px;
@@ -221,8 +297,9 @@
   /* Project buttons */
   .project_button {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    height: 40px;
+    height: auto;
     transition:
       box-shadow 0.3s ease,
       transform 0.3s ease;

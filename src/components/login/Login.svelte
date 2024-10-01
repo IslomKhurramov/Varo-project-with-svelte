@@ -226,8 +226,22 @@
         <input type="password" placeholder="Password" bind:value={password} />
         <!-- svelte-ignore a11y-invalid-attribute -->
         <div>
-          <a on:click={() => (tabMenu = "find_user")}>아이디찾기</a>
-          <a on:click={() => (tabMenu = "reset_password")}>비밀번호초기화</a>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a
+            on:click={() => {
+              errorMessage = null;
+              tabMenu = "find_user";
+            }}>아이디찾기</a
+          >
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a
+            on:click={() => {
+              errorMessage = null;
+              tabMenu = "reset_password";
+            }}>비밀번호초기화</a
+          >
         </div>
         <button type="submit">Sign In</button>
         {#if errorMessage}

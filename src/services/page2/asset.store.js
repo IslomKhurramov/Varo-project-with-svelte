@@ -4,3 +4,4 @@ export const allAssetList = writable([]);
 export const allAssetGroupList = writable([]);
 export const assetDeatilInfo = writable([]);
 export const targetSystemList = writable([]);
+export const assetRegisterStatus = writable([]);

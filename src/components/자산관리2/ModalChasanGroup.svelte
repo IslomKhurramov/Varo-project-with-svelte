@@ -1,42 +1,37 @@
 <script>
   import { onMount } from "svelte";
   import * as d3 from "d3";
+  import { getAssetRegisterStatus } from "../../services/page2/assetService";
+  import { assetRegisterStatus } from "../../services/page2/asset.store";
 
+  let current_day = "2024-09-20";
   let svg1, svg2;
   let selectedGroupIndex = 0;
+
+  async function registerStatus() {
+    try {
+      const response = await getAssetRegisterStatus(current_day);
+
+      if (response.RESULT === "OK") {
+        assetRegisterStatus.set(response.CODE); // Save the entire CODE object
+        console.log("status", response.CODE);
+      }
+    } catch (err) {
+      console.error("Error fetching asset register status:", err);
+    }
+  }
+
+  onMount(() => {
+    registerStatus();
+  });
+
+  function check() {
+    console.log("status", $assetRegisterStatus);
+  }
+
   const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-  let data1 = [
-    { subCategory: "Asset Value1", value: 20 },
-    { subCategory: "Asset Value2", value: 15 },
-    { subCategory: "Asset Level1", value: 40 },
-    { subCategory: "Asset Level2", value: 35 },
-  ];
-
-  let data2 = [
-    [
-      { category: "자산그룹1", subCategory: "Plan", value: 60 },
-      { category: "자산그룹1", subCategory: "Actual", value: 55 },
-      { category: "자산그룹1", subCategory: "Forecast", value: 65 },
-    ],
-    [
-      { category: "자산그룹2", subCategory: "Plan", value: 85 },
-      { category: "자산그룹2", subCategory: "Actual", value: 58 },
-      { category: "자산그룹2", subCategory: "Forecast", value: 96 },
-    ],
-    [
-      { category: "자산그룹3", subCategory: "Plan", value: 36 },
-      { category: "자산그룹3", subCategory: "Actual", value: 53 },
-      { category: "자산그룹3", subCategory: "Forecast", value: 25 },
-    ],
-    // Additional data arrays for other groups
-  ];
-
-  let chasanGroups = data2.map((group, index) => ({
-    chasanGroup: group[0].category,
-    index,
-  }));
-
+  // Draw the bar chart
   function drawBarChart(svgElement, dataset) {
     d3.select(svgElement).selectAll("*").remove(); // Clear previous chart content
 
@@ -99,21 +94,59 @@
       .text((d) => d.value);
   }
 
-  onMount(() => {
-    drawBarChart(svg1, data1);
-    drawBarChart(svg2, data2[selectedGroupIndex]);
-  });
+  // Extract total values for the first chart
+  function getTotalValues() {
+    const assetData = $assetRegisterStatus;
+    if (assetData && assetData.total) {
+      return assetData.total.map((item) => {
+        const key = Object.keys(item)[0]; // Get the first key (3, 6, 9, 12)
+        return {
+          subCategory: key,
+          value: Number(item[key]) || 0, // Convert string to number
+        };
+      });
+    }
+    return [];
+  }
 
+  // Get selected group data for the second chart
+  function getSelectedGroupData(index) {
+    const assetData = $assetRegisterStatus;
+    if (assetData && assetData.groups) {
+      const groupKeys = Object.keys(assetData.groups);
+      if (index >= 0 && index < groupKeys.length) {
+        const selectedGroupKey = groupKeys[index];
+        return assetData.groups[selectedGroupKey].map((item) => {
+          const key = Object.keys(item)[0]; // Get the first key (3, 6, 9, 12)
+          return {
+            subCategory: key,
+            value: Number(item[key]) || 0,
+          };
+        });
+      }
+    }
+    return [];
+  }
+
+  // On mount, draw the initial charts
+  $: if ($assetRegisterStatus) {
+    // Draw both charts with available data when assetRegisterStatus is updated
+    drawBarChart(svg1, getTotalValues());
+    drawBarChart(svg2, getSelectedGroupData(selectedGroupIndex));
+  }
+
+  // Reactively update the second chart when the selected group changes
   $: if (svg2) {
-    drawBarChart(svg2, data2[selectedGroupIndex]);
+    const selectedGroupData = getSelectedGroupData(selectedGroupIndex);
+    drawBarChart(svg2, selectedGroupData);
   }
 </script>
 
 <main class="container">
   <div class="first_container">
     <div class="first_line1">
-      <p>기간선택</p>
-      <p class="options">3/6/9/12/전체</p>
+      <p on:click={check}>기간선택</p>
+      <p class="options"><input type="date" bind:value={current_day} /></p>
     </div>
     <div class="second_line1">
       <svg bind:this={svg1}></svg>
@@ -124,9 +157,13 @@
     <div class="second_line2">
       <p>
         <select bind:value={selectedGroupIndex} class="dropdown">
-          {#each chasanGroups as group}
-            <option value={group.index}>{group.chasanGroup}</option>
-          {/each}
+          {#if $assetRegisterStatus && $assetRegisterStatus.groups}
+            {#each Object.keys($assetRegisterStatus.groups) as groupTitle, index}
+              <option value={index}>{groupTitle}</option>
+            {/each}
+          {:else}
+            <option disabled>No data available</option>
+          {/if}
         </select>
       </p>
       <svg bind:this={svg2}></svg>

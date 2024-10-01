@@ -1,144 +1,75 @@
 <script>
-  import {
-    assetDeatilInfo,
-    targetSystemList,
-    allAssetList,
-  } from "../../services/page2/asset.store";
-  import { get } from "svelte/store";
+  import { targetSystemList } from "../../services/page2/asset.store"; // Ensure this is valid
   import { setAssetTargetRegister } from "../../services/page2/assetService";
   import { successAlert } from "../../shared/sweetAlert";
+  import { allAssetList } from "../../services/page2/asset.store"; // Assuming this is valid
+
   export let cancel;
   export let selectedAsset;
 
-  let foundAsset = null;
-  let targetList = [];
-  let targets = [];
-  /********************************************************************/
-  function findSelectedAsset() {
-    const assets = $allAssetList;
-    foundAsset = assets.find(
-      (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
-    );
-    if (foundAsset) {
-      console.log("Found asset:", foundAsset);
-      // Initialize targets from selectedAsset's assessment_target_system
-      targets = $targetSystemList.map((target) => ({
-        ...target,
-        selected: foundAsset.assessment_target_system.includes(
-          target.cct_target,
-        ),
-        applied_system: target.applied_system || "",
-        pw: target.pw || "",
-        ip: target.ip || "",
-        port: target.port || "",
-        dbname: target.dbname || "",
-        usermode: target.usermode || "",
-        web_name: target.web_name || "",
-        was_name: target.was_name || "",
-        installed_path: target.installed_path || "",
-      }));
-    } else {
-      console.warn(
-        "Asset not found in allAssetList with UUID:",
-        selectedAsset.ass_uuid,
-      );
-    }
-  }
-  $: if (selectedAsset) {
-    findSelectedAsset();
-  }
+  let targetData = {
+    asset_uuid: selectedAsset.ass_uuid || "",
+    targets: [],
+  };
 
+  // Prepopulate form based on selectedAsset and ast_buse
   $: if (selectedAsset && selectedAsset.assessment_target_system) {
-    targetList = selectedAsset.assessment_target_system;
+    targetData.targets = $targetSystemList.map((target) => {
+      const assetTarget =
+        selectedAsset.targets?.find((t) => t.type === target.cct_target) || {};
+
+      return {
+        ...target,
+        ast_buse: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
+        ip: assetTarget.ip || "",
+        port: assetTarget.port || "",
+        dbname: assetTarget.dbname || "",
+        username: assetTarget.username || "",
+        pw: assetTarget.pw || "",
+        installed_path: assetTarget.installed_path || "",
+        web_name: assetTarget.web_name || "",
+        was_name: assetTarget.was_name || "",
+      };
+    });
   }
-  /******************************************************************/
-  // Example function to format the target data based on type
-  function prepareTargetData() {
-    return targets
-      .filter((target) => target.selected)
-      .map((target) => {
-        const targetData = {};
-        switch (target.cct_target) {
-          case "UNIX":
-            targetData.UNIX = "-t linux";
-            break;
-          case "WINDOWS":
-            targetData.WINDOWS = "-t windows";
-            break;
-          case "DBMS":
-            targetData.DBMS = `-t ${target.applied_system} -u ${target.usermode} -p ${target.pw} -H ${target.ip} -P ${target.port} -D ${target.dbname}`;
-            break;
-          case "NETWORK":
-            targetData.NETWORK = `-u ${target.userid} -p ${target.pw} -H ${target.ip} -P ${target.port}`;
-            break;
-          case "WEB":
-            targetData.WEB = `-t ${target.web_name} -path ${target.installed_path}`;
-            break;
-          case "WAS":
-            targetData.WAS = `-t ${target.was_name} -path ${target.installed_path}`;
-            break;
-          case "PC":
-            targetData.PC = "-t pc";
-            break;
-          default:
-            break;
-        }
-        return targetData;
-      });
+  function check() {
+    console.log("Targetlist", $targetSystemList);
   }
-  /******************************************************************/
-  async function submit(event) {
-    event.preventDefault();
-    if (!selectedAsset || !selectedAsset.ass_uuid) {
-      alert("No valid asset selected");
-      return;
+  /*************************************************/
+  /*************************************************/
+  $: if (Object.keys(selectedAsset).length > 0 && !targetData.targets) {
+    targetData = { ...selectedAsset };
+    console.log("Loaded asset details:", selectedAsset);
+  }
+  /*************************************************/
+  async function submit() {
+    if (!selectedAsset.ass_uuid) {
+      alert("Asset UUID is missing");
     }
 
     try {
-      const preparedTargets = prepareTargetData();
-
-      const payload = {
-        asset_uuid: selectedAsset.ass_uuid,
-        targets: preparedTargets,
-      };
-
       const response = await setAssetTargetRegister(
-        payload.asset_uuid,
-        payload.targets,
+        selectedAsset.ass_uuid,
+        targetData,
       );
-
       if (response.RESULT === "OK") {
-        successAlert("Target registered successfully!");
-        updateSelectedAsset(); // Sync the updated asset data
-        cancel(); // Close the form or reset it
+        successAlert("registered successfully");
+        console.log("RESPONSEDATA", response);
+      } else {
+        throw new Error();
       }
-    } catch (error) {
-      // Handle errors during submission
-      console.error("Submission failed:", error);
-      alert("An error occurred while submitting the form: " + error.message);
-    }
-  }
-
-  /******************************************************************/
-  function updateSelectedAsset() {
-    const updatedAsset = $allAssetList.find(
-      (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
-    );
-
-    if (updatedAsset) {
-      Object.assign(selectedAsset, updatedAsset);
-      console.log("Updated selected asset:", selectedAsset);
-    } else {
-      console.warn("Asset not found in allAssetList");
+    } catch (err) {
+      console.error("Submission failed:", err);
+      alert("An error occurred while submitting the form: " + err.message);
     }
   }
 </script>
 
 <!-- Form to display and edit the selected asset and its targets -->
-<form on:submit={submit} class="container">
+<form on:submit|preventDefault={submit} class="container">
   <div class="header_group">
     <div class="header">
-      <span>운영제체</span>
+      <span on:click={check}>운영제체</span>
       <div class="select">
         <p>{selectedAsset.assessment_target_system}</p>
       </div>
@@ -165,21 +96,40 @@
   </div>
 
   <!-- Editable target systems from selectedAsset -->
-  {#each targets as target}
+  {#each targetData.targets as target, i}
     <div class="checkbox-group">
-      <input
-        type="checkbox"
-        bind:checked={target.selected}
-        id={target.cct_target}
-      />
-      <label for={target.cct_target}>{target.cct_target}</label>
+      <input type="checkbox" bind:checked={target.selected} />
+      <label>{target.cct_target}</label>
     </div>
 
     {#if target.selected}
+      {#if target.cct_target === "NETWORK"}
+        <div class="input-group">
+          <label>IP</label>
+          <input type="text" bind:value={target.ip} />
+        </div>
+        <div class="input-group">
+          <label>PORT</label>
+          <input type="text" bind:value={target.port} />
+        </div>
+        <div class="input-group">
+          <label>USERID</label>
+          <input type="text" bind:value={target.username} />
+        </div>
+        <div class="input-group">
+          <label>USERPW</label>
+          <input type="text" bind:value={target.pw} />
+        </div>
+      {/if}
+
       {#if target.cct_target === "DBMS"}
         <div class="input-group">
-          <label>Systems</label>
-          <input type="text" bind:value={target.applied_system} />
+          <label>DBNAME</label>
+          <input type="text" bind:value={target.dbname} />
+        </div>
+        <div class="input-group">
+          <label>USERMODE</label>
+          <input type="text" bind:value={target.mode} />
         </div>
         <div class="input-group">
           <label>PW</label>
@@ -193,56 +143,21 @@
           <label>PORT</label>
           <input type="text" bind:value={target.port} />
         </div>
-        <div class="input-group">
-          <label>DBNAME</label>
-          <input type="text" bind:value={target.dbname} />
-        </div>
-        <div class="input-group">
-          <label>USERMODE</label>
-          <input type="text" bind:value={target.usermode} />
-        </div>
       {/if}
 
-      {#if target.cct_target === "NETWORK"}
+      {#if target.cct_target === "WEB" || target.cct_target === "WAS"}
         <div class="input-group">
-          <label>IP</label>
-          <input type="text" bind:value={target.ip} />
+          <label>APP NAME</label>
+          {#if target.cct_target === "WEB"}
+            <input type="text" bind:value={target.web_name} />
+          {/if}
+          {#if target.cct_target === "WAS"}
+            <input type="text" bind:value={target.was_name} />
+          {/if}
         </div>
         <div class="input-group">
-          <label>PORT</label>
-          <input type="text" bind:value={target.port} />
-        </div>
-        <div class="input-group">
-          <label>UserID</label>
-          <input type="text" bind:value={target.userid} />
-        </div>
-        <div class="input-group">
-          <label>UserPW</label>
-          <input type="text" bind:value={target.pw} />
-        </div>
-      {/if}
-
-      {#if targetList.cct_target === "WEB" || targetList.cct_target === "WAS"}
-        <!-- WEB and WAS inputs -->
-        <div class="input-group">
-          <label>{targetList.cct_target} Name</label>
-          <input
-            type="text"
-            value={targetList.cct_target === "WEB"
-              ? targetList.web_name
-              : targetList.was_name}
-            on:input={(e) => {
-              if (targetList.cct_target === "WEB") {
-                targetList.web_name = e.target.value;
-              } else {
-                targetList.was_name = e.target.value;
-              }
-            }}
-          />
-        </div>
-        <div class="input-group">
-          <label>Installed Path</label>
-          <input type="text" bind:value={targetList.installed_path} />
+          <label>INSTALLED PATH</label>
+          <input type="text" bind:value={target.installed_path} />
         </div>
       {/if}
     {/if}
@@ -250,9 +165,9 @@
 
   <div class="button-group">
     <button class="btn submit" type="submit">Submit</button>
-    <button class="btn cancel" type="button" on:click|preventDefault={cancel}
-      >Cancel</button
-    >
+    <button class="btn cancel" type="button" on:click|preventDefault={cancel}>
+      Cancel
+    </button>
   </div>
 </form>
 

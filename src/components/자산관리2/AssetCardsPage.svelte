@@ -32,6 +32,8 @@
   function check() {
     console.log("SELECTED", selected);
     console.log("TARGETLIST", $targetSystemList);
+
+    console.log("All AssetList array data", $allAssetList);
   }
 
   /************************************************************/
@@ -41,7 +43,7 @@
 
       if (response.RESULT === "OK") {
         allAssetList.set(Object.values(response.CODE));
-        console.log("array data", allAssetList);
+        console.log("All AssetList array data", allAssetList);
       }
     } catch (err) {
       alert(`Error getting AllAssetList ${err.message}`);

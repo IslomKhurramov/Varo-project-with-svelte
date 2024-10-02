@@ -262,22 +262,15 @@ export const getTargetSystemLists = async () => {
 };
 export const setAssetTargetRegister = async (ass_uuid, targets) => {
   try {
-    const payload = {
-      asset_uuid: ass_uuid, // Ensure it's a string
-      targets,
-    };
-
-    console.log(
-      "Sending asset target registration with payload:",
-      JSON.stringify(payload, null, 2),
-    );
-
     const response = await axios.post(
       `${serverApi}/api/setAssetTargetRegister/`,
-      payload,
+      {
+        asset_uuid: ass_uuid,
+        targets: targets,
+      },
     );
 
-    console.log("API response:", JSON.stringify(response.data, null, 2));
+    console.log("API response:", response.data);
 
     if (response.data && response.data.RESULT === "OK") {
       return response.data;

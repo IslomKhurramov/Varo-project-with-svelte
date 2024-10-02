@@ -2,7 +2,13 @@
   import { onMount } from "svelte";
   import { allAssetGroupList } from "../../services/page2/asset.store";
   import { getAssetGroup } from "../../services/page2/assetService";
+  import { allAssetList } from "../../services/page2/asset.store";
 
+  let showAssetReg = true;
+  let showCopyReg = false;
+  let filteredAssets = [];
+  let selectedGroup = "";
+  /****************************************************/
   async function assetGroupList() {
     try {
       const response = await getAssetGroup();
@@ -10,40 +16,59 @@
       if (response.RESULT === "OK") {
         allAssetGroupList.set(Object.values(response.CODE));
         console.log("CALLED GROUP", allAssetGroupList);
+
+        // Extract asg_index values from the response CODE
+        const asgIndexes = response.CODE.map((group) => group.asg_index);
+        console.log("asgIndexes", asgIndexes); // Log asgIndexes
+
+        // // Filter AllAssetList based on asg_index
+        // filteredAssets = $allAssetList.filter((asset) => {
+        //   console.log("Asset:", asset); // Log each asset
+        //   return (
+        //     Array.isArray(asset.asset_group) && // Ensure asset_group is an array
+        //     asset.asset_group.some((group) =>
+        //       asgIndexes.includes(group.asg_index),
+        //     )
+        //   );
+        // });
+
+        console.log("Filtered Assets", filteredAssets); // Log filtered assets
       }
     } catch (err) {
       throw err;
     }
   }
+  // Function to filter assets based on the selected group
+  function filterAssets() {
+    console.log("Selected Group:", selectedGroup);
+    filteredAssets = $allAssetList.filter((asset) => {
+      if (Array.isArray(asset.asset_group)) {
+        return asset.asset_group.some(
+          (group) => group.asg_index === selectedGroup,
+        );
+      }
+      return false;
+    });
+  }
   onMount(() => {
     assetGroupList();
+    console.log("AllAssetList", $allAssetList);
+    console.log("pointHISTORY", filteredAssets);
   });
   /***************************************************/
 
-  let assetGroup = [];
-  for (let i = 1; i <= 25; i++) {
-    assetGroup.push({
-      assetName: `자산그룹${i}`,
-    });
+  function handleSelectChange(event) {
+    const value = event.target.value;
+    showAssetReg = value === "자산등록";
+    showCopyReg = value === "기존그룹복사";
   }
+  /*********************************************************/
 
   let assetCard = [];
 
   let selected = [];
   $: allSelected = assetCard.length === selected.length;
 
-  for (let i = 0; i <= 15; i++) {
-    assetCard.push({
-      secureScore: "90",
-      assetGroup: "(자산그룹1)",
-      assetData: "2024/07/22 13:11:22",
-      operatingSystem: "윈도우 서버 2022",
-      assetName: "ABCDEFSDFSDFEWFSDF",
-      ipAdress: "192.168.0.01",
-      inspectionTarget: "UNIX, DBMS, WEB",
-      agentInstallation: "설치됨",
-    });
-  }
   function toggleAll() {
     if (allSelected) {
       selected = [];
@@ -56,97 +81,96 @@
 <main>
   <div class="select_group">
     <div class="select_container">
-      <button class="select_button">자산그룹명</button>
-      <select name="asset_group" id="asset_group" class="select_input">
-        {#each assetGroup as asset}
-          <option value="network_security">{asset.assetName}</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="select_container">
       <button class="select_button">생성방법</button>
-      <select name="creation_method" id="creation_method" class="select_input">
-        <option value="automated">기존 그룹에 엑셀 추가 등록 </option>
-        <option value="manual">개별자산 선택 등록 </option>
-        <option value="hybrid">엑셀과 개별자산 선택 등록 </option>
+      <select
+        name="asset_group"
+        id="asset_group"
+        class="select_input"
+        on:change={handleSelectChange}
+      >
+        <option value="자산등록">자산등록 </option>
+        <option value="기존그룹복사">기존그룹복사</option>
       </select>
     </div>
   </div>
-
-  <div class="second_container">
-    <p>생성방법</p>
-    <div class="inside_container">
-      <div class="first_line_container">
-        <input type="file" />
-        <input type="file" />
-        <p>대용량업로드(엑셀파일)</p>
-      </div>
-
-      <div class="second_line_container">
-        <div class="group_container">
-          {#if $allAssetGroupList.length > 0}
-            {#each $allAssetGroupList as group}
-              <p>{group.asg_title}</p>
-            {/each}
-          {/if}
+  {#if showAssetReg}
+    <div class="second_container">
+      <p>생성방법</p>
+      <div class="inside_container">
+        <div class="first_line_container">
+          <input type="file" />
+          <input type="file" />
+          <p>대용량업로드(엑셀파일)</p>
+          <p>샘플다운로드</p>
         </div>
-        <div class="right_container">
-          <div class="option_container">
-            <div class="div1">
-              <select name="" id="">
-                <option value=""></option>
-              </select>
-              <select name="" id="">
-                <option value=""></option>
-              </select>
-              <select name="" id="">
-                <option value=""></option>
-              </select>
+
+        <div class="second_line_container">
+          <div class="right_container">
+            <select bind:value={selectedGroup} on:change={filterAssets}>
+              <option value="">Select Asset Group</option>
+              {#if $allAssetGroupList.length > 0}
+                {#each $allAssetGroupList as group}
+                  <option value={group.asg_index}>{group.asg_title}</option>
+                {/each}
+              {/if}
+            </select>
+            <div class="option_container">
+              <div class="div1">
+                <select name="" id="">
+                  <option value=""></option>
+                </select>
+                <select name="" id="">
+                  <option value=""></option>
+                </select>
+                <select name="" id="">
+                  <option value=""></option>
+                </select>
+              </div>
+              <div class="div2">
+                <button>button</button>
+                <button>저장</button>
+              </div>
             </div>
-            <div class="div2">
-              <button>button</button>
-              <button>저장</button>
+            <div class="first_check_cont">
+              <input
+                type="checkbox"
+                class="first_checkbox"
+                on:click={toggleAll}
+                checked={allSelected}
+              />
+              <p>전체선택</p>
             </div>
-          </div>
-          <div class="first_check_cont">
-            <input
-              type="checkbox"
-              class="first_checkbox"
-              on:click={toggleAll}
-              checked={allSelected}
-            />
-            <p>전체선택</p>
-          </div>
-          <div class="card_container">
-            {#each assetCard as asset}
-              <div class="card">
-                <input
-                  type="checkbox"
-                  class="card_checkbox"
-                  bind:group={selected}
-                  name={asset}
-                  value={asset}
-                />
-                <div class="img_container">
-                  <!-- svelte-ignore a11y-img-redundant-alt -->
-                  <img src="./images/Picture1.png" alt="Image description" />
-                  <div class="img_overlay">
-                    <p>UNIX</p>
-                    <p>DBMS</p>
+            <div class="card_container">
+              {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+                <div class="card">
+                  <input
+                    type="checkbox"
+                    class="card_checkbox"
+                    bind:group={selected}
+                    name={asset}
+                    value={asset}
+                  />
+                  <div class="img_container">
+                    <img src="./images/Picture1.png" alt="Image description" />
+                    <div class="img_overlay">
+                      <p>{asset.ast_hostname}</p>
+                      <p>DBMS</p>
+                    </div>
+                  </div>
+                  <div class="info_card">
+                    <p><strong>이름:</strong> {asset.ast_hostname}</p>
+                    <p><strong>아피:</strong> {asset.ast_ipaddr}</p>
                   </div>
                 </div>
-                <div class="info_card">
-                  <p><strong>이름:</strong> abcdefg</p>
-                  <p><strong>아피:</strong> 192.168.0.2</p>
-                </div>
-              </div>
-            {/each}
+              {/each}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  {:else if showCopyReg}
+    <div>happy regsiter</div>
+  {/if}
 
   <div class="input_buttons">
     <button class="save_button">저장하기</button>

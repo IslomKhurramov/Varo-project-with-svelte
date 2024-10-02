@@ -15,12 +15,31 @@
     NETWORK: "",
     WEB: "",
     WAS: "",
+    SECURITY: "",
+    CLOUD: "",
   };
 
   let dbmsValues = {
     pw: "",
     ip: "",
     port: "",
+    userid: "",
+    dbname: "",
+    usermode: "",
+  };
+  let network = {
+    userid: "",
+    userpw: "",
+    ipaddress: "",
+    port: "",
+  };
+  let web = {
+    webApplicatioName: "",
+    installedPath: "",
+  };
+  let was = {
+    webApplicatioName: "",
+    installedPath: "",
   };
 
   let targetData = {
@@ -32,11 +51,13 @@
   $: if (selectedAsset && selectedAsset.assessment_target_system) {
     targetData.targets = $targetSystemList.map((target) => {
       const assetTarget =
-        selectedAsset.targets?.find((t) => t.type === target.cct_target) || {};
+        selectedAsset.assessment_target_system?.find(
+          (t) => t.type === target.cct_target,
+        ) || {};
 
       return {
         ...target,
-        ast_buse: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
+        selected: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
         ip: assetTarget.ip || "",
         port: assetTarget.port || "",
         dbname: assetTarget.dbname || "",
@@ -61,31 +82,80 @@
   async function submit() {
     if (!selectedAsset.ass_uuid) {
       alert("Asset UUID is missing");
+      return;
     }
 
-    targets.DBMS = `t dbms_name –u user –p ${dbmsValues.pw} –H ${dbmsValues.ip} –P ${dbmsValues.port} –D dbname –M mode`;
+    // Build the targets object conditionally, avoiding empty or invalid fields
+    const targets = {};
 
-    console.log("sendData:", targets);
+    // If DBMS has values, add it to targets
+    if (
+      dbmsValues.dbname ||
+      dbmsValues.userid ||
+      dbmsValues.pw ||
+      dbmsValues.ip ||
+      dbmsValues.port ||
+      dbmsValues.usermode
+    ) {
+      targets.DBMS = {
+        dbname: dbmsValues.dbname || null,
+        userid: dbmsValues.userid || null,
+        pw: dbmsValues.pw || null,
+        ip: dbmsValues.ip || null,
+        port: dbmsValues.port || null,
+        usermode: dbmsValues.usermode || null,
+      };
+    }
 
-    // try {
-    //   const response = await setAssetTargetRegister(
-    //     selectedAsset.ass_uuid,
-    //     targetData,
-    //   );
-    //   if (response.RESULT === "OK") {
-    //     successAlert("registered successfully");
-    //     console.log("RESPONSEDATA", response);
-    //   } else {
-    //     throw new Error();
-    //   }
-    // } catch (err) {
-    //   console.error("Submission failed:", err);
-    //   alert("An error occurred while submitting the form: " + err.message);
-    // }
+    // If NETWORK has values, add it to targets
+    if (network.userid || network.userpw || network.ipaddress || network.port) {
+      targets.NETWORK = {
+        userid: network.userid || null,
+        userpw: network.userpw || null,
+        ipaddress: network.ipaddress || null,
+        port: network.port || null,
+      };
+    }
+
+    // If WEB has values, add it to targets
+    if (web.webApplicatioName || web.installedPath) {
+      targets.WEB = {
+        appname: web.webApplicatioName || null,
+        installedPath: web.installedPath || null,
+      };
+    }
+
+    // If WAS has values, add it to targets
+    if (was.webApplicatioName || was.installedPath) {
+      targets.WAS = {
+        appname: was.webApplicatioName || null,
+        installedPath: was.installedPath || null,
+      };
+    }
+
+    console.log("sendData:", targets); // Log the payload before sending
+    // Send the payload to the API
+    try {
+      const response = await setAssetTargetRegister(
+        selectedAsset.ass_uuid,
+        targets,
+      );
+
+      if (response.RESULT === "OK") {
+        successAlert("registered successfully");
+        cancel();
+        console.log("RESPONSEDATA", response);
+      } else {
+        throw new Error(`API error: ${response.CODE}`);
+      }
+    } catch (err) {
+      console.error("Submission failed:", err);
+      alert("An error occurred while submitting the form: " + err.message);
+    }
   }
 
   $: {
-    console.log("dbmsValues:", dbmsValues);
+    console.log("dbmsValues:", selectedAsset);
   }
 </script>
 
@@ -95,7 +165,7 @@
     <div class="header">
       <span on:click={check}>운영제체</span>
       <div class="select">
-        <p>{selectedAsset.assessment_target_system}</p>
+        <p>{selectedAsset.assessment_target_system[2]}</p>
       </div>
     </div>
     <div class="header">
@@ -125,40 +195,60 @@
       <input
         type="checkbox"
         on:change={(e) => {
-          targets.UNIX = e.target.checked ? "-t linux" : "";
+          const isChecked = e.target.checked;
+          target.ast_buse = isChecked; // Update the target in the list
+          targetData.targets = [...targetData.targets];
+
+          // Update the main targets object
+          switch (target.cct_target) {
+            case "UNIX":
+              targets.UNIX = isChecked ? "-t linux" : "";
+              break;
+            case "WINDOWS":
+              targets.WINDOWS = isChecked ? "-t windows" : "";
+              break;
+            case "SECURITY":
+              targets.SECURITY = isChecked ? "-t security" : "";
+              break;
+            case "CLOUD":
+              targets.CLOUD = isChecked ? "-t cloud" : "";
+              break;
+            // Add cases for other systems as needed
+          }
+
+          targetData.targets = [...targetData.targets];
         }}
       />
       <label>{target.cct_target}</label>
     </div>
 
-    <!-- {#if target.selected} -->
-    {#if target.cct_target === "NETWORK"}
+    {#if target.selected && target.cct_target === "NETWORK"}
       <div class="input-group">
         <label>IP</label>
-        <input type="text" />
+        <input type="text" bind:value={network.ipaddress} />
       </div>
       <div class="input-group">
         <label>PORT</label>
-        <input type="text" />
+        <input type="text" bind:value={network.port} />
       </div>
       <div class="input-group">
         <label>USERID</label>
-        <input type="text" />
+        <input type="text" bind:value={network.userid} />
       </div>
       <div class="input-group">
         <label>USERPW</label>
-        <input type="text" />
+        <input type="text" bind:value={network.userpw} />
       </div>
-      <!-- {/if} -->
+    {/if}
 
-      <!-- {#if target.cct_target === "DBMS"} -->
+    {#if target.selected && target.cct_target === "DBMS"}
       <div class="input-group">
         <label>DBNAME</label>
-        <input type="text" />
+        <input type="text" bind:value={dbmsValues.dbname} />
       </div>
       <div class="input-group">
         <label>USERMODE</label>
-        <input type="text" />
+        <input type="text" bind:value={dbmsValues.usermode} />
       </div>
       <div class="input-group">
         <label>PW</label>
@@ -172,23 +262,29 @@
         <label>PORT</label>
         <input type="text" bind:value={dbmsValues.port} />
       </div>
-      <!-- {/if} -->
+    {/if}
 
-      <!-- {#if target.cct_target === "WEB" || target.cct_target === "WAS"} -->
-      <div class="input-group">
-        <label>APP NAME</label>
-        {#if target.cct_target === "WEB"}
-          <input type="text" />
-        {/if}
-        {#if target.cct_target === "WAS"}
-          <input type="text" />
-        {/if}
-      </div>
-      <div class="input-group">
-        <label>INSTALLED PATH</label>
-        <input type="text" />
-      </div>
-      <!-- {/if} -->
+    {#if target.selected && (target.cct_target === "WEB" || target.cct_target === "WAS")}
+      {#if target.cct_target === "WEB"}
+        <div class="input-group">
+          <label>APP NAME</label>
+          <input type="text" bind:value={web.webApplicatioName} />
+        </div>
+        <div class="input-group">
+          <label>INSTALLED PATH</label>
+          <input type="text" bind:value={web.installedPath} />
+        </div>
+      {/if}
+      {#if target.cct_target === "WAS"}
+        <div class="input-group">
+          <label>APP NAME</label>
+          <input type="text" bind:value={was.webApplicatioName} />
+        </div>
+        <div class="input-group">
+          <label>INSTALLED PATH</label>
+          <input type="text" bind:value={was.installedPath} />
+        </div>
+      {/if}
     {/if}
   {/each}
 

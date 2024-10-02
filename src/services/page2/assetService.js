@@ -309,3 +309,34 @@ export const getAssetRegisterStatus = async (current_day) => {
     throw new Error(`Failed to fetch asset detail: ${error.message}`);
   }
 };
+/**************************************************************************** */
+
+export const setAssetForNewGroup = async (assetInfo) => {
+  try {
+    const {
+      asset_reg_how,
+      existed_asset_group_index,
+      target_group_index,
+      asset_file,
+      asset_lists,
+    } = assetInfo;
+    const response = await axios.post(`${serverApi}/api/setAssetForNewGroup/`, {
+      asset_reg_how,
+      existed_asset_group_index,
+      target_group_index,
+      asset_file,
+      asset_lists,
+    });
+
+    if (response.data.RESULT === "OK") {
+      return { success: true }; // Return the data from the API
+    } else {
+      console.error(`API Error:`, response.data); // Log the full response for debugging
+      throw new Error(
+        `Error Code on setAssetForNewGroup: ${response.data.CODE}`,
+      );
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch asset detail: ${error.message}`);
+  }
+};

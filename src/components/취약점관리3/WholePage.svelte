@@ -1,6 +1,8 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalRegisteredAdmin from "./ModalRegisteredAdmin.svelte";
+  import { Swiper, Navigation, Pagination } from "swiper";
+  import "swiper/swiper-bundle.min.css";
 
   let showModal = false;
   let actionMethod = "어쩌고...저쩌고...";
@@ -21,9 +23,50 @@
   function closeModal() {
     showModal = false; // Close the modal
   }
+
+  let swiperContainer;
+  let swiperInstance;
+
+  $: {
+    new Swiper(swiperContainer, {
+      modules: [Navigation, Pagination],
+      loop: false,
+      slidesPerView: 8,
+      spaceBetween: 15,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+  }
 </script>
 
 <main>
+  <div class="swiper_container1">
+    <img src="./images/left.png" alt="left" />
+    <div bind:this={swiperContainer} class="swiper-container">
+      <div class="swiper-wrapper">
+        {#each [1, 2, 3, 4, 5, 6] as slide}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div class="swiper-slide">
+            {slide}
+          </div>
+        {/each}
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+    <img
+      src="./images/left.png"
+      style="transform: rotate(180deg);"
+      alt="right"
+    />
+  </div>
   <div class="main-container">
     <div class="container">
       <div class="header">
@@ -321,5 +364,78 @@
 
   tr:hover {
     background-color: #e0f7fa; /* Soft hover effect */
+  }
+
+  /* Swiper Styles */
+  .swiper-container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px 0;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    position: relative;
+  }
+  .swiper_container1 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .swiper_container1 img {
+    width: 50px;
+    height: auto;
+  }
+  .swiper-wrapper {
+    display: flex;
+  }
+
+  .swiper-slide {
+    height: 50px;
+    max-width: 300px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .swiper-slide:hover {
+    transform: scale(1.1);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.2),
+      0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .swiper-pagination {
+    color: #007acc;
+  }
+
+  /* Move the left and right navigation buttons outside the swiper container */
+  .swiper-button-prev,
+  .swiper-button-next {
+    color: #007acc;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .swiper-button-prev {
+    left: -50px;
+  }
+
+  .swiper-button-next {
+    right: -50px;
   }
 </style>

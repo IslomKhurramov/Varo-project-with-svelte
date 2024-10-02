@@ -20,11 +20,8 @@
 
 <main>
   <div class="second_line">
-    <!-- svelte-ignore missing-declaration -->
-    <button>CCE</button>
-    <!-- svelte-ignore missing-declaration -->
-    <button>CVE/CPE </button>
-    <button>보안감사 </button>
+    <button>조치계획</button>
+    <button>조치결과 </button>
   </div>
 
   <div class="main_container">

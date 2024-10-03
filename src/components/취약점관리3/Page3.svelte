@@ -1,5 +1,8 @@
 <script>
-  import { getVulnsOfPlan } from "./../../services/vulns/vulnsService.js";
+  import {
+    getVulnsOfAsset,
+    getVulnsOfPlan,
+  } from "./../../services/vulns/vulnsService.js";
   import MainPageProject from "./MainPageProject.svelte";
   import MainPageAsset from "./MainPageAsset.svelte";
   import WholePage from "./WholePage.svelte";
@@ -15,6 +18,7 @@
 
   // DATA
   let plans = [];
+  let assets = [];
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -40,11 +44,16 @@
 
   onMount(async () => {
     plans = await getVulnsOfPlan();
+    const data = await getVulnsOfAsset();
+
+    assets = Object.values(data?.vulns).flatMap((vulnGroup) =>
+      vulnGroup.map((v) => v.result).filter(Boolean),
+    );
   });
 
   $: {
     console.log("plans:", plans?.plans?.[0]?.plan_target);
-    console.log("activeMenu:", activeMenu);
+    console.log("assets:", assets);
   }
 </script>
 
@@ -112,8 +121,8 @@
         </div>
       {:else}
         <div class="project_container">
-          {#each Asset as asset, index}
-            <div class="project_button">
+          {#each assets as asset, index}
+            <div class="project_button asset">
               <img src="./images/projectGray.png" alt="project" />
               <!-- svelte-ignore missing-declaration -->
               <!-- svelte-ignore a11y-invalid-attribute -->
@@ -123,7 +132,7 @@
                 class={activeMenu === asset ? "active" : ""}
               >
                 <i class="fa fa-database" aria-hidden="true"></i>
-                {asset}
+                {asset?.ast_uuid__ass_uuid__ast_hostname}
               </a>
             </div>
           {/each}
@@ -307,6 +316,12 @@
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
+  }
+
+  .project_button.asset {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
   }
 
   .project_container {

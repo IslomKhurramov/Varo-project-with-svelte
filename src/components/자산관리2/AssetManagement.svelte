@@ -1,14 +1,22 @@
 <script>
   import { onMount } from "svelte";
   import { allAssetGroupList } from "../../services/page2/asset.store";
-  import { getAssetGroup } from "../../services/page2/assetService";
+  import {
+    getAssetGroup,
+    setAssetForNewGroup,
+  } from "../../services/page2/assetService";
   import { allAssetList } from "../../services/page2/asset.store";
+  import { successAlert } from "../../shared/sweetAlert";
 
   let showAssetReg = true;
   let showCopyReg = false;
-  let filteredAssets = [];
-  let selectedGroup = "";
-  let assetRegHow = "자산등록";
+  export let filteredAssets = [];
+  export let filterAssets;
+  export let selectedGroup = "";
+  let assetRegHow = "add";
+  let uploadedFile = null;
+  let uploadedFileBig = null;
+  let newRegGroupIndex = "";
   /****************************************************/
   async function assetGroupList() {
     try {
@@ -24,30 +32,40 @@
       throw err;
     }
   }
-  // Function to filter assets based on the selected group
-  function filterAssets() {
-    console.log("Selected Group:", selectedGroup);
-    filteredAssets = $allAssetList.filter((asset) => {
-      if (Array.isArray(asset.asset_group)) {
-        return asset.asset_group.some(
-          (group) => group.asg_index === selectedGroup,
-        );
-      }
-      return false;
-    });
-  }
+
   onMount(() => {
     assetGroupList();
-    console.log("reg How", assetRegHow);
-    console.log("pointHISTORY", filteredAssets);
-    console.log("assetRegHow", assetRegHow);
+    handleFilter();
   });
   /***************************************************/
+  function handleFilter() {
+    filterAssets();
+  }
 
   function handleSelectChange(event) {
     const value = event.target.value;
-    showAssetReg = value === "자산등록";
-    showCopyReg = value === "기존그룹복사";
+    showAssetReg = value === "add";
+    showCopyReg = value === "copy";
+  }
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.name.endsWith(".xlsx")) {
+      uploadedFile = file;
+      console.log("Small file uploaded:", uploadedFile);
+    } else {
+      alert("Please upload an .xlsx file.");
+    }
+  }
+
+  function handleBigFileUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.name.endsWith(".xlsx")) {
+      uploadedFileBig = file;
+      console.log("Big file uploaded:", uploadedFileBig);
+    } else {
+      alert("Please upload an .xlsx file.");
+    }
   }
   /*********************************************************/
 
@@ -55,34 +73,74 @@
   // Handle selection of individual assets and track their UUIDs
   function handleAssetSelection(asset, event) {
     if (event.target.checked) {
-      // Add asset UUID to selectedAssets array if checked
       selectedAssets = [...selectedAssets, asset.ass_uuid];
     } else {
-      // Remove asset UUID from selectedAssets if unchecked
       selectedAssets = selectedAssets.filter((uuid) => uuid !== asset.ass_uuid);
     }
-    console.log("Selected Assets UUIDs:", selectedAssets); // Check selected UUIDs
+    console.log("Selected Assets UUIDs:", selectedAssets);
   }
 
+  /**************************************************************/
+  // $: if (assetRegHow === "add") {
+  //   selectedGroup = "";
+  //   console.log("adding time", selectedGroup);
+  // }
+
+  $: addingAssetForm = {
+    asset_reg_how: assetRegHow,
+    existed_asset_group_index: selectedGroup || "",
+    target_group_index: newRegGroupIndex,
+    asset_file: uploadedFile || uploadedFileBig || null,
+    asset_lists: selectedAssets,
+  };
+  const handleSubmit = async () => {
+    // Validate required fields
+    if (!newRegGroupIndex) {
+      alert("Please select a target asset group.");
+      return; // Early return if validation fails
+    }
+
+    console.log("Submitting asset data:", addingAssetForm); // Debugging log
+    try {
+      const response = await setAssetForNewGroup(addingAssetForm);
+      if (response.success) {
+        successAlert("Asset registered to new group successfully");
+        // Reset form values
+        selectedAssets = [];
+        selectedGroup = "";
+        newRegGroupIndex = "";
+        uploadedFile = null; // Reset file uploads if needed
+      } else {
+        throw new Error("Failed to register asset");
+      }
+    } catch (error) {
+      console.error("Submission error:", error); // Log the error
+      alert("Error occurred: " + error.message);
+    }
+  };
+
+  /**************************************************************/
   let selected = [];
   $: allSelected =
     selected.length === (filteredAssets.length || $allAssetList.length);
 
   function toggleAll() {
+    const allAssets =
+      filteredAssets.length > 0 ? filteredAssets : $allAssetList;
     if (allSelected) {
       selected = [];
-      selectedAssets = []; // Clear selected assets UUIDs
+      selectedAssets = [];
     } else {
-      const allAssets =
-        filteredAssets.length > 0 ? filteredAssets : $allAssetList;
       selected = [...allAssets];
-      // Store all selected asset UUIDs
       selectedAssets = allAssets.map((asset) => asset.ass_uuid);
     }
-    console.log("Selected Assets UUIDs (after toggle):", selectedAssets); // Check selected UUIDs
+    console.log("Selected Assets UUIDs (after toggle):", selectedAssets);
   }
   function check() {
+    console.log("selected group index", selectedGroup);
+    console.log("selected asset", selectedAssets);
     console.log("assetRegHow", assetRegHow);
+    console.log("newRegGroupIndex", newRegGroupIndex);
   }
 </script>
 
@@ -97,19 +155,21 @@
         on:change={handleSelectChange}
         bind:value={assetRegHow}
       >
-        <option value="자산등록">자산등록 </option>
-        <option value="기존그룹복사">기존그룹복사</option>
+        <option value="add">자산등록 </option>
+        <option value="copy">기존그룹복사</option>
       </select>
     </div>
   </div>
 
-  {#if showCopyReg}
+  {#if showAssetReg}
     <div class="second_container">
       <p>생성방법</p>
       <div class="inside_container">
         <div class="first_line_container">
-          <input type="file" />
-          <input type="file" />
+          <input type="file" accept=".xlsx" on:change={handleFileUpload} />
+
+          <input type="file" accept=".xlsx" on:change={handleBigFileUpload} />
+
           <p>대용량업로드(엑셀파일)</p>
           <a
             href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
@@ -119,19 +179,36 @@
       </div>
     </div>
   {/if}
+
   <div class="second_container">
     <p>생성방법</p>
     <div class="inside_container">
       <div class="second_line_container">
         <div class="right_container">
-          <select bind:value={selectedGroup} on:change={filterAssets}>
-            <option value="">Select Asset Group</option>
-            {#if $allAssetGroupList.length > 0}
-              {#each $allAssetGroupList as group}
-                <option value={group.asg_index}>{group.asg_title}</option>
-              {/each}
-            {/if}
-          </select>
+          <div class=" headerSelect">
+            <div>
+              <p>선택된 자산 그룹:</p>
+              <select bind:value={selectedGroup} on:change={handleFilter}>
+                <option value="">자산 그룹</option>
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
+              </select>
+            </div>
+            <div>
+              <p>자산에 대한 새 그룹을 선택하세요:</p>
+              <select bind:value={newRegGroupIndex}>
+                <option value="">자산 그룹</option>
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
+              </select>
+            </div>
+          </div>
           <div class="option_container">
             <div class="div1">
               <select name="" id="">
@@ -167,10 +244,20 @@
                   on:change={(event) => handleAssetSelection(asset, event)}
                 />
                 <div class="img_container">
+                  <!-- svelte-ignore a11y-img-redundant-alt -->
                   <img src="./images/Picture1.png" alt="Image description" />
                   <div class="img_overlay">
-                    <p>{asset.assessment_target_system}</p>
-                    <p>DBMS</p>
+                    {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
+                      {#each asset.assessment_target_system as target}
+                        {#if target && typeof target === "object"}
+                          {#each Object.entries(target) as [key, value]}
+                            {#if value}
+                              <p>{key}</p>
+                            {/if}
+                          {/each}
+                        {/if}
+                      {/each}
+                    {/if}
                   </div>
                 </div>
                 <div class="info_card">
@@ -179,6 +266,9 @@
                 </div>
               </div>
             {/each}
+          </div>
+          <div class="div2">
+            <button on:click={handleSubmit}>저장하기 </button>
           </div>
         </div>
       </div>
@@ -300,35 +390,6 @@
     gap: 35px;
     max-height: 500px;
     overflow-x: hidden; /* Prevent horizontal overflow */
-  }
-
-  .group_container {
-    width: 250px;
-    font-family: "Roboto", sans-serif;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 100%;
-  }
-
-  .group_container p {
-    margin: 5px 0;
-    font-size: 12px;
-    color: #333;
-    padding: 8px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-
-  .group_container p:hover {
-    cursor: pointer;
-    background-color: #37a5f3;
-    color: #fff;
   }
 
   .right_container {
@@ -489,32 +550,60 @@
     width: 100%;
     margin-top: 10px;
   }
+  .headerSelect {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
 
-  .input_buttons {
+  .headerSelect div {
+    flex: 1;
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    justify-content: center;
-    width: 100%;
-    margin-top: 20px;
   }
 
-  .save_button {
-    background-color: #0056b3;
-    color: #fff;
-    width: 120px;
-    height: 40px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
+  .headerSelect p {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
   }
 
-  .save_button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  .headerSelect select {
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border 0.3s ease;
+    width: 61%;
+    margin-top: 12px;
+  }
+
+  .headerSelect select:hover {
+    border-color: #888;
+  }
+
+  .headerSelect select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .headerSelect select option {
+    padding: 8px;
+  }
+
+  /* Add subtle shadow to the container */
+  .headerSelect {
+    padding: 5;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  /* For better spacing between elements */
+  .headerSelect div {
+    margin-right: 20px;
   }
 </style>

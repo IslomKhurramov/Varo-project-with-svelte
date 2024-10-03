@@ -165,7 +165,17 @@
     <div class="header">
       <span on:click={check}>운영제체</span>
       <div class="select">
-        <p>{selectedAsset.assessment_target_system[2]}</p>
+        {#if selectedAsset.assessment_target_system && Array.isArray(selectedAsset.assessment_target_system)}
+          {#each selectedAsset.assessment_target_system as target}
+            {#if target && typeof target === "object"}
+              {#each Object.entries(target) as [key, value]}
+                {#if value}
+                  <p>{key}</p>
+                {/if}
+              {/each}
+            {/if}
+          {/each}
+        {/if}
       </div>
     </div>
     <div class="header">
@@ -196,10 +206,12 @@
         type="checkbox"
         on:change={(e) => {
           const isChecked = e.target.checked;
-          target.ast_buse = isChecked; // Update the target in the list
-          targetData.targets = [...targetData.targets];
 
-          // Update the main targets object
+          // Update the target's selected (ast_buse) value
+          target.selected = isChecked;
+          target.ast_buse = isChecked ? true : false;
+
+          // Update the main targets object based on the checkbox change
           switch (target.cct_target) {
             case "UNIX":
               targets.UNIX = isChecked ? "-t linux" : "";
@@ -213,9 +225,10 @@
             case "CLOUD":
               targets.CLOUD = isChecked ? "-t cloud" : "";
               break;
-            // Add cases for other systems as needed
+            // Handle other target types here...
           }
 
+          // Reassign the array to trigger a reactivity update
           targetData.targets = [...targetData.targets];
         }}
       />

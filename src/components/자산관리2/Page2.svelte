@@ -4,7 +4,10 @@
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
   import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
-  import { allAssetGroupList } from "../../services/page2/asset.store";
+  import {
+    allAssetGroupList,
+    allAssetList,
+  } from "../../services/page2/asset.store";
   import {
     getAssetGroup,
     setNewAssetGroup,
@@ -18,6 +21,8 @@
   let newGroupName = "";
   let isAddingNewGroup = false;
   let inputRef;
+  let selectedGroup = "";
+  let filteredAssets = [];
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
     try {
@@ -33,6 +38,19 @@
   onMount(() => {
     assetGroupList();
   });
+  /*************************************************************/
+  // Function to filter assets based on the selected group
+  function filterAssets() {
+    console.log("Selected Group:", selectedGroup);
+    filteredAssets = $allAssetList.filter((asset) => {
+      if (Array.isArray(asset.asset_group)) {
+        return asset.asset_group.some(
+          (group) => group.asg_index === selectedGroup,
+        );
+      }
+      return false;
+    });
+  }
 
   /***********************************************************/
   const addNewGroup = async () => {
@@ -76,11 +94,12 @@
     isAddingNewGroup = false;
   };
   /*****************************************/
-  const selectPage = (page, menu) => {
+  function selectPage(page, group) {
     currentPage = page;
-    activeMenu = menu;
-  };
-
+    activeMenu = group;
+    selectedGroup = group.asg_index;
+    filterAssets(); // Set the selected group index when selecting a group
+  }
   function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
     currentPage = null;
@@ -119,7 +138,7 @@
               <div>
                 <button
                   class="asset_button"
-                  on:click={() => selectPage(AssetManagement, "자산관리")}
+                  on:click={() => selectPage(AssetManagement, group)}
                   >자산관리</button
                 >
               </div>
@@ -205,7 +224,12 @@
 
     <div class="swiper_container">
       {#if currentPage}
-        <svelte:component this={currentPage} />
+        <svelte:component
+          this={currentPage}
+          bind:selectedGroup
+          {filterAssets}
+          {filteredAssets}
+        />
       {:else if currentView === "newView"}
         {#key currentView}
           <Swiper />

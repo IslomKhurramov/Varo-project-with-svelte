@@ -363,3 +363,27 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
     throw error;
   }
 };
+/************************************************************************** */
+export const getSearch = async (
+  ast_group,
+  asset_ostype,
+  asset_target_registered,
+  asset_activate,
+) => {
+  try {
+    const response = await axios.post(`${serverApi}/api/getSearch/`, {
+      asset_group: ast_group,
+      asset_ostype: asset_ostype,
+      asset_target_registered: asset_target_registered,
+      asset_activate: asset_activate,
+    });
+
+    if (response.data.RESULT === "OK") {
+      return response.data; // Return the data from the API
+    } else {
+      throw new Error(`Error Code on getSearch: ${response.data.CODE}`);
+    }
+  } catch (error) {
+    throw new Error(`Failed to  getSearch: ${error.message}`);
+  }
+};

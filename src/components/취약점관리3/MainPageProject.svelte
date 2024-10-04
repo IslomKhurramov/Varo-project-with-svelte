@@ -1,5 +1,6 @@
 <script>
   export let projectData = [];
+  export let tableData;
 
   for (let i = 1; i <= 15; i++) {
     projectData.push({
@@ -15,6 +16,53 @@
       operationoffiecer: "02-102-0922",
       acknowledge: "",
     });
+  }
+
+  let data = [];
+
+  function transformVulns(vulns) {
+    const transformed = [];
+
+    for (const key in vulns) {
+      // We need to hold the current vulnerability's result in a separate variable
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      vulns[key].forEach((item) => {
+        if (item?.result?.ccr_item_result == "취약") {
+          if (item.result) {
+            currentResult = item?.result;
+          } else {
+            // Only keep the latest fix_plan and fix_result
+            if (item.fix_plan) {
+              fixPlan = item.fix_plan;
+            }
+            if (item.fix_result) {
+              fixResult = item.fix_result;
+            }
+          }
+        }
+      });
+
+      // If we have a current result, push it to the transformed array
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    return transformed;
+  }
+
+  $: {
+    if (tableData) {
+      data = transformVulns(tableData);
+      console.log("data:", data);
+    }
   }
 </script>
 
@@ -39,27 +87,37 @@
         <th>운영담당자 </th>
         <th>승인 </th>
       </tr>
-      {#each projectData as asset}
-        <tr>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.logContent}</td>
-          <td>{asset.performer}</td>
-          <td>{asset.date}</td>
-          <td>{asset.note}</td>
-          <td>{asset.operationDepartment}</td>
-          <td>{asset.operationoffiecer}</td>
-          <td
-            ><select name="" id="" class="select_input">
-              <option value="승인">승인</option>
-              <option value="반려">반려</option>
-              <option value="승인">재검토</option>
-            </select></td
-          >
-        </tr>
-      {/each}
+      {#if data?.length !== 0}
+        {#each data as item, index}
+          <tr>
+            <td>{index + 1}</td>
+            <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
+            <td>{item?.cct_index__cct_target}</td>
+            <td>{item.ccr_item_no__ccc_item_group}</td>
+            <td>{item.ccr_item_no__ccc_item_title}</td>
+            <td>{item.ccr_item_no__ccc_item_level}</td>
+            <td
+              >{false
+                ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
+                : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}</td
+            >
+            <td>
+              {false
+                ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
+                : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
+            </td>
+            <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
+            <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+            <td
+              ><select name="" id="" class="select_input">
+                <option value="승인">승인</option>
+                <option value="반려">반려</option>
+                <option value="승인">재검토</option>
+              </select></td
+            >
+          </tr>
+        {/each}
+      {/if}
     </table>
   </div>
 </main>

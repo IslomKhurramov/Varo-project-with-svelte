@@ -1,11 +1,11 @@
 import axios from "axios";
 import { serverApi } from "../../lib/config";
 
-export const getVulnsOfPlan = async () => {
+export const getVulnsOfPlan = async (data = undefined) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfPlan/`,
-      {},
+      data,
       {
         withCredentials: true,
       },

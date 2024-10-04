@@ -15,6 +15,7 @@
   let Project = ["프로젝트 1", "프로젝트 2", "프로젝트 3"];
   let Asset = ["자산 1", "자산 2", "자산 3"];
   let showProject = true;
+  let tableData;
 
   // DATA
   let plans = [];
@@ -44,16 +45,17 @@
 
   onMount(async () => {
     plans = await getVulnsOfPlan();
-    const data = await getVulnsOfAsset();
+    // const data = await getVulnsOfAsset();
 
-    assets = Object.values(data?.vulns).flatMap((vulnGroup) =>
-      vulnGroup.map((v) => v.result).filter(Boolean),
-    );
+    tableData = plans?.vulns;
+    console.log("table:", tableData);
+
+    // assets = Object.values(data?.vulns).flatMap((vulnGroup) =>
+    //   vulnGroup.map((v) => v.result).filter(Boolean),
+    // );
   });
 
   $: {
-    console.log("plans:", plans?.plans?.[0]?.plan_target);
-    console.log("assets:", assets);
   }
 </script>
 
@@ -195,7 +197,7 @@
 
     <div class="swiper_container">
       {#if currentView === "default"}
-        <MainPageProject />
+        <MainPageProject bind:tableData />
       {:else if currentPage}
         <svelte:component this={currentPage} />
       {/if}

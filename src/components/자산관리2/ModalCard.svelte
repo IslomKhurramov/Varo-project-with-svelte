@@ -6,6 +6,10 @@
 
   export let cancel;
   export let selectedAsset;
+  let isDbmsChecked = false;
+  let isNetworkChecked = false;
+  let isWebChecked = false;
+  let isWasChecked = false;
 
   let targets = {
     UNIX: "",
@@ -47,17 +51,14 @@
     targets: [],
   };
 
-  // Prepopulate form based on selectedAsset and ast_buse
   $: if (selectedAsset && selectedAsset.assessment_target_system) {
     targetData.targets = $targetSystemList.map((target) => {
       const assetTarget =
-        selectedAsset.assessment_target_system?.find(
-          (t) => t.type === target.cct_target,
-        ) || {};
+        selectedAsset.targets?.find((t) => t.type === target.cct_target) || {};
 
       return {
         ...target,
-        selected: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
+        ast_buse: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
         ip: assetTarget.ip || "",
         port: assetTarget.port || "",
         dbname: assetTarget.dbname || "",
@@ -76,7 +77,7 @@
   /*************************************************/
   $: if (Object.keys(selectedAsset).length > 0 && !targetData.targets) {
     targetData = { ...selectedAsset };
-    console.log("Loaded asset details:", selectedAsset);
+    console.log("SELECTED asset detaisl", selectedAsset);
   }
   /*************************************************/
   async function submit() {
@@ -84,9 +85,6 @@
       alert("Asset UUID is missing");
       return;
     }
-
-    // Build the targets object conditionally, avoiding empty or invalid fields
-    const targets = {};
 
     // If DBMS has values, add it to targets
     if (
@@ -134,7 +132,7 @@
     }
 
     console.log("sendData:", targets); // Log the payload before sending
-    // Send the payload to the API
+
     try {
       const response = await setAssetTargetRegister(
         selectedAsset.ass_uuid,
@@ -155,7 +153,8 @@
   }
 
   $: {
-    console.log("dbmsValues:", selectedAsset);
+    console.log("targets:", targets);
+    console.log("selected asset:", selectedAsset);
   }
 </script>
 
@@ -165,7 +164,17 @@
     <div class="header">
       <span on:click={check}>운영제체</span>
       <div class="select">
-        <p>{selectedAsset.assessment_target_system[2]}</p>
+        {#if selectedAsset.assessment_target_system && Array.isArray(selectedAsset.assessment_target_system)}
+          {#each selectedAsset.assessment_target_system as target}
+            {#if target && typeof target === "object"}
+              {#each Object.entries(target) as [key, value]}
+                {#if value}
+                  <p>{key}</p>
+                {/if}
+              {/each}
+            {/if}
+          {/each}
+        {/if}
       </div>
     </div>
     <div class="header">
@@ -190,39 +199,39 @@
   </div>
 
   <!-- Editable target systems from selectedAsset -->
-  {#each targetData.targets as target, i}
+  {#each targetData.targets as target}
     <div class="checkbox-group">
       <input
         type="checkbox"
         on:change={(e) => {
           const isChecked = e.target.checked;
-          target.ast_buse = isChecked; // Update the target in the list
-          targetData.targets = [...targetData.targets];
 
-          // Update the main targets object
+          // Update checkbox state for conditional rendering
           switch (target.cct_target) {
-            case "UNIX":
-              targets.UNIX = isChecked ? "-t linux" : "";
+            case "DBMS":
+              isDbmsChecked = isChecked;
               break;
-            case "WINDOWS":
-              targets.WINDOWS = isChecked ? "-t windows" : "";
+            case "NETWORK":
+              isNetworkChecked = isChecked;
               break;
-            case "SECURITY":
-              targets.SECURITY = isChecked ? "-t security" : "";
+            case "WEB":
+              isWebChecked = isChecked;
               break;
-            case "CLOUD":
-              targets.CLOUD = isChecked ? "-t cloud" : "";
+            case "WAS":
+              isWasChecked = isChecked;
               break;
-            // Add cases for other systems as needed
+            // Add other cases if needed...
           }
 
-          targetData.targets = [...targetData.targets];
+          // Update the main targets object based on the checkbox change
+          targets[target.cct_target] = isChecked
+            ? `-t ${target.cct_target.toLowerCase()}`
+            : "";
         }}
       />
       <label>{target.cct_target}</label>
     </div>
-
-    {#if target.selected && target.cct_target === "NETWORK"}
+    {#if target.cct_target === "NETWORK" && isNetworkChecked}
       <div class="input-group">
         <label>IP</label>
         <input type="text" bind:value={network.ipaddress} />
@@ -241,7 +250,7 @@
       </div>
     {/if}
 
-    {#if target.selected && target.cct_target === "DBMS"}
+    {#if target.cct_target === "DBMS" && isDbmsChecked}
       <div class="input-group">
         <label>DBNAME</label>
         <input type="text" bind:value={dbmsValues.dbname} />
@@ -264,7 +273,7 @@
       </div>
     {/if}
 
-    {#if target.selected && (target.cct_target === "WEB" || target.cct_target === "WAS")}
+    {#if (target.cct_target === "WEB" || target.cct_target === "WAS") && (target.cct_target === "WEB" ? isWebChecked : isWasChecked)}
       {#if target.cct_target === "WEB"}
         <div class="input-group">
           <label>APP NAME</label>

@@ -311,7 +311,7 @@ export const getAssetRegisterStatus = async (current_day) => {
 };
 /**************************************************************************** */
 
-export const setAssetForNewGroup = async (assetInfo) => {
+export const setAssetForNewGroup = async (addingAssetForm) => {
   try {
     const {
       asset_reg_how,
@@ -319,24 +319,71 @@ export const setAssetForNewGroup = async (assetInfo) => {
       target_group_index,
       asset_file,
       asset_lists,
-    } = assetInfo;
-    const response = await axios.post(`${serverApi}/api/setAssetForNewGroup/`, {
-      asset_reg_how,
-      existed_asset_group_index,
-      target_group_index,
-      asset_file,
-      asset_lists,
+    } = addingAssetForm;
+    console.log("api data: ", addingAssetForm);
+
+    // Create FormData object for multipart/form-data
+    const formData = new FormData();
+
+    // Append the form data fields
+    formData.append("asset_reg_how", asset_reg_how);
+    formData.append("existed_asset_group_index", existed_asset_group_index);
+    formData.append("target_group_index", target_group_index);
+
+    // Append the file only if it exists (you can omit null fields)
+    if (asset_file) {
+      formData.append("asset_file", asset_file); // Assuming asset_file is a File object
+    }
+
+    // Loop through asset_lists array and append each item individually
+    asset_lists.forEach((asset) => {
+      formData.append("asset_lists[]", asset); // Correct way to append arrays in FormData
+    });
+
+    // Send the request using axios
+    const response = await axios.post(
+      `${serverApi}/api/setAssetForNewGroup/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set the proper Content-Type
+        },
+      },
+    );
+
+    // Handle the API response
+    if (response.data.RESULT === "OK") {
+      return { success: true }; // Return success if response is OK
+    } else {
+      console.log("API ERROR:", response.data);
+      return { success: false, message: response.data.CODE };
+    }
+  } catch (error) {
+    console.error("API Request Error:", error); // Log any errors
+    throw error;
+  }
+};
+/************************************************************************** */
+export const getSearch = async (
+  ast_group,
+  asset_ostype,
+  asset_target_registered,
+  asset_activate,
+) => {
+  try {
+    const response = await axios.post(`${serverApi}/api/getSearch/`, {
+      asset_group: ast_group,
+      asset_ostype: asset_ostype,
+      asset_target_registered: asset_target_registered,
+      asset_activate: asset_activate,
     });
 
     if (response.data.RESULT === "OK") {
-      return { success: true }; // Return the data from the API
+      return response.data; // Return the data from the API
     } else {
-      console.error(`API Error:`, response.data); // Log the full response for debugging
-      throw new Error(
-        `Error Code on setAssetForNewGroup: ${response.data.CODE}`,
-      );
+      throw new Error(`Error Code on getSearch: ${response.data.CODE}`);
     }
   } catch (error) {
-    throw new Error(`Failed to fetch asset detail: ${error.message}`);
+    throw new Error(`Failed to  getSearch: ${error.message}`);
   }
 };

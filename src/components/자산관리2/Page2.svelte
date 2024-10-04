@@ -4,13 +4,18 @@
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
   import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
-  import { allAssetGroupList } from "../../services/page2/asset.store";
+  import {
+    allAssetGroupList,
+    allAssetList,
+  } from "../../services/page2/asset.store";
   import {
     getAssetGroup,
+    getSearch,
     setNewAssetGroup,
   } from "../../services/page2/assetService";
   import { onMount } from "svelte";
   import { successAlert } from "../../shared/sweetAlert";
+  import { checkAuth } from "../../stores/user.store";
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
@@ -18,6 +23,12 @@
   let newGroupName = "";
   let isAddingNewGroup = false;
   let inputRef;
+  let selectedGroup = "";
+  let filteredAssets = [];
+  let asset_ostype = "";
+  let assetTargetReg = "";
+  let assetAcitve = "";
+  let groupNames = "";
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
     try {
@@ -33,6 +44,19 @@
   onMount(() => {
     assetGroupList();
   });
+  /*************************************************************/
+  // Function to filter assets based on the selected group
+  function filterAssets() {
+    console.log("Selected Group:", selectedGroup);
+    filteredAssets = $allAssetList.filter((asset) => {
+      if (Array.isArray(asset.asset_group)) {
+        return asset.asset_group.some(
+          (group) => group.asg_index === selectedGroup,
+        );
+      }
+      return false;
+    });
+  }
 
   /***********************************************************/
   const addNewGroup = async () => {
@@ -76,15 +100,36 @@
     isAddingNewGroup = false;
   };
   /*****************************************/
-  const selectPage = (page, menu) => {
-    currentPage = page;
-    activeMenu = menu;
+  const getSearchAsset = async () => {
+    try {
+      const response = await getSearch(); // Send new group to backend
+      if (response.success) {
+        successAlert("Group created successfully!");
+      } else {
+        throw new Error("Failed to save group.");
+      }
+    } catch (error) {
+      console.error("Error saving group:", error);
+      alert("Failed to save the group. Please try again.");
+    }
   };
 
+  function selectPage(page, group) {
+    currentPage = page;
+    activeMenu = group;
+    selectedGroup = group.asg_index;
+    filterAssets(); // Set the selected group index when selecting a group
+  }
   function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
     currentPage = null;
     console.log("Current View:", currentView);
+  }
+  function check() {
+    console.log("group", groupNames);
+    console.log("target", assetTargetReg);
+    console.log("acvtivate", assetAcitve);
+    console.log("osType", asset_ostype);
   }
 </script>
 
@@ -119,7 +164,7 @@
               <div>
                 <button
                   class="asset_button"
-                  on:click={() => selectPage(AssetManagement, "자산관리")}
+                  on:click={() => selectPage(AssetManagement, group)}
                   >자산관리</button
                 >
               </div>
@@ -160,18 +205,31 @@
               name="approval_status"
               id="approval_status"
               class="select_input"
+              bind:value={groupNames}
             >
-              <option value="pending">자산그룹명</option>
-              <option value="approved">운영체제</option>
-              <option value="rejected">에이전트여부</option>
-              <option value="rejected">등록승인여부</option>
+              {#each $allAssetGroupList as group}
+                <option class="group_option" value={group.asg_title}
+                  >{group.asg_title}</option
+                >
+              {/each}
+              <option value="" disabled selected hidden
+                >그룹을 선택하세요</option
+              >
             </select>
           </div>
           <div class="select_container">
-            <select name="asset_group" id="asset_group" class="select_input">
-              <option value="network">운영체제</option>
-              <option value="endpoint">Endpoint Security</option>
-              <option value="cloud">Cloud Security</option>
+            <select
+              name="asset_group"
+              id="asset_group"
+              class="select_input"
+              bind:value={asset_ostype}
+            >
+              <option value="" disabled selected hidden>운영체제</option>
+              {#each $allAssetList as asset}
+                <option class="group_option" value={asset.ast_os}
+                  >{asset.ast_os}</option
+                >
+              {/each}
             </select>
           </div>
           <div class="select_container">
@@ -179,23 +237,31 @@
               name="operating_system"
               id="operating_system"
               class="select_input"
+              bind:value={assetTargetReg}
             >
-              <option value="windows">에이전트여부</option>
-              <option value="linux">Linux</option>
-              <option value="macos">macOS</option>
+              <option value="" disabled selected hidden>에이전트여부</option>
+
+              <option class="group_option" value="YES">YES</option>
+
+              <option class="group_option" value="NO">NO</option>
             </select>
           </div>
           <div class="select_container">
-            <select name="agent_status" id="agent_status" class="select_input">
-              <option value="active">등록승인여부</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+            <select
+              name="agent_status"
+              bind:value={assetAcitve}
+              id="agent_status"
+              class="select_input"
+            >
+              <option value="" disabled selected hidden>등록승인여부</option>
+              <option value="1">Active</option>
+              <option value="0">Unactive</option>
             </select>
           </div>
         </form>
       </div>
       <div class="header_button">
-        <p>자산명</p>
+        <p on:click={check}>자산명</p>
         <p>엑셀저장</p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p on:click={() => (showModal = true)}>등록현황</p>
@@ -205,7 +271,12 @@
 
     <div class="swiper_container">
       {#if currentPage}
-        <svelte:component this={currentPage} />
+        <svelte:component
+          this={currentPage}
+          bind:selectedGroup
+          {filterAssets}
+          {filteredAssets}
+        />
       {:else if currentView === "newView"}
         {#key currentView}
           <Swiper />
@@ -561,5 +632,10 @@
     border-width: 5px;
     border-style: solid;
     border-color: transparent transparent #333 transparent;
+  }
+  .group_option {
+    height: 120px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 </style>

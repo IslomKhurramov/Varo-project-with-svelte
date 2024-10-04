@@ -19,33 +19,29 @@
   }
 
   let data = [];
+  let setView = "plan";
 
   function transformVulns(vulns) {
     const transformed = [];
 
     for (const key in vulns) {
-      // We need to hold the current vulnerability's result in a separate variable
       let currentResult = null;
       let fixPlan = {};
       let fixResult = {};
 
       vulns[key].forEach((item) => {
-        if (item?.result?.ccr_item_result == "취약") {
-          if (item.result) {
-            currentResult = item?.result;
-          } else {
-            // Only keep the latest fix_plan and fix_result
-            if (item.fix_plan) {
-              fixPlan = item.fix_plan;
-            }
-            if (item.fix_result) {
-              fixResult = item.fix_result;
-            }
+        if (item.result) {
+          currentResult = item?.result;
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
           }
         }
       });
 
-      // If we have a current result, push it to the transformed array
       if (currentResult) {
         transformed.push({
           ...currentResult,
@@ -68,8 +64,18 @@
 
 <main>
   <div class="second_line">
-    <button>조치계획</button>
-    <button>조치결과 </button>
+    <button
+      on:click={() => (setView = "plan")}
+      class={setView == "plan" ? "active" : ""}
+    >
+      조치계획
+    </button>
+    <button
+      on:click={() => (setView = "result")}
+      class={setView == "result" ? "active" : ""}
+    >
+      조치결과
+    </button>
   </div>
 
   <div class="main_container">
@@ -96,13 +102,13 @@
             <td>{item.ccr_item_no__ccc_item_group}</td>
             <td>{item.ccr_item_no__ccc_item_title}</td>
             <td>{item.ccr_item_no__ccc_item_level}</td>
-            <td
-              >{false
-                ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
-                : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}</td
-            >
             <td>
-              {false
+              {setView == "plan"
+                ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
+                : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+            </td>
+            <td>
+              {setView == "result"
                 ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
                 : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
             </td>
@@ -205,6 +211,10 @@
       background-color 0.3s ease,
       transform 0.3s ease,
       box-shadow 0.3s ease;
+  }
+
+  .second_line button.active {
+    background-color: rgb(225 143 45 / 62%);
   }
 
   .second_line button:hover {

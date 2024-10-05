@@ -1,9 +1,12 @@
 <script>
+  import WholePage from "./WholePage.svelte";
+
   export let projectData = [];
   export let tableData;
   export let vulnerabilityStatus;
   export let actionStatus;
   export let setView;
+  export let wholePage;
 
   for (let i = 1; i <= 15; i++) {
     projectData.push({
@@ -129,7 +132,7 @@
               </tr>
             {/if}
           {:else}
-            <tr>
+            <tr on:click={() => (wholePage = true)}>
               <td>{index + 1}</td>
               <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
               <td>{item?.cct_index__cct_target}</td>

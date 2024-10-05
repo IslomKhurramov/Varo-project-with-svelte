@@ -20,6 +20,8 @@
   let vulnerabilityStatus;
   let actionStatusValue;
   let actionStatus;
+  let activePlan = null;
+  let wholePage = false;
 
   let search = {
     plan_index: "",
@@ -31,9 +33,11 @@
   let assets = [];
 
   const selectPage = async (page, menu) => {
+    console.log("selectPage clicked");
     currentPage = page;
     activeMenu = menu;
     currentView = "default";
+    wholePage = false;
   };
 
   function toggleView() {
@@ -46,10 +50,8 @@
     showProject = view === "project";
   }
 
-  let activePlan = null; // Track which plan is expanded
-
   function toggleAccordion(plan) {
-    activePlan = activePlan === plan ? null : plan; // Toggle accordion
+    activePlan = activePlan === plan ? null : plan;
   }
 
   onMount(async () => {
@@ -125,7 +127,7 @@
                   class="accordion_header"
                   on:click={() => {
                     toggleAccordion(plan);
-                    selectPage(MainPageProject, plan, plan?.plan_index);
+                    selectPage(MainPageProject, plan);
                   }}
                 >
                   <img src="./images/projectGray.png" alt="project" />
@@ -256,15 +258,18 @@
     </header>
 
     <div class="swiper_container">
-      {#if currentView === "default"}
+      {#if currentView === "default" && !wholePage}
         <MainPageProject
           bind:tableData
           bind:vulnerabilityStatus
           bind:actionStatus
           bind:setView
+          bind:wholePage
         />
-      {:else if currentPage}
-        <svelte:component this={currentPage} />
+      {/if}
+
+      {#if wholePage}
+        <WholePage />
       {/if}
     </div>
   </div>

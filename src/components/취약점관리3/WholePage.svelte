@@ -74,50 +74,6 @@
       </div>
 
       <div class="content">
-        <div class="info">
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>취약점정보</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
-          </div>
-
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>조치방법</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
-          </div>
-
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>관련자산</label>
-            <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
-            ></textarea>
-          </div>
-
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-          <div class="row">
-            <label>이전조치이력</label>
-            <div class="table_container">
-              <table>
-                <tr class="first_line">
-                  <th>조치방법</th>
-                  <th>일정</th>
-                  <th>의견</th>
-                  <th>조치담당자</th>
-                </tr>
-                {#each performanceLog as asset}
-                  <tr>
-                    <td>{asset.actionMethod}</td>
-                    <td>{asset.schedule}</td>
-                    <td>{asset.opinion}</td>
-                    <td>{asset.personInCharge}</td>
-                  </tr>
-                {/each}
-              </table>
-            </div>
-          </div>
-        </div>
-
         <div class="actions">
           <div class="action-header">
             <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -172,6 +128,50 @@
             <button class="list-button" on:click={() => (showModal = true)}
               >등록된 운영/관리자 계정</button
             >
+          </div>
+        </div>
+
+        <div class="info">
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>취약점정보</label>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+          </div>
+
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>조치방법</label>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+          </div>
+
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>관련자산</label>
+            <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
+            ></textarea>
+          </div>
+
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+          <div class="row">
+            <label>이전조치이력</label>
+            <div class="table_container">
+              <table>
+                <tr class="first_line">
+                  <th>조치방법</th>
+                  <th>일정</th>
+                  <th>의견</th>
+                  <th>조치담당자</th>
+                </tr>
+                {#each performanceLog as asset}
+                  <tr>
+                    <td>{asset.actionMethod}</td>
+                    <td>{asset.schedule}</td>
+                    <td>{asset.opinion}</td>
+                    <td>{asset.personInCharge}</td>
+                  </tr>
+                {/each}
+              </table>
+            </div>
           </div>
         </div>
       </div>

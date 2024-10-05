@@ -44,18 +44,17 @@
   }
 
   onMount(async () => {
-    plans = await getVulnsOfPlan();
     // const data = await getVulnsOfAsset();
-
-    tableData = plans?.vulns;
-    console.log("table:", tableData);
-
     // assets = Object.values(data?.vulns).flatMap((vulnGroup) =>
     //   vulnGroup.map((v) => v.result).filter(Boolean),
     // );
   });
 
   $: {
+    (async () => {
+      plans = await getVulnsOfPlan();
+      tableData = plans?.vulns;
+    })();
   }
 </script>
 
@@ -156,10 +155,12 @@
               id="approval_status"
               class="select_input"
             >
-              <option value="pending">프로젝트</option>
-              <option value="approved">운영체제</option>
-              <option value="rejected">에이전트여부</option>
-              <option value="rejected">등록승인여부</option>
+              <option value="" selected>프로젝트</option>
+              {#if plans && plans?.plans && plans?.plans?.length !== 0}
+                {#each plans?.plans as plan, index}
+                  <option value={plan?.plan_index}> {plan?.plan_title}</option>
+                {/each}
+              {/if}
             </select>
           </div>
           <div class="select_container">

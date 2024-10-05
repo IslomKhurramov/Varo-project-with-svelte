@@ -8,14 +8,22 @@
   import WholePage from "./WholePage.svelte";
   import { onMount } from "svelte";
   import { each } from "svelte/internal";
+  import { get } from "svelte/store";
 
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
-  let Project = ["프로젝트 1", "프로젝트 2", "프로젝트 3"];
-  let Asset = ["자산 1", "자산 2", "자산 3"];
   let showProject = true;
   let tableData;
+  let vulnerabilityStatusValue;
+  let vulnerabilityStatus;
+  let actionStatusValue;
+  let actionStatus;
+
+  let search = {
+    plan_index: "",
+    asset_target_uuid: "",
+  };
 
   // DATA
   let plans = [];
@@ -44,18 +52,20 @@
   }
 
   onMount(async () => {
+    plans = await getVulnsOfPlan();
+    tableData = plans?.vulns;
     // const data = await getVulnsOfAsset();
     // assets = Object.values(data?.vulns).flatMap((vulnGroup) =>
     //   vulnGroup.map((v) => v.result).filter(Boolean),
     // );
   });
 
-  $: {
-    (async () => {
-      plans = await getVulnsOfPlan();
-      tableData = plans?.vulns;
-    })();
-  }
+  const getPlanDataSearch = async () => {
+    plans = await getVulnsOfPlan(search);
+    tableData = plans?.vulns;
+    vulnerabilityStatus = vulnerabilityStatusValue;
+    actionStatus = actionStatusValue;
+  };
 </script>
 
 <main class="container">
@@ -154,6 +164,7 @@
               name="approval_status"
               id="approval_status"
               class="select_input"
+              bind:value={search["plan_index"]}
             >
               <option value="" selected>프로젝트</option>
               {#if plans && plans?.plans && plans?.plans?.length !== 0}
@@ -164,10 +175,17 @@
             </select>
           </div>
           <div class="select_container">
-            <select name="asset_group" id="asset_group" class="select_input">
-              <option value="network">취약점현황</option>
-              <option value="endpoint">Endpoint Security</option>
-              <option value="cloud">Cloud Security</option>
+            <select
+              name="asset_group"
+              id="asset_group"
+              class="select_input"
+              bind:value={vulnerabilityStatusValue}
+            >
+              <option value="" selected>취약점현황</option>
+              <option value="양호">양호</option>
+              <option value="취약">취약</option>
+              <option value="수동점검">수동점검</option>
+              <option value="인터뷰">인터뷰</option>
             </select>
           </div>
           <div class="select_container">
@@ -175,10 +193,16 @@
               name="operating_system"
               id="operating_system"
               class="select_input"
+              bind:value={actionStatusValue}
             >
-              <option value="windows">조치상태별</option>
-              <option value="linux">Linux</option>
-              <option value="macos">macOS</option>
+              <option value="" selected>조치상태별</option>
+              <option value="조치전">조치전</option>
+              <option value="조치계획등록">조치계획등록</option>
+              <option value="조치계획승인">조치계획승인</option>
+              <option value="조치계획반려">조치계획반려</option>
+              <option value="조치결과등록">조치결과등록</option>
+              <option value="조치결과승인">조치결과승인</option>
+              <option value="조치결과반려">조치결과반려</option>
             </select>
           </div>
           <div class="select_container">
@@ -191,14 +215,18 @@
         </form>
       </div>
       <div class="header_button">
-        <button>조회</button>
+        <button on:click={getPlanDataSearch}>조회</button>
         <p>엑셀다운로드</p>
       </div>
     </header>
 
     <div class="swiper_container">
       {#if currentView === "default"}
-        <MainPageProject bind:tableData />
+        <MainPageProject
+          bind:tableData
+          bind:vulnerabilityStatus
+          bind:actionStatus
+        />
       {:else if currentPage}
         <svelte:component this={currentPage} />
       {/if}

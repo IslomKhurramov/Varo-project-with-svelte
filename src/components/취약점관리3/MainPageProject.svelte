@@ -1,6 +1,8 @@
 <script>
   export let projectData = [];
   export let tableData;
+  export let vulnerabilityStatus;
+  export let actionStatus;
 
   for (let i = 1; i <= 15; i++) {
     projectData.push({
@@ -95,33 +97,65 @@
       </tr>
       {#if data?.length !== 0}
         {#each data as item, index}
-          <tr>
-            <td>{index + 1}</td>
-            <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
-            <td>{item?.cct_index__cct_target}</td>
-            <td>{item.ccr_item_no__ccc_item_group}</td>
-            <td>{item.ccr_item_no__ccc_item_title}</td>
-            <td>{item.ccr_item_no__ccc_item_level}</td>
-            <td>
-              {setView == "plan"
-                ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
-                : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
-            </td>
-            <td>
-              {setView == "result"
-                ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
-                : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
-            </td>
-            <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
-            <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
-            <td
-              ><select name="" id="" class="select_input">
-                <option value="승인">승인</option>
-                <option value="반려">반려</option>
-                <option value="승인">재검토</option>
-              </select></td
-            >
-          </tr>
+          {#if vulnerabilityStatus}
+            {#if item.ccr_item_result == vulnerabilityStatus}
+              <tr>
+                <td>{index + 1} </td>
+                <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
+                <td>{item?.cct_index__cct_target}</td>
+                <td>{item.ccr_item_no__ccc_item_group}</td>
+                <td>{item.ccr_item_no__ccc_item_title}</td>
+                <td>{item.ccr_item_no__ccc_item_level}</td>
+                <td>
+                  {setView == "plan"
+                    ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
+                    : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+                </td>
+                <td>
+                  {setView == "result"
+                    ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
+                    : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
+                </td>
+                <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
+                <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+                <td
+                  ><select name="" id="" class="select_input">
+                    <option value="승인">승인</option>
+                    <option value="반려">반려</option>
+                    <option value="승인">재검토</option>
+                  </select></td
+                >
+              </tr>
+            {/if}
+          {:else}
+            <tr>
+              <td>{index + 1}</td>
+              <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
+              <td>{item?.cct_index__cct_target}</td>
+              <td>{item.ccr_item_no__ccc_item_group}</td>
+              <td>{item.ccr_item_no__ccc_item_title}</td>
+              <td>{item.ccr_item_no__ccc_item_level}</td>
+              <td>
+                {setView == "plan"
+                  ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
+                  : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+              </td>
+              <td>
+                {setView == "result"
+                  ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
+                  : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
+              </td>
+              <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
+              <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+              <td
+                ><select name="" id="" class="select_input">
+                  <option value="승인">승인</option>
+                  <option value="반려">반려</option>
+                  <option value="승인">재검토</option>
+                </select></td
+              >
+            </tr>
+          {/if}
         {/each}
       {/if}
     </table>

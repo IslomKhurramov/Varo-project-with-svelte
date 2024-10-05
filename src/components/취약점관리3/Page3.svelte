@@ -30,10 +30,10 @@
   let plans = [];
   let assets = [];
 
-  const selectPage = (page, menu) => {
+  const selectPage = async (page, menu) => {
     currentPage = page;
     activeMenu = menu;
-    currentView = "pageView";
+    currentView = "default";
   };
 
   function toggleView() {
@@ -60,8 +60,12 @@
   });
 
   const getPlanDataSearch = async () => {
+    console.log("getPlanDataSearch:", search);
     plans = await getVulnsOfPlan(search);
+    console.log("plans:", plans);
     tableData = plans?.vulns;
+    console.log("tableData before:", tableData);
+
     vulnerabilityStatus = vulnerabilityStatusValue;
     actionStatus = actionStatusValue;
   };
@@ -121,7 +125,7 @@
                   class="accordion_header"
                   on:click={() => {
                     toggleAccordion(plan);
-                    selectPage(MainPageProject, plan);
+                    selectPage(MainPageProject, plan, plan?.plan_index);
                   }}
                 >
                   <img src="./images/projectGray.png" alt="project" />

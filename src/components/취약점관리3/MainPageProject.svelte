@@ -57,6 +57,7 @@
   }
 
   $: {
+    console.log("tableData:", tableData);
     if (tableData) {
       data = transformVulns(tableData);
       console.log("data:", data);

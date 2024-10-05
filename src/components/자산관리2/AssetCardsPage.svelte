@@ -13,11 +13,13 @@
   } from "../../services/page2/assetService";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
   import { onMount } from "svelte";
+  import { each } from "svelte/internal";
 
   let showModal = false;
   let selected = [];
   let selectedAsset = null;
-
+  export let searchedResult;
+  export let showSearchResult;
   let allSelected;
   $: allAssetList.subscribe((data) => {
     allSelected = data.length === selected.length;
@@ -177,9 +179,145 @@
       </div>
     </div>
     <div class="card_container">
-      {#if $allAssetList.length > 0}
+      {#if showSearchResult}
+        {#if searchedResult}
+          {#each searchedResult as asset}
+            <!-- Main Searched Asset Display -->
+            <div
+              class="card{asset.ast_activate ? '' : 'deactivated'}"
+              style="height: 165px;"
+            >
+              <input
+                type="checkbox"
+                class="checkbox"
+                bind:group={selected}
+                name={asset}
+                value={asset}
+              />
+
+              <div class="card_buttons">
+                <!-- Activate Button -->
+                <button
+                  class="blue"
+                  on:click={() => activateAsset(asset.ass_uuid)}
+                ></button>
+
+                <!-- Un-Activate Button -->
+                <button class="red" on:click={() => unActivate(asset.ass_uuid)}
+                ></button>
+              </div>
+
+              <!-- Conditional Rendering for Registration Status -->
+              {#if asset.asset_target_registered === "YES"}
+                <button
+                  class="modal_button"
+                  on:click={() => {
+                    showModal = true;
+                    selectedAsset = asset;
+                  }}
+                >
+                  등록 미승인
+                </button>
+              {:else}
+                <button
+                  class="modal_button"
+                  on:click={() => {
+                    showModal = true;
+                    selectedAsset = asset;
+                  }}
+                >
+                  등록 해제
+                </button>
+              {/if}
+
+              <div class="first_col">
+                <div class="first_col_1">
+                  <p>보안점수</p>
+
+                  <!-- Security Point Display -->
+                  {#if asset.asset_point_history?.[0]?.ast_security_point > 0}
+                    <div
+                      class="box_number {asset.asset_point_history?.[0]
+                        ?.ast_security_point < 50
+                        ? 'low'
+                        : asset.asset_point_history?.[0]?.ast_security_point <
+                            80
+                          ? 'medium'
+                          : 'high'}"
+                    >
+                      {asset.asset_point_history?.[0]?.ast_security_point}%
+                    </div>
+                  {:else}
+                    <div class="box_number low">0%</div>
+                  {/if}
+
+                  <!-- Asset Group -->
+                  <p>
+                    <span style="font-weight: bold; white-space: nowrap;">
+                      {asset.asset_group?.[0]?.asg_index__asg_title || ""}
+                    </span>
+                  </p>
+                </div>
+
+                <!-- Connection Status and Last Connect Date -->
+                <div class="first_col_2">
+                  <div>
+                    <span style="font-weight: bold;">
+                      {asset.ast_activate ? "연결중" : "연결 안됨"}
+                    </span>
+                  </div>
+                  <div>
+                    <span style="font-weight: bold;">
+                      {formatDate(asset.ast_lastconnect) || "Unknown Date"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="second_col">
+                <!-- Operating System -->
+                <p>
+                  운영체제: <span style="font-weight: bold;">
+                    {asset.ast_os || "Unknown OS"}
+                  </span>
+                </p>
+
+                <!-- Hostname -->
+                <p>
+                  자산명: <span style="font-weight: bold;">
+                    {asset.ast_hostname || "Unknown Hostname"}
+                  </span>
+                </p>
+
+                <!-- IP Address -->
+                <p>
+                  아이피주소: <span style="font-weight: bold;">
+                    {asset.ast_ipaddr || "Unknown IP"}
+                  </span>
+                </p>
+
+                <!-- Target -->
+                <p>
+                  점검대상: <span style="font-weight: bold;">
+                    {asset.asset_point_history?.[0]
+                      ?.ast_uuid__ast_target__cct_target || "No Target"}
+                  </span>
+                </p>
+
+                <!-- Agent Installation Status -->
+                <p>
+                  에이전트설치여부: <span style="font-weight: bold;">
+                    {asset.ast_agent_installed ? "설치됨" : "설치 안됨"}
+                  </span>
+                </p>
+              </div>
+            </div>
+          {/each}
+        {/if}
+      {:else if $allAssetList.length > 0}
+        <!-- Display List of Assets -->
         {#each $allAssetList as asset}
-          <div class="card {asset.ast_activate ? `` : 'deactivated'}">
+          <div class="card {asset.ast_activate ? '' : 'deactivated'}">
             <input
               type="checkbox"
               class="checkbox"
@@ -197,6 +335,7 @@
               ></button>
             </div>
 
+            <!-- Registration Status -->
             {#if asset.asset_target_registered === "YES"}
               <button
                 class="modal_button"
@@ -218,11 +357,11 @@
                 등록 해제
               </button>
             {/if}
+
+            <!-- Asset Details -->
             <div class="first_col">
               <div class="first_col_1">
                 <p>보안점수</p>
-
-                <!-- Display the valid security point, or "Not Assessed" if no valid score -->
                 {#if asset.asset_point_history?.[0]?.ast_security_point > 0}
                   <div
                     class="box_number {asset.asset_point_history?.[0]
@@ -235,20 +374,12 @@
                     {asset.asset_point_history?.[0]?.ast_security_point}%
                   </div>
                 {:else}
-                  <div
-                    class="box_number {asset.asset_point_history?.[0]
-                      ?.ast_security_point < 50
-                      ? 'low'
-                      : asset.asset_point_history?.[0]?.ast_security_point < 80
-                        ? 'medium'
-                        : 'high'}"
-                  >
-                    0%
-                  </div>
+                  <div class="box_number low">0%</div>
                 {/if}
                 <p>
                   <span style="font-weight: bold; white-space: nowrap;">
-                    {asset.asset_group?.[0]?.asg_index__asg_title}
+                    {asset.asset_group?.[0]?.asg_index__asg_title ||
+                      "Unknown Group"}
                   </span>
                 </p>
               </div>
@@ -261,7 +392,7 @@
                 </div>
                 <div>
                   <span style="font-weight: bold;">
-                    {formatDate(asset.ast_lastconnect)}
+                    {formatDate(asset.ast_lastconnect) || "Unknown Date"}
                   </span>
                 </div>
               </div>
@@ -270,23 +401,23 @@
             <div class="second_col">
               <p>
                 운영체제: <span style="font-weight: bold;">
-                  {asset.ast_os}
+                  {asset.ast_os || "Unknown OS"}
                 </span>
               </p>
               <p>
                 자산명: <span style="font-weight: bold;">
-                  {asset.ast_hostname}
+                  {asset.ast_hostname || "Unknown Hostname"}
                 </span>
               </p>
               <p>
                 아이피주소: <span style="font-weight: bold;">
-                  {asset.ast_ipaddr}
+                  {asset.ast_ipaddr || "Unknown IP"}
                 </span>
               </p>
               <p>
                 점검대상: <span style="font-weight: bold;">
                   {asset.asset_point_history?.[0]
-                    ?.ast_uuid__ast_target__cct_target}
+                    ?.ast_uuid__ast_target__cct_target || "No Target"}
                 </span>
               </p>
               <p>

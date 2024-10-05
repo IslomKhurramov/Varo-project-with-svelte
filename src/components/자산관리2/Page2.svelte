@@ -29,6 +29,9 @@
   let assetTargetReg = "";
   let assetAcitve = "";
   let groupNames = "";
+  let searchedResult = [];
+  let showSearchResult = false;
+
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
     try {
@@ -101,10 +104,26 @@
   };
   /*****************************************/
   const getSearchAsset = async () => {
+    console.log("group", groupNames);
+    console.log("target", assetTargetReg);
+    console.log("acvtivate", assetAcitve);
+    console.log("osType", asset_ostype);
     try {
-      const response = await getSearch(); // Send new group to backend
-      if (response.success) {
+      const response = await getSearch(
+        groupNames,
+        asset_ostype,
+        assetTargetReg,
+        assetAcitve,
+      ); // Send new group to backend
+
+      // Check if response is not empty and has keys
+      if (response.RESULT === "OK" && Object.keys(response).length > 0) {
+        // Convert response object into an array of asset objects
+        searchedResult = Object.values(response.CODE); // Store all assets in an array
+        showSearchResult = true;
+
         successAlert("Group created successfully!");
+        console.log("response search", searchedResult);
       } else {
         throw new Error("Failed to save group.");
       }
@@ -226,8 +245,8 @@
             >
               <option value="" disabled selected hidden>운영체제</option>
               {#each $allAssetList as asset}
-                <option class="group_option" value={asset.ast_os}
-                  >{asset.ast_os}</option
+                <option class="group_option" value={asset.ast_ostype}
+                  >{asset.ast_ostype}</option
                 >
               {/each}
             </select>
@@ -261,7 +280,7 @@
         </form>
       </div>
       <div class="header_button">
-        <p on:click={check}>자산명</p>
+        <p on:click={getSearchAsset}>자산명</p>
         <p>엑셀저장</p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p on:click={() => (showModal = true)}>등록현황</p>
@@ -282,7 +301,7 @@
           <Swiper />
         {/key}
       {:else}
-        <AssetCardsPage />
+        <AssetCardsPage {searchedResult} {showSearchResult} />
       {/if}
     </div>
   </div>

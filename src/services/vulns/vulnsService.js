@@ -22,11 +22,11 @@ export const getVulnsOfPlan = async (data = undefined) => {
   }
 };
 
-export const getVulnsOfAsset = async () => {
+export const getVulnsOfAsset = async (data) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
-      {},
+      data,
       {
         withCredentials: true,
       },

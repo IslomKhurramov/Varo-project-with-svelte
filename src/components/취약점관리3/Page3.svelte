@@ -11,6 +11,7 @@
   import { get } from "svelte/store";
 
   let currentView = "default";
+  let setView = "plan";
   let currentPage = null;
   let activeMenu = null;
   let showProject = true;
@@ -54,10 +55,8 @@
   onMount(async () => {
     plans = await getVulnsOfPlan();
     tableData = plans?.vulns;
-    // const data = await getVulnsOfAsset();
-    // assets = Object.values(data?.vulns).flatMap((vulnGroup) =>
-    //   vulnGroup.map((v) => v.result).filter(Boolean),
-    // );
+
+    assets = await getVulnsOfAsset(search);
   });
 
   const getPlanDataSearch = async () => {
@@ -74,20 +73,44 @@
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click={() => toggleList("project")}>
+        <p
+          class="menu_button"
+          on:click={() => {
+            toggleList("project");
+            tableData = plans?.vulns;
+            search = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            setView = "plan";
+          }}
+        >
           프로젝트별
         </p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click={() => toggleList("asset")}>자산별</p>
+        <p
+          class="menu_button"
+          on:click={() => {
+            toggleList("asset");
+            tableData = assets?.vulns;
+            search = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            setView = "plan";
+          }}
+        >
+          자산별
+        </p>
       </div>
-      <div>
+      <!-- <div>
         <p
           class="switch_button1"
           on:click={() => selectPage(WholePage, "전체")}
         >
           전체
         </p>
-      </div>
+      </div> -->
 
       {#if showProject}
         <div class="project_container">
@@ -132,21 +155,29 @@
         </div>
       {:else}
         <div class="project_container">
-          {#each assets as asset, index}
-            <div class="project_button asset">
-              <img src="./images/projectGray.png" alt="project" />
-              <!-- svelte-ignore missing-declaration -->
-              <!-- svelte-ignore a11y-invalid-attribute -->
-              <a
-                href="javascript:void(0)"
-                on:click={() => selectPage(MainPageAsset, asset)}
-                class={activeMenu === asset ? "active" : ""}
-              >
-                <i class="fa fa-database" aria-hidden="true"></i>
-                {asset?.ast_uuid__ass_uuid__ast_hostname}
-              </a>
-            </div>
-          {/each}
+          {#if assets && assets?.plans && assets?.plans?.length !== 0}
+            {#each assets?.plans as asset, index}
+              {#each asset?.plan_target as target}
+                {#each Object.entries(target) as [osType, hosts]}
+                  {#each hosts as host}
+                    <div class="project_button asset">
+                      <img src="./images/projectGray.png" alt="project" />
+                      <!-- svelte-ignore missing-declaration -->
+                      <!-- svelte-ignore a11y-invalid-attribute -->
+                      <a
+                        href="javascript:void(0)"
+                        on:click={() => selectPage(MainPageAsset, asset)}
+                        class={activeMenu === asset ? "active" : ""}
+                      >
+                        <i class="fa fa-database" aria-hidden="true"></i>
+                        {host?.ast_uuid__ass_uuid__ast_hostname}
+                      </a>
+                    </div>
+                  {/each}
+                {/each}
+              {/each}
+            {/each}
+          {/if}
         </div>
       {/if}
     </aside>
@@ -226,6 +257,7 @@
           bind:tableData
           bind:vulnerabilityStatus
           bind:actionStatus
+          bind:setView
         />
       {:else if currentPage}
         <svelte:component this={currentPage} />

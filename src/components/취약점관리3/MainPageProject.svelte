@@ -3,6 +3,7 @@
   export let tableData;
   export let vulnerabilityStatus;
   export let actionStatus;
+  export let setView;
 
   for (let i = 1; i <= 15; i++) {
     projectData.push({
@@ -21,7 +22,6 @@
   }
 
   let data = [];
-  let setView = "plan";
 
   function transformVulns(vulns) {
     const transformed = [];

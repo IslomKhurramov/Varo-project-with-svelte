@@ -1,32 +1,164 @@
 <script>
-  export let projectData = [];
+  import { setFixApprove } from "../../services/vulns/vulnsService";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
-  for (let i = 1; i <= 15; i++) {
-    projectData.push({
-      number: i.toString(),
-      projectNO: `aaaaaaa`,
-      assetName: "UNIX",
-      cassification: "계정관리",
-      logContent: "Setuid설정",
-      performer: "상",
-      date: "조치전",
-      note: "조치계획등록",
-      operationDepartment: "홍길동",
-      operationoffiecer: "02-102-0922",
-      acknowledge: "",
-    });
+  export let tableData;
+  export let vulnerabilityStatus;
+  export let actionStatus;
+  export let setView;
+  export let wholePage;
+  export let selectedSendData;
+
+  let selectedItems = [];
+
+  let data = [];
+
+  function transformVulns(vulns) {
+    const transformed = [];
+
+    for (const key in vulns) {
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      vulns[key].forEach((item) => {
+        if (item.result) {
+          currentResult = item?.result;
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
+          }
+        }
+      });
+
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    return transformed;
+  }
+
+  const fixApproveHandler = async (data) => {
+    try {
+      console.log("fixApproveHandler:", data);
+
+      const result = await setFixApprove(data);
+      successAlert(result);
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  function toggleSelection(item) {
+    const index = selectedItems.indexOf(item);
+    if (index === -1) {
+      selectedItems = [...selectedItems, item];
+    } else {
+      selectedItems = selectedItems.filter((i) => i !== item);
+    }
+  }
+
+  $: {
+    if (tableData) {
+      data = transformVulns(tableData);
+    }
+  }
+
+  $: {
+    console.log("selectedItems:", selectedItems);
   }
 </script>
 
 <main>
   <div class="second_line">
-    <button>조치계획</button>
-    <button>조치결과 </button>
+    <div>
+      <button
+        on:click={() => (setView = "plan")}
+        class={setView == "plan" ? "active" : ""}
+      >
+        조치계획
+      </button>
+      <button
+        on:click={() => (setView = "result")}
+        class={setView == "result" ? "active" : ""}
+      >
+        조치결과
+      </button>
+    </div>
+    <div>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 1,
+            approved_targets: selectedItems,
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+          selectedItems = [];
+        }}
+      >
+        선택항목승인
+      </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 0,
+            approved_targets: selectedItems,
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+          selectedItems = [];
+        }}
+      >
+        선택항목반려
+      </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 1,
+            approved_targets: "ALL",
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+        }}
+      >
+        일괄승인
+      </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 0,
+            approved_targets: "ALL",
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+        }}
+      >
+        일괄반려
+      </button>
+    </div>
   </div>
 
   <div class="main_container">
     <table>
       <tr class="first_line">
+        <th></th>
         <th>순번</th>
         <th>자산명</th>
         <th>점검대상</th>
@@ -39,27 +171,93 @@
         <th>운영담당자 </th>
         <th>승인 </th>
       </tr>
-      {#each projectData as asset}
-        <tr>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.logContent}</td>
-          <td>{asset.performer}</td>
-          <td>{asset.date}</td>
-          <td>{asset.note}</td>
-          <td>{asset.operationDepartment}</td>
-          <td>{asset.operationoffiecer}</td>
-          <td
-            ><select name="" id="" class="select_input">
-              <option value="승인">승인</option>
-              <option value="반려">반려</option>
-              <option value="승인">재검토</option>
-            </select></td
-          >
-        </tr>
-      {/each}
+      {#if data?.length !== 0}
+        {#each data as item, index}
+          {#if vulnerabilityStatus}
+            {#if item.ccr_item_result == vulnerabilityStatus}
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    on:click={(e) => e.stopPropagation()}
+                    on:change={() => toggleSelection(item?.ccr_index)}
+                    checked={selectedItems.includes(item?.ccr_index)}
+                  />
+                </td>
+                <td>{index + 1} </td>
+                <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
+                <td>{item?.cct_index__cct_target}</td>
+                <td>{item.ccr_item_no__ccc_item_group}</td>
+                <td>{item.ccr_item_no__ccc_item_title}</td>
+                <td>{item.ccr_item_no__ccc_item_level}</td>
+                <td>
+                  {setView == "plan"
+                    ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
+                    : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+                </td>
+                <td>
+                  {setView == "result"
+                    ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
+                    : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
+                </td>
+                <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
+                <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <select name="" id="" class="select_input">
+                    <option value="승인">승인</option>
+                    <option value="반려">반려</option>
+                  </select>
+                </td>
+              </tr>
+            {/if}
+          {:else}
+            <tr on:click={() => (wholePage = true)}>
+              <td>
+                <input
+                  type="checkbox"
+                  on:click={(e) => e.stopPropagation()}
+                  on:change={() => toggleSelection(item?.ccr_index)}
+                  checked={selectedItems.includes(item?.ccr_index)}
+                />
+              </td>
+              <td>{index + 1}</td>
+              <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
+              <td>{item?.cct_index__cct_target}</td>
+              <td>{item.ccr_item_no__ccc_item_group}</td>
+              <td>{item.ccr_item_no__ccc_item_title}</td>
+              <td>{item.ccr_item_no__ccc_item_level}</td>
+              <td>
+                {setView == "plan"
+                  ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
+                  : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+              </td>
+              <td>
+                {setView == "result"
+                  ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
+                  : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
+              </td>
+              <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
+              <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <td
+                on:click={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <select name="" id="" class="select_input">
+                  <option value="승인">승인</option>
+                  <option value="반려">반려</option>
+                </select>
+              </td>
+            </tr>
+          {/if}
+        {/each}
+      {/if}
     </table>
   </div>
 </main>
@@ -128,10 +326,11 @@
   .second_line {
     width: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 10px;
     margin: 20px 0;
     padding-left: 20px;
+    box-sizing: border-box;
   }
 
   .second_line button {
@@ -147,6 +346,10 @@
       background-color 0.3s ease,
       transform 0.3s ease,
       box-shadow 0.3s ease;
+  }
+
+  .second_line button.active {
+    background-color: rgb(225 143 45 / 62%);
   }
 
   .second_line button:hover {

@@ -1,25 +1,44 @@
 <script>
-  import { getVulnsOfPlan } from "./../../services/vulns/vulnsService.js";
+  import {
+    getVulnsOfAsset,
+    getVulnsOfPlan,
+  } from "./../../services/vulns/vulnsService.js";
   import MainPageProject from "./MainPageProject.svelte";
   import MainPageAsset from "./MainPageAsset.svelte";
   import WholePage from "./WholePage.svelte";
   import { onMount } from "svelte";
   import { each } from "svelte/internal";
+  import { get } from "svelte/store";
 
   let currentView = "default";
+  let setView = "plan";
   let currentPage = null;
   let activeMenu = null;
-  let Project = ["프로젝트 1", "프로젝트 2", "프로젝트 3"];
-  let Asset = ["자산 1", "자산 2", "자산 3"];
   let showProject = true;
+  let tableData;
+  let vulnerabilityStatusValue;
+  let vulnerabilityStatus;
+  let actionStatusValue;
+  let actionStatus;
+  let activePlan = null;
+  let wholePage = false;
+  let selectedSendData;
+
+  let search = {
+    plan_index: "",
+    asset_target_uuid: "",
+  };
 
   // DATA
   let plans = [];
+  let assets = [];
 
-  const selectPage = (page, menu) => {
+  const selectPage = async (page, menu) => {
+    console.log("selectPage clicked");
     currentPage = page;
     activeMenu = menu;
-    currentView = "pageView";
+    currentView = "default";
+    wholePage = false;
   };
 
   function toggleView() {
@@ -32,20 +51,24 @@
     showProject = view === "project";
   }
 
-  let activePlan = null; // Track which plan is expanded
-
   function toggleAccordion(plan) {
-    activePlan = activePlan === plan ? null : plan; // Toggle accordion
+    activePlan = activePlan === plan ? null : plan;
   }
 
   onMount(async () => {
     plans = await getVulnsOfPlan();
+    tableData = plans?.vulns;
+
+    assets = await getVulnsOfAsset(search);
   });
 
-  $: {
-    console.log("plans:", plans?.plans?.[0]?.plan_target);
-    console.log("activeMenu:", activeMenu);
-  }
+  const getPlanDataSearch = async () => {
+    plans = await getVulnsOfPlan(search);
+    tableData = plans?.vulns;
+
+    vulnerabilityStatus = vulnerabilityStatusValue;
+    actionStatus = actionStatusValue;
+  };
 </script>
 
 <main class="container">
@@ -54,20 +77,44 @@
     <aside>
       <div class="add_delete_container">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click={() => toggleList("project")}>
+        <p
+          class="menu_button"
+          on:click={() => {
+            toggleList("project");
+            tableData = plans?.vulns;
+            search = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            setView = "plan";
+          }}
+        >
           프로젝트별
         </p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click={() => toggleList("asset")}>자산별</p>
+        <p
+          class="menu_button"
+          on:click={() => {
+            toggleList("asset");
+            tableData = assets?.vulns;
+            search = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            setView = "plan";
+          }}
+        >
+          자산별
+        </p>
       </div>
-      <div>
+      <!-- <div>
         <p
           class="switch_button1"
           on:click={() => selectPage(WholePage, "전체")}
         >
           전체
         </p>
-      </div>
+      </div> -->
 
       {#if showProject}
         <div class="project_container">
@@ -112,21 +159,40 @@
         </div>
       {:else}
         <div class="project_container">
-          {#each Asset as asset, index}
-            <div class="project_button">
-              <img src="./images/projectGray.png" alt="project" />
-              <!-- svelte-ignore missing-declaration -->
-              <!-- svelte-ignore a11y-invalid-attribute -->
-              <a
-                href="javascript:void(0)"
-                on:click={() => selectPage(MainPageAsset, asset)}
-                class={activeMenu === asset ? "active" : ""}
-              >
-                <i class="fa fa-database" aria-hidden="true"></i>
-                {asset}
-              </a>
-            </div>
-          {/each}
+          {#if assets && assets?.plans && assets?.plans?.length !== 0}
+            {#each assets?.plans as asset, index}
+              {#each asset?.plan_target as target}
+                {#each Object.entries(target) as [osType, hosts]}
+                  {#each hosts as host}
+                    <div class="project_button asset">
+                      <img src="./images/projectGray.png" alt="project" />
+                      <!-- svelte-ignore missing-declaration -->
+                      <!-- svelte-ignore a11y-invalid-attribute -->
+                      <a
+                        href="javascript:void(0)"
+                        on:click={async () => {
+                          selectPage(MainPageAsset, asset);
+                          assets = await getVulnsOfAsset({
+                            plan_index: "",
+                            asset_target_uuid: host?.ast_uuid,
+                          });
+                          tableData = assets?.vulns;
+                          selectedSendData = {
+                            plan_index: asset?.plan_index,
+                            asset_target_uuid: host?.ast_uuid,
+                          };
+                        }}
+                        class={activeMenu === asset ? "active" : ""}
+                      >
+                        <i class="fa fa-database" aria-hidden="true"></i>
+                        {host?.ast_uuid__ass_uuid__ast_hostname}
+                      </a>
+                    </div>
+                  {/each}
+                {/each}
+              {/each}
+            {/each}
+          {/if}
         </div>
       {/if}
     </aside>
@@ -144,18 +210,28 @@
               name="approval_status"
               id="approval_status"
               class="select_input"
+              bind:value={search["plan_index"]}
             >
-              <option value="pending">프로젝트</option>
-              <option value="approved">운영체제</option>
-              <option value="rejected">에이전트여부</option>
-              <option value="rejected">등록승인여부</option>
+              <option value="" selected>프로젝트</option>
+              {#if plans && plans?.plans && plans?.plans?.length !== 0}
+                {#each plans?.plans as plan, index}
+                  <option value={plan?.plan_index}> {plan?.plan_title}</option>
+                {/each}
+              {/if}
             </select>
           </div>
           <div class="select_container">
-            <select name="asset_group" id="asset_group" class="select_input">
-              <option value="network">취약점현황</option>
-              <option value="endpoint">Endpoint Security</option>
-              <option value="cloud">Cloud Security</option>
+            <select
+              name="asset_group"
+              id="asset_group"
+              class="select_input"
+              bind:value={vulnerabilityStatusValue}
+            >
+              <option value="" selected>취약점현황</option>
+              <option value="양호">양호</option>
+              <option value="취약">취약</option>
+              <option value="수동점검">수동점검</option>
+              <option value="인터뷰">인터뷰</option>
             </select>
           </div>
           <div class="select_container">
@@ -163,10 +239,16 @@
               name="operating_system"
               id="operating_system"
               class="select_input"
+              bind:value={actionStatusValue}
             >
-              <option value="windows">조치상태별</option>
-              <option value="linux">Linux</option>
-              <option value="macos">macOS</option>
+              <option value="" selected>조치상태별</option>
+              <option value="조치전">조치전</option>
+              <option value="조치계획등록">조치계획등록</option>
+              <option value="조치계획승인">조치계획승인</option>
+              <option value="조치계획반려">조치계획반려</option>
+              <option value="조치결과등록">조치결과등록</option>
+              <option value="조치결과승인">조치결과승인</option>
+              <option value="조치결과반려">조치결과반려</option>
             </select>
           </div>
           <div class="select_container">
@@ -179,16 +261,25 @@
         </form>
       </div>
       <div class="header_button">
-        <button>조회</button>
+        <button on:click={getPlanDataSearch}>조회</button>
         <p>엑셀다운로드</p>
       </div>
     </header>
 
     <div class="swiper_container">
-      {#if currentView === "default"}
-        <MainPageProject />
-      {:else if currentPage}
-        <svelte:component this={currentPage} />
+      {#if currentView === "default" && !wholePage}
+        <MainPageProject
+          bind:tableData
+          bind:vulnerabilityStatus
+          bind:actionStatus
+          bind:setView
+          bind:wholePage
+          bind:selectedSendData
+        />
+      {/if}
+
+      {#if wholePage}
+        <WholePage bind:plans />
       {/if}
     </div>
   </div>
@@ -307,6 +398,12 @@
       box-shadow 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
+  }
+
+  .project_button.asset {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
   }
 
   .project_container {

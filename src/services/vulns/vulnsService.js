@@ -1,11 +1,11 @@
 import axios from "axios";
 import { serverApi } from "../../lib/config";
 
-export const getVulnsOfPlan = async () => {
+export const getVulnsOfPlan = async (data = undefined) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfPlan/`,
-      {},
+      data,
       {
         withCredentials: true,
       },
@@ -22,11 +22,11 @@ export const getVulnsOfPlan = async () => {
   }
 };
 
-export const getVulnsOfAsset = async () => {
+export const getVulnsOfAsset = async (data) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
-      {},
+      data,
       {
         withCredentials: true,
       },
@@ -60,6 +60,23 @@ export const setFixPlanRegister = async (data) => {
     return response.data?.CODE;
   } catch (error) {
     console.error("Error setFixPlanRegister:", error);
+    throw error;
+  }
+};
+
+export const setFixApprove = async (data) => {
+  try {
+    const response = await axios.post(`${serverApi}/api/setFixApprove/`, data, {
+      withCredentials: true,
+    });
+
+    console.log("setFixApprove RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setFixApprove:", error);
     throw error;
   }
 };

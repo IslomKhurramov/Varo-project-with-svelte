@@ -1,28 +1,13 @@
 <script>
-  import WholePage from "./WholePage.svelte";
+  import { setFixApprove } from "../../services/vulns/vulnsService";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
-  export let projectData = [];
   export let tableData;
   export let vulnerabilityStatus;
   export let actionStatus;
   export let setView;
   export let wholePage;
-
-  for (let i = 1; i <= 15; i++) {
-    projectData.push({
-      number: i.toString(),
-      projectNO: `aaaaaaa`,
-      assetName: "UNIX",
-      cassification: "계정관리",
-      logContent: "Setuid설정",
-      performer: "상",
-      date: "조치전",
-      note: "조치계획등록",
-      operationDepartment: "홍길동",
-      operationoffiecer: "02-102-0922",
-      acknowledge: "",
-    });
-  }
+  export let selectedSendData;
 
   let data = [];
 
@@ -59,34 +44,78 @@
     return transformed;
   }
 
+  const fixApproveHandler = async (data) => {
+    try {
+      console.log("fixApproveHandler:", data);
+
+      const result = await setFixApprove(data);
+      successAlert(result);
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
   $: {
-    console.log("tableData:", tableData);
     if (tableData) {
       data = transformVulns(tableData);
-      console.log("data:", data);
     }
   }
 </script>
 
 <main>
   <div class="second_line">
-    <button
-      on:click={() => (setView = "plan")}
-      class={setView == "plan" ? "active" : ""}
-    >
-      조치계획
-    </button>
-    <button
-      on:click={() => (setView = "result")}
-      class={setView == "result" ? "active" : ""}
-    >
-      조치결과
-    </button>
+    <div>
+      <button
+        on:click={() => (setView = "plan")}
+        class={setView == "plan" ? "active" : ""}
+      >
+        조치계획
+      </button>
+      <button
+        on:click={() => (setView = "result")}
+        class={setView == "result" ? "active" : ""}
+      >
+        조치결과
+      </button>
+    </div>
+    <div>
+      <button> 선택항목승인 </button>
+      <button> 선택항목반려 </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 1,
+            approved_targets: "ALL",
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+        }}
+      >
+        일괄승인
+      </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 0,
+            approved_targets: "ALL",
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+        }}
+      >
+        일괄반려
+      </button>
+    </div>
   </div>
 
   <div class="main_container">
     <table>
       <tr class="first_line">
+        <th></th>
         <th>순번</th>
         <th>자산명</th>
         <th>점검대상</th>
@@ -104,6 +133,9 @@
           {#if vulnerabilityStatus}
             {#if item.ccr_item_result == vulnerabilityStatus}
               <tr>
+                <td>
+                  <input type="checkbox" />
+                </td>
                 <td>{index + 1} </td>
                 <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
                 <td>{item?.cct_index__cct_target}</td>
@@ -122,17 +154,24 @@
                 </td>
                 <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
                 <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <td
-                  ><select name="" id="" class="select_input">
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <select name="" id="" class="select_input">
                     <option value="승인">승인</option>
                     <option value="반려">반려</option>
-                    <option value="승인">재검토</option>
-                  </select></td
-                >
+                  </select>
+                </td>
               </tr>
             {/if}
           {:else}
             <tr on:click={() => (wholePage = true)}>
+              <td>
+                <input type="checkbox" />
+              </td>
               <td>{index + 1}</td>
               <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
               <td>{item?.cct_index__cct_target}</td>
@@ -151,13 +190,17 @@
               </td>
               <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
               <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <td
-                ><select name="" id="" class="select_input">
+                on:click={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <select name="" id="" class="select_input">
                   <option value="승인">승인</option>
                   <option value="반려">반려</option>
-                  <option value="승인">재검토</option>
-                </select></td
-              >
+                </select>
+              </td>
             </tr>
           {/if}
         {/each}
@@ -230,10 +273,11 @@
   .second_line {
     width: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 10px;
     margin: 20px 0;
     padding-left: 20px;
+    box-sizing: border-box;
   }
 
   .second_line button {

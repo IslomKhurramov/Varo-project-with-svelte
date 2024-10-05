@@ -22,6 +22,7 @@
   let actionStatus;
   let activePlan = null;
   let wholePage = false;
+  let selectedSendData;
 
   let search = {
     plan_index: "",
@@ -62,11 +63,8 @@
   });
 
   const getPlanDataSearch = async () => {
-    console.log("getPlanDataSearch:", search);
     plans = await getVulnsOfPlan(search);
-    console.log("plans:", plans);
     tableData = plans?.vulns;
-    console.log("tableData before:", tableData);
 
     vulnerabilityStatus = vulnerabilityStatusValue;
     actionStatus = actionStatusValue;
@@ -172,7 +170,18 @@
                       <!-- svelte-ignore a11y-invalid-attribute -->
                       <a
                         href="javascript:void(0)"
-                        on:click={() => selectPage(MainPageAsset, asset)}
+                        on:click={async () => {
+                          selectPage(MainPageAsset, asset);
+                          assets = await getVulnsOfAsset({
+                            plan_index: "",
+                            asset_target_uuid: host?.ast_uuid,
+                          });
+                          tableData = assets?.vulns;
+                          selectedSendData = {
+                            plan_index: asset?.plan_index,
+                            asset_target_uuid: host?.ast_uuid,
+                          };
+                        }}
                         class={activeMenu === asset ? "active" : ""}
                       >
                         <i class="fa fa-database" aria-hidden="true"></i>
@@ -265,6 +274,7 @@
           bind:actionStatus
           bind:setView
           bind:wholePage
+          bind:selectedSendData
         />
       {/if}
 

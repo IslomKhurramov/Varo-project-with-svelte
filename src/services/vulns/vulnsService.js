@@ -63,3 +63,20 @@ export const setFixPlanRegister = async (data) => {
     throw error;
   }
 };
+
+export const setFixApprove = async (data) => {
+  try {
+    const response = await axios.post(`${serverApi}/api/setFixApprove/`, data, {
+      withCredentials: true,
+    });
+
+    console.log("setFixApprove RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setFixApprove:", error);
+    throw error;
+  }
+};

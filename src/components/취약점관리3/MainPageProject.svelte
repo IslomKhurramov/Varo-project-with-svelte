@@ -9,6 +9,8 @@
   export let wholePage;
   export let selectedSendData;
 
+  let selectedItems = [];
+
   let data = [];
 
   function transformVulns(vulns) {
@@ -55,10 +57,23 @@
     }
   };
 
+  function toggleSelection(item) {
+    const index = selectedItems.indexOf(item);
+    if (index === -1) {
+      selectedItems = [...selectedItems, item];
+    } else {
+      selectedItems = selectedItems.filter((i) => i !== item);
+    }
+  }
+
   $: {
     if (tableData) {
       data = transformVulns(tableData);
     }
+  }
+
+  $: {
+    console.log("selectedItems:", selectedItems);
   }
 </script>
 
@@ -79,8 +94,36 @@
       </button>
     </div>
     <div>
-      <button> 선택항목승인 </button>
-      <button> 선택항목반려 </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 1,
+            approved_targets: selectedItems,
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+          selectedItems = [];
+        }}
+      >
+        선택항목승인
+      </button>
+      <button
+        on:click={() => {
+          const data = {
+            plan_index: selectedSendData?.plan_index,
+            asset_target_uuid: selectedSendData?.asset_target_uuid,
+            approved: 0,
+            approved_targets: selectedItems,
+            approved_comment: "",
+          };
+          fixApproveHandler(data);
+          selectedItems = [];
+        }}
+      >
+        선택항목반려
+      </button>
       <button
         on:click={() => {
           const data = {
@@ -134,7 +177,12 @@
             {#if item.ccr_item_result == vulnerabilityStatus}
               <tr>
                 <td>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    on:click={(e) => e.stopPropagation()}
+                    on:change={() => toggleSelection(item?.ccr_index)}
+                    checked={selectedItems.includes(item?.ccr_index)}
+                  />
                 </td>
                 <td>{index + 1} </td>
                 <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
@@ -170,7 +218,12 @@
           {:else}
             <tr on:click={() => (wholePage = true)}>
               <td>
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  on:click={(e) => e.stopPropagation()}
+                  on:change={() => toggleSelection(item?.ccr_index)}
+                  checked={selectedItems.includes(item?.ccr_index)}
+                />
               </td>
               <td>{index + 1}</td>
               <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>

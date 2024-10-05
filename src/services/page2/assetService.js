@@ -339,7 +339,9 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
     asset_lists.forEach((asset) => {
       formData.append("asset_lists[]", asset); // Correct way to append arrays in FormData
     });
-
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
     // Send the request using axios
     const response = await axios.post(
       `${serverApi}/api/setAssetForNewGroup/`,

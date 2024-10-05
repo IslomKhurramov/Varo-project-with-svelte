@@ -76,6 +76,7 @@
     asset_reg_how: assetRegHow,
     existed_asset_group_index: selectedGroup || "",
     target_group_index: newRegGroupIndex,
+    asset_file: uploadedFile,
     asset_lists: selectedAssets,
   };
   const handleSubmit = async () => {

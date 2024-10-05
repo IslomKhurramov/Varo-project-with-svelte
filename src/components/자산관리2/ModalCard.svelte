@@ -151,7 +151,12 @@
       alert("An error occurred while submitting the form: " + err.message);
     }
   }
-
+  function isTargetChecked(cct_target) {
+    // Check if the selectedAsset has the target and its value is truthy (true)
+    return selectedAsset.assessment_target_system?.some(
+      (target) => target[cct_target],
+    );
+  }
   $: {
     console.log("targets:", targets);
     console.log("selected asset:", selectedAsset);
@@ -203,6 +208,7 @@
     <div class="checkbox-group">
       <input
         type="checkbox"
+        checked={isTargetChecked(target.cct_target)}
         on:change={(e) => {
           const isChecked = e.target.checked;
 

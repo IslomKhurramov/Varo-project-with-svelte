@@ -1,8 +1,12 @@
 <script>
+  import { getUserName } from "./../../services/login/loginService.js";
+  import { onMount } from "svelte";
   import Modal from "../../shared/Modal.svelte";
   import ModalRegisteredAdmin from "./ModalRegisteredAdmin.svelte";
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
+
+  export let plans;
 
   let showModal = false;
   let actionMethod = "어쩌고...저쩌고...";
@@ -10,7 +14,6 @@
     "자산명, 아이피주소, 자산그룹, 식별코드, 등록일, 보안점수 등등";
   let actionPlan = "";
   let riskLevel = "상/중/하";
-
   let performanceLog = [
     {
       actionMethod: "조치방법",
@@ -19,13 +22,10 @@
       personInCharge: "조치담당자",
     },
   ];
-
   function closeModal() {
     showModal = false; // Close the modal
   }
-
   let swiperContainer;
-  let swiperInstance;
 
   $: {
     new Swiper(swiperContainer, {
@@ -43,6 +43,12 @@
       },
     });
   }
+
+  let usernames;
+
+  onMount(async () => {
+    usernames = await getUserName();
+  });
 </script>
 
 <main>
@@ -50,12 +56,19 @@
     <img src="./images/left.png" alt="left" />
     <div bind:this={swiperContainer} class="swiper-container">
       <div class="swiper-wrapper">
-        {#each [1, 2, 3, 4, 5, 6] as slide}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div class="swiper-slide">
-            {slide}
-          </div>
-        {/each}
+        {#if plans && plans?.plans && plans?.plans?.length !== 0}
+          {#each plans?.plans as plan, index}
+            {#each plan?.plan_target as target}
+              {#each Object.entries(target) as [osType, hosts]}
+                {#each hosts as host}
+                  <div class="swiper-slide">
+                    {host.ast_uuid__ass_uuid__ast_hostname}
+                  </div>
+                {/each}
+              {/each}
+            {/each}
+          {/each}
+        {/if}
       </div>
       <div class="swiper-pagination"></div>
       <div class="swiper-button-prev"></div>

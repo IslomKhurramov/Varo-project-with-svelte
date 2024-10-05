@@ -269,7 +269,7 @@
       {/if}
 
       {#if wholePage}
-        <WholePage />
+        <WholePage bind:plans />
       {/if}
     </div>
   </div>

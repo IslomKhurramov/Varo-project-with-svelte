@@ -145,7 +145,20 @@
                       {#each Object.entries(target) as [osType, hosts]}
                         <div class="main_accordion">- {osType}</div>
                         {#each hosts as host}
-                          <div class="second_accordion">
+                          <div
+                            class="second_accordion"
+                            on:click={async () => {
+                              assets = await getVulnsOfPlan({
+                                plan_index: plan?.plan_index,
+                                asset_target_uuid: host?.ast_uuid,
+                              });
+                              tableData = assets?.vulns;
+                              selectedSendData = {
+                                plan_index: plan?.plan_index,
+                                asset_target_uuid: host?.ast_uuid,
+                              };
+                            }}
+                          >
                             - {host.ast_uuid__ass_uuid__ast_hostname}
                           </div>
                         {/each}
@@ -173,7 +186,7 @@
                         on:click={async () => {
                           selectPage(MainPageAsset, asset);
                           assets = await getVulnsOfAsset({
-                            plan_index: "",
+                            plan_index: asset?.plan_index,
                             asset_target_uuid: host?.ast_uuid,
                           });
                           tableData = assets?.vulns;

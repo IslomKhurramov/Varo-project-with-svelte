@@ -1,5 +1,8 @@
 <script>
-  import { setFixApprove } from "../../services/vulns/vulnsService";
+  import {
+    setFixApprove,
+    setFixDoneApprove,
+  } from "../../services/vulns/vulnsService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
   export let tableData;
@@ -57,6 +60,17 @@
     }
   };
 
+  const fixDoneApproveHandler = async (data) => {
+    try {
+      console.log("fixApproveHandler:", data);
+
+      const result = await setFixDoneApprove(data);
+      successAlert(result);
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
   function toggleSelection(item) {
     const index = selectedItems.indexOf(item);
     if (index === -1) {
@@ -81,78 +95,149 @@
   <div class="second_line">
     <div>
       <button
-        on:click={() => (setView = "plan")}
+        on:click={() => {
+          setView = "plan";
+          selectedItems = [];
+        }}
         class={setView == "plan" ? "active" : ""}
       >
         조치계획
       </button>
       <button
-        on:click={() => (setView = "result")}
+        on:click={() => {
+          setView = "result";
+          selectedItems = [];
+        }}
         class={setView == "result" ? "active" : ""}
       >
         조치결과
       </button>
     </div>
-    <div>
-      <button
-        on:click={() => {
-          const data = {
-            plan_index: selectedSendData?.plan_index,
-            asset_target_uuid: selectedSendData?.asset_target_uuid,
-            approved: 1,
-            approved_targets: selectedItems,
-            approved_comment: "",
-          };
-          fixApproveHandler(data);
-          selectedItems = [];
-        }}
-      >
-        선택항목승인
-      </button>
-      <button
-        on:click={() => {
-          const data = {
-            plan_index: selectedSendData?.plan_index,
-            asset_target_uuid: selectedSendData?.asset_target_uuid,
-            approved: 0,
-            approved_targets: selectedItems,
-            approved_comment: "",
-          };
-          fixApproveHandler(data);
-          selectedItems = [];
-        }}
-      >
-        선택항목반려
-      </button>
-      <button
-        on:click={() => {
-          const data = {
-            plan_index: selectedSendData?.plan_index,
-            asset_target_uuid: selectedSendData?.asset_target_uuid,
-            approved: 1,
-            approved_targets: "ALL",
-            approved_comment: "",
-          };
-          fixApproveHandler(data);
-        }}
-      >
-        일괄승인
-      </button>
-      <button
-        on:click={() => {
-          const data = {
-            plan_index: selectedSendData?.plan_index,
-            asset_target_uuid: selectedSendData?.asset_target_uuid,
-            approved: 0,
-            approved_targets: "ALL",
-            approved_comment: "",
-          };
-          fixApproveHandler(data);
-        }}
-      >
-        일괄반려
-      </button>
-    </div>
+    {#if setView == "plan"}
+      <div>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 1,
+              approved_targets: selectedItems,
+              approved_comment: "",
+            };
+            fixApproveHandler(data);
+            selectedItems = [];
+          }}
+        >
+          선택항목승인
+        </button>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 0,
+              approved_targets: selectedItems,
+              approved_comment: "",
+            };
+            fixApproveHandler(data);
+            selectedItems = [];
+          }}
+        >
+          선택항목반려
+        </button>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 1,
+              approved_targets: "ALL",
+              approved_comment: "",
+            };
+            fixApproveHandler(data);
+          }}
+        >
+          일괄승인
+        </button>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 0,
+              approved_targets: "ALL",
+              approved_comment: "",
+            };
+            fixApproveHandler(data);
+          }}
+        >
+          일괄반려
+        </button>
+      </div>
+    {/if}
+
+    {#if setView == "result"}
+      <div>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 1,
+              approved_targets: selectedItems,
+              approved_comment: "",
+            };
+            fixDoneApproveHandler(data);
+            selectedItems = [];
+          }}
+        >
+          선택항목승인
+        </button>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 0,
+              approved_targets: selectedItems,
+              approved_comment: "",
+            };
+            fixDoneApproveHandler(data);
+            selectedItems = [];
+          }}
+        >
+          선택항목반려
+        </button>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 1,
+              approved_targets: "ALL",
+              approved_comment: "",
+            };
+            fixDoneApproveHandler(data);
+          }}
+        >
+          일괄승인
+        </button>
+        <button
+          on:click={() => {
+            const data = {
+              plan_index: selectedSendData?.plan_index,
+              asset_target_uuid: selectedSendData?.asset_target_uuid,
+              approved: 0,
+              approved_targets: "ALL",
+              approved_comment: "",
+            };
+            fixDoneApproveHandler(data);
+          }}
+        >
+          일괄반려
+        </button>
+      </div>
+    {/if}
   </div>
 
   <div class="main_container">

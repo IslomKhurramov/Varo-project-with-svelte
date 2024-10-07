@@ -5,6 +5,7 @@
   import ModalRegisteredAdmin from "./ModalRegisteredAdmin.svelte";
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
+  import { getVulnsFixWay } from "../../services/vulns/vulnsService.js";
 
   export let plans;
 
@@ -46,10 +47,12 @@
     });
   }
 
-  let usernames;
+  let usernames = [];
+  let options = [];
 
   onMount(async () => {
     usernames = await getUserName();
+    options = await getVulnsFixWay();
   });
 </script>
 
@@ -100,10 +103,15 @@
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치방법</label>
               <select bind:value={actionPlan} class="select_input">
-                <option value="조치계획">조치계획</option>
-                <option value="대책수립">대책수립</option>
-                <option value="예외처리">예외처리</option>
-                <option value="위험수용">위험수용</option>
+                <option value={""}>
+                  조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                </option>
+                {#if options?.length !== 0}
+                  {#each options as option}
+                    <option value={option?.cvf_index}>{option?.cvf_desc}</option
+                    >
+                  {/each}
+                {/if}
               </select>
             </div>
 
@@ -111,6 +119,7 @@
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치수준</label>
               <select bind:value={riskLevel}>
+                <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
                 <option value="긴급">긴급</option>
                 <option value="단기">단기</option>
                 <option value="중기">중기</option>
@@ -138,17 +147,24 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치방법</label>
-              <textarea name="" id=""></textarea>
+              <textarea name="" id="">
+                조치 방법은…. 별도로 작성하지 않아도 됨.
+              </textarea>
             </div>
 
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치담당자</label>
-              <input
-                type="text"
-                bind:value={actionPlan}
-                placeholder="조치담당자를 입력하세요"
-              />
+              <select>
+                <option value={""}> 조치담당자</option>
+                {#if usernames?.length !== 0}
+                  {#each usernames as username}
+                    <option value={username?.user_index}
+                      >{username?.user_name}</option
+                    >
+                  {/each}
+                {/if}
+              </select>
             </div>
           </div>
 

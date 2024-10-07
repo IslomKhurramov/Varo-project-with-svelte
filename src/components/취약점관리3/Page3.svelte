@@ -32,6 +32,7 @@
   // DATA
   let plans = [];
   let assets = [];
+  let targetData = null;
 
   const selectPage = async (page, menu) => {
     currentPage = page;
@@ -45,7 +46,7 @@
     currentPage = null;
   }
 
- async function toggleList(view) {
+  async function toggleList(view) {
     showProject = view === "project";
   }
 
@@ -67,7 +68,6 @@
     vulnerabilityStatus = vulnerabilityStatusValue;
     actionStatus = actionStatusValue;
   };
-
 </script>
 
 <main class="container">
@@ -294,7 +294,7 @@
       {/if}
 
       {#if wholePage}
-        <WholePage bind:plans />
+        <WholePage bind:plans bind:targetData />
       {/if}
     </div>
   </div>

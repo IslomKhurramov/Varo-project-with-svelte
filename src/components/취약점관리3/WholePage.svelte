@@ -22,9 +22,11 @@
       personInCharge: "조치담당자",
     },
   ];
+
   function closeModal() {
     showModal = false; // Close the modal
   }
+
   let swiperContainer;
 
   $: {
@@ -107,11 +109,12 @@
 
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>위험도</label>
+              <label>조치수준</label>
               <select bind:value={riskLevel}>
-                <option value="상">상</option>
-                <option value="중">중</option>
-                <option value="하">하</option>
+                <option value="긴급">긴급</option>
+                <option value="단기">단기</option>
+                <option value="중기">중기</option>
+                <option value="장기">장기</option>
               </select>
             </div>
 
@@ -119,11 +122,23 @@
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치일정</label>
               <input
-                class="input1"
-                type="text"
+                class="input"
+                type="date"
                 bind:value={actionPlan}
                 placeholder="조치일정을 입력하세요"
               />
+              <input
+                class="input"
+                type="date"
+                bind:value={actionPlan}
+                placeholder="조치일정을 입력하세요"
+              />
+            </div>
+
+            <div class="row">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label>조치방법</label>
+              <textarea name="" id=""></textarea>
             </div>
 
             <div class="row">
@@ -138,30 +153,9 @@
           </div>
 
           <div class="action-footer">
-            <button class="list-button" on:click={() => (showModal = true)}
-              >등록된 운영/관리자 계정</button
-            >
-          </div>
-        </div>
-
-        <div class="info">
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>취약점정보</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
-          </div>
-
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>조치방법</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
-          </div>
-
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>관련자산</label>
-            <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
-            ></textarea>
+            <button class="list-button" on:click={() => (showModal = true)}>
+              조치계획등록
+            </button>
           </div>
 
           <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -187,8 +181,34 @@
             </div>
           </div>
         </div>
+
+        <div class="info">
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>취약점정보</label>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+          </div>
+
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>평가기준</label>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+          </div>
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>조치방법</label>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+          </div>
+
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>관련자산</label>
+            <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
+            ></textarea>
+          </div>
+        </div>
       </div>
-      <button class="register_button">조치계획 등록함</button>
+      <!-- <button class="register_button">조치계획 등록함</button> -->
     </div>
   </div>
 
@@ -223,6 +243,7 @@
     font-size: 14px;
     margin-bottom: 10px;
   }
+
   .select_input:hover {
     background-color: #b0b0b0;
   }
@@ -266,13 +287,14 @@
     font-size: 14px;
     background-color: #f9f9f9;
   }
+
   .input1 {
     height: 150px;
   }
 
   .actions {
     width: 40%;
-    height: 540px;
+    height: auto;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -306,11 +328,13 @@
       background-color 0.3s ease,
       transform 0.3s ease;
   }
+
   .register_button:hover {
     background-color: #28863e;
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
+
   .list-button {
     background-color: #007bff; /* Primary button color */
     color: #ffffff;
@@ -327,9 +351,11 @@
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
+
   .data3 {
     height: 40px;
   }
+
   .table_container {
     display: flex;
     justify-content: center;
@@ -345,6 +371,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
   }
+
   table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
@@ -390,16 +417,19 @@
     box-sizing: border-box;
     position: relative;
   }
+
   .swiper_container1 {
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
   }
+
   .swiper_container1 img {
     width: 50px;
     height: auto;
   }
+
   .swiper-wrapper {
     display: flex;
   }

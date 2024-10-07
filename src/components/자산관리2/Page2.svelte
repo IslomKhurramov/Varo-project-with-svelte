@@ -16,6 +16,9 @@
   import { onMount } from "svelte";
   import { successAlert } from "../../shared/sweetAlert";
   import { checkAuth } from "../../stores/user.store";
+  import GetLog from "./getLog.svelte";
+  import GetLogHeader from "./getLogHeader.svelte";
+  import { getAuditNLog, getPlanFilter } from "../../services/logs/logsService";
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
@@ -31,6 +34,7 @@
   let groupNames = "";
   let searchedResult = [];
   let showSearchResult = false;
+  let showGetPlanHeader = false;
 
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
@@ -114,16 +118,13 @@
         asset_ostype,
         assetTargetReg,
         assetAcitve,
-      ); // Send new group to backend
+      );
 
       // Check if response is not empty and has keys
       if (response.RESULT === "OK" && Object.keys(response).length > 0) {
         // Convert response object into an array of asset objects
         searchedResult = Object.values(response.CODE); // Store all assets in an array
         showSearchResult = true;
-
-        successAlert("Group created successfully!");
-        console.log("response search", searchedResult);
       } else {
         throw new Error("Failed to save group.");
       }
@@ -132,24 +133,49 @@
       alert("Failed to save the group. Please try again.");
     }
   };
-
+  /************************************************************************/
   function selectPage(page, group) {
     currentPage = page;
     activeMenu = group;
     selectedGroup = group.asg_index;
     filterAssets(); // Set the selected group index when selecting a group
   }
-  function toggleView() {
+  /**********************************************************************/
+  function toggleGetLogHeader() {
+    if (!showGetPlanHeader) {
+      currentPage = GetLog;
+    } else {
+      currentPage = null;
+    }
+    showGetPlanHeader = !showGetPlanHeader;
+  }
+  /************************************************************************/
+  export function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
     currentPage = null;
     console.log("Current View:", currentView);
   }
-  function check() {
-    console.log("group", groupNames);
-    console.log("target", assetTargetReg);
-    console.log("acvtivate", assetAcitve);
-    console.log("osType", asset_ostype);
+  $: if (showGetPlanHeader) {
+    console.log("GetLogHeader should show");
   }
+  /**********************************************************************/
+  export let searchFilters;
+  let logData = [];
+  export const search = {
+    plan_index: "",
+    asset_name: "",
+    order_user: "",
+    search_start_date: "",
+    search_end_date: "",
+  };
+
+  onMount(async () => {
+    searchFilters = await getPlanFilter();
+  });
+
+  const searchDataHandler = async () => {
+    logData = await getAuditNLog(search);
+  };
 </script>
 
 <div class="container">
@@ -214,77 +240,87 @@
   </div>
   <div class="right_menu">
     <header class="header">
-      <div class="header_option">
-        <button on:click={toggleView} class="toggle_button">
-          <span class="arrow">&#9662;</span>
-        </button>
-        <form action="/action_page.php" class="form_select">
-          <div class="select_container">
-            <select
-              name="approval_status"
-              id="approval_status"
-              class="select_input"
-              bind:value={groupNames}
-            >
-              {#each $allAssetGroupList as group}
-                <option class="group_option" value={group.asg_title}
-                  >{group.asg_title}</option
-                >
-              {/each}
-              <option value="" disabled selected hidden
-                >그룹을 선택하세요</option
+      {#if !showGetPlanHeader}
+        <div class="header_option">
+          <button on:click={toggleView} class="toggle_button">
+            <span class="arrow">&#9662;</span>
+          </button>
+          <form action="/action_page.php" class="form_select">
+            <div class="select_container">
+              <select
+                name="approval_status"
+                id="approval_status"
+                class="select_input"
+                bind:value={groupNames}
               >
-            </select>
-          </div>
-          <div class="select_container">
-            <select
-              name="asset_group"
-              id="asset_group"
-              class="select_input"
-              bind:value={asset_ostype}
-            >
-              <option value="" disabled selected hidden>운영체제</option>
-              {#each $allAssetList as asset}
-                <option class="group_option" value={asset.ast_ostype}
-                  >{asset.ast_ostype}</option
+                {#each $allAssetGroupList as group}
+                  <option class="group_option" value={group.asg_title}
+                    >{group.asg_title}</option
+                  >
+                {/each}
+                <option value="" disabled selected hidden
+                  >그룹을 선택하세요</option
                 >
-              {/each}
-            </select>
-          </div>
-          <div class="select_container">
-            <select
-              name="operating_system"
-              id="operating_system"
-              class="select_input"
-              bind:value={assetTargetReg}
-            >
-              <option value="" disabled selected hidden>에이전트여부</option>
+              </select>
+            </div>
+            <div class="select_container">
+              <select
+                name="asset_group"
+                id="asset_group"
+                class="select_input"
+                bind:value={asset_ostype}
+              >
+                <option value="" disabled selected hidden>운영체제</option>
+                {#each $allAssetList as asset}
+                  <option class="group_option" value={asset.ast_ostype}
+                    >{asset.ast_ostype}</option
+                  >
+                {/each}
+              </select>
+            </div>
+            <div class="select_container">
+              <select
+                name="operating_system"
+                id="operating_system"
+                class="select_input"
+                bind:value={assetTargetReg}
+              >
+                <option value="" disabled selected hidden>에이전트여부</option>
 
-              <option class="group_option" value="YES">YES</option>
+                <option class="group_option" value="YES">YES</option>
 
-              <option class="group_option" value="NO">NO</option>
-            </select>
-          </div>
-          <div class="select_container">
-            <select
-              name="agent_status"
-              bind:value={assetAcitve}
-              id="agent_status"
-              class="select_input"
-            >
-              <option value="" disabled selected hidden>등록승인여부</option>
-              <option value="1">Active</option>
-              <option value="0">Unactive</option>
-            </select>
-          </div>
-        </form>
-      </div>
+                <option class="group_option" value="NO">NO</option>
+              </select>
+            </div>
+            <div class="select_container">
+              <select
+                name="agent_status"
+                bind:value={assetAcitve}
+                id="agent_status"
+                class="select_input"
+              >
+                <option value="" disabled selected hidden>등록승인여부</option>
+                <option value="1">Active</option>
+                <option value="0">Unactive</option>
+              </select>
+            </div>
+          </form>
+        </div>
+      {:else}
+        <GetLogHeader {searchFilters} {toggleView} {search} />
+      {/if}
       <div class="header_button">
-        <p on:click={getSearchAsset}>자산명</p>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        {#if !showGetPlanHeader}
+          <p on:click={getSearchAsset}>자산명</p>
+        {:else}
+          <p on:click={searchDataHandler}>자산명</p>
+        {/if}
         <p>엑셀저장</p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p on:click={() => (showModal = true)}>등록현황</p>
-        <p>이력관리</p>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <p on:click={toggleGetLogHeader}>이력관리</p>
       </div>
     </header>
 
@@ -295,6 +331,7 @@
           bind:selectedGroup
           {filterAssets}
           {filteredAssets}
+          {logData}
         />
       {:else if currentView === "newView"}
         {#key currentView}

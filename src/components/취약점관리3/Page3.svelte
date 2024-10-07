@@ -34,7 +34,6 @@
   let assets = [];
 
   const selectPage = async (page, menu) => {
-    console.log("selectPage clicked");
     currentPage = page;
     activeMenu = menu;
     currentView = "default";
@@ -44,10 +43,9 @@
   function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
     currentPage = null;
-    console.log("Current View:", currentView);
   }
 
-  function toggleList(view) {
+ async function toggleList(view) {
     showProject = view === "project";
   }
 
@@ -69,6 +67,7 @@
     vulnerabilityStatus = vulnerabilityStatusValue;
     actionStatus = actionStatusValue;
   };
+
 </script>
 
 <main class="container">
@@ -79,8 +78,9 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p
           class="menu_button"
-          on:click={() => {
+          on:click={async () => {
             toggleList("project");
+            plans = await getVulnsOfPlan();
             tableData = plans?.vulns;
             search = {
               plan_index: "",
@@ -94,8 +94,9 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <p
           class="menu_button"
-          on:click={() => {
+          on:click={async () => {
             toggleList("asset");
+            assets = await getVulnsOfAsset(search);
             tableData = assets?.vulns;
             search = {
               plan_index: "",
@@ -288,6 +289,7 @@
           bind:setView
           bind:wholePage
           bind:selectedSendData
+          bind:showProject
         />
       {/if}
 

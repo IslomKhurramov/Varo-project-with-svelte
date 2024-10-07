@@ -13,6 +13,7 @@
   export let setView;
   export let wholePage;
   export let selectedSendData;
+  export let showProject;
 
   let isAgenUser = true;
 
@@ -66,12 +67,11 @@
 
   const fixApproveHandler = async (data) => {
     try {
-      console.log("fixApproveHandler:", data);
 
       const result = await setFixApprove(data);
-      successAlert(result);
+      await successAlert(result);
 
-      if (setView == "plan") {
+      if (showProject) {
         const plans = await getVulnsOfPlan(selectedSendData);
         tableData = plans?.vulns;
       } else {
@@ -85,8 +85,6 @@
 
   const fixDoneApproveHandler = async (data) => {
     try {
-      console.log("fixDoneApproveHandler:", data);
-
       const result = await setFixDoneApprove(data);
       successAlert(result);
     } catch (err) {
@@ -109,9 +107,6 @@
     }
   }
 
-  $: {
-    console.log("selectedItems:", selectedItems);
-  }
 </script>
 
 <main>
@@ -330,7 +325,6 @@
                             approved_targets: [item?.ccr_index],
                             approved_comment: e.target.value,
                           };
-                          console.log("data:", data);
 
                           fixApproveHandler(data);
                           selectedItems = [];
@@ -342,7 +336,6 @@
                             approved_targets: [item?.ccr_index],
                             approved_comment: e.target.value,
                           };
-                          console.log("data:", data);
 
                           fixDoneApproveHandler(data);
                           selectedItems = [];
@@ -428,7 +421,6 @@
                           approved_targets: [item?.ccr_index],
                           approved_comment: e.target.value,
                         };
-                        console.log("data:", data);
 
                         fixApproveHandler(data);
                         selectedItems = [];
@@ -440,7 +432,6 @@
                           approved_targets: [item?.ccr_index],
                           approved_comment: e.target.value,
                         };
-                        console.log("data:", data);
 
                         fixDoneApproveHandler(data);
                         selectedItems = [];

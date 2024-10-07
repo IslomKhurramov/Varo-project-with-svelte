@@ -14,6 +14,7 @@
   export let wholePage;
   export let selectedSendData;
   export let showProject;
+  export let targetData;
 
   let isAgenUser = true;
 
@@ -67,7 +68,6 @@
 
   const fixApproveHandler = async (data) => {
     try {
-
       const result = await setFixApprove(data);
       await successAlert(result);
 
@@ -106,7 +106,6 @@
       data = transformVulns(tableData);
     }
   }
-
 </script>
 
 <main>
@@ -283,7 +282,12 @@
         {#each data as item, index}
           {#if vulnerabilityStatus}
             {#if item.ccr_item_result == vulnerabilityStatus}
-              <tr>
+              <tr
+                on:click={() => {
+                  wholePage = true;
+                  targetData = item;
+                }}
+              >
                 <td>
                   <input
                     type="checkbox"
@@ -378,7 +382,12 @@
               </tr>
             {/if}
           {:else}
-            <tr on:click={() => (wholePage = true)}>
+            <tr
+              on:click={() => {
+                wholePage = true;
+                targetData = item;
+              }}
+            >
               <td>
                 <input
                   type="checkbox"

@@ -5,9 +5,13 @@
   import ModalRegisteredAdmin from "./ModalRegisteredAdmin.svelte";
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
-  import { getVulnsFixWay } from "../../services/vulns/vulnsService.js";
+  import {
+    getFixHistoryOfItem,
+    getVulnsFixWay,
+  } from "../../services/vulns/vulnsService.js";
 
   export let plans;
+  export let targetData;
 
   let showModal = false;
   let actionMethod = "어쩌고...저쩌고...";
@@ -49,11 +53,29 @@
 
   let usernames = [];
   let options = [];
+  let historyItemSearch = null;
+  let historyItemData = [];
 
   onMount(async () => {
     usernames = await getUserName();
     options = await getVulnsFixWay();
   });
+
+  $: {
+    (async () => {
+      if (targetData) {
+        historyItemData = await getFixHistoryOfItem({
+          asset_uuid: targetData?.ast_uuid,
+          ccr_index: targetData?.ccr_index,
+          checklist_item_no: targetData?.ccr_item_no__ccc_item_no,
+        });
+      }
+    })();
+  }
+
+  $: {
+    console.log("historyItemData:", historyItemData);
+  }
 </script>
 
 <main>
@@ -175,27 +197,30 @@
           </div>
 
           <!-- svelte-ignore a11y-label-has-associated-control -->
-          <div class="row">
-            <label>이전조치이력</label>
-            <div class="table_container">
-              <table>
-                <tr class="first_line">
-                  <th>조치방법</th>
-                  <th>일정</th>
-                  <th>의견</th>
-                  <th>조치담당자</th>
-                </tr>
-                {#each performanceLog as asset}
-                  <tr>
-                    <td>{asset.actionMethod}</td>
-                    <td>{asset.schedule}</td>
-                    <td>{asset.opinion}</td>
-                    <td>{asset.personInCharge}</td>
+          {#if historyItemData?.length !== 0}
+            <div class="row">
+              <label>이전조치이력</label>
+              <div class="table_container">
+                <table>
+                  <tr class="first_line">
+                    <th>조치방법</th>
+                    <th>플랜</th>
+                    <th>일정</th>
+                    <th>조치담당자</th>
                   </tr>
-                {/each}
-              </table>
+
+                  {#each historyItemData as data}
+                    <tr>
+                      <td>{data.cfi_fix_status__cvs_desc}</td>
+                      <td>{data.ccr_index__ccp_index__ccp_title}</td>
+                      <td>{data.cfi_fix_startdate} {data.cfi_fix_enddate}</td>
+                      <td>{data.user_index__user_name}</td>
+                    </tr>
+                  {/each}
+                </table>
+              </div>
             </div>
-          </div>
+          {/if}
         </div>
 
         <div class="info">

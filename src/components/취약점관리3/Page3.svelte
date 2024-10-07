@@ -290,6 +290,7 @@
           bind:wholePage
           bind:selectedSendData
           bind:showProject
+          bind:targetData
         />
       {/if}
 

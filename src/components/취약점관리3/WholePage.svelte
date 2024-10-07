@@ -8,7 +8,9 @@
   import {
     getFixHistoryOfItem,
     getVulnsFixWay,
+    setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
 
   export let plans;
   export let targetData;
@@ -53,13 +55,49 @@
 
   let usernames = [];
   let options = [];
-  let historyItemSearch = null;
   let historyItemData = [];
+  let sendPlanRegisterData = {
+    asset_uuid: "",
+    ccr_index: "",
+    fix_method: "",
+    fix_level: "",
+    fix_start_date: "",
+    fix_end_date: "",
+    fix_comment: "",
+    fix_user_index: "",
+    fix_step_status: "2",
+  };
 
   onMount(async () => {
     usernames = await getUserName();
     options = await getVulnsFixWay();
   });
+
+  const fixPlanRegister = async () => {
+    try {
+      sendPlanRegisterData.asset_uuid = targetData?.ast_uuid;
+      sendPlanRegisterData.ccr_index = targetData?.ccr_index;
+
+      const response = await setFixPlanRegister(sendPlanRegisterData);
+
+      successAlert(response);
+
+      sendPlanRegisterData = {
+        asset_uuid: "",
+        ccr_index: "",
+        fix_method: "",
+        fix_level: "",
+        fix_start_date: "",
+        fix_end_date: "",
+        fix_comment: "",
+        fix_user_index: "",
+        fix_step_status: "2",
+      };
+    } catch (err) {
+      console.error("Error fixPlanRegister:", err);
+      errorAlert(err?.message);
+    }
+  };
 
   $: {
     (async () => {
@@ -124,7 +162,10 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치방법</label>
-              <select bind:value={actionPlan} class="select_input">
+              <select
+                bind:value={sendPlanRegisterData["fix_method"]}
+                class="select_input"
+              >
                 <option value={""}>
                   조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
                 </option>
@@ -140,7 +181,7 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치수준</label>
-              <select bind:value={riskLevel}>
+              <select bind:value={sendPlanRegisterData["fix_level"]}>
                 <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
                 <option value="긴급">긴급</option>
                 <option value="단기">단기</option>
@@ -155,13 +196,13 @@
               <input
                 class="input"
                 type="date"
-                bind:value={actionPlan}
+                bind:value={sendPlanRegisterData["fix_start_date"]}
                 placeholder="조치일정을 입력하세요"
               />
               <input
                 class="input"
                 type="date"
-                bind:value={actionPlan}
+                bind:value={sendPlanRegisterData["fix_end_date"]}
                 placeholder="조치일정을 입력하세요"
               />
             </div>
@@ -169,15 +210,15 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치방법</label>
-              <textarea name="" id="">
-                조치 방법은…. 별도로 작성하지 않아도 됨.
-              </textarea>
+
+              <textarea bind:value={sendPlanRegisterData["fix_comment"]}
+              ></textarea>
             </div>
 
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치담당자</label>
-              <select>
+              <select bind:value={sendPlanRegisterData["fix_user_index"]}>
                 <option value={""}> 조치담당자</option>
                 {#if usernames?.length !== 0}
                   {#each usernames as username}
@@ -191,7 +232,7 @@
           </div>
 
           <div class="action-footer">
-            <button class="list-button" on:click={() => (showModal = true)}>
+            <button class="list-button" on:click={fixPlanRegister}>
               조치계획등록
             </button>
           </div>
@@ -253,9 +294,9 @@
     </div>
   </div>
 
-  <Modal bind:showModal>
+  <!-- <Modal bind:showModal>
     <ModalRegisteredAdmin {closeModal} />
-  </Modal>
+  </Modal> -->
 </main>
 
 <style>

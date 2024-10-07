@@ -12,7 +12,7 @@
   export let wholePage;
   export let selectedSendData;
 
-  let isAgenUser = false;
+  let isAgenUser = true;
 
   let selectedItems = [];
 
@@ -128,7 +128,7 @@
         </button>
       {/if}
     </div>
-    {#if isAgenUser}
+    {#if isAgenUser && selectedSendData?.plan_index}
       {#if setView == "plan"}
         <div>
           <button
@@ -268,7 +268,6 @@
         <th>취약점명</th>
         <th>위험도</th>
         <th>조치현황</th>
-        <!-- <th>조치분류상태 </th> -->
         <th>운영부서</th>
         <th>운영담당자 </th>
         {#if isAgenUser}
@@ -299,11 +298,6 @@
                     ? test[item?.cfi_fix_status__cvs_index]
                     : test[item?.cfr_fix_status__cvs_index]}
                 </td>
-                <!-- <td>
-                  {setView == "result"
-                    ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
-                    : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
-                </td> -->
                 <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
                 <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -313,7 +307,36 @@
                       e.stopPropagation();
                     }}
                   >
-                    <select name="" id="" class="select_input">
+                    <select
+                      name=""
+                      id=""
+                      class="select_input"
+                      on:change={(e) => {
+                        if (setView == "plan") {
+                          const data = {
+                            plan_index: item?.ccp_index,
+                            asset_target_uuid: item?.ast_uuid,
+                            approved: 1,
+                            approved_targets: [item?.ccr_index],
+                            approved_comment: "",
+                          };
+                          console.log("data:", data);
+
+                          fixApproveHandler(data);
+                          selectedItems = [];
+                        }
+                      }}
+                    >
+                      <option
+                        value="없음"
+                        selected={setView == "plan"
+                          ? item?.cfi_fix_status__cvs_index != 3 ||
+                            item?.cfi_fix_status__cvs_index != 4
+                          : item?.cfi_fix_status__cvs_index != 3 ||
+                            item?.cfr_fix_status__cvs_index != 4}
+                      >
+                        없음
+                      </option>
                       <option
                         value="승인"
                         selected={setView == "plan"
@@ -361,12 +384,6 @@
                   : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
                     "조치전")}
               </td>
-              <!-- <td>
-                {setView == "result"
-                  ? (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
-                    "조치전")
-                  : (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "조치전")}
-              </td> -->
               <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
               <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -376,7 +393,36 @@
                     e.stopPropagation();
                   }}
                 >
-                  <select name="" id="" class="select_input">
+                  <select
+                    name=""
+                    id=""
+                    class="select_input"
+                    on:change={(e) => {
+                      if (setView == "plan") {
+                        const data = {
+                          plan_index: item?.ccp_index,
+                          asset_target_uuid: item?.ast_uuid,
+                          approved: e.target.value == "승인" ? 1 : 0,
+                          approved_targets: [item?.ccr_index],
+                          approved_comment: "승인",
+                        };
+                        console.log("data:", data);
+
+                        fixApproveHandler(data);
+                        selectedItems = [];
+                      }
+                    }}
+                  >
+                    <option
+                      value="없음"
+                      selected={setView == "plan"
+                        ? item?.cfi_fix_status__cvs_index != 3 ||
+                          item?.cfi_fix_status__cvs_index != 4
+                        : item?.cfi_fix_status__cvs_index != 3 ||
+                          item?.cfr_fix_status__cvs_index != 4}
+                    >
+                      없음
+                    </option>
                     <option
                       value="승인"
                       selected={setView == "plan"

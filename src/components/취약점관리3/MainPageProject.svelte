@@ -1,5 +1,7 @@
 <script>
   import {
+    getVulnsOfAsset,
+    getVulnsOfPlan,
     setFixApprove,
     setFixDoneApprove,
   } from "../../services/vulns/vulnsService";
@@ -22,7 +24,7 @@
     0: "조치전",
     1: "조치예정",
     2: "조치계획등록",
-    3: "조치계획승은",
+    3: "조치계획승인",
     4: "조치계획반려",
     5: "조치결과등록",
     6: "조치결과승은",
@@ -68,6 +70,8 @@
 
       const result = await setFixApprove(data);
       successAlert(result);
+      const plans = await getVulnsOfPlan(selectedSendData);
+      tableData = plans?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -75,7 +79,7 @@
 
   const fixDoneApproveHandler = async (data) => {
     try {
-      console.log("fixApproveHandler:", data);
+      console.log("fixDoneApproveHandler:", data);
 
       const result = await setFixDoneApprove(data);
       successAlert(result);
@@ -136,7 +140,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 1,
+                approved: "1",
                 approved_targets: selectedItems,
                 approved_comment: "",
               };
@@ -151,7 +155,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 0,
+                approved: "0",
                 approved_targets: selectedItems,
                 approved_comment: "",
               };
@@ -166,7 +170,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 1,
+                approved: "1",
                 approved_targets: "ALL",
                 approved_comment: "",
               };
@@ -180,7 +184,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 0,
+                approved: "0",
                 approved_targets: "ALL",
                 approved_comment: "",
               };
@@ -199,7 +203,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 1,
+                approved: "1",
                 approved_targets: selectedItems,
                 approved_comment: "",
               };
@@ -214,7 +218,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 0,
+                approved: "0",
                 approved_targets: selectedItems,
                 approved_comment: "",
               };
@@ -229,7 +233,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 1,
+                approved: "1",
                 approved_targets: "ALL",
                 approved_comment: "",
               };
@@ -243,7 +247,7 @@
               const data = {
                 plan_index: selectedSendData?.plan_index,
                 asset_target_uuid: selectedSendData?.asset_target_uuid,
-                approved: 0,
+                approved: "0",
                 approved_targets: "ALL",
                 approved_comment: "",
               };
@@ -316,13 +320,25 @@
                           const data = {
                             plan_index: item?.ccp_index,
                             asset_target_uuid: item?.ast_uuid,
-                            approved: 1,
+                            approved: e.target.value == "승인" ? "1" : "0",
                             approved_targets: [item?.ccr_index],
-                            approved_comment: "",
+                            approved_comment: e.target.value,
                           };
                           console.log("data:", data);
 
                           fixApproveHandler(data);
+                          selectedItems = [];
+                        } else {
+                          const data = {
+                            plan_index: item?.ccp_index,
+                            asset_target_uuid: item?.ast_uuid,
+                            approved: e.target.value == "승인" ? "1" : "0",
+                            approved_targets: [item?.ccr_index],
+                            approved_comment: e.target.value,
+                          };
+                          console.log("data:", data);
+
+                          fixDoneApproveHandler(data);
                           selectedItems = [];
                         }
                       }}
@@ -402,13 +418,25 @@
                         const data = {
                           plan_index: item?.ccp_index,
                           asset_target_uuid: item?.ast_uuid,
-                          approved: e.target.value == "승인" ? 1 : 0,
+                          approved: e.target.value == "승인" ? "1" : "0",
                           approved_targets: [item?.ccr_index],
-                          approved_comment: "승인",
+                          approved_comment: e.target.value,
                         };
                         console.log("data:", data);
 
                         fixApproveHandler(data);
+                        selectedItems = [];
+                      } else {
+                        const data = {
+                          plan_index: item?.ccp_index,
+                          asset_target_uuid: item?.ast_uuid,
+                          approved: e.target.value == "승인" ? "1" : "0",
+                          approved_targets: [item?.ccr_index],
+                          approved_comment: e.target.value,
+                        };
+                        console.log("data:", data);
+
+                        fixDoneApproveHandler(data);
                         selectedItems = [];
                       }
                     }}

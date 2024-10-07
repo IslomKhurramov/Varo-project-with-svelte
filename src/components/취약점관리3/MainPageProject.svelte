@@ -12,9 +12,22 @@
   export let wholePage;
   export let selectedSendData;
 
+  let isAgenUser = false;
+
   let selectedItems = [];
 
   let data = [];
+
+  let test = {
+    0: "조치전",
+    1: "조치예정",
+    2: "조치계획등록",
+    3: "조치계획승은",
+    4: "조치계획반려",
+    5: "조치결과등록",
+    6: "조치결과승은",
+    7: "조치결과반려",
+  };
 
   function transformVulns(vulns) {
     const transformed = [];
@@ -103,140 +116,144 @@
       >
         조치계획
       </button>
-      <button
-        on:click={() => {
-          setView = "result";
-          selectedItems = [];
-        }}
-        class={setView == "result" ? "active" : ""}
-      >
-        조치결과
-      </button>
+      {#if isAgenUser}
+        <button
+          on:click={() => {
+            setView = "result";
+            selectedItems = [];
+          }}
+          class={setView == "result" ? "active" : ""}
+        >
+          조치결과
+        </button>
+      {/if}
     </div>
-    {#if setView == "plan"}
-      <div>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 1,
-              approved_targets: selectedItems,
-              approved_comment: "",
-            };
-            fixApproveHandler(data);
-            selectedItems = [];
-          }}
-        >
-          선택항목승인
-        </button>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 0,
-              approved_targets: selectedItems,
-              approved_comment: "",
-            };
-            fixApproveHandler(data);
-            selectedItems = [];
-          }}
-        >
-          선택항목반려
-        </button>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 1,
-              approved_targets: "ALL",
-              approved_comment: "",
-            };
-            fixApproveHandler(data);
-          }}
-        >
-          일괄승인
-        </button>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 0,
-              approved_targets: "ALL",
-              approved_comment: "",
-            };
-            fixApproveHandler(data);
-          }}
-        >
-          일괄반려
-        </button>
-      </div>
-    {/if}
+    {#if isAgenUser}
+      {#if setView == "plan"}
+        <div>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 1,
+                approved_targets: selectedItems,
+                approved_comment: "",
+              };
+              fixApproveHandler(data);
+              selectedItems = [];
+            }}
+          >
+            선택항목승인
+          </button>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 0,
+                approved_targets: selectedItems,
+                approved_comment: "",
+              };
+              fixApproveHandler(data);
+              selectedItems = [];
+            }}
+          >
+            선택항목반려
+          </button>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 1,
+                approved_targets: "ALL",
+                approved_comment: "",
+              };
+              fixApproveHandler(data);
+            }}
+          >
+            일괄승인
+          </button>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 0,
+                approved_targets: "ALL",
+                approved_comment: "",
+              };
+              fixApproveHandler(data);
+            }}
+          >
+            일괄반려
+          </button>
+        </div>
+      {/if}
 
-    {#if setView == "result"}
-      <div>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 1,
-              approved_targets: selectedItems,
-              approved_comment: "",
-            };
-            fixDoneApproveHandler(data);
-            selectedItems = [];
-          }}
-        >
-          선택항목승인
-        </button>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 0,
-              approved_targets: selectedItems,
-              approved_comment: "",
-            };
-            fixDoneApproveHandler(data);
-            selectedItems = [];
-          }}
-        >
-          선택항목반려
-        </button>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 1,
-              approved_targets: "ALL",
-              approved_comment: "",
-            };
-            fixDoneApproveHandler(data);
-          }}
-        >
-          일괄승인
-        </button>
-        <button
-          on:click={() => {
-            const data = {
-              plan_index: selectedSendData?.plan_index,
-              asset_target_uuid: selectedSendData?.asset_target_uuid,
-              approved: 0,
-              approved_targets: "ALL",
-              approved_comment: "",
-            };
-            fixDoneApproveHandler(data);
-          }}
-        >
-          일괄반려
-        </button>
-      </div>
+      {#if setView == "result"}
+        <div>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 1,
+                approved_targets: selectedItems,
+                approved_comment: "",
+              };
+              fixDoneApproveHandler(data);
+              selectedItems = [];
+            }}
+          >
+            선택항목승인
+          </button>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 0,
+                approved_targets: selectedItems,
+                approved_comment: "",
+              };
+              fixDoneApproveHandler(data);
+              selectedItems = [];
+            }}
+          >
+            선택항목반려
+          </button>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 1,
+                approved_targets: "ALL",
+                approved_comment: "",
+              };
+              fixDoneApproveHandler(data);
+            }}
+          >
+            일괄승인
+          </button>
+          <button
+            on:click={() => {
+              const data = {
+                plan_index: selectedSendData?.plan_index,
+                asset_target_uuid: selectedSendData?.asset_target_uuid,
+                approved: 0,
+                approved_targets: "ALL",
+                approved_comment: "",
+              };
+              fixDoneApproveHandler(data);
+            }}
+          >
+            일괄반려
+          </button>
+        </div>
+      {/if}
     {/if}
   </div>
 
@@ -251,10 +268,12 @@
         <th>취약점명</th>
         <th>위험도</th>
         <th>조치현황</th>
-        <th>조치분류상태 </th>
+        <!-- <th>조치분류상태 </th> -->
         <th>운영부서</th>
         <th>운영담당자 </th>
-        <th>승인 </th>
+        {#if isAgenUser}
+          <th>승인 </th>
+        {/if}
       </tr>
       {#if data?.length !== 0}
         {#each data as item, index}
@@ -277,27 +296,47 @@
                 <td>{item.ccr_item_no__ccc_item_level}</td>
                 <td>
                   {setView == "plan"
-                    ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
-                    : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+                    ? test[item?.cfi_fix_status__cvs_index]
+                    : test[item?.cfr_fix_status__cvs_index]}
                 </td>
-                <td>
+                <!-- <td>
                   {setView == "result"
                     ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
                     : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
-                </td>
+                </td> -->
                 <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
                 <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <td
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <select name="" id="" class="select_input">
-                    <option value="승인">승인</option>
-                    <option value="반려">반려</option>
-                  </select>
-                </td>
+                {#if isAgenUser}
+                  <td
+                    on:click={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <select name="" id="" class="select_input">
+                      <option
+                        value="승인"
+                        selected={setView == "plan"
+                          ? item?.cfi_fix_status__cvs_index == 3 ||
+                            item?.cfi_fix_status__cvs_index == 4
+                          : item?.cfi_fix_status__cvs_index == 3 ||
+                            item?.cfr_fix_status__cvs_index == 4}
+                      >
+                        승인
+                      </option>
+                      <option
+                        value="반려"
+                        selected={setView == "plan"
+                          ? item?.cfi_fix_status__cvs_index == 4 ||
+                            item?.cfi_fix_status__cvs_index == 7
+                          : item?.cfi_fix_status__cvs_index == 4 ||
+                            item?.cfr_fix_status__cvs_index == 7}
+                      >
+                        반려
+                      </option>
+                    </select>
+                  </td>
+                {/if}
               </tr>
             {/if}
           {:else}
@@ -318,27 +357,49 @@
               <td>{item.ccr_item_no__ccc_item_level}</td>
               <td>
                 {setView == "plan"
-                  ? (item?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ?? "-")
-                  : (item?.fix_result?.[0]?.cfi_fix_method__cvf_desc ?? "-")}
+                  ? test[item?.cfi_fix_status__cvs_index]
+                  : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
+                    "조치전")}
               </td>
-              <td>
+              <!-- <td>
                 {setView == "result"
-                  ? (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "-")
-                  : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "-")}
-              </td>
+                  ? (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
+                    "조치전")
+                  : (item?.fix_plan?.[0]?.cfi_fix_status__cvs_desc ?? "조치전")}
+              </td> -->
               <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
               <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td
-                on:click={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <select name="" id="" class="select_input">
-                  <option value="승인">승인</option>
-                  <option value="반려">반려</option>
-                </select>
-              </td>
+              {#if isAgenUser}
+                <td
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <select name="" id="" class="select_input">
+                    <option
+                      value="승인"
+                      selected={setView == "plan"
+                        ? item?.cfi_fix_status__cvs_index == 3 ||
+                          item?.cfi_fix_status__cvs_index == 4
+                        : item?.cfi_fix_status__cvs_index == 3 ||
+                          item?.cfr_fix_status__cvs_index == 4}
+                    >
+                      승인
+                    </option>
+                    <option
+                      value="반려"
+                      selected={setView == "plan"
+                        ? item?.cfi_fix_status__cvs_index == 4 ||
+                          item?.cfi_fix_status__cvs_index == 7
+                        : item?.cfi_fix_status__cvs_index == 4 ||
+                          item?.cfr_fix_status__cvs_index == 7}
+                    >
+                      반려
+                    </option>
+                  </select>
+                </td>
+              {/if}
             </tr>
           {/if}
         {/each}

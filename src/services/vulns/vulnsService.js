@@ -80,3 +80,24 @@ export const setFixApprove = async (data) => {
     throw error;
   }
 };
+
+export const setFixDoneApprove = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setFixDoneApprove/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("setFixDoneApprove RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setFixDoneApprove:", error);
+    throw error;
+  }
+};

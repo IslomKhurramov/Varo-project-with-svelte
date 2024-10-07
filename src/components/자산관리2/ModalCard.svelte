@@ -10,6 +10,7 @@
   let isNetworkChecked = false;
   let isWebChecked = false;
   let isWasChecked = false;
+  let modifiedTargets = {};
 
   let targets = {
     UNIX: "",
@@ -31,20 +32,9 @@
     dbname: "",
     usermode: "",
   };
-  let network = {
-    userid: "",
-    userpw: "",
-    ipaddress: "",
-    port: "",
-  };
-  let web = {
-    webApplicatioName: "",
-    installedPath: "",
-  };
-  let was = {
-    webApplicatioName: "",
-    installedPath: "",
-  };
+  let network = { userid: "", userpw: "", ipaddress: "", port: "" };
+  let web = { webApplicatioName: "", installedPath: "" };
+  let was = { webApplicatioName: "", installedPath: "" };
 
   let targetData = {
     asset_uuid: selectedAsset.ass_uuid || "",
@@ -70,79 +60,85 @@
       };
     });
   }
-  function check() {
-    console.log("Targetlist", $targetSystemList);
+  /****************************************************************************/
+  function handleCheckboxChange(target) {
+    return function (e) {
+      const isChecked = e.target.checked;
+
+      // Update only the target being modified
+      if (isChecked) {
+        // Add or update the target's value in modifiedTargets when checked
+        switch (target.cct_target) {
+          case "UNIX":
+            modifiedTargets.UNIX = "-t linux";
+            break;
+          case "WINDOWS":
+            modifiedTargets.WINDOWS = "-t windows";
+            break;
+          case "DBMS":
+            modifiedTargets.DBMS = `-t ${dbmsValues.applied_system} -u ${dbmsValues.usermode} -p ${dbmsValues.pw} -H ${dbmsValues.ip} -P ${dbmsValues.port} -D ${dbmsValues.dbname}`;
+            break;
+          case "NETWORK":
+            modifiedTargets.NETWORK = `-u ${network.userid} -p ${network.userpw} -H ${network.ipaddress} -P ${network.port}`;
+            break;
+          case "WEB":
+            modifiedTargets.WEB = `-t ${web.webApplicatioName} -path ${web.installedPath}`;
+            break;
+          case "WAS":
+            modifiedTargets.WAS = `-t ${was.webApplicatioName} -path ${was.installedPath}`;
+            break;
+          case "PC":
+            modifiedTargets.PC = "-t pc";
+            break;
+        }
+      } else {
+        // If unchecked, set its value to an empty string in modifiedTargets
+        modifiedTargets[target.cct_target] = "";
+      }
+    };
   }
+
+  function prepareTargetData() {
+    // We only want to send modifiedTargets (either checked or unchecked)
+    return Object.entries(modifiedTargets)
+      .filter(([_, value]) => value !== undefined) // Include only those that were modified
+      .map(([key, value]) => {
+        const targetData = {};
+        targetData[key] = value; // Assign the value (either the checked data or "")
+        return targetData;
+      });
+  }
+  /*******************************************************************************/
+
   /*************************************************/
   /*************************************************/
   $: if (Object.keys(selectedAsset).length > 0 && !targetData.targets) {
     targetData = { ...selectedAsset };
     console.log("SELECTED asset detaisl", selectedAsset);
   }
+
   /*************************************************/
   async function submit() {
     if (!selectedAsset.ass_uuid) {
       alert("Asset UUID is missing");
       return;
     }
+    const preparedTargets = prepareTargetData();
 
-    // If DBMS has values, add it to targets
-    if (
-      dbmsValues.dbname ||
-      dbmsValues.userid ||
-      dbmsValues.pw ||
-      dbmsValues.ip ||
-      dbmsValues.port ||
-      dbmsValues.usermode
-    ) {
-      targets.DBMS = {
-        dbname: dbmsValues.dbname || null,
-        userid: dbmsValues.userid || null,
-        pw: dbmsValues.pw || null,
-        ip: dbmsValues.ip || null,
-        port: dbmsValues.port || null,
-        usermode: dbmsValues.usermode || null,
-      };
-    }
+    const payload = {
+      asset_uuid: selectedAsset.ass_uuid,
+      targets: preparedTargets,
+    };
 
-    // If NETWORK has values, add it to targets
-    if (network.userid || network.userpw || network.ipaddress || network.port) {
-      targets.NETWORK = {
-        userid: network.userid || null,
-        userpw: network.userpw || null,
-        ipaddress: network.ipaddress || null,
-        port: network.port || null,
-      };
-    }
-
-    // If WEB has values, add it to targets
-    if (web.webApplicatioName || web.installedPath) {
-      targets.WEB = {
-        appname: web.webApplicatioName || null,
-        installedPath: web.installedPath || null,
-      };
-    }
-
-    // If WAS has values, add it to targets
-    if (was.webApplicatioName || was.installedPath) {
-      targets.WAS = {
-        appname: was.webApplicatioName || null,
-        installedPath: was.installedPath || null,
-      };
-    }
-
-    console.log("sendData:", targets); // Log the payload before sending
+    console.log("payload:", JSON.stringify(payload)); // Log the payload before sending
 
     try {
-      const response = await setAssetTargetRegister(
-        selectedAsset.ass_uuid,
-        targets,
-      );
+      const response = await setAssetTargetRegister(payload);
 
       if (response.RESULT === "OK") {
         successAlert("registered successfully");
+        window.location.reload();
         cancel();
-        console.log("RESPONSEDATA", response);
       } else {
         throw new Error(`API error: ${response.CODE}`);
       }
@@ -151,12 +147,15 @@
       alert("An error occurred while submitting the form: " + err.message);
     }
   }
+  /****************************************************************************/
+
   function isTargetChecked(cct_target) {
     // Check if the selectedAsset has the target and its value is truthy (true)
     return selectedAsset.assessment_target_system?.some(
       (target) => target[cct_target],
     );
   }
+
   $: {
     console.log("targets:", targets);
     console.log("selected asset:", selectedAsset);
@@ -167,7 +166,7 @@
 <form on:submit|preventDefault={submit} class="container">
   <div class="header_group">
     <div class="header">
-      <span on:click={check}>운영제체</span>
+      <span>운영제체</span>
       <div class="select">
         {#if selectedAsset.assessment_target_system && Array.isArray(selectedAsset.assessment_target_system)}
           {#each selectedAsset.assessment_target_system as target}
@@ -209,48 +208,33 @@
       <input
         type="checkbox"
         checked={isTargetChecked(target.cct_target)}
-        on:change={(e) => {
-          const isChecked = e.target.checked;
-
-          // Update checkbox state for conditional rendering
-          switch (target.cct_target) {
-            case "DBMS":
-              isDbmsChecked = isChecked;
-              break;
-            case "NETWORK":
-              isNetworkChecked = isChecked;
-              break;
-            case "WEB":
-              isWebChecked = isChecked;
-              break;
-            case "WAS":
-              isWasChecked = isChecked;
-              break;
-            // Add other cases if needed...
-          }
-
-          // Update the main targets object based on the checkbox change
-          targets[target.cct_target] = isChecked
-            ? `-t ${target.cct_target.toLowerCase()}`
-            : "";
-        }}
+        on:change={handleCheckboxChange(target)}
       />
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label>{target.cct_target}</label>
     </div>
     {#if target.cct_target === "NETWORK" && isNetworkChecked}
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>IP</label>
         <input type="text" bind:value={network.ipaddress} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>PORT</label>
         <input type="text" bind:value={network.port} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>USERID</label>
         <input type="text" bind:value={network.userid} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>USERPW</label>
         <input type="text" bind:value={network.userpw} />
       </div>
@@ -258,22 +242,32 @@
 
     {#if target.cct_target === "DBMS" && isDbmsChecked}
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>DBNAME</label>
         <input type="text" bind:value={dbmsValues.dbname} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>USERMODE</label>
         <input type="text" bind:value={dbmsValues.usermode} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>PW</label>
         <input type="text" bind:value={dbmsValues.pw} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>IP</label>
         <input type="text" bind:value={dbmsValues.ip} />
       </div>
       <div class="input-group">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+
         <label>PORT</label>
         <input type="text" bind:value={dbmsValues.port} />
       </div>
@@ -282,20 +276,28 @@
     {#if (target.cct_target === "WEB" || target.cct_target === "WAS") && (target.cct_target === "WEB" ? isWebChecked : isWasChecked)}
       {#if target.cct_target === "WEB"}
         <div class="input-group">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+
           <label>APP NAME</label>
           <input type="text" bind:value={web.webApplicatioName} />
         </div>
         <div class="input-group">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+
           <label>INSTALLED PATH</label>
           <input type="text" bind:value={web.installedPath} />
         </div>
       {/if}
       {#if target.cct_target === "WAS"}
         <div class="input-group">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+
           <label>APP NAME</label>
           <input type="text" bind:value={was.webApplicatioName} />
         </div>
         <div class="input-group">
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+
           <label>INSTALLED PATH</label>
           <input type="text" bind:value={was.installedPath} />
         </div>

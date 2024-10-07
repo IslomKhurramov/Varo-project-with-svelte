@@ -260,14 +260,13 @@ export const getTargetSystemLists = async () => {
     throw error;
   }
 };
-export const setAssetTargetRegister = async (ass_uuid, targets) => {
+
+// Change the function signature to accept a single payload object
+export const setAssetTargetRegister = async (payload) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/setAssetTargetRegister/`,
-      {
-        asset_uuid: ass_uuid,
-        targets: targets,
-      },
+      payload, // Send the entire payload object
     );
 
     console.log("API response:", response.data);
@@ -287,6 +286,7 @@ export const setAssetTargetRegister = async (ass_uuid, targets) => {
     throw new Error(`Failed to register asset target: ${error.message}`);
   }
 };
+
 /*********************************************************************************** */
 
 export const getAssetRegisterStatus = async (current_day) => {

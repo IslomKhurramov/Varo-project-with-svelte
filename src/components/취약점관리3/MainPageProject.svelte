@@ -70,8 +70,14 @@
 
       const result = await setFixApprove(data);
       successAlert(result);
-      const plans = await getVulnsOfPlan(selectedSendData);
-      tableData = plans?.vulns;
+
+      if (setView == "plan") {
+        const plans = await getVulnsOfPlan(selectedSendData);
+        tableData = plans?.vulns;
+      } else {
+        const assets = await getVulnsOfAsset(selectedSendData);
+        tableData = assets?.vulns;
+      }
     } catch (err) {
       errorAlert(err?.message);
     }

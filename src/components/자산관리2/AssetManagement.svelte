@@ -7,12 +7,15 @@
   } from "../../services/page2/assetService";
   import { allAssetList } from "../../services/page2/asset.store";
   import { successAlert } from "../../shared/sweetAlert";
+  import { filter } from "d3";
 
   let showAssetReg = true;
   let showCopyReg = false;
   export let filteredAssets = [];
   export let filterAssets;
   export let selectedGroup = "";
+  export let assetHost = "";
+  export let assetOs = "";
   let assetRegHow = "add";
   let uploadedFile = null;
   let newRegGroupIndex = "";
@@ -37,6 +40,7 @@
     handleFilter();
   });
   /***************************************************/
+
   function handleFilter() {
     filterAssets();
   }
@@ -127,10 +131,21 @@
     console.log("Selected Assets UUIDs (after toggle):", selectedAssets);
   }
   function check() {
-    console.log("selected group index", selectedGroup);
-    console.log("selected asset", selectedAssets);
+    console.log("assetHost", assetHost);
+    console.log("assetOst", assetOs);
     console.log("assetRegHow", assetRegHow);
     console.log("newRegGroupIndex", newRegGroupIndex);
+  }
+  // Handle changes in asset hostname selection
+  function handleHostnameChange(event) {
+    assetHost = event.target.value;
+    // No need to call filterAssets manually, Svelte will reactively update filteredAssets
+  }
+
+  // Handle changes in asset OS type selection
+  function handleOSTypeChange(event) {
+    assetOs = event.target.value;
+    // No need to call filterAssets manually
   }
 </script>
 
@@ -200,18 +215,29 @@
             </div>
             <div class="option_container">
               <div class="div1">
-                <select name="" id="">
-                  <option value=""></option>
+                <select bind:value={assetHost} on:change={handleHostnameChange}>
+                  <option value="">Select Hostname</option>
+                  {#each $allAssetList as asset (asset.ass_uuid)}
+                    <option value={asset.ast_hostname}>
+                      {asset.ast_hostname}
+                    </option>
+                  {/each}
                 </select>
-                <select name="" id="">
-                  <option value=""></option>
-                </select>
-                <select name="" id="">
-                  <option value=""></option>
+
+                <!-- Select for ast_ostype -->
+                <select bind:value={assetOs} on:change={handleOSTypeChange}>
+                  <option value="">Select OS Type</option>
+                  {#each $allAssetList as asset (asset.ass_uuid)}
+                    {#if asset.ast_ostype !== ""}
+                      <option value={asset.ast_ostype}>
+                        {asset.ast_ostype}
+                      </option>
+                    {/if}
+                  {/each}
                 </select>
               </div>
               <div class="div2">
-                <button>저장</button>
+                <button on:click|preventDefault={filterAssets}>저장</button>
               </div>
             </div>
             <div class="first_check_cont">

@@ -9,12 +9,15 @@
     getFixHistoryOfItem,
     getVulnsFixWay,
     getVulnsOfAsset,
+    setFixApprove,
     setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
   import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
 
   export let plans;
   export let targetData;
+
+  let isAgentUser = false;
 
   // let swiperContainer;
   // let swiperInstance;
@@ -51,6 +54,14 @@
     fix_comment: "",
     fix_user_index: "",
     fix_step_status: "2",
+  };
+
+  let sendApproveData = {
+    asset_target_uuid: "",
+    plan_index: "",
+    approved: "",
+    approved_targets: "",
+    approved_comment: "",
   };
 
   onMount(async () => {
@@ -142,6 +153,15 @@
   $: {
     getData();
   }
+
+  const fixApproveHandler = async (data) => {
+    try {
+      const result = await setFixApprove(data);
+      await successAlert(result);
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
 
   $: {
     console.log("targetData:", targetData);
@@ -258,13 +278,62 @@
                 {/if}
               </select>
             </div>
+
+            {#if isAgentUser}
+              {#if targetData?.fix_plan && targetData?.fix_plan?.length !== 0}
+                <div class="row">
+                  <!-- svelte-ignore a11y-label-has-associated-control -->
+                  <label>조치계획승인</label>
+                  <select bind:value={sendApproveData["approved"]}>
+                    <option value={""}> 조치계획승인 / 조치계획반려 </option>
+                    <option value={"1"}> 조치계획승인</option>
+                    <option value={"0"}> 조치계획반려</option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <!-- svelte-ignore a11y-label-has-associated-control -->
+                  <label>조치승인자의견 </label>
+                  <input
+                    type="text"
+                    bind:value={sendApproveData["approved_comment"]}
+                  />
+                </div>
+              {/if}
+            {/if}
           </div>
 
-          <div class="action-footer">
-            <button class="list-button" on:click={fixPlanRegister}>
-              조치계획등록
-            </button>
-          </div>
+          {#if isAgentUser && targetData?.fix_plan && targetData?.fix_plan?.length !== 0}
+            <div class="action-footer">
+              <button
+                class="list-button"
+                on:click={async () => {
+                  sendApproveData.asset_target_uuid = targetData?.ast_uuid;
+                  sendApproveData.plan_index = targetData?.ccp_index;
+                  sendApproveData.approved_targets = [targetData?.ccr_index];
+                  console.log("sendApproveData:", sendApproveData);
+                  await fixApproveHandler(sendApproveData);
+                  sendApproveData = {
+                    asset_target_uuid: "",
+                    plan_index: "",
+                    approved: "",
+                    approved_targets: "",
+                    approved_comment: "",
+                  };
+                }}
+              >
+                의견등록
+              </button>
+            </div>
+          {:else if isAgentUser && targetData?.fix_result?.length === 0}
+            <div>test</div>
+          {:else}
+            <div class="action-footer">
+              <button class="list-button" on:click={fixPlanRegister}>
+                조치계획등록
+              </button>
+            </div>
+          {/if}
 
           <!-- svelte-ignore a11y-label-has-associated-control -->
           {#if historyItemData?.length !== 0}

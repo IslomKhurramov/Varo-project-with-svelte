@@ -160,3 +160,24 @@ export const getFixDoneLists = async (data) => {
     throw error;
   }
 };
+
+export const setFixDoneRegister = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setFixDoneRegister/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("setFixDoneRegister RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error setFixDoneRegister:", error);
+    throw error;
+  }
+};

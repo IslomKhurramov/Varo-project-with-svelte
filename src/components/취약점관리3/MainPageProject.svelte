@@ -18,7 +18,7 @@
   export let targetData;
   export let wholeOption;
 
-  let isAgenUser = false;
+  let isAgenUser = true;
 
   let selectedItems = [];
 
@@ -130,8 +130,6 @@
             selectedItems = [];
             const data = await getFixDoneLists(selectedSendData);
 
-            console.log("getFixDoneLists:", data);
-
             tableData = Object.fromEntries(
               Object.entries(data?.vulns).filter(([key, value]) =>
                 value.some(
@@ -140,7 +138,6 @@
                 ),
               ),
             );
-            console.log("tableData:", tableData);
           }}
           class={setView == "result" ? "active" : ""}
         >

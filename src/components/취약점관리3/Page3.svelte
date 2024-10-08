@@ -297,7 +297,7 @@
       {/if}
 
       {#if wholePage}
-        <WholePage bind:plans bind:targetData bind:wholeOption />
+        <WholePage bind:plans bind:targetData bind:setView />
       {/if}
     </div>
   </div>

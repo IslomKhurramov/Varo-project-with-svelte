@@ -70,30 +70,46 @@
         // Add or update the target's value in modifiedTargets when checked
         switch (target.cct_target) {
           case "UNIX":
-            modifiedTargets.UNIX = "-t linux";
+            modifiedTargets.UNIX = isChecked ? "-t linux" : "";
             break;
           case "WINDOWS":
-            modifiedTargets.WINDOWS = "-t windows";
+            modifiedTargets.WINDOWS = isChecked ? "-t windows" : "";
             break;
           case "DBMS":
-            modifiedTargets.DBMS = `-t ${dbmsValues.applied_system} -u ${dbmsValues.usermode} -p ${dbmsValues.pw} -H ${dbmsValues.ip} -P ${dbmsValues.port} -D ${dbmsValues.dbname}`;
+            modifiedTargets.DBMS = isChecked
+              ? `-t ${dbmsValues.applied_system} -u ${dbmsValues.usermode} -p ${dbmsValues.pw} -H ${dbmsValues.ip} -P ${dbmsValues.port} -D ${dbmsValues.dbname}`
+              : "";
+            isDbmsChecked = isChecked; // Toggle DBMS inputs visibility
             break;
           case "NETWORK":
-            modifiedTargets.NETWORK = `-u ${network.userid} -p ${network.userpw} -H ${network.ipaddress} -P ${network.port}`;
+            modifiedTargets.NETWORK = isChecked
+              ? `-u ${network.userid} -p ${network.userpw} -H ${network.ipaddress} -P ${network.port}`
+              : "";
+            isNetworkChecked = isChecked; // Toggle NETWORK inputs visibility
             break;
           case "WEB":
-            modifiedTargets.WEB = `-t ${web.webApplicatioName} -path ${web.installedPath}`;
+            modifiedTargets.WEB = isChecked
+              ? `-t ${web.webApplicatioName} -path ${web.installedPath}`
+              : "";
+            isWebChecked = isChecked; // Toggle WEB inputs visibility
             break;
           case "WAS":
-            modifiedTargets.WAS = `-t ${was.webApplicatioName} -path ${was.installedPath}`;
+            modifiedTargets.WAS = isChecked
+              ? `-t ${was.webApplicatioName} -path ${was.installedPath}`
+              : "";
+            isWasChecked = isChecked; // Toggle WAS inputs visibility
             break;
           case "PC":
-            modifiedTargets.PC = "-t pc";
+            modifiedTargets.PC = isChecked ? "-t pc" : "";
             break;
         }
       } else {
         // If unchecked, set its value to an empty string in modifiedTargets
         modifiedTargets[target.cct_target] = "";
+        if (target.cct_target === "DBMS") isDbmsChecked = false;
+        if (target.cct_target === "NETWORK") isNetworkChecked = false;
+        if (target.cct_target === "WEB") isWebChecked = false;
+        if (target.cct_target === "WAS") isWasChecked = false;
       }
     };
   }
@@ -150,7 +166,11 @@
   /****************************************************************************/
 
   function isTargetChecked(cct_target) {
-    // Check if the selectedAsset has the target and its value is truthy (true)
+    // Check if the target is present in modifiedTargets
+    if (modifiedTargets[cct_target]) {
+      return !!modifiedTargets[cct_target];
+    }
+    // Fall back to checking initial state from selectedAsset
     return selectedAsset.assessment_target_system?.some(
       (target) => target[cct_target],
     );

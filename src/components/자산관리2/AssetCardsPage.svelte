@@ -13,10 +13,12 @@
   } from "../../services/page2/assetService";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
   import { onMount } from "svelte";
-  import { each } from "svelte/internal";
+  import axios from "axios";
+  import { serverApi } from "../../lib/config";
 
   let showModal = false;
   let selected = [];
+  let selectedUUID = [];
   let selectedAsset = null;
   export let searchedResult;
   export let showSearchResult;
@@ -30,11 +32,13 @@
       selected = allSelected ? [] : [...data];
       return data;
     });
+    selectedUUID = allSelected ? [] : selected.map((asset) => asset.ass_uuid);
   }
+  $: selectedUUID = selected.map((asset) => asset.ass_uuid);
   function check() {
     console.log("SELECTED", selected);
     console.log("TARGETLIST", $targetSystemList);
-
+    console.log("SELECTED UUIDs", selectedUUID);
     console.log("All AssetList array data", $allAssetList);
   }
 
@@ -151,6 +155,49 @@
   }
 
   /**********************************************************************/
+  async function downloadReport() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      // Send a POST request to the API with the response type set to 'blob'
+      const response = await axios.post(
+        `${serverApi}/api/getSummaryReportOfAsset/`,
+        {
+          ass_uuid: selectedUUID,
+        },
+        {
+          responseType: "blob", // Important to set the response type
+        },
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element for downloading
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
+
+      a.download = fileName; // Change this to your desired file name
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      alert("An error occurred while downloading the report.");
+    }
+  }
   function cancel() {
     showModal = false;
   }
@@ -159,8 +206,8 @@
 <main>
   <div class="container">
     <div class="header_buttons">
-      <button on:click={check}>요약보고서</button>
-      <button>상세보고서 </button>
+      <button on:click={downloadReport}>요약보고서</button>
+      <button on:click={check}>상세보고서 </button>
     </div>
     <div class="allselect">
       <div class="allSelectDiv">

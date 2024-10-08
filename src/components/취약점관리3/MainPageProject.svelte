@@ -89,6 +89,9 @@
     try {
       const result = await setFixDoneApprove(data);
       successAlert(result);
+
+      const list = await getFixDoneLists(selectedSendData);
+      tableData = list?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -115,9 +118,17 @@
   <div class="second_line">
     <div>
       <button
-        on:click={() => {
+        on:click={async () => {
           setView = "plan";
           selectedItems = [];
+
+          if (showProject) {
+            const data = await getVulnsOfPlan();
+            tableData = data?.vulns;
+          } else {
+            const data = await getVulnsOfAsset();
+            tableData = data?.vulns;
+          }
         }}
         class={setView == "plan" ? "active" : ""}
       >

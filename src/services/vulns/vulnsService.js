@@ -3,6 +3,7 @@ import { serverApi } from "../../lib/config";
 
 export const getVulnsOfPlan = async (data = undefined) => {
   try {
+    console.log("getVulnsOfPlan data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfPlan/`,
       data,
@@ -24,6 +25,7 @@ export const getVulnsOfPlan = async (data = undefined) => {
 
 export const getVulnsOfAsset = async (data) => {
   try {
+    console.log("getVulnsOfAsset data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
       data,
@@ -45,6 +47,7 @@ export const getVulnsOfAsset = async (data) => {
 
 export const setFixPlanRegister = async (data) => {
   try {
+    console.log("setFixPlanRegister data:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixPlanRegister/`,
       data,
@@ -66,6 +69,7 @@ export const setFixPlanRegister = async (data) => {
 
 export const setFixApprove = async (data) => {
   try {
+    console.log("setFixApprove data:", data);
     const response = await axios.post(`${serverApi}/api/setFixApprove/`, data, {
       withCredentials: true,
     });
@@ -83,6 +87,7 @@ export const setFixApprove = async (data) => {
 
 export const setFixDoneApprove = async (data) => {
   try {
+    console.log("setFixDoneApprove data:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixDoneApprove/`,
       data,
@@ -121,6 +126,8 @@ export const getVulnsFixWay = async () => {
 
 export const getFixHistoryOfItem = async (data) => {
   try {
+    console.log("getFixHistoryOfItem data:", data);
+
     const response = await axios.post(
       `${serverApi}/api/getFixHistoryOfItem/`,
       data,
@@ -142,6 +149,7 @@ export const getFixHistoryOfItem = async (data) => {
 
 export const getFixDoneLists = async (data) => {
   try {
+    console.log("getFixDoneLists data:", data);
     const response = await axios.post(
       `${serverApi}/api/getFixDoneLists/`,
       data,
@@ -163,6 +171,7 @@ export const getFixDoneLists = async (data) => {
 
 export const setFixDoneRegister = async (data) => {
   try {
+    console.log("setFixDoneRegister data:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixDoneRegister/`,
       data,

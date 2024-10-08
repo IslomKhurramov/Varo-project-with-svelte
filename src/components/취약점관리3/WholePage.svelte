@@ -219,8 +219,9 @@
 
   const setFixDoneApproveHandler = async () => {
     try {
-      sendSetFixDoneApprove.asset_uuid = targetData?.ast_uuid;
-      sendSetFixDoneApprove.ccr_index = targetData?.ccr_index;
+      sendSetFixDoneApprove.asset_target_uuid = targetData?.ast_uuid;
+      sendSetFixDoneApprove.plan_index = targetData?.ccp_index;
+      sendSetFixDoneApprove.approved_targets = [targetData?.ccr_index];
       console.log("=sendSetFixDoneApprove:", sendSetFixDoneApprove);
 
       const result = await setFixDoneApprove(sendSetFixDoneApprove);
@@ -433,6 +434,80 @@
                   bind:value={sendSetFixDoneApprove["approved_comment"]}
                 />
               </div>
+            {:else if isAgentUser && setView == "plan"}
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_method__cvf_desc}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치수준</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_term}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치일정</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_startdate}
+                />
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_enddate}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+
+                <textarea
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_etc}
+                  readonly
+                ></textarea>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치담당자</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.user_index__user_name}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치계획승인</label>
+                <select bind:value={sendApproveData["approved"]}>
+                  <option value={""}> 조치계획승인 / 조치계획반려 </option>
+                  <option value={"1"}> 조치계획승인</option>
+                  <option value={"0"}> 조치계획반려</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치승인자의견 </label>
+                <input
+                  type="text"
+                  bind:value={sendApproveData["approved_comment"]}
+                />
+              </div>
             {:else}
               <div class="row">
                 <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -505,29 +580,6 @@
                   {/if}
                 </select>
               </div>
-            {/if}
-
-            {#if isAgentUser}
-              {#if isAgentUser && setView == "plan"}
-                <div class="row">
-                  <!-- svelte-ignore a11y-label-has-associated-control -->
-                  <label>조치계획승인</label>
-                  <select bind:value={sendApproveData["approved"]}>
-                    <option value={""}> 조치계획승인 / 조치계획반려 </option>
-                    <option value={"1"}> 조치계획승인</option>
-                    <option value={"0"}> 조치계획반려</option>
-                  </select>
-                </div>
-
-                <div class="row">
-                  <!-- svelte-ignore a11y-label-has-associated-control -->
-                  <label>조치승인자의견 </label>
-                  <input
-                    type="text"
-                    bind:value={sendApproveData["approved_comment"]}
-                  />
-                </div>
-              {/if}
             {/if}
           </div>
 

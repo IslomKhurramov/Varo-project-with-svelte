@@ -95,7 +95,11 @@
         selectedAssets = [];
         selectedGroup = "";
         newRegGroupIndex = "";
-        uploadedFile = null; // Reset file uploads if needed
+
+        if (uploadedFile) {
+          document.querySelector('input[type="file"]').value = "";
+          uploadedFile = null;
+        }
       } else {
         throw new Error("Failed to register asset");
       }

@@ -92,7 +92,7 @@
       const response = await setAssetInformationUpdate(formData);
       if (response.success) {
         showModalSecond = false;
-        successAlert("Data updated successfully");
+        successAlert("데이터가 성공적으로 업데이트되었습니다");
       } else {
         throw new Error();
       }
@@ -165,7 +165,7 @@
       const unActivating = await setAssetUnActivate(uuid_asset);
 
       if (unActivating.success) {
-        successAlert("The asset has been successfully unactivated!");
+        successAlert("자산이 성공적으로 활성화 해제되었습니다!");
 
         assetDetails.ast_activate = false;
         // Update the asset's activation status directly in the store
@@ -178,7 +178,7 @@
           });
         });
       } else if (unActivating.alreadyUnactivated) {
-        errorAlert("The asset is already unactivated.");
+        errorAlert("자산이 이미 활성화되지 않았습니다.");
       } else {
         throw new Error(unActivating.CODE);
       }
@@ -198,7 +198,7 @@
       const activating = await setAssetActivate(uuid_asset);
 
       if (activating.success) {
-        successAlert("The asset has been successfully activated!");
+        successAlert("자산이 성공적으로 활성화되었습니다!");
 
         assetDetails.ast_activate = true;
         // Update the asset's activation status in the store
@@ -220,7 +220,7 @@
   /******************************************************************/
   async function assetGroupChange() {
     if (uuid_asset === "") {
-      errorAlert("Please select asset");
+      errorAlert("자산을 선택해주세요");
     }
     try {
       const response = await setAssetGroupChange(
@@ -231,9 +231,9 @@
 
       if (response.success) {
         showModal = false;
-        sweetAlert("Group changed successfully!");
+        sweetAlert("그룹이 성공적으로 변경되었습니다!");
       } else {
-        errorAlert("Please select asset!");
+        errorAlert("자산을 선택해주세요!");
       }
     } catch (err) {
       console.error(`Error fetching asset details: ${err.message}`);
@@ -247,7 +247,7 @@
 
   async function assetRegisterChange() {
     if (uuid_asset === "") {
-      errorAlert("Please select an asset");
+      errorAlert("자산을 선택해주세요");
       return;
     }
     const newApproveStatus = approve_status === 0 ? 1 : 0;
@@ -258,7 +258,7 @@
       );
 
       if (response.RESULT === "OK") {
-        successAlert("Asset register changed successfully!");
+        successAlert("자산 등록부가 성공적으로 변경되었습니다!");
 
         // Update the asset's approval status in the store
         allAssetList.update((assets) => {

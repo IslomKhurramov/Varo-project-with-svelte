@@ -310,7 +310,6 @@ export const getAssetRegisterStatus = async (current_day) => {
   }
 };
 /**************************************************************************** */
-
 export const setAssetForNewGroup = async (addingAssetForm) => {
   try {
     const {
@@ -320,51 +319,52 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
       asset_file,
       asset_lists,
     } = addingAssetForm;
+
     console.log("api data: ", addingAssetForm);
 
-    // Create FormData object for multipart/form-data
     const formData = new FormData();
 
-    // Append the form data fields
     formData.append("asset_reg_how", asset_reg_how);
     formData.append("existed_asset_group_index", existed_asset_group_index);
     formData.append("target_group_index", target_group_index);
 
-    // Append the file only if it exists (you can omit null fields)
     if (asset_file) {
-      formData.append("asset_file", asset_file); // Assuming asset_file is a File object
+      formData.append("asset_file", asset_file);
     }
 
-    // Loop through asset_lists array and append each item individually
-    asset_lists.forEach((asset) => {
-      formData.append("asset_lists[]", asset); // Correct way to append arrays in FormData
-    });
+    asset_lists
+      .filter((uuid) => uuid && uuid.trim() !== "")
+      .forEach((asset) => {
+        formData.append("asset_lists", asset);
+      });
+
+    // Log the FormData entries to verify what's being sent
     for (let [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-    // Send the request using axios
+
     const response = await axios.post(
       `${serverApi}/api/setAssetForNewGroup/`,
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data", // Set the proper Content-Type
+          "Content-Type": "multipart/form-data",
         },
       },
     );
 
-    // Handle the API response
     if (response.data.RESULT === "OK") {
-      return { success: true }; // Return success if response is OK
+      return { success: true };
     } else {
       console.log("API ERROR:", response.data);
       return { success: false, message: response.data.CODE };
     }
   } catch (error) {
-    console.error("API Request Error:", error); // Log any errors
+    console.error("API Request Error:", error);
     throw error;
   }
 };
+
 /************************************************************************** */
 export const getSearch = async (
   ast_group,

@@ -90,12 +90,16 @@
     try {
       const response = await setAssetForNewGroup(addingAssetForm);
       if (response.success) {
-        successAlert("Asset registered to new group successfully");
+        successAlert("자산이 새 그룹에 성공적으로 등록되었습니다.");
         // Reset form values
         selectedAssets = [];
         selectedGroup = "";
         newRegGroupIndex = "";
-        uploadedFile = null; // Reset file uploads if needed
+
+        if (uploadedFile) {
+          document.querySelector('input[type="file"]').value = "";
+          uploadedFile = null;
+        }
       } else {
         throw new Error("Failed to register asset");
       }

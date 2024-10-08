@@ -11,6 +11,7 @@
     getVulnsFixWay,
     getVulnsOfAsset,
     setFixApprove,
+    setFixDoneApprove,
     setFixDoneRegister,
     setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
@@ -76,6 +77,14 @@
     fixed_comment: "",
     fixed_user_index: "",
     fixed_evidence_file: "",
+  };
+
+  let sendSetFixDoneApprove = {
+    asset_target_uuid: "",
+    plan_index: "",
+    approved: "",
+    approved_targets: "",
+    approved_comment: "",
   };
 
   onMount(async () => {
@@ -205,6 +214,26 @@
       await getFixEviDownload(cfr_index, file);
     } catch (error) {
       console.log("Error sampleClick: ", error);
+    }
+  };
+
+  const setFixDoneApproveHandler = async () => {
+    try {
+      sendSetFixDoneApprove.asset_uuid = targetData?.ast_uuid;
+      sendSetFixDoneApprove.ccr_index = targetData?.ccr_index;
+      console.log("=sendSetFixDoneApprove:", sendSetFixDoneApprove);
+
+      const result = await setFixDoneApprove(sendSetFixDoneApprove);
+      await successAlert(result);
+      sendSetFixDoneApprove = {
+        asset_target_uuid: "",
+        plan_index: "",
+        approved: "",
+        approved_targets: "",
+        approved_comment: "",
+      };
+    } catch (err) {
+      errorAlert(err?.message);
     }
   };
 
@@ -385,6 +414,25 @@
                   readonly
                 />
               </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치계획승인</label>
+                <select bind:value={sendSetFixDoneApprove["approved"]}>
+                  <option value={""}> 조치계획승인 / 조치계획반려 </option>
+                  <option value={"1"}> 조치계획승인</option>
+                  <option value={"0"}> 조치계획반려</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치승인자의견 </label>
+                <input
+                  type="text"
+                  bind:value={sendSetFixDoneApprove["approved_comment"]}
+                />
+              </div>
             {:else}
               <div class="row">
                 <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -511,7 +559,9 @@
             >
           {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <button class="list-button">의견등록 setFixDoneApprove</button>
+            <button class="list-button" on:click={setFixDoneApproveHandler}
+              >의견등록</button
+            >
           {:else}
             <div class="action-footer">
               <button class="list-button" on:click={fixPlanRegister}>

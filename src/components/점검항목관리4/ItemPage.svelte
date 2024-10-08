@@ -57,7 +57,7 @@
       const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
 
       if (deleteItem.success) {
-        successAlert(`Selected items deleted successfully!`);
+        successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`);
 
         // Update filteredChecklistData by removing deleted items
         filteredChecklistData.update((data) =>

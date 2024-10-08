@@ -75,6 +75,12 @@
           case "WINDOWS":
             modifiedTargets.WINDOWS = isChecked ? "-t windows" : "";
             break;
+          case "SECURITY":
+            modifiedTargets.SECURITY = isChecked ? "-t security" : "";
+            break;
+          case "CLOUD":
+            modifiedTargets.CLOUD = isChecked ? "-t cloud" : "";
+            break;
           case "DBMS":
             modifiedTargets.DBMS = isChecked
               ? `-t ${dbmsValues.applied_system} -u ${dbmsValues.usermode} -p ${dbmsValues.pw} -H ${dbmsValues.ip} -P ${dbmsValues.port} -D ${dbmsValues.dbname}`
@@ -152,7 +158,7 @@
       const response = await setAssetTargetRegister(payload);
 
       if (response.RESULT === "OK") {
-        successAlert("registered successfully");
+        successAlert("성공적으로 등록되었습니다");
         window.location.reload();
         cancel();
       } else {
@@ -215,10 +221,13 @@
     </div>
     <div class="header">
       <span>승인여부</span>
-      <select class="select" bind:value={selectedAsset.ast_approve_status}>
-        <option value={1}>등록승인</option>
-        <option value={0}>등록미승인</option>
-      </select>
+      <div class="select">
+        {#if selectedAsset.ast_approve_status === 1}
+          <p>승인</p>
+        {:else}
+          <p>미승인</p>
+        {/if}
+      </div>
     </div>
   </div>
 

@@ -1,9 +1,4 @@
 <script>
-  import { assetDeatilInfo } from "../../../services/page2/asset.store";
-  import { setAssetInformationUpdate } from "../../../services/page2/assetService";
-  import { successAlert } from "../../../shared/sweetAlert";
-
-  export let showModalSecond;
   export let handleSubmit;
   export let formData;
   export let assetDetails;

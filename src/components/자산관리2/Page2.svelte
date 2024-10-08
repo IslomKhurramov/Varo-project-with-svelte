@@ -75,7 +75,7 @@
     try {
       const response = await setNewAssetGroup(newGroupName); // Send new group to backend
       if (response.success) {
-        successAlert("Group created successfully!");
+        successAlert("그룹이 성공적으로 생성되었습니다!");
 
         allAssetGroupList.update((groups) => [
           ...groups,

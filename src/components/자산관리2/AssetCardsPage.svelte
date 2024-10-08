@@ -1,5 +1,4 @@
 <script>
-  import Modal from "../../shared/Modal.svelte";
   import ModalCard from "./ModalCard.svelte";
   import {
     allAssetList,
@@ -35,12 +34,6 @@
     selectedUUID = allSelected ? [] : selected.map((asset) => asset.ass_uuid);
   }
   $: selectedUUID = selected.map((asset) => asset.ass_uuid);
-  function check() {
-    console.log("SELECTED", selected);
-    console.log("TARGETLIST", $targetSystemList);
-    console.log("SELECTED UUIDs", selectedUUID);
-    console.log("All AssetList array data", $allAssetList);
-  }
 
   /************************************************************/
   async function assetList() {
@@ -80,14 +73,14 @@
 
     // If the asset is already unactivated, show an alert and skip API call
     if (!asset.ast_activate) {
-      errorAlert("The asset is already unactivated.");
+      errorAlert("자산이 이미 활성화되지 않았습니다.");
       return; // Stop execution, don't call the API
     }
     try {
       const unActivating = await setAssetUnActivate(uuid);
 
       if (unActivating.success) {
-        successAlert("The asset has been successfully unactivated!");
+        successAlert("자산이 성공적으로 활성화 해제되었습니다!");
 
         // Update the asset's activation status directly in the store
         allAssetList.update((assets) => {
@@ -99,7 +92,7 @@
           });
         });
       } else if (unActivating.alreadyUnactivated) {
-        errorAlert("The asset is already unactivated.");
+        errorAlert("자산이 이미 활성화되지 않았습니다.");
       } else {
         throw new Error(unActivating.CODE);
       }
@@ -113,14 +106,14 @@
   async function activateAsset(uuid) {
     const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
     if (asset.ast_activate) {
-      errorAlert("The asset is already activated.");
+      errorAlert("자산이 이미 활성화되었습니다.");
       return;
     }
     try {
       const activating = await setAssetActivate(uuid);
 
       if (activating.success) {
-        successAlert("The asset has been successfully activated!");
+        successAlert("자산이 성공적으로 활성화되었습니다!");
 
         // Update the asset's activation status in the store
         allAssetList.update((assets) => {
@@ -198,6 +191,50 @@
       alert("An error occurred while downloading the report.");
     }
   }
+  /*************************************************************************/
+  async function downloadTotalReport() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      // Send a POST request to the API with the response type set to 'blob'
+      const response = await axios.post(
+        `${serverApi}/api/getToalReportOfAsset/`,
+        {
+          ass_uuid: selectedUUID,
+        },
+        {
+          responseType: "blob", // Important to set the response type
+        },
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element for downloading
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
+
+      a.download = fileName; // Change this to your desired file name
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      alert("An error occurred while downloading the report.");
+    }
+  }
   function cancel() {
     showModal = false;
   }
@@ -207,7 +244,7 @@
   <div class="container">
     <div class="header_buttons">
       <button on:click={downloadReport}>요약보고서</button>
-      <button on:click={check}>상세보고서 </button>
+      <button on:click={downloadTotalReport}>상세보고서 </button>
     </div>
     <div class="allselect">
       <div class="allSelectDiv">

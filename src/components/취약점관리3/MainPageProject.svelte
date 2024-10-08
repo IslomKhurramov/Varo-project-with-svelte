@@ -13,6 +13,8 @@
   export let setView;
   export let wholePage;
   export let selectedSendData;
+  export let showProject;
+  export let targetData;
 
   let isAgenUser = true;
 
@@ -66,12 +68,16 @@
 
   const fixApproveHandler = async (data) => {
     try {
-      console.log("fixApproveHandler:", data);
-
       const result = await setFixApprove(data);
-      successAlert(result);
-      const plans = await getVulnsOfPlan(selectedSendData);
-      tableData = plans?.vulns;
+      await successAlert(result);
+
+      if (showProject) {
+        const plans = await getVulnsOfPlan(selectedSendData);
+        tableData = plans?.vulns;
+      } else {
+        const assets = await getVulnsOfAsset(selectedSendData);
+        tableData = assets?.vulns;
+      }
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -79,8 +85,6 @@
 
   const fixDoneApproveHandler = async (data) => {
     try {
-      console.log("fixDoneApproveHandler:", data);
-
       const result = await setFixDoneApprove(data);
       successAlert(result);
     } catch (err) {
@@ -101,10 +105,6 @@
     if (tableData) {
       data = transformVulns(tableData);
     }
-  }
-
-  $: {
-    console.log("selectedItems:", selectedItems);
   }
 </script>
 
@@ -282,7 +282,12 @@
         {#each data as item, index}
           {#if vulnerabilityStatus}
             {#if item.ccr_item_result == vulnerabilityStatus}
-              <tr>
+              <tr
+                on:click={() => {
+                  wholePage = true;
+                  targetData = item;
+                }}
+              >
                 <td>
                   <input
                     type="checkbox"
@@ -324,7 +329,6 @@
                             approved_targets: [item?.ccr_index],
                             approved_comment: e.target.value,
                           };
-                          console.log("data:", data);
 
                           fixApproveHandler(data);
                           selectedItems = [];
@@ -336,7 +340,6 @@
                             approved_targets: [item?.ccr_index],
                             approved_comment: e.target.value,
                           };
-                          console.log("data:", data);
 
                           fixDoneApproveHandler(data);
                           selectedItems = [];
@@ -379,7 +382,12 @@
               </tr>
             {/if}
           {:else}
-            <tr on:click={() => (wholePage = true)}>
+            <tr
+              on:click={() => {
+                wholePage = true;
+                targetData = item;
+              }}
+            >
               <td>
                 <input
                   type="checkbox"
@@ -422,7 +430,6 @@
                           approved_targets: [item?.ccr_index],
                           approved_comment: e.target.value,
                         };
-                        console.log("data:", data);
 
                         fixApproveHandler(data);
                         selectedItems = [];
@@ -434,7 +441,6 @@
                           approved_targets: [item?.ccr_index],
                           approved_comment: e.target.value,
                         };
-                        console.log("data:", data);
 
                         fixDoneApproveHandler(data);
                         selectedItems = [];

@@ -5,8 +5,15 @@
   import ModalRegisteredAdmin from "./ModalRegisteredAdmin.svelte";
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
+  import {
+    getFixHistoryOfItem,
+    getVulnsFixWay,
+    setFixPlanRegister,
+  } from "../../services/vulns/vulnsService.js";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
 
   export let plans;
+  export let targetData;
 
   let showModal = false;
   let actionMethod = "어쩌고...저쩌고...";
@@ -22,9 +29,11 @@
       personInCharge: "조치담당자",
     },
   ];
+
   function closeModal() {
     showModal = false; // Close the modal
   }
+
   let swiperContainer;
 
   $: {
@@ -44,11 +53,67 @@
     });
   }
 
-  let usernames;
+  let usernames = [];
+  let options = [];
+  let historyItemData = [];
+  let sendPlanRegisterData = {
+    asset_uuid: "",
+    ccr_index: "",
+    fix_method: "",
+    fix_level: "",
+    fix_start_date: "",
+    fix_end_date: "",
+    fix_comment: "",
+    fix_user_index: "",
+    fix_step_status: "2",
+  };
 
   onMount(async () => {
     usernames = await getUserName();
+    options = await getVulnsFixWay();
   });
+
+  const fixPlanRegister = async () => {
+    try {
+      sendPlanRegisterData.asset_uuid = targetData?.ast_uuid;
+      sendPlanRegisterData.ccr_index = targetData?.ccr_index;
+
+      const response = await setFixPlanRegister(sendPlanRegisterData);
+
+      successAlert(response);
+
+      sendPlanRegisterData = {
+        asset_uuid: "",
+        ccr_index: "",
+        fix_method: "",
+        fix_level: "",
+        fix_start_date: "",
+        fix_end_date: "",
+        fix_comment: "",
+        fix_user_index: "",
+        fix_step_status: "2",
+      };
+    } catch (err) {
+      console.error("Error fixPlanRegister:", err);
+      errorAlert(err?.message);
+    }
+  };
+
+  $: {
+    (async () => {
+      if (targetData) {
+        historyItemData = await getFixHistoryOfItem({
+          asset_uuid: targetData?.ast_uuid,
+          ccr_index: targetData?.ccr_index,
+          checklist_item_no: targetData?.ccr_item_no__ccc_item_no,
+        });
+      }
+    })();
+  }
+
+  $: {
+    console.log("historyItemData:", historyItemData);
+  }
 </script>
 
 <main>
@@ -97,21 +162,31 @@
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치방법</label>
-              <select bind:value={actionPlan} class="select_input">
-                <option value="조치계획">조치계획</option>
-                <option value="대책수립">대책수립</option>
-                <option value="예외처리">예외처리</option>
-                <option value="위험수용">위험수용</option>
+              <select
+                bind:value={sendPlanRegisterData["fix_method"]}
+                class="select_input"
+              >
+                <option value={""}>
+                  조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                </option>
+                {#if options?.length !== 0}
+                  {#each options as option}
+                    <option value={option?.cvf_index}>{option?.cvf_desc}</option
+                    >
+                  {/each}
+                {/if}
               </select>
             </div>
 
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>위험도</label>
-              <select bind:value={riskLevel}>
-                <option value="상">상</option>
-                <option value="중">중</option>
-                <option value="하">하</option>
+              <label>조치수준</label>
+              <select bind:value={sendPlanRegisterData["fix_level"]}>
+                <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
+                <option value="긴급">긴급</option>
+                <option value="단기">단기</option>
+                <option value="중기">중기</option>
+                <option value="장기">장기</option>
               </select>
             </div>
 
@@ -119,29 +194,74 @@
               <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치일정</label>
               <input
-                class="input1"
-                type="text"
-                bind:value={actionPlan}
+                class="input"
+                type="date"
+                bind:value={sendPlanRegisterData["fix_start_date"]}
+                placeholder="조치일정을 입력하세요"
+              />
+              <input
+                class="input"
+                type="date"
+                bind:value={sendPlanRegisterData["fix_end_date"]}
                 placeholder="조치일정을 입력하세요"
               />
             </div>
 
             <div class="row">
               <!-- svelte-ignore a11y-label-has-associated-control -->
+              <label>조치방법</label>
+
+              <textarea bind:value={sendPlanRegisterData["fix_comment"]}
+              ></textarea>
+            </div>
+
+            <div class="row">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
               <label>조치담당자</label>
-              <input
-                type="text"
-                bind:value={actionPlan}
-                placeholder="조치담당자를 입력하세요"
-              />
+              <select bind:value={sendPlanRegisterData["fix_user_index"]}>
+                <option value={""}> 조치담당자</option>
+                {#if usernames?.length !== 0}
+                  {#each usernames as username}
+                    <option value={username?.user_index}
+                      >{username?.user_name}</option
+                    >
+                  {/each}
+                {/if}
+              </select>
             </div>
           </div>
 
           <div class="action-footer">
-            <button class="list-button" on:click={() => (showModal = true)}
-              >등록된 운영/관리자 계정</button
-            >
+            <button class="list-button" on:click={fixPlanRegister}>
+              조치계획등록
+            </button>
           </div>
+
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+          {#if historyItemData?.length !== 0}
+            <div class="row">
+              <label>이전조치이력</label>
+              <div class="table_container">
+                <table>
+                  <tr class="first_line">
+                    <th>조치방법</th>
+                    <th>플랜</th>
+                    <th>일정</th>
+                    <th>조치담당자</th>
+                  </tr>
+
+                  {#each historyItemData as data}
+                    <tr>
+                      <td>{data.cfi_fix_status__cvs_desc}</td>
+                      <td>{data.ccr_index__ccp_index__ccp_title}</td>
+                      <td>{data.cfi_fix_startdate} {data.cfi_fix_enddate}</td>
+                      <td>{data.user_index__user_name}</td>
+                    </tr>
+                  {/each}
+                </table>
+              </div>
+            </div>
+          {/if}
         </div>
 
         <div class="info">
@@ -151,6 +271,11 @@
             <textarea bind:value={actionMethod} rows="3" readonly></textarea>
           </div>
 
+          <div class="row">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>평가기준</label>
+            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+          </div>
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>조치방법</label>
@@ -163,38 +288,15 @@
             <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
             ></textarea>
           </div>
-
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-          <div class="row">
-            <label>이전조치이력</label>
-            <div class="table_container">
-              <table>
-                <tr class="first_line">
-                  <th>조치방법</th>
-                  <th>일정</th>
-                  <th>의견</th>
-                  <th>조치담당자</th>
-                </tr>
-                {#each performanceLog as asset}
-                  <tr>
-                    <td>{asset.actionMethod}</td>
-                    <td>{asset.schedule}</td>
-                    <td>{asset.opinion}</td>
-                    <td>{asset.personInCharge}</td>
-                  </tr>
-                {/each}
-              </table>
-            </div>
-          </div>
         </div>
       </div>
-      <button class="register_button">조치계획 등록함</button>
+      <!-- <button class="register_button">조치계획 등록함</button> -->
     </div>
   </div>
 
-  <Modal bind:showModal>
+  <!-- <Modal bind:showModal>
     <ModalRegisteredAdmin {closeModal} />
-  </Modal>
+  </Modal> -->
 </main>
 
 <style>
@@ -223,6 +325,7 @@
     font-size: 14px;
     margin-bottom: 10px;
   }
+
   .select_input:hover {
     background-color: #b0b0b0;
   }
@@ -266,13 +369,14 @@
     font-size: 14px;
     background-color: #f9f9f9;
   }
+
   .input1 {
     height: 150px;
   }
 
   .actions {
     width: 40%;
-    height: 540px;
+    height: auto;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -306,11 +410,13 @@
       background-color 0.3s ease,
       transform 0.3s ease;
   }
+
   .register_button:hover {
     background-color: #28863e;
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
+
   .list-button {
     background-color: #007bff; /* Primary button color */
     color: #ffffff;
@@ -327,9 +433,11 @@
     transform: translateY(-2px);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
+
   .data3 {
     height: 40px;
   }
+
   .table_container {
     display: flex;
     justify-content: center;
@@ -345,6 +453,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #000000;
   }
+
   table {
     font-family: "Arial", sans-serif;
     border-collapse: collapse;
@@ -390,16 +499,19 @@
     box-sizing: border-box;
     position: relative;
   }
+
   .swiper_container1 {
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
   }
+
   .swiper_container1 img {
     width: 50px;
     height: auto;
   }
+
   .swiper-wrapper {
     display: flex;
   }

@@ -91,7 +91,14 @@
       successAlert(result);
 
       const list = await getFixDoneLists(selectedSendData);
-      tableData = list?.vulns;
+      tableData = Object.fromEntries(
+        Object.entries(list?.vulns).filter(([key, value]) =>
+          value.some(
+            (item) =>
+              item.result && item.result.cfi_fix_status__cvs_index === 3,
+          ),
+        ),
+      );
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -108,7 +115,6 @@
 
   $: {
     if (tableData) {
-      console.log("tableData:", tableData);
       data = transformVulns(tableData);
     }
   }

@@ -4,7 +4,7 @@
   import { getAssetRegisterStatus } from "../../services/page2/assetService";
   import { assetRegisterStatus } from "../../services/page2/asset.store";
 
-  let current_day = "2024-09-20";
+  let current_day = "";
   let svg1, svg2;
   let selectedGroupIndex = 0;
 
@@ -20,11 +20,14 @@
       console.error("Error fetching asset register status:", err);
     }
   }
-
+  /*****************************************************************************/
+  $: if (current_day) {
+    registerStatus();
+  }
   onMount(() => {
     registerStatus();
   });
-
+  /**************************************************************************/
   function check() {
     console.log("status", $assetRegisterStatus);
   }
@@ -145,7 +148,7 @@
 <main class="container">
   <div class="first_container">
     <div class="first_line1">
-      <p on:click={check}>기간선택</p>
+      <p>기간선택</p>
       <p class="options"><input type="date" bind:value={current_day} /></p>
     </div>
     <div class="second_line1">

@@ -1,5 +1,6 @@
 <script>
   import {
+    getFixDoneLists,
     getVulnsOfAsset,
     getVulnsOfPlan,
     setFixApprove,
@@ -15,6 +16,7 @@
   export let selectedSendData;
   export let showProject;
   export let targetData;
+  export let wholeOption;
 
   let isAgenUser = true;
 
@@ -87,6 +89,9 @@
     try {
       const result = await setFixDoneApprove(data);
       successAlert(result);
+
+      const list = await getFixDoneLists(selectedSendData);
+      tableData = list?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -103,6 +108,7 @@
 
   $: {
     if (tableData) {
+      console.log("tableData:", tableData);
       data = transformVulns(tableData);
     }
   }
@@ -112,9 +118,17 @@
   <div class="second_line">
     <div>
       <button
-        on:click={() => {
+        on:click={async () => {
           setView = "plan";
           selectedItems = [];
+
+          if (showProject) {
+            const data = await getVulnsOfPlan();
+            tableData = data?.vulns;
+          } else {
+            const data = await getVulnsOfAsset();
+            tableData = data?.vulns;
+          }
         }}
         class={setView == "plan" ? "active" : ""}
       >
@@ -122,9 +136,19 @@
       </button>
       {#if isAgenUser}
         <button
-          on:click={() => {
+          on:click={async () => {
             setView = "result";
             selectedItems = [];
+            const data = await getFixDoneLists(selectedSendData);
+
+            tableData = Object.fromEntries(
+              Object.entries(data?.vulns).filter(([key, value]) =>
+                value.some(
+                  (item) =>
+                    item.result && item.result.cfi_fix_status__cvs_index === 3,
+                ),
+              ),
+            );
           }}
           class={setView == "result" ? "active" : ""}
         >
@@ -272,6 +296,7 @@
         <th>취약점명</th>
         <th>위험도</th>
         <th>조치현황</th>
+        <th>조치분류상태</th>
         <th>운영부서</th>
         <th>운영담당자 </th>
         {#if isAgenUser}
@@ -303,9 +328,10 @@
                 <td>{item.ccr_item_no__ccc_item_title}</td>
                 <td>{item.ccr_item_no__ccc_item_level}</td>
                 <td>
-                  {setView == "plan"
-                    ? test[item?.cfi_fix_status__cvs_index]
-                    : test[item?.cfr_fix_status__cvs_index]}
+                  {test[item?.cfi_fix_status__cvs_index] ?? "조치전"}
+                </td>
+                <td>
+                  {item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "조치전"}
                 </td>
                 <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
                 <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
@@ -386,6 +412,11 @@
               on:click={() => {
                 wholePage = true;
                 targetData = item;
+                if (setView == "plan") {
+                  wholeOption = "plan";
+                } else {
+                  wholeOption = "result";
+                }
               }}
             >
               <td>
@@ -403,10 +434,10 @@
               <td>{item.ccr_item_no__ccc_item_title}</td>
               <td>{item.ccr_item_no__ccc_item_level}</td>
               <td>
-                {setView == "plan"
-                  ? test[item?.cfi_fix_status__cvs_index]
-                  : (item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
-                    "조치전")}
+                {test[item?.cfi_fix_status__cvs_index] ?? "조치전"}
+              </td>
+              <td>
+                {item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "조치전"}
               </td>
               <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
               <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>

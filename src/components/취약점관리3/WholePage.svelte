@@ -6,56 +6,48 @@
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
   import {
+    getFixEviDownload,
     getFixHistoryOfItem,
     getVulnsFixWay,
+    getVulnsOfAsset,
+    setFixApprove,
+    setFixDoneApprove,
+    setFixDoneRegister,
     setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
   import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
 
   export let plans;
   export let targetData;
+  export let setView;
 
-  let showModal = false;
-  let actionMethod = "어쩌고...저쩌고...";
-  let relatedAssets =
-    "자산명, 아이피주소, 자산그룹, 식별코드, 등록일, 보안점수 등등";
-  let actionPlan = "";
-  let riskLevel = "상/중/하";
-  let performanceLog = [
-    {
-      actionMethod: "조치방법",
-      schedule: "일정",
-      opinion: "의견",
-      personInCharge: "조치담당자",
-    },
-  ];
+  let isAgentUser = true;
 
-  function closeModal() {
-    showModal = false; // Close the modal
-  }
+  // let swiperContainer;
+  // let swiperInstance;
 
-  let swiperContainer;
-
-  $: {
-    new Swiper(swiperContainer, {
-      modules: [Navigation, Pagination],
-      loop: false,
-      slidesPerView: 8,
-      spaceBetween: 15,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-  }
+  // onMount(() => {
+  //   swiperInstance = new Swiper(swiperContainer, {
+  //     modules: [Navigation, Pagination],
+  //     loop: false,
+  //     slidesPerView: 8,
+  //     spaceBetween: 15,
+  //     pagination: {
+  //       el: ".swiper-pagination",
+  //       clickable: true,
+  //     },
+  //     navigation: {
+  //       nextEl: ".swiper-button-next",
+  //       prevEl: ".swiper-button-prev",
+  //     },
+  //   });
+  // });
 
   let usernames = [];
   let options = [];
   let historyItemData = [];
+  let assets = [];
+
   let sendPlanRegisterData = {
     asset_uuid: "",
     ccr_index: "",
@@ -66,6 +58,33 @@
     fix_comment: "",
     fix_user_index: "",
     fix_step_status: "2",
+  };
+
+  let sendApproveData = {
+    asset_target_uuid: "",
+    plan_index: "",
+    approved: "",
+    approved_targets: "",
+    approved_comment: "",
+  };
+
+  let sendFixDone = {
+    asset_uuid: "",
+    ccr_index: "",
+    fixed_method: "",
+    fixed_start_date: "",
+    fixed_end_date: "",
+    fixed_comment: "",
+    fixed_user_index: "",
+    fixed_evidence_file: "",
+  };
+
+  let sendSetFixDoneApprove = {
+    asset_target_uuid: "",
+    plan_index: "",
+    approved: "",
+    approved_targets: "",
+    approved_comment: "",
   };
 
   onMount(async () => {
@@ -99,6 +118,39 @@
     }
   };
 
+  function transformVulns(vulns) {
+    const transformed = [];
+
+    for (const key in vulns) {
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      vulns[key].forEach((item) => {
+        if (item.result) {
+          currentResult = item?.result;
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
+          }
+        }
+      });
+
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    return transformed;
+  }
+
   $: {
     (async () => {
       if (targetData) {
@@ -111,33 +163,105 @@
     })();
   }
 
+  let data = [];
+
+  const getData = async () => {
+    assets = await getVulnsOfAsset({
+      plan_index: targetData?.ccp_index,
+      asset_target_uuid: targetData?.ast_uuid,
+    });
+    data = transformVulns(assets?.vulns);
+  };
+
   $: {
-    console.log("historyItemData:", historyItemData);
+    getData();
+  }
+
+  const fixApproveHandler = async (data) => {
+    try {
+      const result = await setFixApprove(data);
+      await successAlert(result);
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  const setFixDoneRegisterHandler = async () => {
+    try {
+      sendFixDone.asset_uuid = targetData?.ast_uuid;
+      sendFixDone.ccr_index = targetData?.ccr_index;
+      console.log("=sendFixDone:", sendFixDone);
+      const formData = new FormData();
+
+      for (const key in sendFixDone) {
+        formData.append(key, sendFixDone[key]);
+      }
+      const result = await setFixDoneRegister(formData);
+      await successAlert(result);
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    sendFixDone.fixed_evidence_file = event.target.files[0];
+  };
+
+  const sampleClick = async (cfr_index, file) => {
+    try {
+      file = file.split("/").pop();
+      console.log("file: ", file);
+      await getFixEviDownload(cfr_index, file);
+    } catch (error) {
+      console.log("Error sampleClick: ", error);
+    }
+  };
+
+  const setFixDoneApproveHandler = async () => {
+    try {
+      sendSetFixDoneApprove.asset_target_uuid = targetData?.ast_uuid;
+      sendSetFixDoneApprove.plan_index = targetData?.ccp_index;
+      sendSetFixDoneApprove.approved_targets = [targetData?.ccr_index];
+      console.log("=sendSetFixDoneApprove:", sendSetFixDoneApprove);
+
+      const result = await setFixDoneApprove(sendSetFixDoneApprove);
+      await successAlert(result);
+      sendSetFixDoneApprove = {
+        asset_target_uuid: "",
+        plan_index: "",
+        approved: "",
+        approved_targets: "",
+        approved_comment: "",
+      };
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  $: {
+    console.log("targetData:", targetData);
   }
 </script>
 
 <main>
   <div class="swiper_container1">
     <img src="./images/left.png" alt="left" />
-    <div bind:this={swiperContainer} class="swiper-container">
-      <div class="swiper-wrapper">
-        {#if plans && plans?.plans && plans?.plans?.length !== 0}
-          {#each plans?.plans as plan, index}
-            {#each plan?.plan_target as target}
-              {#each Object.entries(target) as [osType, hosts]}
-                {#each hosts as host}
-                  <div class="swiper-slide">
-                    {host.ast_uuid__ass_uuid__ast_hostname}
-                  </div>
-                {/each}
-              {/each}
-            {/each}
+    <div class="scroll">
+      {#if data?.length !== 0}
+        <div class="scroll-container">
+          {#each data as item, index}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class={`slide ${item?.fi_fix_status__cvs_index == 2 && "color1"} ${item?.fi_fix_status__cvs_index == 3 && "color2"}  ${item?.fi_fix_status__cvs_index == 4 && "color4"} ${item?.cfr_fix_status__cvs_index == 6 && "color6"}  ${item?.cfr_fix_status__cvs_index == 7 && "color7"}`}
+              on:click={() => {
+                targetData = item;
+              }}
+            >
+              {item?.ccr_item_no__ccc_item_no}
+            </div>
           {/each}
-        {/if}
-      </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
+        </div>
+      {/if}
     </div>
     <img
       src="./images/left.png"
@@ -159,83 +283,344 @@
           </div>
 
           <div class="action-content">
-            <div class="row">
-              <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>조치방법</label>
-              <select
-                bind:value={sendPlanRegisterData["fix_method"]}
-                class="select_input"
+            {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+                <select
+                  bind:value={sendFixDone["fixed_method"]}
+                  class="select_input"
+                >
+                  <option value={""}>
+                    조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                  </option>
+                  {#if options?.length !== 0}
+                    {#each options as option}
+                      <option value={option?.cvf_index}
+                        >{option?.cvf_desc}</option
+                      >
+                    {/each}
+                  {/if}
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치일정</label>
+                <input
+                  class="input"
+                  type="date"
+                  bind:value={sendFixDone["fixed_start_date"]}
+                  placeholder="조치일정을 입력하세요"
+                />
+                <input
+                  class="input"
+                  type="date"
+                  bind:value={sendFixDone["fixed_end_date"]}
+                  placeholder="조치일정을 입력하세요"
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치내역</label>
+
+                <textarea bind:value={sendFixDone["fixed_comment"]}></textarea>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>증적자료</label>
+                <input
+                  type="file"
+                  on:change={(e) => {
+                    handleFileUpload(e);
+                  }}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치수행자</label>
+                <select bind:value={sendFixDone["fixed_user_index"]}>
+                  <option value={""}> 조치담당자</option>
+                  {#if usernames?.length !== 0}
+                    {#each usernames as username}
+                      <option value={username?.user_index}
+                        >{username?.user_name}</option
+                      >
+                    {/each}
+                  {/if}
+                </select>
+              </div>
+            {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_result?.[0]?.cfr_fix_method__cvf_desc}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치일정</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
+                />
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치내역</label>
+
+                <textarea readonly>
+                  {targetData?.fix_result?.[0]?.cfr_fix_etc}
+                </textarea>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>증적자료</label>
+                <input
+                  type="text"
+                  value={targetData?.fix_result?.[0]?.cfr_evidence_file
+                    .split("/")
+                    .pop() + " ( 다운로드 )"}
+                  readonly
+                  on:click={() => {
+                    sampleClick(
+                      targetData?.fix_result?.[0]?.cfr_index,
+                      targetData?.fix_result?.[0]?.cfr_evidence_file,
+                    );
+                  }}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치수행자</label>
+                <input
+                  type="text"
+                  value={targetData?.fix_result?.[0]?.user_index__user_name}
+                  readonly
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치계획승인</label>
+                <select bind:value={sendSetFixDoneApprove["approved"]}>
+                  <option value={""}> 조치계획승인 / 조치계획반려 </option>
+                  <option value={"1"}> 조치계획승인</option>
+                  <option value={"0"}> 조치계획반려</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치승인자의견 </label>
+                <input
+                  type="text"
+                  bind:value={sendSetFixDoneApprove["approved_comment"]}
+                />
+              </div>
+            {:else if isAgentUser && setView == "plan"}
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_method__cvf_desc}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치수준</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_term}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치일정</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_startdate}
+                />
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_enddate}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+
+                <textarea
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_etc}
+                  readonly
+                ></textarea>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치담당자</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_plan?.[0]?.user_index__user_name}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치계획승인</label>
+                <select bind:value={sendApproveData["approved"]}>
+                  <option value={""}> 조치계획승인 / 조치계획반려 </option>
+                  <option value={"1"}> 조치계획승인</option>
+                  <option value={"0"}> 조치계획반려</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치승인자의견 </label>
+                <input
+                  type="text"
+                  bind:value={sendApproveData["approved_comment"]}
+                />
+              </div>
+            {:else}
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+                <select
+                  bind:value={sendPlanRegisterData["fix_method"]}
+                  class="select_input"
+                >
+                  <option value={""}>
+                    조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                  </option>
+                  {#if options?.length !== 0}
+                    {#each options as option}
+                      <option value={option?.cvf_index}
+                        >{option?.cvf_desc}</option
+                      >
+                    {/each}
+                  {/if}
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치수준</label>
+                <select bind:value={sendPlanRegisterData["fix_level"]}>
+                  <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
+                  <option value="긴급">긴급</option>
+                  <option value="단기">단기</option>
+                  <option value="중기">중기</option>
+                  <option value="장기">장기</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치일정</label>
+                <input
+                  class="input"
+                  type="date"
+                  bind:value={sendPlanRegisterData["fix_start_date"]}
+                  placeholder="조치일정을 입력하세요"
+                />
+                <input
+                  class="input"
+                  type="date"
+                  bind:value={sendPlanRegisterData["fix_end_date"]}
+                  placeholder="조치일정을 입력하세요"
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+
+                <textarea bind:value={sendPlanRegisterData["fix_comment"]}
+                ></textarea>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치담당자</label>
+                <select bind:value={sendPlanRegisterData["fix_user_index"]}>
+                  <option value={""}> 조치담당자</option>
+                  {#if usernames?.length !== 0}
+                    {#each usernames as username}
+                      <option value={username?.user_index}
+                        >{username?.user_name}</option
+                      >
+                    {/each}
+                  {/if}
+                </select>
+              </div>
+            {/if}
+          </div>
+
+          {#if isAgentUser && setView == "plan"}
+            <div class="action-footer">
+              <button
+                class="list-button"
+                on:click={async () => {
+                  sendApproveData.asset_target_uuid = targetData?.ast_uuid;
+                  sendApproveData.plan_index = targetData?.ccp_index;
+                  sendApproveData.approved_targets = [targetData?.ccr_index];
+                  await fixApproveHandler(sendApproveData);
+                  sendApproveData = {
+                    asset_target_uuid: "",
+                    plan_index: "",
+                    approved: "",
+                    approved_targets: "",
+                    approved_comment: "",
+                  };
+                }}
               >
-                <option value={""}>
-                  조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                </option>
-                {#if options?.length !== 0}
-                  {#each options as option}
-                    <option value={option?.cvf_index}>{option?.cvf_desc}</option
-                    >
-                  {/each}
-                {/if}
-              </select>
+                의견등록
+              </button>
             </div>
-
-            <div class="row">
-              <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>조치수준</label>
-              <select bind:value={sendPlanRegisterData["fix_level"]}>
-                <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
-                <option value="긴급">긴급</option>
-                <option value="단기">단기</option>
-                <option value="중기">중기</option>
-                <option value="장기">장기</option>
-              </select>
+          {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <button class="list-button" on:click={setFixDoneRegisterHandler}
+              >조치결과등록</button
+            >
+          {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <button class="list-button" on:click={setFixDoneApproveHandler}
+              >의견등록</button
+            >
+          {:else}
+            <div class="action-footer">
+              <button class="list-button" on:click={fixPlanRegister}>
+                조치계획등록
+              </button>
             </div>
-
-            <div class="row">
-              <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>조치일정</label>
-              <input
-                class="input"
-                type="date"
-                bind:value={sendPlanRegisterData["fix_start_date"]}
-                placeholder="조치일정을 입력하세요"
-              />
-              <input
-                class="input"
-                type="date"
-                bind:value={sendPlanRegisterData["fix_end_date"]}
-                placeholder="조치일정을 입력하세요"
-              />
-            </div>
-
-            <div class="row">
-              <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>조치방법</label>
-
-              <textarea bind:value={sendPlanRegisterData["fix_comment"]}
-              ></textarea>
-            </div>
-
-            <div class="row">
-              <!-- svelte-ignore a11y-label-has-associated-control -->
-              <label>조치담당자</label>
-              <select bind:value={sendPlanRegisterData["fix_user_index"]}>
-                <option value={""}> 조치담당자</option>
-                {#if usernames?.length !== 0}
-                  {#each usernames as username}
-                    <option value={username?.user_index}
-                      >{username?.user_name}</option
-                    >
-                  {/each}
-                {/if}
-              </select>
-            </div>
-          </div>
-
-          <div class="action-footer">
-            <button class="list-button" on:click={fixPlanRegister}>
-              조치계획등록
-            </button>
-          </div>
+          {/if}
 
           <!-- svelte-ignore a11y-label-has-associated-control -->
           {#if historyItemData?.length !== 0}
@@ -268,25 +653,52 @@
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>취약점정보</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+            <textarea rows="3" readonly>
+              ${targetData?.ccr_item_no__ccc_item_criteria}
+            </textarea>
           </div>
 
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>평가기준</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+            <textarea rows="3" readonly>
+              {targetData?.ccr_item_no__ccc_item_title}
+            </textarea>
           </div>
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>조치방법</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+            <textarea rows="3" readonly>
+              {targetData?.ccr_item_no__ccc_mitigation_example}
+            </textarea>
           </div>
 
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>관련자산</label>
+          <!-- <div class="row"> -->
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+          <!-- <label>관련자산</label>
             <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
             ></textarea>
+          </div> -->
+
+          <div class="row">
+            <label>관련자산</label>
+            <div class="table_container">
+              <table>
+                <tr class="first_line">
+                  <th>자산명</th>
+                  <th>아이피주소</th>
+                  <th>자산그룹</th>
+                  <th>OS</th>
+                </tr>
+
+                <tr>
+                  <td>{targetData?.ast_uuid__ass_uuid__ast_hostname}</td>
+                  <td>{targetData?.ast_uuid__ass_uuid__ast_ipaddr}</td>
+                  <td>{targetData?.cct_index__cct_target}</td>
+                  <td>{targetData?.ast_uuid__ass_uuid__ast_os}</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -562,5 +974,51 @@
 
   .swiper-button-next {
     right: -50px;
+  }
+
+  .scroll {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .scroll-container {
+    display: flex; /* Flexbox layout to align items horizontally */
+  }
+
+  .slide {
+    min-width: 100px; /* Adjust item width as needed */
+    padding: 10px;
+    background-color: #f7f7f7;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .color1 {
+    background-color: #ffff00;
+  }
+
+  .color2 {
+    background-color: #92d051;
+  }
+
+  .color3 {
+    background-color: #fec100;
+  }
+
+  /* .color4 {
+    background-color: #b4c6e7;
+  } */
+
+  .color5 {
+    background-color: #b4c6e7;
+  }
+
+  .color7 {
+    background-color: #c55a11;
   }
 </style>

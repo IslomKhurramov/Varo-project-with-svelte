@@ -8,6 +8,7 @@
   import {
     getFixHistoryOfItem,
     getVulnsFixWay,
+    getVulnsOfAsset,
     setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
   import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
@@ -15,47 +16,31 @@
   export let plans;
   export let targetData;
 
-  let showModal = false;
-  let actionMethod = "어쩌고...저쩌고...";
-  let relatedAssets =
-    "자산명, 아이피주소, 자산그룹, 식별코드, 등록일, 보안점수 등등";
-  let actionPlan = "";
-  let riskLevel = "상/중/하";
-  let performanceLog = [
-    {
-      actionMethod: "조치방법",
-      schedule: "일정",
-      opinion: "의견",
-      personInCharge: "조치담당자",
-    },
-  ];
+  // let swiperContainer;
+  // let swiperInstance;
 
-  function closeModal() {
-    showModal = false; // Close the modal
-  }
-
-  let swiperContainer;
-
-  $: {
-    new Swiper(swiperContainer, {
-      modules: [Navigation, Pagination],
-      loop: false,
-      slidesPerView: 8,
-      spaceBetween: 15,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-  }
+  // onMount(() => {
+  //   swiperInstance = new Swiper(swiperContainer, {
+  //     modules: [Navigation, Pagination],
+  //     loop: false,
+  //     slidesPerView: 8,
+  //     spaceBetween: 15,
+  //     pagination: {
+  //       el: ".swiper-pagination",
+  //       clickable: true,
+  //     },
+  //     navigation: {
+  //       nextEl: ".swiper-button-next",
+  //       prevEl: ".swiper-button-prev",
+  //     },
+  //   });
+  // });
 
   let usernames = [];
   let options = [];
   let historyItemData = [];
+  let assets = [];
+
   let sendPlanRegisterData = {
     asset_uuid: "",
     ccr_index: "",
@@ -99,6 +84,39 @@
     }
   };
 
+  function transformVulns(vulns) {
+    const transformed = [];
+
+    for (const key in vulns) {
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      vulns[key].forEach((item) => {
+        if (item.result) {
+          currentResult = item?.result;
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
+          }
+        }
+      });
+
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    return transformed;
+  }
+
   $: {
     (async () => {
       if (targetData) {
@@ -111,33 +129,44 @@
     })();
   }
 
+  let data = [];
+
+  const getData = async () => {
+    assets = await getVulnsOfAsset({
+      plan_index: targetData?.ccp_index,
+      asset_target_uuid: targetData?.ast_uuid,
+    });
+    data = transformVulns(assets?.vulns);
+  };
+
   $: {
-    console.log("historyItemData:", historyItemData);
+    getData();
+  }
+
+  $: {
+    console.log("targetData:", targetData);
   }
 </script>
 
 <main>
   <div class="swiper_container1">
     <img src="./images/left.png" alt="left" />
-    <div bind:this={swiperContainer} class="swiper-container">
-      <div class="swiper-wrapper">
-        {#if plans && plans?.plans && plans?.plans?.length !== 0}
-          {#each plans?.plans as plan, index}
-            {#each plan?.plan_target as target}
-              {#each Object.entries(target) as [osType, hosts]}
-                {#each hosts as host}
-                  <div class="swiper-slide">
-                    {host.ast_uuid__ass_uuid__ast_hostname}
-                  </div>
-                {/each}
-              {/each}
-            {/each}
+    <div class="scroll">
+      {#if data?.length !== 0}
+        <div class="scroll-container">
+          {#each data as item, index}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class={`slide ${item?.fi_fix_status__cvs_index == 2 && "color1"} ${item?.fi_fix_status__cvs_index == 3 && "color2"}  ${item?.fi_fix_status__cvs_index == 4 && "color4"} ${item?.cfr_fix_status__cvs_index == 6 && "color6"}  ${item?.cfr_fix_status__cvs_index == 7 && "color7"}`}
+              on:click={() => {
+                targetData = item;
+              }}
+            >
+              {item?.ccr_item_no__ccc_item_no}
+            </div>
           {/each}
-        {/if}
-      </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
+        </div>
+      {/if}
     </div>
     <img
       src="./images/left.png"
@@ -268,25 +297,52 @@
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>취약점정보</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+            <textarea rows="3" readonly>
+              ${targetData?.ccr_item_no__ccc_item_criteria}
+            </textarea>
           </div>
 
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>평가기준</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+            <textarea rows="3" readonly>
+              {targetData?.ccr_item_no__ccc_item_title}
+            </textarea>
           </div>
           <div class="row">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>조치방법</label>
-            <textarea bind:value={actionMethod} rows="3" readonly></textarea>
+            <textarea rows="3" readonly>
+              {targetData?.ccr_item_no__ccc_mitigation_example}
+            </textarea>
           </div>
 
-          <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label>관련자산</label>
+          <!-- <div class="row"> -->
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+          <!-- <label>관련자산</label>
             <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
             ></textarea>
+          </div> -->
+
+          <div class="row">
+            <label>관련자산</label>
+            <div class="table_container">
+              <table>
+                <tr class="first_line">
+                  <th>자산명</th>
+                  <th>아이피주소</th>
+                  <th>자산그룹</th>
+                  <th>OS</th>
+                </tr>
+
+                <tr>
+                  <td>{targetData?.ast_uuid__ass_uuid__ast_hostname}</td>
+                  <td>{targetData?.ast_uuid__ass_uuid__ast_ipaddr}</td>
+                  <td>{targetData?.cct_index__cct_target}</td>
+                  <td>{targetData?.ast_uuid__ass_uuid__ast_os}</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -562,5 +618,51 @@
 
   .swiper-button-next {
     right: -50px;
+  }
+
+  .scroll {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .scroll-container {
+    display: flex; /* Flexbox layout to align items horizontally */
+  }
+
+  .slide {
+    min-width: 100px; /* Adjust item width as needed */
+    padding: 10px;
+    background-color: #f7f7f7;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .color1 {
+    background-color: #ffff00;
+  }
+
+  .color2 {
+    background-color: #92d051;
+  }
+
+  .color3 {
+    background-color: #fec100;
+  }
+
+  /* .color4 {
+    background-color: #b4c6e7;
+  } */
+
+  .color5 {
+    background-color: #b4c6e7;
+  }
+
+  .color7 {
+    background-color: #c55a11;
   }
 </style>

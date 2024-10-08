@@ -23,6 +23,7 @@
   let activePlan = null;
   let wholePage = false;
   let selectedSendData;
+  let wholeOption = null;
 
   let search = {
     plan_index: "",
@@ -291,11 +292,12 @@
           bind:selectedSendData
           bind:showProject
           bind:targetData
+          bind:wholeOption
         />
       {/if}
 
       {#if wholePage}
-        <WholePage bind:plans bind:targetData />
+        <WholePage bind:plans bind:targetData bind:wholeOption />
       {/if}
     </div>
   </div>

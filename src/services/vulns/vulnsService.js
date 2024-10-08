@@ -139,3 +139,24 @@ export const getFixHistoryOfItem = async (data) => {
     throw error;
   }
 };
+
+export const getFixDoneLists = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getFixDoneLists/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    console.log("getFixDoneLists RESPONSE:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
+  } catch (error) {
+    console.error("Error getFixDoneLists:", error);
+    throw error;
+  }
+};

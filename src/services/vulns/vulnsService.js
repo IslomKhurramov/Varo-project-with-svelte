@@ -181,3 +181,30 @@ export const setFixDoneRegister = async (data) => {
     throw error;
   }
 };
+
+export const getFixEviDownload = async (cfr_index, filename) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getFixEviDownload/`,
+      {
+        cfr_index: cfr_index,
+      },
+      {
+        responseType: "blob",
+        withCredentials: true,
+      },
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.setAttribute("download", filename);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error getFixEviDownload:", error);
+    throw error;
+  }
+};

@@ -6,6 +6,7 @@
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
   import {
+    getFixEviDownload,
     getFixHistoryOfItem,
     getVulnsFixWay,
     getVulnsOfAsset,
@@ -197,6 +198,16 @@
     sendFixDone.fixed_evidence_file = event.target.files[0];
   };
 
+  const sampleClick = async (cfr_index, file) => {
+    try {
+      file = file.split("/").pop();
+      console.log("file: ", file);
+      await getFixEviDownload(cfr_index, file);
+    } catch (error) {
+      console.log("Error sampleClick: ", error);
+    }
+  };
+
   $: {
     console.log("targetData:", targetData);
   }
@@ -311,6 +322,68 @@
                     {/each}
                   {/if}
                 </select>
+              </div>
+            {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치방법</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_result?.[0]?.cfr_fix_method__cvf_desc}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치일정</label>
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
+                />
+                <input
+                  type="text"
+                  readonly
+                  value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치내역</label>
+
+                <textarea readonly>
+                  {targetData?.fix_result?.[0]?.cfr_fix_etc}
+                </textarea>
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>증적자료</label>
+                <input
+                  type="text"
+                  value={targetData?.fix_result?.[0]?.cfr_evidence_file
+                    .split("/")
+                    .pop() + " ( 다운로드 )"}
+                  readonly
+                  on:click={() => {
+                    sampleClick(
+                      targetData?.fix_result?.[0]?.cfr_index,
+                      targetData?.fix_result?.[0]?.cfr_evidence_file,
+                    );
+                  }}
+                />
+              </div>
+
+              <div class="row">
+                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <label>조치수행자</label>
+                <input
+                  type="text"
+                  value={targetData?.fix_result?.[0]?.user_index__user_name}
+                  readonly
+                />
               </div>
             {:else}
               <div class="row">

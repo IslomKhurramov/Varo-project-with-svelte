@@ -52,6 +52,13 @@
       );
       console.log("REGISTER:", response);
 
+      userData.set({
+        isLoggedIn: true,
+        userInfo: response?.CODE,
+      });
+
+      localStorage.setItem("userInfo", JSON.stringify(response?.CODE));
+
       successMessageSignUp = "Registration successful! Redirecting to login...";
       errorMessageSignUp = "";
 
@@ -66,12 +73,16 @@
   // Handle login using session-based authentication
   const handleLogin = async () => {
     try {
-      await login(email, password);
+      const response = await login(email, password);
+
+      console.log("handleLogin:", response);
 
       userData.set({
         isLoggedIn: true,
-        userInfo: "data",
+        userInfo: response?.CODE,
       });
+
+      localStorage.setItem("userInfo", JSON.stringify(response?.CODE));
 
       navigate("/");
     } catch (err) {

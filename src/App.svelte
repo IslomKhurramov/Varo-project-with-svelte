@@ -16,6 +16,8 @@
   onMount(() => {
     checkAuth();
 
+    console.log("$userData:", $userData);
+
     // if ($userData.isLoggedIn) {
     //   console.log("User is logged in:", $userData);
     //   navigate("/");

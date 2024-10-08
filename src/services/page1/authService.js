@@ -18,7 +18,7 @@ export const login = async (email, password) => {
     console.log("login: response =>", response);
 
     if (data.RESULT !== "ERROR") {
-      return { success: true };
+      return data;
     } else {
       throw new Error(data.CODE);
     }
@@ -45,7 +45,7 @@ export const register = async (name, email, password, department) => {
     console.log("login: response =>", response);
 
     if (data.RESULT !== "ERROR") {
-      return { success: true };
+      return data;
     } else {
       throw new Error(data.CODE);
     }

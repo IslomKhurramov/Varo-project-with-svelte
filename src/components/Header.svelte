@@ -2,6 +2,7 @@
   import { Link } from "svelte-routing";
   // import { authToken } from "../stores/authToken";
   import { navigate } from "svelte-routing";
+  import { userData } from "../stores/user.store";
 
   export let activeMenu = "";
 
@@ -63,9 +64,13 @@
     </div>
     <div class="right_side">
       <img src="./images/user.png" alt="user" class="user_image" />
-      <Link to="/login" on:click={() => (activeMenu = "login")}>
-        <p>Login</p>
-      </Link>
+      {#if $userData?.userInfo}
+        <p>{$userData?.userInfo?.user_name}</p>
+      {:else}
+        <Link to="/login" on:click={() => (activeMenu = "login")}>
+          <p>Login</p>
+        </Link>
+      {/if}
     </div>
   </div>
 </main>

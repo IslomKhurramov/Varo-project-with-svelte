@@ -5,6 +5,7 @@
   import { onMount } from "svelte";
   import { getAllPlanLists } from "../../services/page1/planInfoService";
   import { setDeletePlan } from "../../services/page1/newInspection";
+  import { userData } from "../../stores/user.store";
 
   let currentView = "default";
   let currentPage = null;
@@ -28,7 +29,7 @@
   });
 
   $: {
-    console.log("+currentView:", currentView);
+    console.log("$userData2:", $userData);
   }
 
   /**********************************/

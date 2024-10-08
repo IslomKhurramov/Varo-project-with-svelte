@@ -35,6 +35,8 @@
   let searchedResult = [];
   let showSearchResult = false;
   let showGetPlanHeader = false;
+  let assetOs = "";
+  let assetHost = "";
 
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
@@ -51,17 +53,26 @@
   onMount(() => {
     assetGroupList();
   });
+  $: console.log("assetHost:", assetHost);
+  $: console.log("assetOs:", assetOs);
   /*************************************************************/
-  // Function to filter assets based on the selected group
   function filterAssets() {
     console.log("Selected Group:", selectedGroup);
+
     filteredAssets = $allAssetList.filter((asset) => {
-      if (Array.isArray(asset.asset_group)) {
-        return asset.asset_group.some(
-          (group) => group.asg_index === selectedGroup,
-        );
-      }
-      return false;
+      const groupMatch =
+        Array.isArray(asset.asset_group) &&
+        asset.asset_group.some((group) => group.asg_index === selectedGroup);
+
+      const hostnameMatch = assetHost
+        ? asset.ast_hostname.toLowerCase().includes(assetHost.toLowerCase())
+        : true;
+
+      const ostypeMatch = assetOs
+        ? asset.ast_ostype.toLowerCase().includes(assetOs.toLowerCase())
+        : true;
+
+      return groupMatch && hostnameMatch && ostypeMatch;
     });
   }
 
@@ -272,9 +283,11 @@
               >
                 <option value="" disabled selected hidden>운영체제</option>
                 {#each $allAssetList as asset}
-                  <option class="group_option" value={asset.ast_ostype}
-                    >{asset.ast_ostype}</option
-                  >
+                  {#if asset.ast_ostype !== ""}
+                    <option class="group_option" value={asset.ast_ostype}
+                      >{asset.ast_ostype}</option
+                    >
+                  {/if}
                 {/each}
               </select>
             </div>
@@ -332,6 +345,8 @@
           {filterAssets}
           {filteredAssets}
           {logData}
+          bind:assetHost
+          bind:assetOs
         />
       {:else if currentView === "newView"}
         {#key currentView}

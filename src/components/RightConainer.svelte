@@ -30,10 +30,11 @@
 
   // Function to filter based on the selected criteria
   function filterProjects() {
+    console.log("selectedAgentStatus:", selectedAgentStatus);
     filteredProjects = projectArray.filter((project) => {
       return (
         (selectedStatus === "" ||
-          project.ccp_b_finalized === (selectedStatus === "approved")) &&
+          project.ccp_b_finalized.toString() == selectedStatus) &&
         (selectedScheduleRange === "" ||
           doesProjectMatchScheduleRange(
             project.ccp_cdate,
@@ -41,19 +42,24 @@
           )) &&
         (selectedOS === "" || doesProjectMatchOS(project, selectedOS)) &&
         (selectedAgentStatus === "" ||
-          project.uploaded_result === selectedAgentStatus)
+          (selectedAgentStatus === "1" && project.uploaded_result > 0) ||
+          (selectedAgentStatus === "0" && project.uploaded_result <= 0))
       );
     });
   }
 
-  // Function to check if the project matches the selected OS (asset type)
   function doesProjectMatchOS(project, os) {
-    if (os === "Windows") {
-      return project.asset?.WINDOWS; // Match Windows
-    } else if (os === "Unix") {
-      return project.asset?.UNIX; // Match Unix
-    } else if (os === "Security") {
-      return project.asset?.SECURITY; // Match Security Assets
+    console.log("os:", os);
+    if (os === "WINDOWS") {
+      return project.asset?.WINDOWS;
+    } else if (os === "UNIX") {
+      return project.asset?.UNIX;
+    } else if (os === "SECURITY") {
+      return project.asset?.SECURITY;
+    } else if (os === "NETWORK") {
+      return project.asset?.NETWORK;
+    } else if (os === "DBMS") {
+      return project.asset?.DBMS;
     }
     return false;
   }
@@ -63,10 +69,10 @@
     const projectDateObj = new Date(projectDate);
     const now = new Date();
 
-    if (range === "next7days") {
-      const next7Days = new Date();
-      next7Days.setDate(now.getDate() + 7);
-      return projectDateObj >= now && projectDateObj <= next7Days;
+    if (range === "last7days") {
+      const last7days = new Date();
+      last7days.setDate(now.getDate() - 7);
+      return projectDateObj >= last7days && projectDateObj <= now;
     } else if (range === "past90days") {
       const past90Days = new Date();
       past90Days.setDate(now.getDate() - 90);
@@ -105,8 +111,8 @@
         class="select_input"
       >
         <option value="">프로젝트명</option>
-        <option value="approved">완료된 프로젝트</option>
-        <option value="pending">진행 중인 프로젝트</option>
+        <option value="true">완료된 프로젝트</option>
+        <option value="false">진행 중인 프로젝트</option>
       </select>
     </div>
 
@@ -118,7 +124,7 @@
         class="select_input"
       >
         <option value="">일정범위</option>
-        <option value="next7days">Next 7 Days</option>
+        <option value="last7days">Past 7 Days</option>
         <option value="past90days">Past 90 Days</option>
       </select>
     </div>
@@ -131,9 +137,11 @@
         class="select_input"
       >
         <option value="">운영체제</option>
-        <option value="Windows">Windows</option>
-        <option value="Unix">Unix</option>
-        <option value="Security">Security</option>
+        <option value="WINDOWS">Windows</option>
+        <option value="UNIX">Unix</option>
+        <option value="SECURITY">Security</option>
+        <option value="NETWORK">Network</option>
+        <option value="DBMS">Dbms</option>
       </select>
     </div>
 
@@ -145,8 +153,8 @@
         class="select_input"
       >
         <option value="">결과등록상태</option>
-        <option value="12">Registered</option>
-        <option value="pending">Pending</option>
+        <option value="1">Registered</option>
+        <option value="0">Pending</option>
       </select>
     </div>
   </form>

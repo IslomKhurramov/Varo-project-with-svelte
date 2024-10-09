@@ -64,7 +64,7 @@
 
   <div class="right_menu">
     {#if tabMenu !== "no"}
-      <svelte:component this={currentPage} />
+      <svelte:component this={currentPage} bind:projectIndex />
     {:else}
       <ProjectDetail {projectIndex} />
     {/if}

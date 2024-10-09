@@ -734,7 +734,11 @@
   </div>
 
   {#if modalData}
-    <ModalDynamic bind:showModal modalWidth={60}>
+    <ModalDynamic
+      bind:showModal
+      modalWidth={60}
+      modalHeight={modalData?.length > 10 ? 70 : null}
+    >
       <ResultPopUp bind:modalData />
     </ModalDynamic>
   {/if}

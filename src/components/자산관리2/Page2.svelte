@@ -53,29 +53,22 @@
   onMount(() => {
     assetGroupList();
   });
-  $: console.log("assetHost:", assetHost);
-  $: console.log("assetOs:", assetOs);
+
   /*************************************************************/
   function filterAssets() {
     console.log("Selected Group:", selectedGroup);
-
     filteredAssets = $allAssetList.filter((asset) => {
-      const groupMatch =
-        Array.isArray(asset.asset_group) &&
-        asset.asset_group.some((group) => group.asg_index === selectedGroup);
-
-      const hostnameMatch = assetHost
-        ? asset.ast_hostname.toLowerCase().includes(assetHost.toLowerCase())
-        : true;
-
-      const ostypeMatch = assetOs
-        ? asset.ast_ostype.toLowerCase().includes(assetOs.toLowerCase())
-        : true;
-
-      return groupMatch && hostnameMatch && ostypeMatch;
+      if (Array.isArray(asset.asset_group)) {
+        return asset.asset_group.some(
+          (group) => group.asg_index === selectedGroup,
+        );
+      }
+      return false;
     });
   }
-
+  function handleFilter() {
+    filterAssets();
+  }
   /***********************************************************/
   const addNewGroup = async () => {
     if (!newGroupName.trim()) {
@@ -119,13 +112,11 @@
   };
   /*****************************************/
   const getSearchAsset = async () => {
-    console.log("group", groupNames);
     console.log("target", assetTargetReg);
     console.log("acvtivate", assetAcitve);
     console.log("osType", asset_ostype);
     try {
       const response = await getSearch(
-        groupNames,
         asset_ostype,
         assetTargetReg,
         assetAcitve,
@@ -134,7 +125,7 @@
       // Check if response is not empty and has keys
       if (response.RESULT === "OK" && Object.keys(response).length > 0) {
         // Convert response object into an array of asset objects
-        searchedResult = Object.values(response.CODE); // Store all assets in an array
+        filteredAssets = Object.values(response.CODE); // Store all assets in an array
         showSearchResult = true;
       } else {
         throw new Error("Failed to save group.");
@@ -262,13 +253,14 @@
                 name="approval_status"
                 id="approval_status"
                 class="select_input"
-                bind:value={groupNames}
+                bind:value={selectedGroup}
+                on:change={handleFilter}
               >
-                {#each $allAssetGroupList as group}
-                  <option class="group_option" value={group.asg_title}
-                    >{group.asg_title}</option
-                  >
-                {/each}
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
                 <option value="" disabled selected hidden
                   >그룹을 선택하세요</option
                 >
@@ -353,7 +345,7 @@
           <Swiper />
         {/key}
       {:else}
-        <AssetCardsPage {searchedResult} {showSearchResult} />
+        <AssetCardsPage {searchedResult} {showSearchResult} {filteredAssets} />
       {/if}
     </div>
   </div>

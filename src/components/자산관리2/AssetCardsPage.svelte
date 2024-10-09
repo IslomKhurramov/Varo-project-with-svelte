@@ -20,6 +20,7 @@
   let selectedUUID = [];
   let selectedAsset = null;
   export let searchedResult;
+  export let filteredAssets = [];
   export let showSearchResult;
   let allSelected;
   $: allAssetList.subscribe((data) => {
@@ -398,9 +399,9 @@
             </div>
           {/each}
         {/if}
-      {:else if $allAssetList.length > 0}
+      {:else}
         <!-- Display List of Assets -->
-        {#each $allAssetList as asset}
+        {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
           <div class="card {asset.ast_activate ? '' : 'deactivated'}">
             <input
               type="checkbox"
@@ -636,6 +637,7 @@
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease;
+    height: 170px;
   }
 
   .card:hover {

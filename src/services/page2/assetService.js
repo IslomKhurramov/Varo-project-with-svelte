@@ -367,14 +367,12 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
 
 /************************************************************************** */
 export const getSearch = async (
-  ast_group,
   asset_ostype,
   asset_target_registered,
   asset_activate,
 ) => {
   try {
     const response = await axios.post(`${serverApi}/api/getSearchAsset/`, {
-      asset_group: ast_group,
       asset_ostype: asset_ostype,
       asset_target_registered: asset_target_registered,
       asset_activate: asset_activate,

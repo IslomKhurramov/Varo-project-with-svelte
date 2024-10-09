@@ -52,14 +52,6 @@
         이력관리
       </h3>
     </div>
-    <!-- <div class="header">
-      <h3
-        on:click="{() => selectPage(FifthMenu, '프로그램다운로드')}"
-        class="{tabMenu === '프로그램다운로드' ? 'active' : ''}"
-      >
-        프로그램다운로드
-      </h3>
-        </div> -->
   </div>
 
   <div class="right_menu">

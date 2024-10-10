@@ -23,14 +23,14 @@
   let showModalSecond = false;
   let selectedGroupIndex = "";
   let showModal = false;
-  let currentPage = null;
-  let activeMenu = null;
+  let currentPage = FirstMenu;
+  let activeMenu = "자산개요";
   let swiperInstance;
   let swiperContainer;
   let uuid_asset = "";
   let asset_group_index = "";
-  let isProcessing = false;
   let approve_status = "";
+  export let closeSwiper;
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -283,6 +283,7 @@
 </script>
 
 <main>
+  <button on:click={closeSwiper} class="close-button">X</button>
   <div class="swiper_container1">
     <img src="./images/left.png" alt="left" />
     <div bind:this={swiperContainer} class="swiper-container">
@@ -395,6 +396,9 @@
 <style>
   main {
     width: 100%;
+    background-color: #f7f9fb;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   .dialog2 {
     width: 100%;
@@ -424,6 +428,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-top: -25px;
   }
   .swiper_container1 img {
     width: 50px;
@@ -487,13 +492,9 @@
     display: flex;
     flex-direction: row;
     gap: 20px;
-    padding: 20px 0;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    background-color: #f7f9fb;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .header h3 {
@@ -672,5 +673,21 @@
     to {
       opacity: 1;
     }
+  }
+  .close-button {
+    background-color: transparent;
+    border: none;
+    color: #0056b3;
+    font-size: 16px;
+    cursor: pointer;
+    top: 10px;
+    right: 10px;
+    transition: color 0.3s ease;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .close-button:hover {
+    color: #ff5e5e;
   }
 </style>

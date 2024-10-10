@@ -9,8 +9,8 @@
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
   export let tableData;
-  export let vulnerabilityStatus;
-  export let actionStatus;
+  export let vulnerabilityStatusValue;
+  export let actionStatusValue;
   export let setView;
   export let wholePage;
   export let selectedSendData;
@@ -35,7 +35,7 @@
     7: "조치결과반려",
   };
 
-  function transformVulns(vulns) {
+  function transformVulns(vulns, vulnerabilityStatusValue, actionStatusValue) {
     const transformed = [];
 
     for (const key in vulns) {
@@ -45,7 +45,35 @@
 
       vulns[key].forEach((item) => {
         if (item.result) {
-          currentResult = item?.result;
+          const result = item?.result;
+          const statusMatch =
+            !vulnerabilityStatusValue ||
+            result.ccr_item_result === vulnerabilityStatusValue;
+          let actionMatch;
+          if (
+            actionStatusValue == "5" ||
+            actionStatusValue == "6" ||
+            actionStatusValue == "7"
+          ) {
+            actionMatch =
+              !actionStatusValue ||
+              result.cfr_fix_status__cvs_index == actionStatusValue;
+          } else {
+            actionMatch =
+              !actionStatusValue ||
+              result.cfi_fix_status__cvs_index == actionStatusValue;
+          }
+
+          // const agentMatch = !filters.agentStatus || result.agent === filters.agentStatus;
+
+          // If all conditions match, assign the result to currentResult
+          if (statusMatch && actionMatch) {
+            currentResult = result;
+          }
+
+          //   if (planMatch && statusMatch && actionMatch && agentMatch) {
+          //   currentResult = result;
+          // }
         } else {
           if (item.fix_plan) {
             fixPlan = item.fix_plan;
@@ -115,8 +143,16 @@
 
   $: {
     if (tableData) {
-      data = transformVulns(tableData);
+      data = transformVulns(
+        tableData,
+        vulnerabilityStatusValue,
+        actionStatusValue,
+      );
     }
+  }
+
+  $: {
+    console.log();
   }
 </script>
 
@@ -294,7 +330,9 @@
   <div class="main_container">
     <table>
       <tr class="first_line">
-        <th></th>
+        {#if isAgenUser}
+          <th></th>
+        {/if}
         <th>순번</th>
         <th>자산명</th>
         <th>점검대상</th>
@@ -311,120 +349,18 @@
       </tr>
       {#if data?.length !== 0}
         {#each data as item, index}
-          {#if vulnerabilityStatus}
-            {#if item.ccr_item_result == vulnerabilityStatus}
-              <tr
-                on:click={() => {
-                  wholePage = true;
-                  targetData = item;
-                }}
-              >
-                <td>
-                  <input
-                    type="checkbox"
-                    on:click={(e) => e.stopPropagation()}
-                    on:change={() => toggleSelection(item?.ccr_index)}
-                    checked={selectedItems.includes(item?.ccr_index)}
-                  />
-                </td>
-                <td>{index + 1} </td>
-                <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
-                <td>{item?.cct_index__cct_target}</td>
-                <td>{item.ccr_item_no__ccc_item_group}</td>
-                <td>{item.ccr_item_no__ccc_item_title}</td>
-                <td>{item.ccr_item_no__ccc_item_level}</td>
-                <td>
-                  {test[item?.cfi_fix_status__cvs_index] ?? "조치전"}
-                </td>
-                <td>
-                  {item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "조치전"}
-                </td>
-                <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
-                <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                {#if isAgenUser}
-                  <td
-                    on:click={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <select
-                      name=""
-                      id=""
-                      class="select_input"
-                      on:change={(e) => {
-                        if (setView == "plan") {
-                          const data = {
-                            plan_index: item?.ccp_index,
-                            asset_target_uuid: item?.ast_uuid,
-                            approved: e.target.value == "승인" ? "1" : "0",
-                            approved_targets: [item?.ccr_index],
-                            approved_comment: e.target.value,
-                          };
-
-                          fixApproveHandler(data);
-                          selectedItems = [];
-                        } else {
-                          const data = {
-                            plan_index: item?.ccp_index,
-                            asset_target_uuid: item?.ast_uuid,
-                            approved: e.target.value == "승인" ? "1" : "0",
-                            approved_targets: [item?.ccr_index],
-                            approved_comment: e.target.value,
-                          };
-
-                          fixDoneApproveHandler(data);
-                          selectedItems = [];
-                        }
-                      }}
-                    >
-                      <option
-                        value="없음"
-                        selected={setView == "plan"
-                          ? item?.cfi_fix_status__cvs_index != 3 ||
-                            item?.cfi_fix_status__cvs_index != 4
-                          : item?.cfi_fix_status__cvs_index != 3 ||
-                            item?.cfr_fix_status__cvs_index != 4}
-                      >
-                        없음
-                      </option>
-                      <option
-                        value="승인"
-                        selected={setView == "plan"
-                          ? item?.cfi_fix_status__cvs_index == 3 ||
-                            item?.cfi_fix_status__cvs_index == 4
-                          : item?.cfi_fix_status__cvs_index == 3 ||
-                            item?.cfr_fix_status__cvs_index == 4}
-                      >
-                        승인
-                      </option>
-                      <option
-                        value="반려"
-                        selected={setView == "plan"
-                          ? item?.cfi_fix_status__cvs_index == 4 ||
-                            item?.cfi_fix_status__cvs_index == 7
-                          : item?.cfi_fix_status__cvs_index == 4 ||
-                            item?.cfr_fix_status__cvs_index == 7}
-                      >
-                        반려
-                      </option>
-                    </select>
-                  </td>
-                {/if}
-              </tr>
-            {/if}
-          {:else}
-            <tr
-              on:click={() => {
-                wholePage = true;
-                targetData = item;
-                if (setView == "plan") {
-                  wholeOption = "plan";
-                } else {
-                  wholeOption = "result";
-                }
-              }}
-            >
+          <tr
+            on:click={() => {
+              wholePage = true;
+              targetData = item;
+              if (setView == "plan") {
+                wholeOption = "plan";
+              } else {
+                wholeOption = "result";
+              }
+            }}
+          >
+            {#if isAgenUser}
               <td>
                 <input
                   type="checkbox"
@@ -433,92 +369,93 @@
                   checked={selectedItems.includes(item?.ccr_index)}
                 />
               </td>
-              <td>{index + 1}</td>
-              <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
-              <td>{item?.cct_index__cct_target}</td>
-              <td>{item.ccr_item_no__ccc_item_group}</td>
-              <td>{item.ccr_item_no__ccc_item_title}</td>
-              <td>{item.ccr_item_no__ccc_item_level}</td>
-              <td>
-                {test[item?.cfi_fix_status__cvs_index] ?? "조치전"}
-              </td>
-              <td>
-                {item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "조치전"}
-              </td>
-              <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
-              <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              {#if isAgenUser}
-                <td
-                  on:click={(e) => {
-                    e.stopPropagation();
+            {/if}
+
+            <td>{index + 1}</td>
+            <td>{item.ast_uuid__ass_uuid__ast_hostname}</td>
+            <td>{item?.cct_index__cct_target}</td>
+            <td>{item.ccr_item_no__ccc_item_group}</td>
+            <td>{item.ccr_item_no__ccc_item_title}</td>
+            <td>{item.ccr_item_no__ccc_item_level}</td>
+            <td>
+              {test[item?.cfi_fix_status__cvs_index] ?? "조치전"}
+            </td>
+            <td>
+              {item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ?? "조치전"}
+            </td>
+            <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
+            <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            {#if isAgenUser}
+              <td
+                on:click={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <select
+                  name=""
+                  id=""
+                  class="select_input"
+                  on:change={(e) => {
+                    if (setView == "plan") {
+                      const data = {
+                        plan_index: item?.ccp_index,
+                        asset_target_uuid: item?.ast_uuid,
+                        approved: e.target.value == "승인" ? "1" : "0",
+                        approved_targets: [item?.ccr_index],
+                        approved_comment: e.target.value,
+                      };
+
+                      fixApproveHandler(data);
+                      selectedItems = [];
+                    } else {
+                      const data = {
+                        plan_index: item?.ccp_index,
+                        asset_target_uuid: item?.ast_uuid,
+                        approved: e.target.value == "승인" ? "1" : "0",
+                        approved_targets: [item?.ccr_index],
+                        approved_comment: e.target.value,
+                      };
+
+                      fixDoneApproveHandler(data);
+                      selectedItems = [];
+                    }
                   }}
                 >
-                  <select
-                    name=""
-                    id=""
-                    class="select_input"
-                    on:change={(e) => {
-                      if (setView == "plan") {
-                        const data = {
-                          plan_index: item?.ccp_index,
-                          asset_target_uuid: item?.ast_uuid,
-                          approved: e.target.value == "승인" ? "1" : "0",
-                          approved_targets: [item?.ccr_index],
-                          approved_comment: e.target.value,
-                        };
-
-                        fixApproveHandler(data);
-                        selectedItems = [];
-                      } else {
-                        const data = {
-                          plan_index: item?.ccp_index,
-                          asset_target_uuid: item?.ast_uuid,
-                          approved: e.target.value == "승인" ? "1" : "0",
-                          approved_targets: [item?.ccr_index],
-                          approved_comment: e.target.value,
-                        };
-
-                        fixDoneApproveHandler(data);
-                        selectedItems = [];
-                      }
-                    }}
+                  <option
+                    value="없음"
+                    selected={setView == "plan"
+                      ? item?.cfi_fix_status__cvs_index != 3 ||
+                        item?.cfi_fix_status__cvs_index != 4
+                      : item?.cfi_fix_status__cvs_index != 3 ||
+                        item?.cfr_fix_status__cvs_index != 4}
                   >
-                    <option
-                      value="없음"
-                      selected={setView == "plan"
-                        ? item?.cfi_fix_status__cvs_index != 3 ||
-                          item?.cfi_fix_status__cvs_index != 4
-                        : item?.cfi_fix_status__cvs_index != 3 ||
-                          item?.cfr_fix_status__cvs_index != 4}
-                    >
-                      없음
-                    </option>
-                    <option
-                      value="승인"
-                      selected={setView == "plan"
-                        ? item?.cfi_fix_status__cvs_index == 3 ||
-                          item?.cfi_fix_status__cvs_index == 4
-                        : item?.cfi_fix_status__cvs_index == 3 ||
-                          item?.cfr_fix_status__cvs_index == 4}
-                    >
-                      승인
-                    </option>
-                    <option
-                      value="반려"
-                      selected={setView == "plan"
-                        ? item?.cfi_fix_status__cvs_index == 4 ||
-                          item?.cfi_fix_status__cvs_index == 7
-                        : item?.cfi_fix_status__cvs_index == 4 ||
-                          item?.cfr_fix_status__cvs_index == 7}
-                    >
-                      반려
-                    </option>
-                  </select>
-                </td>
-              {/if}
-            </tr>
-          {/if}
+                    없음
+                  </option>
+                  <option
+                    value="승인"
+                    selected={setView == "plan"
+                      ? item?.cfi_fix_status__cvs_index == 3 ||
+                        item?.cfi_fix_status__cvs_index == 4
+                      : item?.cfi_fix_status__cvs_index == 3 ||
+                        item?.cfr_fix_status__cvs_index == 4}
+                  >
+                    승인
+                  </option>
+                  <option
+                    value="반려"
+                    selected={setView == "plan"
+                      ? item?.cfi_fix_status__cvs_index == 4 ||
+                        item?.cfi_fix_status__cvs_index == 7
+                      : item?.cfi_fix_status__cvs_index == 4 ||
+                        item?.cfr_fix_status__cvs_index == 7}
+                  >
+                    반려
+                  </option>
+                </select>
+              </td>
+            {/if}
+          </tr>
         {/each}
       {/if}
     </table>

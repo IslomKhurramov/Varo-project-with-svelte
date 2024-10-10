@@ -17,7 +17,6 @@
   } from "../../services/vulns/vulnsService.js";
   import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
 
-  export let plans;
   export let targetData;
   export let setView;
 
@@ -441,7 +440,8 @@
                 <input
                   type="text"
                   readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_method__cvf_desc}
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ??
+                    ""}
                 />
               </div>
 
@@ -451,7 +451,7 @@
                 <input
                   type="text"
                   readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_term}
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_term ?? ""}
                 />
               </div>
 
@@ -461,12 +461,12 @@
                 <input
                   type="text"
                   readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_startdate}
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_startdate ?? ""}
                 />
                 <input
                   type="text"
                   readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_enddate}
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_enddate ?? ""}
                 />
               </div>
 
@@ -475,7 +475,7 @@
                 <label>조치방법</label>
 
                 <textarea
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_etc}
+                  value={targetData?.fix_plan?.[0]?.cfi_fix_etc ?? ""}
                   readonly
                 ></textarea>
               </div>
@@ -486,7 +486,7 @@
                 <input
                   type="text"
                   readonly
-                  value={targetData?.fix_plan?.[0]?.user_index__user_name}
+                  value={targetData?.fix_plan?.[0]?.user_index__user_name ?? ""}
                 />
               </div>
 

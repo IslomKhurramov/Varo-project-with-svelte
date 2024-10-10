@@ -12,7 +12,7 @@
 
   let projects;
   let searchFilters;
-  let logData = [];
+  let logData = null;
   let search = {
     plan_index: "",
     asset_name: "",
@@ -30,8 +30,11 @@
   };
 
   $: {
-    if (projectIndex) {
+    if (projectIndex && !logData) {
       search = { ...search, plan_index: projectIndex };
+      searchDataHandler();
+      console.log("triger data", searchFilters);
+      console.log("logData", logData);
     }
   }
 </script>
@@ -41,7 +44,11 @@
     <div class="dropdown-group">
       <div class="dropdown-container">
         <label for="project">프로젝트:</label>
-        <select id="project" bind:value={search.plan_index}>
+        <select
+          id="project"
+          bind:value={search.plan_index}
+          on:change={searchDataHandler}
+        >
           <option value="" selected disabled>선택</option>
           {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
             {#each searchFilters?.plans as plan}
@@ -52,7 +59,11 @@
       </div>
       <div class="dropdown-container">
         <label for="target">수행자:</label>
-        <select id="target" bind:value={search.order_user}>
+        <select
+          id="target"
+          bind:value={search.order_user}
+          on:change={searchDataHandler}
+        >
           <option value="" selected>선택</option>
           {#if searchFilters?.users && searchFilters?.users?.length !== 0}
             {#each searchFilters?.users as user}
@@ -64,14 +75,21 @@
       <div class="dropdown-container">
         <label for="target">날짜:</label>
         <div>
-          <input type="date" bind:value={search.search_start_date} />
+          <input
+            type="date"
+            bind:value={search.search_start_date}
+            on:change={searchDataHandler}
+          />
           ~
-          <input type="date" bind:value={search.search_end_date} />
+          <input
+            type="date"
+            bind:value={search.search_end_date}
+            on:change={searchDataHandler}
+          />
         </div>
       </div>
     </div>
     <div class="button-group">
-      <button class="firstlineButton" on:click={searchDataHandler}>검색</button>
       <button class="firstlineButton">엑셀저장</button>
     </div>
   </div>
@@ -89,7 +107,7 @@
       </tr>
     </thead>
     <tbody>
-      {#if logData.length !== 0}
+      {#if logData && logData.length !== 0}
         {#each logData as data, index}
           <tr>
             <td>{index + 1}</td>

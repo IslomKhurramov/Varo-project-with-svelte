@@ -7,6 +7,7 @@
   import SecondMenu from "./점검관리1/HeaderMenu/SecondMenu.svelte";
   import ThirdMenu from "./점검관리1/HeaderMenu/ThirdMenu.svelte";
   import FourthMenu from "./점검관리1/HeaderMenu/FourthMenu.svelte";
+  import ProjectDetail from "./점검관리1/ProjectDetail.svelte";
 
   let projectData = {};
   let projectArray = [];
@@ -16,6 +17,9 @@
   let currentPage = null;
   let projectIndex = null;
   let tabMenu = null;
+
+  let detailPage = false;
+  let selectedProjectIndex = null;
 
   // Filter state for each select input
   let selectedStatus = "";
@@ -118,7 +122,7 @@
   }
 </script>
 
-{#if currentPage}
+{#if currentPage && !detailPage}
   <div class="container_page1">
     <div class="navbar">
       <div class="header">
@@ -156,6 +160,13 @@
       <svelte:component this={currentPage} bind:projectIndex />
     </div>
   </div>
+{:else if detailPage}
+  <svelte:component
+    this={currentPage}
+    projectIndex={selectedProjectIndex}
+    {currentPage}
+    bind:tabMenu
+  />
 {:else}
   <header>
     <form action="/action_page.php" class="form_select">
@@ -230,7 +241,14 @@
       <div class="projectContainer">
         {#each filteredProjects as project, index}
           <div class="project">
-            <div class="projectInfo">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class="projectInfo"
+              on:click={() => {
+                currentPage = ProjectDetail;
+                projectIndex = project.ccp_index;
+              }}
+            >
               <div class="firstCol">
                 <p>보안점수</p>
                 <div class="percentage">

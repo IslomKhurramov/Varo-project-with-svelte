@@ -44,3 +44,29 @@ export const setMakeExcelWordFullReport = async (data) => {
     throw error;
   }
 };
+
+export const setPlanSummaryReportCreate = async (plan_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setPlanSummaryReportCreate/`,
+      {
+        plan_index: plan_index,
+      },
+      {
+        responseType: "blob",
+        withCredentials: true,
+      },
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "요약 보고서생성.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (error) {
+    console.error("Error setPlanSummaryReportCreate:", error);
+    throw error;
+  }
+};

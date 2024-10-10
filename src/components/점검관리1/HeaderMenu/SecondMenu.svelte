@@ -77,9 +77,7 @@
   };
 
   const refetchDataHandler = async () => {
-    console.log("search:", search);
     fullResultData = await getViewPlanResults(search);
-    console.log("fullResultData:", fullResultData);
     changeDataCount(100);
   };
 
@@ -133,7 +131,6 @@
 
   const changeItemResult = async (data) => {
     try {
-      console.log("changeItemResult:", data);
       await setResultChanged(data);
       searchDataHandler();
       change_option = "ONE";
@@ -158,7 +155,6 @@
     if (projectIndex && !fullResultData) {
       search = { ...search, plan_index: projectIndex };
       searchDataHandler();
-      console.log("triger data");
     }
   }
 </script>

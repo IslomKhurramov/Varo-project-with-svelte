@@ -2,6 +2,7 @@
   import {
     getPlanReportLists,
     setMakeExcelWordFullReport,
+    setPlanSummaryReportCreate,
   } from "./../../../services/report/reportService.js";
   import { getPlanLists } from "../../../services/page1/newInspection";
   import { onMount } from "svelte";
@@ -41,6 +42,15 @@
     }
   };
 
+  const planSummaryReportHandler = async () => {
+    try {
+      const response = await setPlanSummaryReportCreate(selectedPlan);
+    } catch (error) {
+      console.error("Error planSummaryReportHandler :", error);
+      errorAlert(error?.message);
+    }
+  };
+
   $: {
     if (selectedPlan) {
       getReportData();
@@ -71,7 +81,21 @@
             </div>
           </div>
           <div class="first_line">
-            <p class="button2 width">요약 보고서생성 (양식 향후 지정)</p>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <p
+              class="button2 width"
+              style="cursor: pointer;"
+              on:click={() => {
+                if (
+                  planReports?.v_excel &&
+                  planReports?.v_excel?.length !== 0
+                ) {
+                  planSummaryReportHandler();
+                }
+              }}
+            >
+              요약 보고서생성 (양식 향후 지정)
+            </p>
             <div class="report-box">
               <div class="top">
                 <h5 class="txt1">보고서유형</h5>

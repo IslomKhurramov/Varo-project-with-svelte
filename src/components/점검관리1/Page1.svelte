@@ -86,6 +86,7 @@
                 href="javascript:void(0)"
                 on:click={() => selectPage(RightContainerMenu, asset)}
                 class={activeMenu === asset ? "active" : ""}
+                title={asset.ccp_title}
               >
                 <i class="fa fa-folder-open" aria-hidden="true"></i>
                 {asset.ccp_title}
@@ -111,6 +112,42 @@
 </div>
 
 <style>
+  /* Tooltip styling */
+  .project_button a[title] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .project_button a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .project_button a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+  }
+
   /* General Reset */
   * {
     margin: 0;

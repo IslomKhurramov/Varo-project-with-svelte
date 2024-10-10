@@ -11,6 +11,8 @@
   } from "../../../services/result/resultService";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert";
 
+  export let projectIndex;
+
   let showModal = false;
   let insertData = {};
 
@@ -134,6 +136,12 @@
       errorAlert(err?.message);
     }
   };
+
+  $: {
+    if (projectIndex) {
+      search = { ...search, plan_index: projectIndex };
+    }
+  }
 </script>
 
 <body>

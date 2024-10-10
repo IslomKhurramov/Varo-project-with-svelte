@@ -13,6 +13,8 @@
   import ResultErrorPopup from "../ResultErrorPopup.svelte";
   import ResultUploadStatusPopup from "../ResultUploadStatusPopup.svelte";
 
+  export let projectIndex;
+
   // inputs & files
   let jsonInput;
   let txtInput;
@@ -84,8 +86,7 @@
   };
 
   $: {
-    console.log("uploadStatus:", uploadStatus);
-    console.log("uploadStatusModalData:", uploadStatusModalData);
+    if (projectIndex) selectedPlan = projectIndex;
   }
 </script>
 

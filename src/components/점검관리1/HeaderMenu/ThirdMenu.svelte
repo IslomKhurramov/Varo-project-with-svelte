@@ -7,6 +7,8 @@
   import { onMount } from "svelte";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert.js";
 
+  export let projectIndex;
+
   let selectedPlan = null;
   let planList = [];
   let planReports = null;
@@ -43,6 +45,10 @@
     if (selectedPlan) {
       getReportData();
     }
+  }
+
+  $: {
+    if (projectIndex) selectedPlan = projectIndex;
   }
 </script>
 

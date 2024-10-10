@@ -8,10 +8,12 @@
   import { onMount } from "svelte";
   import Tooltip from "../../../shared/Tooltip.svelte";
 
+  export let projectIndex;
+
   let projects;
   let searchFilters;
   let logData = [];
-  const search = {
+  let search = {
     plan_index: "",
     asset_name: "",
     order_user: "",
@@ -28,8 +30,9 @@
   };
 
   $: {
-    console.log("logData:", logData);
-    console.log("search:", search);
+    if (projectIndex) {
+      search = { ...search, plan_index: projectIndex };
+    }
   }
 </script>
 

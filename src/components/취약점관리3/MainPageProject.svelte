@@ -9,8 +9,8 @@
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
   export let tableData;
-  export let vulnerabilityStatus;
-  export let actionStatus;
+  export let vulnerabilityStatusValue;
+  export let actionStatusValue;
   export let setView;
   export let wholePage;
   export let selectedSendData;
@@ -35,7 +35,7 @@
     7: "조치결과반려",
   };
 
-  function transformVulns(vulns) {
+  function transformVulns(vulns, vulnerabilityStatusValue, actionStatusValue) {
     const transformed = [];
 
     for (const key in vulns) {
@@ -45,7 +45,35 @@
 
       vulns[key].forEach((item) => {
         if (item.result) {
-          currentResult = item?.result;
+          const result = item?.result;
+          const statusMatch =
+            !vulnerabilityStatusValue ||
+            result.ccr_item_result === vulnerabilityStatusValue;
+          let actionMatch;
+          if (
+            actionStatusValue == "5" ||
+            actionStatusValue == "6" ||
+            actionStatusValue == "7"
+          ) {
+            actionMatch =
+              !actionStatusValue ||
+              result.cfr_fix_status__cvs_index == actionStatusValue;
+          } else {
+            actionMatch =
+              !actionStatusValue ||
+              result.cfi_fix_status__cvs_index == actionStatusValue;
+          }
+
+          // const agentMatch = !filters.agentStatus || result.agent === filters.agentStatus;
+
+          // If all conditions match, assign the result to currentResult
+          if (statusMatch && actionMatch) {
+            currentResult = result;
+          }
+
+          //   if (planMatch && statusMatch && actionMatch && agentMatch) {
+          //   currentResult = result;
+          // }
         } else {
           if (item.fix_plan) {
             fixPlan = item.fix_plan;
@@ -115,7 +143,11 @@
 
   $: {
     if (tableData) {
-      data = transformVulns(tableData);
+      data = transformVulns(
+        tableData,
+        vulnerabilityStatusValue,
+        actionStatusValue,
+      );
     }
   }
 </script>
@@ -311,8 +343,8 @@
       </tr>
       {#if data?.length !== 0}
         {#each data as item, index}
-          {#if vulnerabilityStatus}
-            {#if item.ccr_item_result == vulnerabilityStatus}
+          {#if false}
+            {#if item.ccr_item_result == vulnerabilityStatusValue}
               <tr
                 on:click={() => {
                   wholePage = true;

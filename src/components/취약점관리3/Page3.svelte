@@ -17,7 +17,6 @@
   let showProject = true;
   let tableData;
   let vulnerabilityStatusValue;
-  let vulnerabilityStatus;
   let actionStatusValue;
   let actionStatus;
   let activePlan = null;
@@ -65,9 +64,6 @@
   const getPlanDataSearch = async () => {
     plans = await getVulnsOfPlan(search);
     tableData = plans?.vulns;
-
-    vulnerabilityStatus = vulnerabilityStatusValue;
-    actionStatus = actionStatusValue;
   };
 </script>
 
@@ -126,22 +122,26 @@
                 <div
                   class="accordion_header"
                   on:click={() => {
-                    toggleAccordion(plan);
+                    search.plan_index = plan.plan_index;
+                    getPlanDataSearch();
+                    toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
                   }}
                 >
                   <img src="./images/projectGray.png" alt="project" />
                   <a
                     href="javascript:void(0)"
-                    class={activeMenu === plan ? "active" : ""}
+                    class={activeMenu === plan.plan_index ? "active" : ""}
                   >
                     <i class="fa fa-folder-open" aria-hidden="true"></i>
                     {plan?.plan_title}
                   </a>
-                  <span class="arrow">{activePlan === plan ? "▲" : "▼"}</span>
+                  <span class="arrow"
+                    >{activePlan === plan.plan_index ? "▲" : "▼"}</span
+                  >
                 </div>
 
-                {#if activePlan === plan}
+                {#if activePlan === plan.plan_index}
                   {#each plan?.plan_target as target}
                     <div class="accordion_content">
                       {#each Object.entries(target) as [osType, hosts]}
@@ -226,6 +226,7 @@
               id="approval_status"
               class="select_input"
               bind:value={search["plan_index"]}
+              on:change={getPlanDataSearch}
             >
               <option value="" selected>프로젝트</option>
               {#if plans && plans?.plans && plans?.plans?.length !== 0}
@@ -257,26 +258,20 @@
               bind:value={actionStatusValue}
             >
               <option value="" selected>조치상태별</option>
-              <option value="조치전">조치전</option>
-              <option value="조치계획등록">조치계획등록</option>
-              <option value="조치계획승인">조치계획승인</option>
-              <option value="조치계획반려">조치계획반려</option>
-              <option value="조치결과등록">조치결과등록</option>
-              <option value="조치결과승인">조치결과승인</option>
-              <option value="조치결과반려">조치결과반려</option>
-            </select>
-          </div>
-          <div class="select_container">
-            <select name="agent_status" id="agent_status" class="select_input">
-              <option value="active">담당자별</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+              <option value="0">조치전</option>
+              <option value="1">조치예정</option>
+              <option value="2">조치계획등록</option>
+              <option value="3">조치계획승인</option>
+              <option value="4">조치계획반려</option>
+              <option value="5">조치결과등록</option>
+              <option value="6">조치결과승인</option>
+              <option value="7">조치결과반려</option>
             </select>
           </div>
         </form>
       </div>
       <div class="header_button">
-        <button on:click={getPlanDataSearch}>조회</button>
+        <!-- <button on:click={getPlanDataSearch}>조회</button> -->
         <p>엑셀다운로드</p>
       </div>
     </header>
@@ -285,8 +280,8 @@
       {#if currentView === "default" && !wholePage}
         <MainPageProject
           bind:tableData
-          bind:vulnerabilityStatus
-          bind:actionStatus
+          bind:vulnerabilityStatusValue
+          bind:actionStatusValue
           bind:setView
           bind:wholePage
           bind:selectedSendData

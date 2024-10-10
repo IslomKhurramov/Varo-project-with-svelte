@@ -186,7 +186,7 @@
                       <a
                         href="javascript:void(0)"
                         on:click={async () => {
-                          selectPage(MainPageAsset, asset);
+                          selectPage(MainPageProject, asset);
                           assets = await getVulnsOfAsset({
                             plan_index: asset?.plan_index,
                             asset_target_uuid: host?.ast_uuid,
@@ -227,6 +227,11 @@
               class="select_input"
               bind:value={search["plan_index"]}
               on:change={getPlanDataSearch}
+              on:change={(e) => {
+                if (wholePage) {
+                  wholePage = false;
+                }
+              }}
             >
               <option value="" selected>프로젝트</option>
               {#if plans && plans?.plans && plans?.plans?.length !== 0}
@@ -242,6 +247,11 @@
               id="asset_group"
               class="select_input"
               bind:value={vulnerabilityStatusValue}
+              on:change={(e) => {
+                if (wholePage) {
+                  wholePage = false;
+                }
+              }}
             >
               <option value="" selected>취약점현황</option>
               <option value="양호">양호</option>
@@ -256,6 +266,11 @@
               id="operating_system"
               class="select_input"
               bind:value={actionStatusValue}
+              on:change={(e) => {
+                if (wholePage) {
+                  wholePage = false;
+                }
+              }}
             >
               <option value="" selected>조치상태별</option>
               <option value="0">조치전</option>

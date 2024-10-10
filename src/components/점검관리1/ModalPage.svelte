@@ -5,6 +5,8 @@
   export let planIndex;
   export let insertData;
   export let changeDataHandler;
+
+  let change_option = "ONE";
 </script>
 
 <div class="modal">
@@ -110,9 +112,13 @@
         </div>
         <div class="line5">
           <p>수정범위:</p>
-          <select>
-            <option value="전체항목">해당항목만</option>
-            <option value="전체항목">전체항목</option>
+          <select
+            on:change={(e) => {
+              change_option = e.target.value;
+            }}
+          >
+            <option value="ONE">해당항목만</option>
+            <option value="ALL">전체항목</option>
           </select>
         </div>
         <p>(점검현황/점검결과 적용됨)</p>
@@ -160,16 +166,18 @@
     class="modify-button"
     style="float: right;"
     disabled={Object.keys(insertData).length === 0}
-    on:click={() =>
+    on:click={() => {
       changeDataHandler({
         plan_index: planIndex,
         result_index: modalData?.ccr_index,
         checklist_index: modalData?.ccr_item_no__ccc_index,
         change_result: insertData?.change_result,
-        change_option: "ONE",
+        change_option: change_option,
         change_status_text: insertData?.change_status_text,
         change_evidence_file: insertData?.change_evidence_file,
-      })}
+      });
+      change_option = "ONE";
+    }}
   >
     저장하기
   </button>

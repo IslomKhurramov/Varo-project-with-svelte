@@ -14,23 +14,6 @@
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
-  let data = [];
-  for (let i = 1; i <= 100; i++) {
-    data.push({
-      number: "길동이",
-      projectNO: `프로젝트${i}`,
-      assetName: "AAAAAA",
-      cassification: "ERROR-099",
-      logContent: "실행과정",
-      performer: "길동이",
-      date: "2024-12-11 ",
-      note: "길동이",
-      logContent: "실행과정에서 ",
-      performer: "길동이",
-      date: "2024-12-11 ",
-      note: "길동이",
-    });
-  }
 </script>
 
 <main>

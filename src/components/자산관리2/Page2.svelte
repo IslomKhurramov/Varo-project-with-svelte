@@ -37,7 +37,7 @@
   let showGetPlanHeader = false;
   let assetOs = "";
   let assetHost = "";
-
+  let showSwiperComponent = false;
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
     try {
@@ -54,6 +54,10 @@
     assetGroupList();
   });
 
+  function toggleSwiper() {
+    console.log("Toggling Swiper. Closing...");
+    showSwiperComponent = false;
+  }
   /*************************************************************/
   function filterAssets() {
     console.log("Selected Group:", selectedGroup);
@@ -140,7 +144,8 @@
     currentPage = page;
     activeMenu = group;
     selectedGroup = group.asg_index;
-    filterAssets(); // Set the selected group index when selecting a group
+    filterAssets();
+    toggleSwiper();
   }
   /**********************************************************************/
   function toggleGetLogHeader() {
@@ -199,7 +204,9 @@
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   href="#"
-                  on:click={() => selectPage(AssetCardsPage, group)}
+                  on:click={() => {
+                    selectPage(AssetCardsPage, group);
+                  }}
                   class={activeMenu === group ? "active" : ""}
                   title={group.asg_title}
                 >
@@ -244,9 +251,6 @@
     <header class="header">
       {#if !showGetPlanHeader}
         <div class="header_option">
-          <button on:click={toggleView} class="toggle_button">
-            <span class="arrow">&#9662;</span>
-          </button>
           <form action="/action_page.php" class="form_select">
             <div class="select_container">
               <select
@@ -345,7 +349,12 @@
           <Swiper />
         {/key}
       {:else}
-        <AssetCardsPage {searchedResult} {showSearchResult} {filteredAssets} />
+        <AssetCardsPage
+          {searchedResult}
+          {showSearchResult}
+          {filteredAssets}
+          {showSwiperComponent}
+        />
       {/if}
     </div>
   </div>

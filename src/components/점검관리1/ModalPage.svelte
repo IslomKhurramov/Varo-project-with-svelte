@@ -151,7 +151,9 @@
     </tr>
     <tr>
       <th>개선예시</th>
-      <td>{@html modalData?.ccr_item_no__ccc_mitigation_example}</td>
+      <td style="display: flex; height: 70px; overflow-y: auto;"
+        >{@html modalData?.ccr_item_no__ccc_mitigation_example}</td
+      >
     </tr>
   </table>
   <button

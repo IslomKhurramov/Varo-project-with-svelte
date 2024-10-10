@@ -51,6 +51,8 @@
     show_option: "",
   };
 
+  let change_option = "ONE";
+
   // search
   let searchFilters;
   let targets;
@@ -118,8 +120,10 @@
 
   const changeItemResult = async (data) => {
     try {
+      console.log("changeItemResult:", data);
       await setResultChanged(data);
       searchDataHandler();
+      change_option = "ONE";
     } catch (err) {
       console.error("Error changeItemResult:", err);
     }
@@ -309,7 +313,7 @@
                     {@html data.ccr_item_status}
                   </p>
                 </td>
-                <td>
+                <td style="text-align: center;">
                   <span class={data.ccr_item_result}
                     >{data.ccr_item_result}</span
                   >
@@ -322,7 +326,7 @@
                         result_index: data?.ccr_index,
                         checklist_index: data?.ccr_item_no__ccc_index,
                         change_result: e.target.value,
-                        change_option: "ONE",
+                        change_option: change_option,
                       })}
                   >
                     <option
@@ -356,6 +360,14 @@
                     >
                       해당없음
                     </option>
+                  </select>
+                  <select
+                    on:change={(e) => {
+                      change_option = e.target.value;
+                    }}
+                  >
+                    <option value="ONE"> 해당 </option>
+                    <option value="ALL"> 전체 </option>
                   </select>
                 </td>
               </tr>
@@ -510,7 +522,6 @@
   td {
     word-wrap: break-word;
     max-width: 150px;
-    text-align: center;
   }
 
   tbody tr:nth-child(even) {

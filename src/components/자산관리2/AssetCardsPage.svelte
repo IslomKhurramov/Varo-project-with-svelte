@@ -271,263 +271,126 @@
         </div>
       </div>
       <div class="card_container">
-        {#if showSearchResult}
-          {#if searchedResult}
-            {#each searchedResult as asset}
-              <!-- Main Searched Asset Display -->
-              <div
-                class="card{asset.ast_activate ? '' : 'deactivated'}"
-                style="height: 165px;"
+        <!-- Display List of Assets -->
+        {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div
+            on:click={() => {
+              selectedAsset = asset;
+              showSwiperComponent = true;
+            }}
+            class="card {asset.ast_activate ? '' : 'deactivated'}"
+          >
+            <input
+              type="checkbox"
+              class="checkbox"
+              bind:group={selected}
+              name={asset}
+              value={asset}
+            />
+
+            <div class="card_buttons">
+              <button
+                class="blue"
+                on:click={() => activateAsset(asset.ass_uuid)}
+              ></button>
+              <button class="red" on:click={() => unActivate(asset.ass_uuid)}
+              ></button>
+            </div>
+
+            <!-- Registration Status -->
+            {#if asset.asset_target_registered === "YES"}
+              <button
+                class="modal_button"
+                on:click={() => {
+                  showModal = true;
+                  selectedAsset = asset;
+                }}
               >
-                <input
-                  type="checkbox"
-                  class="checkbox"
-                  bind:group={selected}
-                  name={asset}
-                  value={asset}
-                />
+                등록 미승인
+              </button>
+            {:else}
+              <button
+                class="modal_button"
+                on:click={() => {
+                  showModal = true;
+                  selectedAsset = asset;
+                }}
+              >
+                등록 해제
+              </button>
+            {/if}
 
-                <div class="card_buttons">
-                  <!-- Activate Button -->
-                  <button
-                    class="blue"
-                    on:click={() => activateAsset(asset.ass_uuid)}
-                  ></button>
-
-                  <!-- Un-Activate Button -->
-                  <button
-                    class="red"
-                    on:click={() => unActivate(asset.ass_uuid)}
-                  ></button>
-                </div>
-
-                <!-- Conditional Rendering for Registration Status -->
-                {#if asset.asset_target_registered === "YES"}
-                  <button
-                    class="modal_button"
-                    on:click={() => {
-                      showModal = true;
-                      selectedAsset = asset;
-                    }}
+            <!-- Asset Details -->
+            <div class="first_col">
+              <div class="first_col_1">
+                <p>보안점수</p>
+                {#if asset.asset_point_history?.[0]?.ast_security_point > 0}
+                  <div
+                    class="box_number {asset.asset_point_history?.[0]
+                      ?.ast_security_point < 50
+                      ? 'low'
+                      : asset.asset_point_history?.[0]?.ast_security_point < 80
+                        ? 'medium'
+                        : 'high'}"
                   >
-                    등록 미승인
-                  </button>
+                    {asset.asset_point_history?.[0]?.ast_security_point}%
+                  </div>
                 {:else}
-                  <button
-                    class="modal_button"
-                    on:click={() => {
-                      showModal = true;
-                      selectedAsset = asset;
-                    }}
-                  >
-                    등록 해제
-                  </button>
+                  <div class="box_number low">0%</div>
                 {/if}
-
-                <div class="first_col">
-                  <div class="first_col_1">
-                    <p>보안점수</p>
-
-                    <!-- Security Point Display -->
-                    {#if asset.asset_point_history?.[0]?.ast_security_point > 0}
-                      <div
-                        class="box_number {asset.asset_point_history?.[0]
-                          ?.ast_security_point < 50
-                          ? 'low'
-                          : asset.asset_point_history?.[0]?.ast_security_point <
-                              80
-                            ? 'medium'
-                            : 'high'}"
-                      >
-                        {asset.asset_point_history?.[0]?.ast_security_point}%
-                      </div>
-                    {:else}
-                      <div class="box_number low">0%</div>
-                    {/if}
-
-                    <!-- Asset Group -->
-                    <p>
-                      <span style="font-weight: bold; white-space: nowrap;">
-                        {asset.asset_group?.[0]?.asg_index__asg_title || ""}
-                      </span>
-                    </p>
-                  </div>
-
-                  <!-- Connection Status and Last Connect Date -->
-                  <div class="first_col_2">
-                    <div>
-                      <span style="font-weight: bold;">
-                        {asset.ast_activate ? "연결중" : "연결 안됨"}
-                      </span>
-                    </div>
-                    <div>
-                      <span style="font-weight: bold;">
-                        {formatDate(asset.ast_lastconnect) || "Unknown Date"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="second_col">
-                  <!-- Operating System -->
-                  <p>
-                    운영체제: <span style="font-weight: bold;">
-                      {asset.ast_os || "Unknown OS"}
-                    </span>
-                  </p>
-
-                  <!-- Hostname -->
-                  <p>
-                    자산명: <span style="font-weight: bold;">
-                      {asset.ast_hostname || "Unknown Hostname"}
-                    </span>
-                  </p>
-
-                  <!-- IP Address -->
-                  <p>
-                    아이피주소: <span style="font-weight: bold;">
-                      {asset.ast_ipaddr || "Unknown IP"}
-                    </span>
-                  </p>
-
-                  <!-- Target -->
-                  <p>
-                    점검대상: <span style="font-weight: bold;">
-                      {asset.asset_point_history?.[0]
-                        ?.ast_uuid__ast_target__cct_target || "No Target"}
-                    </span>
-                  </p>
-
-                  <!-- Agent Installation Status -->
-                  <p>
-                    에이전트설치여부: <span style="font-weight: bold;">
-                      {asset.ast_agent_installed ? "설치됨" : "설치 안됨"}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            {/each}
-          {/if}
-        {:else}
-          <!-- Display List of Assets -->
-          {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              on:click={() => (showSwiperComponent = true)}
-              class="card {asset.ast_activate ? '' : 'deactivated'}"
-            >
-              <input
-                type="checkbox"
-                class="checkbox"
-                bind:group={selected}
-                name={asset}
-                value={asset}
-              />
-
-              <div class="card_buttons">
-                <button
-                  class="blue"
-                  on:click={() => activateAsset(asset.ass_uuid)}
-                ></button>
-                <button class="red" on:click={() => unActivate(asset.ass_uuid)}
-                ></button>
+                <p>
+                  <span style="font-weight: bold; white-space: nowrap;">
+                    {asset.asset_group?.[0]?.asg_index__asg_title ||
+                      "Unknown Group"}
+                  </span>
+                </p>
               </div>
 
-              <!-- Registration Status -->
-              {#if asset.asset_target_registered === "YES"}
-                <button
-                  class="modal_button"
-                  on:click={() => {
-                    showModal = true;
-                    selectedAsset = asset;
-                  }}
-                >
-                  등록 미승인
-                </button>
-              {:else}
-                <button
-                  class="modal_button"
-                  on:click={() => {
-                    showModal = true;
-                    selectedAsset = asset;
-                  }}
-                >
-                  등록 해제
-                </button>
-              {/if}
-
-              <!-- Asset Details -->
-              <div class="first_col">
-                <div class="first_col_1">
-                  <p>보안점수</p>
-                  {#if asset.asset_point_history?.[0]?.ast_security_point > 0}
-                    <div
-                      class="box_number {asset.asset_point_history?.[0]
-                        ?.ast_security_point < 50
-                        ? 'low'
-                        : asset.asset_point_history?.[0]?.ast_security_point <
-                            80
-                          ? 'medium'
-                          : 'high'}"
-                    >
-                      {asset.asset_point_history?.[0]?.ast_security_point}%
-                    </div>
-                  {:else}
-                    <div class="box_number low">0%</div>
-                  {/if}
-                  <p>
-                    <span style="font-weight: bold; white-space: nowrap;">
-                      {asset.asset_group?.[0]?.asg_index__asg_title ||
-                        "Unknown Group"}
-                    </span>
-                  </p>
+              <div class="first_col_2">
+                <div>
+                  <span style="font-weight: bold;">
+                    {asset.ast_activate ? "연결중" : "연결 안됨"}
+                  </span>
                 </div>
-
-                <div class="first_col_2">
-                  <div>
-                    <span style="font-weight: bold;">
-                      {asset.ast_activate ? "연결중" : "연결 안됨"}
-                    </span>
-                  </div>
-                  <div>
-                    <span style="font-weight: bold;">
-                      {formatDate(asset.ast_lastconnect) || "Unknown Date"}
-                    </span>
-                  </div>
+                <div>
+                  <span style="font-weight: bold;">
+                    {formatDate(asset.ast_lastconnect) || "Unknown Date"}
+                  </span>
                 </div>
-              </div>
-
-              <div class="second_col">
-                <p>
-                  운영체제: <span style="font-weight: bold;">
-                    {asset.ast_os || "Unknown OS"}
-                  </span>
-                </p>
-                <p>
-                  자산명: <span style="font-weight: bold;">
-                    {asset.ast_hostname || "Unknown Hostname"}
-                  </span>
-                </p>
-                <p>
-                  아이피주소: <span style="font-weight: bold;">
-                    {asset.ast_ipaddr || "Unknown IP"}
-                  </span>
-                </p>
-                <p>
-                  점검대상: <span style="font-weight: bold;">
-                    {asset.asset_point_history?.[0]
-                      ?.ast_uuid__ast_target__cct_target || "No Target"}
-                  </span>
-                </p>
-                <p>
-                  에이전트설치여부: <span style="font-weight: bold;">
-                    {asset.ast_agent_installed ? "설치됨" : "설치 안됨"}
-                  </span>
-                </p>
               </div>
             </div>
-          {/each}
-        {/if}
+
+            <div class="second_col">
+              <p>
+                운영체제: <span style="font-weight: bold;">
+                  {asset.ast_os || "Unknown OS"}
+                </span>
+              </p>
+              <p>
+                자산명: <span style="font-weight: bold;">
+                  {asset.ast_hostname || "Unknown Hostname"}
+                </span>
+              </p>
+              <p>
+                아이피주소: <span style="font-weight: bold;">
+                  {asset.ast_ipaddr || "Unknown IP"}
+                </span>
+              </p>
+              <p>
+                점검대상: <span style="font-weight: bold;">
+                  {asset.asset_point_history?.[0]
+                    ?.ast_uuid__ast_target__cct_target || "No Target"}
+                </span>
+              </p>
+              <p>
+                에이전트설치여부: <span style="font-weight: bold;">
+                  {asset.ast_agent_installed ? "설치됨" : "설치 안됨"}
+                </span>
+              </p>
+            </div>
+          </div>
+        {/each}
       </div>
     </div>
     {#if showModal}
@@ -536,28 +399,11 @@
       </div>
     {/if}
   {:else}
-    <Swiper {closeSwiper} />
+    <Swiper {closeSwiper} {selectedAsset} />
   {/if}
 </main>
 
 <style>
-  .dialog {
-    width: 84%;
-    height: 800px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    justify-content: center;
-    margin-top: 20px;
-    position: fixed;
-    top: 60%;
-    border-radius: 15px;
-    padding: 10px;
-    bottom: 50%;
-    left: 57%;
-    background-color: #f7f9fb;
-    transform: translate(-50%, -50%);
-    animation: fadeIn 0.3s ease;
-  }
   .dialog2 {
     width: 100%;
     height: auto;

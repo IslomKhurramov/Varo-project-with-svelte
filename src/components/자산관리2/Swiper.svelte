@@ -31,6 +31,7 @@
   let asset_group_index = "";
   let approve_status = "";
   export let closeSwiper;
+  export let selectedAsset;
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -119,13 +120,25 @@
 
   /***************************************************************************/
   // Handle the UUID click and fetch the asset details
+
+  $: if (selectedAsset) {
+    console.log("selectedAaset", selectedAsset);
+    handleAssetClick(selectedAsset.ass_uuid, selectedAsset);
+  }
+
   function handleAssetClick(uid, asset) {
     uuid_asset = uid;
     approve_status = asset.ast_approve_status;
+
+    // Check if the asset belongs to any group
     if (asset.asset_group && asset.asset_group.length > 0) {
       asset_group_index = asset.asset_group[0].asg_index;
     }
+
+    // Fetch detailed asset information using the uuid
     assetListDetail(uuid_asset);
+
+    // Log approve status for debugging purposes
     console.log("approve status", approve_status);
   }
   /****************************************************/

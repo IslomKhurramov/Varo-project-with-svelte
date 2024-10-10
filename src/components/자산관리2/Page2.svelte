@@ -26,9 +26,9 @@
   let newGroupName = "";
   let isAddingNewGroup = false;
   let inputRef;
-  let selectedGroup = "";
+  let selectedGroup = "전체";
   let filteredAssets = [];
-  let asset_ostype = "";
+  let asset_ostype = "전체";
   let assetTargetReg = "";
   let assetAcitve = "";
   let groupNames = "";
@@ -60,18 +60,37 @@
   }
   /*************************************************************/
   function filterAssets() {
-    console.log("Selected Group:", selectedGroup);
     filteredAssets = $allAssetList.filter((asset) => {
-      if (Array.isArray(asset.asset_group)) {
-        return asset.asset_group.some(
-          (group) => group.asg_index === selectedGroup,
-        );
-      }
-      return false;
+      const matchesGroup = selectedGroup
+        ? Array.isArray(asset.asset_group) &&
+          asset.asset_group.some((group) => group.asg_index === selectedGroup)
+        : true;
+      const matchesOsType = asset_ostype
+        ? asset.ast_ostype === asset_ostype
+        : true;
+      const matchesTargetReg = assetTargetReg
+        ? asset.asset_target_registered === assetTargetReg
+        : true;
+
+      const matchesActive =
+        assetAcitve !== ""
+          ? asset.ast_activate === (assetAcitve === "1")
+          : true;
+
+      return matchesGroup && matchesOsType && matchesTargetReg && matchesActive;
     });
   }
+
   function handleFilter() {
     filterAssets();
+  }
+
+  function resetFilters() {
+    selectedGroup = "";
+    asset_ostype = "";
+    assetTargetReg = "";
+    assetAcitve = "";
+    filteredAssets = $allAssetList; // Reset the filtered assets to show all
   }
   /***********************************************************/
   const addNewGroup = async () => {
@@ -115,30 +134,7 @@
     isAddingNewGroup = false;
   };
   /*****************************************/
-  const getSearchAsset = async () => {
-    console.log("target", assetTargetReg);
-    console.log("acvtivate", assetAcitve);
-    console.log("osType", asset_ostype);
-    try {
-      const response = await getSearch(
-        asset_ostype,
-        assetTargetReg,
-        assetAcitve,
-      );
 
-      // Check if response is not empty and has keys
-      if (response.RESULT === "OK" && Object.keys(response).length > 0) {
-        // Convert response object into an array of asset objects
-        filteredAssets = Object.values(response.CODE); // Store all assets in an array
-        showSearchResult = true;
-      } else {
-        throw new Error("Failed to save group.");
-      }
-    } catch (error) {
-      console.error("Error saving group:", error);
-      alert("Failed to save the group. Please try again.");
-    }
-  };
   /************************************************************************/
   function selectPage(page, group) {
     currentPage = page;
@@ -253,6 +249,7 @@
         <div class="header_option">
           <form action="/action_page.php" class="form_select">
             <div class="select_container">
+              <!-- Group Filter -->
               <select
                 name="approval_status"
                 id="approval_status"
@@ -260,53 +257,58 @@
                 bind:value={selectedGroup}
                 on:change={handleFilter}
               >
+                <option value="전체">전체 </option>
                 {#if $allAssetGroupList.length > 0}
                   {#each $allAssetGroupList as group}
                     <option value={group.asg_index}>{group.asg_title}</option>
                   {/each}
                 {/if}
-                <option value="" disabled selected hidden
-                  >그룹을 선택하세요</option
-                >
               </select>
             </div>
+
             <div class="select_container">
+              <!-- OS Type Filter -->
               <select
                 name="asset_group"
                 id="asset_group"
                 class="select_input"
                 bind:value={asset_ostype}
+                on:change={handleFilter}
               >
-                <option value="" disabled selected hidden>운영체제</option>
+                <option value="전체">전체 </option>
                 {#each $allAssetList as asset}
                   {#if asset.ast_ostype !== ""}
-                    <option class="group_option" value={asset.ast_ostype}
-                      >{asset.ast_ostype}</option
-                    >
+                    <option class="group_option" value={asset.ast_ostype}>
+                      {asset.ast_ostype}
+                    </option>
                   {/if}
                 {/each}
               </select>
             </div>
+
             <div class="select_container">
+              <!-- Agent Installation Status Filter -->
               <select
                 name="operating_system"
                 id="operating_system"
                 class="select_input"
                 bind:value={assetTargetReg}
+                on:change={handleFilter}
               >
                 <option value="" disabled selected hidden>에이전트여부</option>
-
                 <option class="group_option" value="YES">YES</option>
-
                 <option class="group_option" value="NO">NO</option>
               </select>
             </div>
+
             <div class="select_container">
+              <!-- Activation Status Filter -->
               <select
                 name="agent_status"
-                bind:value={assetAcitve}
                 id="agent_status"
                 class="select_input"
+                bind:value={assetAcitve}
+                on:change={handleFilter}
               >
                 <option value="" disabled selected hidden>등록승인여부</option>
                 <option value="1">Active</option>
@@ -321,7 +323,7 @@
       <div class="header_button">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         {#if !showGetPlanHeader}
-          <p on:click={getSearchAsset}>자산명</p>
+          <p on:click={resetFilters}>초기화</p>
         {:else}
           <p on:click={searchDataHandler}>자산명</p>
         {/if}

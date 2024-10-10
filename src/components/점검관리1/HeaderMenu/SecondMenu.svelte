@@ -72,6 +72,15 @@
   const searchDataHandler = async () => {
     fullResultData = await getViewPlanResults(search);
     changeDataCount(100);
+
+    selectPlan(projectIndex);
+  };
+
+  const refetchDataHandler = async () => {
+    console.log("search:", search);
+    fullResultData = await getViewPlanResults(search);
+    console.log("fullResultData:", fullResultData);
+    changeDataCount(100);
   };
 
   const selectPlan = async (plan_index) => {
@@ -108,6 +117,10 @@
       search.hostname = "";
       search.checklist_item_no = "";
     }
+
+    search.hostname = "";
+    search.checklist_item_no = "";
+    refetchDataHandler();
   };
 
   const changeDataCount = (count) => {
@@ -142,8 +155,10 @@
   };
 
   $: {
-    if (projectIndex) {
+    if (projectIndex && !fullResultData) {
       search = { ...search, plan_index: projectIndex };
+      searchDataHandler();
+      console.log("triger data");
     }
   }
 </script>
@@ -184,7 +199,11 @@
         </div>
         <div class="dropdown-container">
           <label for="host">호스트:</label>
-          <select id="host" bind:value={search["hostname"]}>
+          <select
+            id="host"
+            bind:value={search["hostname"]}
+            on:change={refetchDataHandler}
+          >
             <option value="" selected>선택</option>
             {#if assets && assets.length !== 0}
               {#each assets as asset}
@@ -195,7 +214,11 @@
         </div>
         <div class="dropdown-container">
           <label for="result">점검항목:</label>
-          <select id="result" bind:value={search["checklist_item_no"]}>
+          <select
+            id="result"
+            bind:value={search["checklist_item_no"]}
+            on:change={refetchDataHandler}
+          >
             <option value="" selected>선택</option>
             {#if checklist && checklist.length !== 0}
               {#each checklist as check}
@@ -206,7 +229,11 @@
         </div>
         <div class="dropdown-container">
           <label for="result">점검결과:</label>
-          <select id="result" bind:value={search["check_result"]}>
+          <select
+            id="result"
+            bind:value={search["check_result"]}
+            on:change={refetchDataHandler}
+          >
             <option value="" selected>선택</option>
             {#if results && results.length !== 0}
               {#each results as result}
@@ -217,17 +244,8 @@
             {/if}
           </select>
         </div>
-        <!-- <div class="dropdown-container">
-          <label for="viewOption">보기옵션:</label>
-          <select id="viewOption">
-            <option value="수리과터스트2">수리과터스트2</option>
-          </select>
-        </div> -->
       </div>
       <div class="button-group">
-        <button class="firstlineButton" on:click={searchDataHandler}>
-          조회하기
-        </button>
         <button
           class="firstlineButton"
           disabled={!search?.plan_index || !resultData}
@@ -237,21 +255,6 @@
         </button>
       </div>
     </div>
-
-    <!-- <div class="secondLine">
-      <div>
-        <p class="bold-text">프로젝트 전체 보안수준:</p>
-        <p>{projectsData[0].name}</p>
-      </div>
-      <div>
-        <p class="bold-text">결과미확정, 점검대상:</p>
-        <p>{projectsData[0].inspectionTarget}</p>
-      </div>
-      <div>
-        <p class="bold-text">점검일시:</p>
-        <p>{projectsData[0].inspectionDateAndTime}</p>
-      </div>
-    </div> -->
 
     <div class="thirdLine">
       <p class="bold-text">

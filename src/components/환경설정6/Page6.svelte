@@ -92,6 +92,7 @@
     padding: 20px;
     background-color: #f9f9f9;
     min-height: 100vh;
+    width: 100%;
   }
 
   /* Navbar Styling */

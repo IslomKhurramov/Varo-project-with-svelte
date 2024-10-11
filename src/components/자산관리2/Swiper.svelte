@@ -32,6 +32,7 @@
   let approve_status = "";
   export let closeSwiper;
   export let selectedAsset;
+  export let filteredAssets = [];
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -301,9 +302,11 @@
     <img src="./images/left.png" alt="left" />
     <div bind:this={swiperContainer} class="swiper-container">
       <div class="swiper-wrapper">
-        {#each $allAssetList as asset}
+        {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
+            value={asset}
+            name={asset}
             class="swiper-slide"
             on:click={() => handleAssetClick(asset.ass_uuid, asset)}
           >

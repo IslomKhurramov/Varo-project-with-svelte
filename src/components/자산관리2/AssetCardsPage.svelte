@@ -20,9 +20,7 @@
   let selected = [];
   let selectedUUID = [];
   let selectedAsset = null;
-  export let searchedResult;
   export let filteredAssets = [];
-  export let showSearchResult;
   export let showSwiperComponent;
   let allSelected;
   $: allAssetList.subscribe((data) => {
@@ -71,41 +69,26 @@
 
   /**************UnActivate**************************************/
 
-  async function unActivate(uuid) {
-    const asset = $allAssetList.find((a) => a.ass_uuid === uuid); // Find the asset in the store
+  function updateAssetStatusInList(uuid, isActive) {
+    allAssetList.update((assets) => {
+      return assets.map((asset) => {
+        if (asset.ass_uuid === uuid) {
+          return { ...asset, ast_activate: isActive };
+        }
+        return asset;
+      });
+    });
 
-    // If the asset is already unactivated, show an alert and skip API call
-    if (!asset.ast_activate) {
-      errorAlert("자산이 이미 활성화되지 않았습니다.");
-      return; // Stop execution, don't call the API
-    }
-    try {
-      const unActivating = await setAssetUnActivate(uuid);
-
-      if (unActivating.success) {
-        successAlert("자산이 성공적으로 활성화 해제되었습니다!");
-
-        // Update the asset's activation status directly in the store
-        allAssetList.update((assets) => {
-          return assets.map((asset) => {
-            if (asset.ass_uuid === uuid) {
-              return { ...asset, ast_activate: false }; // Mark asset as unactivated
-            }
-            return asset;
-          });
-        });
-      } else if (unActivating.alreadyUnactivated) {
-        errorAlert("자산이 이미 활성화되지 않았습니다.");
-      } else {
-        throw new Error(unActivating.CODE);
+    // Sync the filteredAssets if it's being used
+    filteredAssets = filteredAssets.map((asset) => {
+      if (asset.ass_uuid === uuid) {
+        return { ...asset, ast_activate: isActive };
       }
-    } catch (err) {
-      alert(`Error on unActivating Asset! ${err.message}`);
-    }
+      return asset;
+    });
   }
 
-  /**************Activate**************************************/
-
+  // Activate an asset
   async function activateAsset(uuid) {
     const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
     if (asset.ast_activate) {
@@ -114,25 +97,32 @@
     }
     try {
       const activating = await setAssetActivate(uuid);
-
       if (activating.success) {
         successAlert("자산이 성공적으로 활성화되었습니다!");
-
-        // Update the asset's activation status in the store
-        allAssetList.update((assets) => {
-          return assets.map((asset) => {
-            if (asset.ass_uuid === uuid) {
-              return { ...asset, ast_activate: true }; // Mark asset as activated
-            }
-            return asset;
-          });
-        });
+        updateAssetStatusInList(uuid, true); // Update both allAssetList and filteredAssets
       }
     } catch (err) {
       alert(`Error on activating Asset! ${err.message}`);
     }
   }
 
+  // Unactivate an asset
+  async function unActivate(uuid) {
+    const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
+    if (!asset.ast_activate) {
+      errorAlert("자산이 이미 활성화되지 않았습니다.");
+      return;
+    }
+    try {
+      const unActivating = await setAssetUnActivate(uuid);
+      if (unActivating.success) {
+        successAlert("자산이 성공적으로 활성화 해제되었습니다!");
+        updateAssetStatusInList(uuid, false); // Update both allAssetList and filteredAssets
+      }
+    } catch (err) {
+      alert(`Error on unActivating Asset! ${err.message}`);
+    }
+  }
   /*****************************************************************/
   // Convert to a more human-readable format
   function formatDate(dateString) {
@@ -292,9 +282,11 @@
             <div class="card_buttons">
               <button
                 class="blue"
-                on:click={() => activateAsset(asset.ass_uuid)}
+                on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
               ></button>
-              <button class="red" on:click={() => unActivate(asset.ass_uuid)}
+              <button
+                class="red"
+                on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
               ></button>
             </div>
 
@@ -302,7 +294,7 @@
             {#if asset.asset_target_registered === "YES"}
               <button
                 class="modal_button"
-                on:click={() => {
+                on:click|stopPropagation={() => {
                   showModal = true;
                   selectedAsset = asset;
                 }}
@@ -312,7 +304,7 @@
             {:else}
               <button
                 class="modal_button"
-                on:click={() => {
+                on:click|stopPropagation={() => {
                   showModal = true;
                   selectedAsset = asset;
                 }}
@@ -399,7 +391,7 @@
       </div>
     {/if}
   {:else}
-    <Swiper {closeSwiper} {selectedAsset} />
+    <Swiper {closeSwiper} {selectedAsset} {filteredAssets} />
   {/if}
 </main>
 

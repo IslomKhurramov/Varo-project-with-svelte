@@ -41,24 +41,46 @@
     targets: [],
   };
 
-  $: if (selectedAsset && selectedAsset.assessment_target_system) {
-    targetData.targets = $targetSystemList.map((target) => {
-      const assetTarget =
-        selectedAsset.targets?.find((t) => t.type === target.cct_target) || {};
+  // Reactive statement to populate targets based on selectedAsset
+  $: if (selectedAsset) {
+    if (
+      selectedAsset.assessment_target_system &&
+      selectedAsset.assessment_target_system.length > 0
+    ) {
+      // Populate targets from selectedAsset if available
+      targetData.targets = $targetSystemList.map((target) => {
+        const assetTarget =
+          selectedAsset.targets?.find((t) => t.type === target.cct_target) ||
+          {};
 
-      return {
+        return {
+          ...target,
+          ast_buse: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
+          ip: assetTarget.ip || "",
+          port: assetTarget.port || "",
+          dbname: assetTarget.dbname || "",
+          username: assetTarget.username || "",
+          pw: assetTarget.pw || "",
+          installed_path: assetTarget.installed_path || "",
+          web_name: assetTarget.web_name || "",
+          was_name: assetTarget.was_name || "",
+        };
+      });
+    } else {
+      // If assessment_target_system is empty, initialize from targetSystemList
+      targetData.targets = $targetSystemList.map((target) => ({
         ...target,
-        ast_buse: assetTarget.ast_buse || false, // Reflect ast_buse in checkbox
-        ip: assetTarget.ip || "",
-        port: assetTarget.port || "",
-        dbname: assetTarget.dbname || "",
-        username: assetTarget.username || "",
-        pw: assetTarget.pw || "",
-        installed_path: assetTarget.installed_path || "",
-        web_name: assetTarget.web_name || "",
-        was_name: assetTarget.was_name || "",
-      };
-    });
+        ast_buse: false, // Default checkbox state
+        ip: "",
+        port: "",
+        dbname: "",
+        username: "",
+        pw: "",
+        installed_path: "",
+        web_name: "",
+        was_name: "",
+      }));
+    }
   }
   /****************************************************************************/
   function handleCheckboxChange(target) {

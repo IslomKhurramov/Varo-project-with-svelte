@@ -31,7 +31,6 @@
   let asset_ostype = "전체";
   let assetTargetReg = "";
   let assetAcitve = "";
-  let groupNames = "";
   let searchedResult = [];
   let showSearchResult = false;
   let showGetPlanHeader = false;
@@ -59,15 +58,30 @@
     showSwiperComponent = false;
   }
   /*************************************************************/
+
   function filterAssets() {
+    console.log("Selected Group:", selectedGroup);
+
     filteredAssets = $allAssetList.filter((asset) => {
-      const matchesGroup = selectedGroup
-        ? Array.isArray(asset.asset_group) &&
-          asset.asset_group.some((group) => group.asg_index === selectedGroup)
-        : true;
-      const matchesOsType = asset_ostype
-        ? asset.ast_ostype === asset_ostype
-        : true;
+      let matchesGroup = true; // Default to true if no group filter is applied
+
+      // Check if selectedGroup is not empty and not '전체' (All)
+      if (selectedGroup && selectedGroup !== "전체") {
+        if (Array.isArray(asset.asset_group)) {
+          matchesGroup = asset.asset_group.some(
+            (group) => group.asg_index === selectedGroup,
+          );
+        } else {
+          matchesGroup = false; // If asset_group is not an array, it doesn't match
+        }
+      }
+
+      // Other filters (OS Type, Target Registered, Active Status)
+      const matchesOsType =
+        asset_ostype && asset_ostype !== "전체"
+          ? asset.ast_ostype === asset_ostype
+          : true;
+
       const matchesTargetReg = assetTargetReg
         ? asset.asset_target_registered === assetTargetReg
         : true;
@@ -77,10 +91,10 @@
           ? asset.ast_activate === (assetAcitve === "1")
           : true;
 
+      // Return true if all conditions match
       return matchesGroup && matchesOsType && matchesTargetReg && matchesActive;
     });
   }
-
   function handleFilter() {
     filterAssets();
   }
@@ -257,7 +271,7 @@
                 bind:value={selectedGroup}
                 on:change={handleFilter}
               >
-                <option value="전체">전체 </option>
+                <option value="전체">전체</option>
                 {#if $allAssetGroupList.length > 0}
                   {#each $allAssetGroupList as group}
                     <option value={group.asg_index}>{group.asg_title}</option>
@@ -325,7 +339,7 @@
         {#if !showGetPlanHeader}
           <p on:click={resetFilters}>초기화</p>
         {:else}
-          <p on:click={searchDataHandler}>자산명</p>
+          <p on:click={searchDataHandler}>검색</p>
         {/if}
         <p>엑셀저장</p>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -346,10 +360,6 @@
           bind:assetHost
           bind:assetOs
         />
-      {:else if currentView === "newView"}
-        {#key currentView}
-          <Swiper />
-        {/key}
       {:else}
         <AssetCardsPage
           {searchedResult}

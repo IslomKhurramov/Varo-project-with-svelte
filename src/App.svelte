@@ -18,6 +18,8 @@
 
   console.log("$userData:", $userData);
 
+  let openNotificaiton = false;
+
   onMount(() => {
     checkAuth();
 
@@ -46,10 +48,14 @@
               <button
                 type="button"
                 class="alarm on"
-                onclick="toggleTooltip(this)"
-                ><img src="./assets/images/icon/alarm.svg" /></button
+                on:click={() => {
+                  openNotificaiton = !openNotificaiton;
+                }}><img src="./assets/images/icon/alarm.svg" /></button
               >
-              <div class="tooltip-modal" style="display: none;">
+              <div
+                class="tooltip-modal"
+                style={`display: ${openNotificaiton ? "block" : "none"};`}
+              >
                 <h3 class="title">알림</h3>
                 <section class="content">
                   <div>

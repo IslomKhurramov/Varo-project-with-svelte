@@ -3,6 +3,7 @@
   // import { authToken } from "../stores/authToken";
   import { navigate } from "svelte-routing";
   import { userData } from "../stores/user.store";
+  import { toggleNav } from "../../public/assets/js/common.js";
 
   export let activeMenu = "점검관리";
 
@@ -38,7 +39,7 @@
       <a href="./index.html"><img src="/assets/images/logo.png" /></a>
     </Link>
   </h1>
-  <button type="button" class="menuIsOpenBtn" onclick="toggleNav();"
+  <button type="button" class="menuIsOpenBtn" on:click={toggleNav}
     ><img src="./assets/images/icon/arrow_side.svg" /></button
   >
   <nav class="menuWrap">

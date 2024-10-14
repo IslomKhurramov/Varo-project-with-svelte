@@ -1,4 +1,8 @@
 <script>
+  import "../public/assets/css/reset.css";
+  import "../public/assets/css/common.css";
+  import "../public/assets/css/login.css";
+
   import { Router, Route, navigate } from "svelte-routing";
   import { onMount } from "svelte";
   import Header from "./components/Header.svelte";

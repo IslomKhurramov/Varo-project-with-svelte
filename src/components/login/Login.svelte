@@ -314,10 +314,11 @@
               }}>비밀번호 초기화</a
             >
           </div>
+          {#if errorMessage}
+            <p class="error">{errorMessage}</p>
+          {/if}
         </div>
-        {#if errorMessage}
-          <p class="error">{errorMessage}</p>
-        {/if}
+
         <div class="btnWrap">
           <a on:click={handleLogin} class="btn loginBtn">로그인</a>
         </div>
@@ -326,6 +327,7 @@
           <span
             ><a
               on:click={() => {
+                errorMessage = null;
                 tabMenu = "signup";
               }}>회원가입</a
             > 하기</span
@@ -388,10 +390,11 @@
               }}>비밀번호 초기화</a
             >
           </div>
+          {#if errorMessage}
+            <p class="error">{errorMessage}</p>
+          {/if}
         </div>
-        {#if errorMessage}
-          <p class="error">{errorMessage}</p>
-        {/if}
+
         <div class="btnWrap">
           <a on:click={handleRegister} class="btn loginBtn">로그인</a>
         </div>
@@ -400,6 +403,115 @@
           <span
             ><a
               on:click={() => {
+                errorMessage = null;
+                tabMenu = "login";
+              }}>로그인</a
+            > 하기</span
+          >
+        </div>
+      </section>
+    {/if}
+
+    {#if tabMenu === "find_user"}
+      <section>
+        <h1>
+          <img src="./assets/images/login_logo.svg" />
+          아이디 찾기
+        </h1>
+        <div class="form">
+          <div class="formControl">
+            <label for="email">Email</label>
+            <input
+              type="text"
+              placeholder="admin@admin.com"
+              id="email"
+              name="email"
+              bind:value={find_user}
+              required
+            />
+          </div>
+          <div class="findIdPw">
+            <a
+              on:click={() => {
+                errorMessage = null;
+                tabMenu = "find_user";
+              }}>아이디 찾기</a
+            >
+            <a
+              on:click={() => {
+                errorMessage = null;
+                tabMenu = "reset_password";
+              }}>비밀번호 초기화</a
+            >
+          </div>
+          {#if errorMessage}
+            <p class="error">{errorMessage}</p>
+          {/if}
+        </div>
+
+        <div class="btnWrap">
+          <a on:click={findUser} class="btn loginBtn">아이디 찾기</a>
+        </div>
+        <div class="joinSummary">
+          계정이 있으신가요?
+          <span
+            ><a
+              on:click={() => {
+                errorMessage = null;
+                tabMenu = "login";
+              }}>로그인</a
+            > 하기</span
+          >
+        </div>
+      </section>
+    {/if}
+
+    {#if tabMenu === "reset_password"}
+      <section>
+        <h1>
+          <img src="./assets/images/login_logo.svg" />
+          비밀번호 초기화
+        </h1>
+        <div class="form">
+          <div class="formControl">
+            <label for="email">Email</label>
+            <input
+              type="text"
+              placeholder="admin@admin.com"
+              id="email"
+              name="email"
+              bind:value={find_user}
+              required
+            />
+          </div>
+          <div class="findIdPw">
+            <a
+              on:click={() => {
+                errorMessage = null;
+                tabMenu = "find_user";
+              }}>아이디 찾기</a
+            >
+            <a
+              on:click={() => {
+                errorMessage = null;
+                tabMenu = "reset_password";
+              }}>비밀번호 초기화</a
+            >
+          </div>
+          {#if errorMessage}
+            <p class="error">{errorMessage}</p>
+          {/if}
+        </div>
+
+        <div class="btnWrap">
+          <a on:click={resetPassword} class="btn loginBtn">비밀번호 초기화</a>
+        </div>
+        <div class="joinSummary">
+          계정이 있으신가요?
+          <span
+            ><a
+              on:click={() => {
+                errorMessage = null;
                 tabMenu = "login";
               }}>로그인</a
             > 하기</span

@@ -195,6 +195,11 @@
   background-color: #528eff;
 }
 
+.error {
+  margin-top: 20px;
+  color: red;
+}
+
 @media screen and (max-width: 720px) {
   .memberWrap {
     background-size: cover;

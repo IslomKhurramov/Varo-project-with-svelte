@@ -383,9 +383,6 @@
     box-sizing: border-box;
     font-family: "Arial", sans-serif;
   }
-  /* Container and Layout Styles */
-  /* Main container for layout */
-  /* Main container for layout */
   .container {
     display: flex;
     flex-direction: row;
@@ -419,7 +416,6 @@
   .right_menu {
     flex-grow: 1;
     margin: 10px 20px;
-    width: 80%;
   }
 
   /* Scrollbar styling */

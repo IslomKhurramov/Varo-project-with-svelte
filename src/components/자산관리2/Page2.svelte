@@ -2,7 +2,6 @@
   import AssetCardsPage from "./AssetCardsPage.svelte";
   import Modal from "../../shared/Modal.svelte";
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
-  import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
   import {
     allAssetGroupList,
@@ -10,7 +9,6 @@
   } from "../../services/page2/asset.store";
   import {
     getAssetGroup,
-    getSearch,
     setNewAssetGroup,
   } from "../../services/page2/assetService";
   import { onMount } from "svelte";
@@ -195,15 +193,60 @@
   };
 </script>
 
-<div class="container">
+<div>
+  <section>
+    <!--SUB MENU-->
+    <article class="sideMenu">
+      <div class="btnWrap">
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a on:click={showNewGroupInput} class="btn btnPrimary"
+          ><img src="./assets/images/icon/add.svg" />그룹추가</a
+        >
+        <button type="button" class="btn btnRed"
+          ><img src="./assets/images/icon/delete.svg" />그룹삭제</button
+        >
+      </div>
+      <ul class="prMenuList">
+        {#if $allAssetGroupList.length > 0}
+          {#each $allAssetGroupList as group, index}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <li>
+              <a
+                on:click={() => {
+                  selectPage(AssetCardsPage, group);
+                }}
+                title={group.asg_title}
+                >{group.asg_title} <span class="arrowIcon"></span></a
+              >
+            </li>
+          {/each}
+        {/if}
+        {#if isAddingNewGroup}
+          <div class="new_input">
+            <input
+              type="text"
+              placeholder="Enter Group Name"
+              bind:value={newGroupName}
+              bind:this={inputRef}
+              class="editable_input"
+            />
+            <div>
+              <button class="asset_button save" on:click={addNewGroup}
+                >Save</button
+              >
+              <button class="asset_button cancel" on:click={cancelNewGroup}
+                >Cancel</button
+              >
+            </div>
+          </div>
+        {/if}
+      </ul>
+    </article>
+  </section>
   <div class="container_aside">
     <aside>
-      <div class="add_delete_container">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p class="menu_button" on:click={showNewGroupInput}>그룹추가</p>
-        <p class="menu_button">그룹삭제</p>
-      </div>
-
       <div class="project_container">
         {#if $allAssetGroupList.length > 0}
           {#each $allAssetGroupList as group, index}

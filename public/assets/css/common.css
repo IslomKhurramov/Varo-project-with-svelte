@@ -2233,9 +2233,9 @@ label.file-label {
   cursor: pointer;
   position: relative;
 }
-.checkboxWrap .checkbox-label input[type="checkbox"] {
+/* .checkboxWrap .checkbox-label input[type="checkbox"] {
   display: none;
-}
+} */
 .checkboxWrap .checkbox-label span {
   font-size: 14px;
   font-weight: 400;

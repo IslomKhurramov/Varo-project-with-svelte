@@ -150,215 +150,179 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-  <main>
-    <div class="select_group">
-      <div class="select_container">
-        <button class="select_button" on:click={check}>생성방법</button>
-        <select
-          name="asset_group"
-          id="asset_group"
-          class="select_input"
-          on:change={handleSelectChange}
-          bind:value={assetRegHow}
-        >
-          <option value="add">자산등록 </option>
-          <option value="copy">기존그룹복사</option>
-        </select>
+  <article class="contentArea">
+    <div class="formControlWrap">
+      <div class="formControl">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label>생성방법</label>
+        <div class="radioWrap">
+          <label class="radio-label">
+            <input
+              type="radio"
+              name="type"
+              value="add"
+              checked
+              on:change={handleSelectChange}
+            />
+            <span>자산등록</span>
+          </label>
+          <label class="radio-label">
+            <input
+              type="radio"
+              name="type"
+              value="copy"
+              on:change={handleSelectChange}
+            />
+            <span>기존그룹복사</span>
+          </label>
+        </div>
       </div>
     </div>
+  </article>
+  {#if showAssetReg}
+    <article class="contentArea registCon">
+      <div class="formControlWrap">
+        <div class="formControl">
+          <div class="upload-section">
+            <label for="file-upload" class="file-label">파일첨부</label>
+            <input
+              type="file"
+              id="file-upload"
+              accept=".xls,.xlsx"
+              class="file-input"
+              on:change={handleFileUpload}
+            />
 
-    {#if showAssetReg}
-      <div class="second_container">
-        <p>생성방법</p>
-        <div class="inside_container">
-          <div class="first_line_container">
-            <input type="file" accept=".xlsx" on:change={handleFileUpload} />
-
-            <p>대용량업로드(엑셀파일)</p>
+            <p class="btn btnPrimary w160 h50">대용량업로드(엑셀파일)</p>
             <a
               href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
-              style="color: aliceblue;">샘플다운로드</a
+              style="color: black;">샘플다운로드</a
             >
           </div>
         </div>
       </div>
-    {/if}
+    </article>
+  {/if}
 
-    <div class="second_container">
-      <p>생성방법</p>
-      <div class="inside_container">
-        <div class="second_line_container">
-          <div class="right_container">
-            <div class=" headerSelect">
-              <div>
-                <p>선택된 자산 그룹:</p>
-                <select bind:value={selectedGroup} on:change={handleFilter}>
-                  <option value="">자산 그룹</option>
-                  {#if $allAssetGroupList.length > 0}
-                    {#each $allAssetGroupList as group}
-                      <option value={group.asg_index}>{group.asg_title}</option>
-                    {/each}
-                  {/if}
-                </select>
-              </div>
-              <div>
-                <p>자산에 대한 새 그룹을 선택하세요:</p>
-                <select bind:value={newRegGroupIndex}>
-                  <option value="">자산 그룹</option>
-                  {#if $allAssetGroupList.length > 0}
-                    {#each $allAssetGroupList as group}
-                      <option value={group.asg_index}>{group.asg_title}</option>
-                    {/each}
-                  {/if}
-                </select>
-              </div>
+  <article class="contentArea flex col gap-20">
+    <div class="second_line_container">
+      <div class="right_container">
+        <div class="top registCon">
+          <section class="filterWrap">
+            <div>
+              <p>선택된 자산 그룹:</p>
+              <select bind:value={selectedGroup} on:change={handleFilter}>
+                <option value="">자산 그룹</option>
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
+              </select>
             </div>
-            <div class="option_container">
-              <div class="div1">
-                <select bind:value={assetHost} on:change={handleHostnameChange}>
-                  <option value="">Select Hostname</option>
-                  {#each $allAssetList as asset (asset.ass_uuid)}
-                    <option value={asset.ast_hostname}>
-                      {asset.ast_hostname}
+            <div>
+              <p>자산에 대한 새 그룹을 선택하세요:</p>
+              <select bind:value={newRegGroupIndex}>
+                <option value="">자산 그룹</option>
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
+              </select>
+            </div>
+          </section>
+        </div>
+
+        <div class="top registCon">
+          <section class="filterWrap">
+            <div>
+              <select bind:value={assetHost} on:change={handleHostnameChange}>
+                <option value="">Select Hostname</option>
+                {#each $allAssetList as asset (asset.ass_uuid)}
+                  <option value={asset.ast_hostname}>
+                    {asset.ast_hostname}
+                  </option>
+                {/each}
+              </select>
+
+              <!-- Select for ast_ostype -->
+              <select bind:value={assetOs} on:change={handleOSTypeChange}>
+                <option value="">Select OS Type</option>
+                {#each $allAssetList as asset (asset.ass_uuid)}
+                  {#if asset.ast_ostype !== ""}
+                    <option value={asset.ast_ostype}>
+                      {asset.ast_ostype}
                     </option>
-                  {/each}
-                </select>
+                  {/if}
+                {/each}
+              </select>
 
-                <!-- Select for ast_ostype -->
-                <select bind:value={assetOs} on:change={handleOSTypeChange}>
-                  <option value="">Select OS Type</option>
-                  {#each $allAssetList as asset (asset.ass_uuid)}
-                    {#if asset.ast_ostype !== ""}
-                      <option value={asset.ast_ostype}>
-                        {asset.ast_ostype}
-                      </option>
-                    {/if}
-                  {/each}
-                </select>
-              </div>
-              <div class="div2">
-                <button on:click|preventDefault={filterAssets}>저장</button>
-              </div>
+              <button
+                class="btn btnBlue w140"
+                on:click|preventDefault={filterAssets}>저장</button
+              >
             </div>
-            <div class="first_check_cont">
-              <input
-                type="checkbox"
-                class="first_checkbox"
-                on:click={toggleAll}
-                checked={allSelected}
-              />
-              <p>전체선택</p>
-            </div>
-            <div class="card_container">
-              {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
-                <div class="card">
+          </section>
+        </div>
+
+        <div class="first_check_cont">
+          <input
+            type="checkbox"
+            class="first_checkbox"
+            on:click={toggleAll}
+            checked={allSelected}
+          />
+          <p>전체선택</p>
+        </div>
+        <section class="maxheight registCon">
+          <div class="cardWrap col5">
+            {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+              <article class="card">
+                <div class="checkboxWrap default">
                   <input
+                    class="checkboxWrap default"
                     type="checkbox"
-                    class="card_checkbox"
                     checked={selectedAssets.includes(asset.ass_uuid)}
                     on:change={(event) => handleAssetSelection(asset, event)}
-                  />
-                  <div class="img_container">
-                    <!-- svelte-ignore a11y-img-redundant-alt -->
-                    <img src="./images/Picture1.png" alt="Image description" />
-                    <div class="img_overlay">
-                      {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
-                        {#each asset.assessment_target_system as target}
-                          {#if target && typeof target === "object"}
-                            {#each Object.entries(target) as [key, value]}
-                              {#if value}
-                                <p>{key}</p>
-                              {/if}
-                            {/each}
-                          {/if}
-                        {/each}
-                      {/if}
-                    </div>
-                  </div>
-                  <div class="info_card">
-                    <p><strong>이름:</strong> {asset.ast_hostname}</p>
-                    <p><strong>아피:</strong> {asset.ast_ipaddr}</p>
+                  /> <span></span>
+                </div>
+                <div class="imageWrap flex align-center gap-20">
+                  <!-- svelte-ignore a11y-img-redundant-alt -->
+                  <img src="./assets/images/asset_window.png" alt="img" />
+                  <div class="head">
+                    {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
+                      {#each asset.assessment_target_system as target}
+                        {#if target && typeof target === "object"}
+                          {#each Object.entries(target) as [key, value]}
+                            {#if value}
+                              <p>{key}</p>
+                            {/if}
+                          {/each}
+                        {/if}
+                      {/each}
+                    {/if}
                   </div>
                 </div>
-              {/each}
-            </div>
-            <div class="div2">
-              <button type="submit">저장하기 </button>
-            </div>
+                <div class="content">
+                  <ul>
+                    <li><span>이름:</span> {asset.ast_hostname}</li>
+                    <li><span>아피:</span> {asset.ast_ipaddr}</li>
+                  </ul>
+                </div>
+              </article>
+            {/each}
           </div>
+        </section>
+        <div class="div2">
+          <button type="submit">저장하기 </button>
         </div>
       </div>
     </div>
-  </main>
+  </article>
 </form>
 
 <style>
-  main {
-    background-color: #f7f9fb;
-    width: 100%;
-    color: #333; /* Darker text color for better readability */
-    box-sizing: border-box;
-    overflow-x: hidden; /* Prevent horizontal scroll */
-    font-family: "Arial", sans-serif;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
-
-  .select_group {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 60%; /* Ensure it doesn’t exceed the container */
-    margin: 0 auto;
-  }
-
-  .select_container {
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .select_button {
-    background-color: #005fa3;
-    color: #fff;
-    padding: 12px 24px;
-    border: none;
-    font-size: 12px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    border-right: 1px solid #3e3e3e;
-    flex-shrink: 0;
-    width: 140px;
-  }
-
-  .select_button:hover {
-    background-color: #005a99;
-  }
-
-  .select_input {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    font-size: 12px;
-    background-color: #fff;
-    color: #000;
-    cursor: pointer;
-    outline: none;
-  }
-
-  .select_input:hover,
-  .select_input:focus {
-    background-color: #e0e0e0;
-  }
-
-  .select_input option {
-    background-color: #fff;
-    color: #000;
-  }
-
   .second_container {
     display: flex;
     flex-direction: column;
@@ -382,22 +346,6 @@
     color: #333;
     padding: 20px;
     box-sizing: border-box;
-  }
-
-  .first_line_container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    background-color: #005fa3;
-    border-radius: 10px;
-    color: #fff;
-    padding: 15px;
-  }
-
-  .first_line_container p {
-    margin: 0;
-    font-weight: bold;
-    color: #f2f3f4;
   }
 
   .second_line_container {
@@ -475,35 +423,6 @@
       inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
       inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
       inset 0 -2px 1px rgba(0, 0, 0, 0.25);
-  }
-
-  .card {
-    position: relative;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    color: #333;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-    padding: 15px;
-    width: 75%;
-    height: 85px; /* Adjusted height */
-    font-size: 12px;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-
-  .card_checkbox {
-    top: 5px;
-    left: 5px;
-    position: absolute;
-    cursor: pointer;
-    transform: scale(1.2);
   }
 
   .img_container {

@@ -1,14 +1,9 @@
 <script>
-  export let toggleView;
   export let searchFilters;
   export let search;
 </script>
 
 <div class="header_option">
-  <button class="toggle_button">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <span class="arrow" on:click={toggleView}>&#9662;</span>
-  </button>
   <form class="form_select">
     <div class="select_container">
       <select

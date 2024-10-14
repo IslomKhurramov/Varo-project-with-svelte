@@ -116,411 +116,297 @@
     tabMenu = menu;
     // projectIndex = plan_index;
   };
-
-  $: {
-    console.log("+tabMenu:", tabMenu);
-  }
 </script>
 
-{#if currentPage && !detailPage}
-  <div class="container_page1">
-    <div class="navbar">
-      <div class="header">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <h3
-          on:click={() => selectPage(FirstMenu, "결과등록")}
-          class={tabMenu === "결과등록" ? "active" : ""}
+<div class="contentsWrap">
+  <nav class="tabMenu">
+    <ul>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = FirstMenu;
+            projectIndex = project.ccp_index;
+          }}
         >
           결과등록
-        </h3>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <h3
-          on:click={() => selectPage(SecondMenu, "결과조회/변경")}
-          class={tabMenu === "결과조회/변경" ? "active" : ""}
+        </a>
+      </li>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = SecondMenu;
+            projectIndex = project.ccp_index;
+          }}
         >
           결과조회/변경
-        </h3>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <h3
-          on:click={() => selectPage(ThirdMenu, "보고서생성")}
-          class={tabMenu === "보고서생성" ? "active" : ""}
+        </a>
+      </li>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = ThirdMenu;
+            projectIndex = project.ccp_index;
+          }}>보고서생성</a
         >
-          보고서생성
-        </h3>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <h3
-          on:click={() => selectPage(FourthMenu, "이력관리")}
-          class={tabMenu === "이력관리" ? "active" : ""}
+      </li>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = FourthMenu;
+            projectIndex = project.ccp_index;
+          }}>이력관리</a
         >
-          이력관리
-        </h3>
-      </div>
-    </div>
-    <div class="right_menu">
-      <svelte:component this={currentPage} bind:projectIndex />
-    </div>
-  </div>
-{:else if detailPage}
+      </li>
+    </ul>
+  </nav>
+
+  {#if currentPage}
+    <svelte:component this={currentPage} bind:projectIndex />
+    <!-- {:else if detailPage}
   <svelte:component
     this={currentPage}
     projectIndex={selectedProjectIndex}
     {currentPage}
     bind:tabMenu
-  />
-{:else}
-  <header>
-    <form action="/action_page.php" class="form_select">
-      <!-- Select for filtering by project status -->
-      <div class="select_container">
-        <select
-          bind:value={selectedStatus}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">프로젝트명</option>
-          <option value="true">완료된 프로젝트</option>
-          <option value="false">진행 중인 프로젝트</option>
-        </select>
-      </div>
-
-      <!-- Select for filtering by schedule range -->
-      <div class="select_container">
-        <select
-          bind:value={selectedScheduleRange}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">일정범위</option>
-          <option value="last7days">Past 7 Days</option>
-          <option value="past90days">Past 90 Days</option>
-        </select>
-      </div>
-
-      <!-- Select for filtering by operating system (derived from asset type) -->
-      <div class="select_container">
-        <select
-          bind:value={selectedOS}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">운영체제</option>
-          <option value="WINDOWS">Windows</option>
-          <option value="UNIX">Unix</option>
-          <option value="SECURITY">Security</option>
-          <option value="NETWORK">Network</option>
-          <option value="DBMS">Dbms</option>
-        </select>
-      </div>
-
-      <!-- Select for filtering by agent status -->
-      <div class="select_container">
-        <select
-          bind:value={selectedAgentStatus}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">결과등록상태</option>
-          <option value="1">Registered</option>
-          <option value="0">Pending</option>
-        </select>
-      </div>
-    </form>
-
-    <div class="headerButton">
-      <button on:click={downloadProgram}> 프로그램다운로드 </button>
-      <button on:click={downloadExcel}> 엑셀다운로드 </button>
-    </div>
-  </header>
-
-  <main>
-    {#if loading}
-      <p>Loading...</p>
-    {:else if error}
-      <p>Error: {error}</p>
-    {:else if filteredProjects.length > 0}
-      <div class="projectContainer">
-        {#each filteredProjects as project, index}
-          <div class="project">
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="projectInfo"
-              on:click={() => {
-                currentPage = ProjectDetail;
-                projectIndex = project.ccp_index;
-              }}
-            >
-              <div class="firstCol">
-                <p>보안점수</p>
-                <div class="percentage">
-                  <p class="box_number">
-                    {project?.ccp_security_point > 0
-                      ? project?.ccp_security_point
-                      : 0}%
-                  </p>
-                </div>
-              </div>
-              <div class="secondCol">
-                <p>제목: {project.ccp_title}</p>
-                <p>점검대상: {project.asg_index__asg_title}</p>
-                <p>생성자: {project.plan_planer_info__user_name}</p>
-              </div>
-              <div class="thirdCol">
-                <p>진행상태: {project?.ccp_b_finalized ? "완료" : "진행 중"}</p>
-                <p>
-                  점검일시: {moment(project?.plan_start_date).format(
-                    "YYYY MM DD",
-                  )} ~ {moment(project?.plan_end_date).format("YYYY MM DD")}
-                </p>
-                <p>
-                  점검방법: {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
-                </p>
-              </div>
-            </div>
-            <div class="buttons">
-              <button
-                on:click={() => {
-                  currentPage = FirstMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                결과등록
-              </button>
-              <button
-                on:click={() => {
-                  currentPage = SecondMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                결과조회
-              </button>
-              <button
-                on:click={() => {
-                  currentPage = ThirdMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                보고서생성
-              </button>
-              <button
-                on:click={() => {
-                  currentPage = FourthMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                이력관리
-              </button>
-            </div>
+  /> -->
+  {:else}
+    <article class="contentArea">
+      <section class="filterWrap">
+        <div>
+          <select bind:value={selectedStatus} on:change={filterProjects}>
+            <option value="">프로젝트명</option>
+            <option value="true">완료된 프로젝트</option>
+            <option value="false">진행 중인 프로젝트</option>
+          </select>
+          <select bind:value={selectedScheduleRange} on:change={filterProjects}>
+            <option value="">일정범위</option>
+            <option value="last7days">Past 7 Days</option>
+            <option value="past90days">Past 90 Days</option>
+          </select>
+          <select bind:value={selectedOS} on:change={filterProjects}>
+            <option value="">운영체제</option>
+            <option value="WINDOWS">Windows</option>
+            <option value="UNIX">Unix</option>
+            <option value="SECURITY">Security</option>
+            <option value="NETWORK">Network</option>
+            <option value="DBMS">Dbms</option>
+          </select>
+          <select bind:value={selectedAgentStatus} on:change={filterProjects}>
+            <option value="">결과등록상태</option>
+            <option value="1">Registered</option>
+            <option value="0">Pending</option>
+          </select>
+          <!-- <button type="button" class="btn btnPrimary">
+            <img src="./assets/images/icon/search.svg" /> 조회
+          </button> -->
+          <button type="button" class="btn btnPrimary">
+            <img src="./assets/images/icon/download.svg" />
+            엑셀 다운로드
+          </button>
+        </div>
+      </section>
+      <section>
+        <div class="tableListWrap">
+          <table class="tableList">
+            <colgroup>
+              <col style="width:100px;" />
+              <col />
+              <col style="width:200px;" />
+              <col style="width:100px;" />
+              <col />
+              <col />
+              <col style="width:190px;" />
+              <col style="width:30px;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>보안점수</th>
+                <th>제목</th>
+                <th>점검대상</th>
+                <th>생성자</th>
+                <th>진행상태</th>
+                <th>점검일시</th>
+                <th>점검방법</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {#if filteredProjects && filteredProjects?.length !== 0}
+                {#each filteredProjects as project, index}
+                  <tr
+                    on:click={() => {
+                      currentPage = ProjectDetail;
+                      projectIndex = project.ccp_index;
+                    }}
+                  >
+                    <td class="circleTd">
+                      <div class="circle" data-percent="100" data-offset="440">
+                        <svg width="" height="" viewBox="0 0 150 150">
+                          <circle
+                            cx="75"
+                            cy="75"
+                            r="70"
+                            stroke={"#F2F2F2"}
+                            stroke-width="10"
+                            fill="none"
+                          />
+                          <circle
+                            class="progress"
+                            cx="75"
+                            cy="75"
+                            r="70"
+                            stroke={project?.ccp_security_point > 0
+                              ? project?.ccp_security_point <= 33
+                                ? "#FF1500"
+                                : project?.ccp_security_point <= 66
+                                  ? "#4AC93F"
+                                  : "#0067FF"
+                              : "#0067FF"}
+                            stroke-width="10"
+                            fill="none"
+                            stroke-dasharray="440"
+                            stroke-dashoffset="440"
+                            stroke-linecap="round"
+                            transform="rotate(-90 75 75)"
+                            style={`stroke: ${
+                              project?.ccp_security_point > 0
+                                ? project?.ccp_security_point <= 33
+                                  ? "#FF1500"
+                                  : project?.ccp_security_point <= 66
+                                    ? "#4AC93F"
+                                    : "#0067FF"
+                                : "#0067FF"
+                            }; stroke-dashoffset: ${
+                              440 -
+                              (440 *
+                                parseInt(
+                                  project?.ccp_security_point > 0
+                                    ? project?.ccp_security_point
+                                    : 0,
+                                )) /
+                                100
+                            };`}
+                          />
+                        </svg>
+                        <div class="percent">
+                          <span
+                            >{project?.ccp_security_point > 0
+                              ? project?.ccp_security_point
+                              : 0}%</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td class="textoverflowLine1">
+                      {project.ccp_title}
+                    </td>
+                    <td>
+                      {project?.asg_index__asg_title} (총
+                      {parseInt(project?.asset["UNIX"] ?? 0) +
+                        parseInt(project?.asset["WINDOWS"] ?? 0) +
+                        parseInt(project?.asset["NETWORK"] ?? 0) +
+                        parseInt(project?.asset["WEB"] ?? 0) +
+                        parseInt(project?.asset["DBMS"] ?? 0)}대)
+                      <div class="tableSummary">
+                        (유닉스:{project?.asset["UNIX"]}대, 윈도우: {project
+                          ?.asset["WINDOWS"]}대, NETWORK: {project?.asset[
+                          "NETWORK"
+                        ]}대, WEB: {project?.asset["WEB"]}대, DBMS: {project
+                          ?.asset["DBMS"]}대)
+                      </div>
+                    </td>
+                    <td> {project.plan_planer_info__user_name} </td>
+                    <td>
+                      <span class="badge badgePrimary">
+                        {project?.ccp_b_finalized ? "완료" : "진행 중"}
+                      </span>
+                      <div class="tableSummary">(18/28대, 78% 결과 수집)</div>
+                    </td>
+                    <td>
+                      {moment(project?.plan_start_date).format("YYYY MM DD")} ~ {moment(
+                        project?.plan_end_date,
+                      ).format("YYYY MM DD")}
+                    </td>
+                    <td>
+                      {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
+                    </td>
+                    <td class="tableTootipWrap">
+                      <button
+                        type="button"
+                        class="tableTootip"
+                        onclick="toggleTooltip(this)"
+                        ><img src="./assets/images/icon/options.svg" /></button
+                      >
+                      <div class="tooltip-modal" style="display: none;">
+                        <ul>
+                          <li>
+                            <a
+                              href="javascript:void(0)"
+                              on:click={() => {
+                                currentPage = FirstMenu;
+                                projectIndex = project.ccp_index;
+                              }}
+                            >
+                              결과등록
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:void(0)"
+                              on:click={() => {
+                                currentPage = SecondMenu;
+                                projectIndex = project.ccp_index;
+                              }}
+                            >
+                              결과조회
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:void(0)"
+                              on:click={() => {
+                                currentPage = ThirdMenu;
+                                projectIndex = project.ccp_index;
+                              }}
+                            >
+                              보고서생성
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:void(0)"
+                              on:click={() => {
+                                currentPage = FourthMenu;
+                                projectIndex = project.ccp_index;
+                              }}
+                            >
+                              이력관리
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                {/each}
+              {/if}
+            </tbody>
+          </table>
+        </div>
+        <!-- <div class="paginationWrap">
+          <div class="totalCount">Total Projects: <span>146</span></div>
+          <div class="pagination">
+            <a href="" class="active">1</a>
+            <a href="">2</a>
+            <a href="">...</a>
+            <a href="">4</a>
+            <a href="">&gt;</a>
           </div>
-        {/each}
-      </div>
-    {:else}
-      <p>No projects available based on the selected criteria.</p>
-    {/if}
-  </main>
-{/if}
-
-<style>
-  main {
-    width: 94%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f7f9fb;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 20px;
-    margin: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  .form_select {
-    display: flex;
-    gap: 20px;
-  }
-
-  .select_container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .select_input {
-    color: #000000;
-    padding: 5px;
-    border: none;
-    border-radius: 5px;
-    border: 1px solid black;
-    height: 30px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .select_input:hover {
-    background-color: #b0b0b0;
-  }
-  .select_input option {
-    background-color: #fff;
-    color: #000000;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f7f9fb;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 20px;
-    margin: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  .headerButton button {
-    background-color: #0056b3; /* Darker Blue */
-    color: #ffffff;
-    border: 1px solid #ffffff;
-    border-radius: 5px;
-    height: 30px;
-    width: 120px;
-    cursor: pointer;
-  }
-  .headerButton button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-  .projectContainer {
-    width: 100%;
-    height: 600px;
-    display: flex;
-    flex-direction: column;
-    margin: 20px 20px;
-    border: 1px solid #000000;
-    box-shadow:
-      rgb(204, 219, 232) 3px 3px 6px 0px inset,
-      rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
-    overflow-y: auto;
-    box-sizing: border-box;
-    border-radius: 10px;
-  }
-  .project {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-    height: auto;
-    margin-top: 20px;
-  }
-  .projectInfo {
-    display: flex;
-    flex-direction: row;
-    gap: 100px;
-    margin-left: 20px;
-    border-radius: 10px;
-    padding: 10px 10px;
-    background-color: #fff;
-    border: 1px solid rgb(179, 179, 179);
-    width: 100%;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
-  }
-  .projectInfo p {
-    font-size: 12px;
-  }
-  .percentage {
-    font-size: 12px;
-    font-weight: bold;
-    padding: 10px;
-    border-radius: 8px;
-    color: #fff; /* White text for contrast */
-    text-align: center;
-    width: 50px;
-    background-color: #28a745;
-  }
-  .percentage p {
-    font-weight: bold;
-  }
-  .buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 117px;
-    justify-content: space-between;
-    margin-right: 20px;
-  }
-  .buttons button {
-    font-size: 10px;
-    background-color: #4682b4;
-    color: #fff;
-    font-weight: 500;
-    width: 80px;
-    padding: 4px;
-    cursor: pointer;
-  }
-  .firstCol {
-    margin-left: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  /* Container Styling */
-  .container_page1 {
-    padding: 20px;
-    min-height: 100vh;
-  }
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f7f9fb;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-
-  .header {
-    display: flex;
-    gap: 40px;
-  }
-
-  .header h3 {
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    position: relative;
-    color: #333333;
-  }
-
-  /* Gradient Effect for Menu Items */
-  .header h3 {
-    background-image: linear-gradient(to right, #3183a0, #54b3d6 50%, #000 50%);
-    background-size: 200% 100%;
-    background-position: -100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition:
-      background-position 0.3s ease-in-out,
-      color 0.3s ease-in-out;
-  }
-
-  .header h3::before {
-    content: "";
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background-color: #3183a0;
-    transition: width 0.3s ease-in-out;
-  }
-
-  /* Hover and Active State */
-  .header h3:hover,
-  .header h3.active {
-    background-position: 0;
-    color: #3183a0;
-  }
-
-  .header h3:hover::before,
-  .header h3.active::before {
-    width: 100%;
-  }
-</style>
+        </div> -->
+      </section>
+    </article>
+  {/if}
+</div>

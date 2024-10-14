@@ -1,4 +1,8 @@
 <script>
+  import "../public/assets/css/reset.css";
+  import "../public/assets/css/common.css";
+  import "../public/assets/css/login.css";
+
   import { Router, Route, navigate } from "svelte-routing";
   import { onMount } from "svelte";
   import Header from "./components/Header.svelte";
@@ -27,9 +31,13 @@
   <Router>
     <!-- {#if $userData.isLoggedIn} -->
     <Header class="header" />
-
-    <LeftNavbar />
-
+    <Route path="/" component={Page1} />
+    <Route path="/page1" component={Page1} />
+    <Route path="/page2" component={Page2} />
+    <Route path="/page3" component={Page3} />
+    <Route path="/page4" component={Page4} />
+    <Route path="/page5" component={Page5} />
+    <Route path="/page6" component={Page6} />
     <!-- {:else} -->
     <Route path="/login" component={Login} />
     <!-- {/if} -->
@@ -39,6 +47,5 @@
 <style>
   main {
     padding-top: 0px; /* Adjust based on your header height */
-    width: 100%;
   }
 </style>

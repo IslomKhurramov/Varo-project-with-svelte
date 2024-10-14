@@ -54,59 +54,7 @@
       console.log("ERROR deleteProject:", err);
     }
   };
-
-  $: {
-    console.log("TAB PAGE: ", tabMenu);
-  }
 </script>
-
-<!-- <div class="container">
-  <div class="container_aside">
-    <aside>
-      <div class="add_delete_container">
-        <p on:click={() => selectPage(AddPorject, "add")} class="menu_button">
-          신규점검
-        </p>
-        <p class="menu_button" on:click={deleteProject}>이력삭제</p>
-      </div>
-
-      <div class="project_container">
-        {#if loading}
-          <p>Loading...</p>
-        {:else if error}
-          <p>Error: {error}</p>
-        {:else if projectArray}
-          {#each projectArray as asset, index}
-            <div class="project_button">
-              <img src="./images/projectGray.png" alt="project" />
-              <a
-                href="javascript:void(0)"
-                on:click={() => selectPage(RightContainerMenu, asset)}
-                class={activeMenu === asset ? "active" : ""}
-                title={asset.ccp_title}
-              >
-                <i class="fa fa-folder-open" aria-hidden="true"></i>
-                {asset.ccp_title}
-              </a>
-            </div>
-          {/each}
-        {/if}
-      </div>
-    </aside>
-  </div>
-  <div class="right_menu">
-    {#if currentView === "default"}
-      <RightConainer />
-    {:else if currentPage}
-      <svelte:component
-        this={currentPage}
-        projectIndex={selectedProjectIndex}
-        {currentPage}
-        bind:tabMenu
-      />
-    {/if}
-  </div>
-</div> -->
 
 <section>
   <article class="sideMenu">

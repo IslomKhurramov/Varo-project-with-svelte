@@ -116,215 +116,64 @@
     tabMenu = menu;
     // projectIndex = plan_index;
   };
-
-  $: {
-    console.log("+tabMenu:", tabMenu);
-  }
 </script>
 
-<!-- {#if currentPage && !detailPage}
-  <div class="container_page1">
-    <div class="navbar">
-      <div class="header">
-        <h3
-          on:click={() => selectPage(FirstMenu, "결과등록")}
-          class={tabMenu === "결과등록" ? "active" : ""}
+<div class="contentsWrap">
+  <nav class="tabMenu">
+    <ul>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = FirstMenu;
+            projectIndex = project.ccp_index;
+          }}
         >
           결과등록
-        </h3>
-        <h3
-          on:click={() => selectPage(SecondMenu, "결과조회/변경")}
-          class={tabMenu === "결과조회/변경" ? "active" : ""}
+        </a>
+      </li>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = SecondMenu;
+            projectIndex = project.ccp_index;
+          }}
         >
           결과조회/변경
-        </h3>
-        <h3
-          on:click={() => selectPage(ThirdMenu, "보고서생성")}
-          class={tabMenu === "보고서생성" ? "active" : ""}
+        </a>
+      </li>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = ThirdMenu;
+            projectIndex = project.ccp_index;
+          }}>보고서생성</a
         >
-          보고서생성
-        </h3>
-        <h3
-          on:click={() => selectPage(FourthMenu, "이력관리")}
-          class={tabMenu === "이력관리" ? "active" : ""}
+      </li>
+      <li>
+        <a
+          href="javascript:void(0)"
+          on:click={() => {
+            currentPage = FourthMenu;
+            projectIndex = project.ccp_index;
+          }}>이력관리</a
         >
-          이력관리
-        </h3>
-      </div>
-    </div>
-    <div class="right_menu">
-      <svelte:component this={currentPage} bind:projectIndex />
-    </div>
-  </div>
-{:else if detailPage}
+      </li>
+    </ul>
+  </nav>
+
+  {#if currentPage}
+    <svelte:component this={currentPage} bind:projectIndex />
+    <!-- {:else if detailPage}
   <svelte:component
     this={currentPage}
     projectIndex={selectedProjectIndex}
     {currentPage}
     bind:tabMenu
-  />
-{:else}
-  <header>
-    <form action="/action_page.php" class="form_select">
-      <div class="select_container">
-        <select
-          bind:value={selectedStatus}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">프로젝트명</option>
-          <option value="true">완료된 프로젝트</option>
-          <option value="false">진행 중인 프로젝트</option>
-        </select>
-      </div>
-
-      <div class="select_container">
-        <select
-          bind:value={selectedScheduleRange}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">일정범위</option>
-          <option value="last7days">Past 7 Days</option>
-          <option value="past90days">Past 90 Days</option>
-        </select>
-      </div>
-
-      <div class="select_container">
-        <select
-          bind:value={selectedOS}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">운영체제</option>
-          <option value="WINDOWS">Windows</option>
-          <option value="UNIX">Unix</option>
-          <option value="SECURITY">Security</option>
-          <option value="NETWORK">Network</option>
-          <option value="DBMS">Dbms</option>
-        </select>
-      </div>
-
-      <div class="select_container">
-        <select
-          bind:value={selectedAgentStatus}
-          on:change={filterProjects}
-          class="select_input"
-        >
-          <option value="">결과등록상태</option>
-          <option value="1">Registered</option>
-          <option value="0">Pending</option>
-        </select>
-      </div>
-    </form>
-
-    <div class="headerButton">
-      <button on:click={downloadProgram}> 프로그램다운로드 </button>
-      <button on:click={downloadExcel}> 엑셀다운로드 </button>
-    </div>
-  </header>
-
-  <main>
-    {#if loading}
-      <p>Loading...</p>
-    {:else if error}
-      <p>Error: {error}</p>
-    {:else if filteredProjects.length > 0}
-      <div class="projectContainer">
-        {#each filteredProjects as project, index}
-          <div class="project">
-            <div
-              class="projectInfo"
-              on:click={() => {
-                currentPage = ProjectDetail;
-                projectIndex = project.ccp_index;
-              }}
-            >
-              <div class="firstCol">
-                <p>보안점수</p>
-                <div class="percentage">
-                  <p class="box_number">
-                    {project?.ccp_security_point > 0
-                      ? project?.ccp_security_point
-                      : 0}%
-                  </p>
-                </div>
-              </div>
-              <div class="secondCol">
-                <p>제목: {project.ccp_title}</p>
-                <p>점검대상: {project.asg_index__asg_title}</p>
-                <p>생성자: {project.plan_planer_info__user_name}</p>
-              </div>
-              <div class="thirdCol">
-                <p>진행상태: {project?.ccp_b_finalized ? "완료" : "진행 중"}</p>
-                <p>
-                  점검일시: {moment(project?.plan_start_date).format(
-                    "YYYY MM DD",
-                  )} ~ {moment(project?.plan_end_date).format("YYYY MM DD")}
-                </p>
-                <p>
-                  점검방법: {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
-                </p>
-              </div>
-            </div>
-            <div class="buttons">
-              <button
-                on:click={() => {
-                  currentPage = FirstMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                결과등록
-              </button>
-              <button
-                on:click={() => {
-                  currentPage = SecondMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                결과조회
-              </button>
-              <button
-                on:click={() => {
-                  currentPage = ThirdMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                보고서생성
-              </button>
-              <button
-                on:click={() => {
-                  currentPage = FourthMenu;
-                  projectIndex = project.ccp_index;
-                }}
-              >
-                이력관리
-              </button>
-            </div>
-          </div>
-        {/each}
-      </div>
-    {:else}
-      <p>No projects available based on the selected criteria.</p>
-    {/if}
-  </main>
-{/if} -->
-
-{#if currentPage & !detailPage}
-  <div>1</div>
-{:else if detailPage}
-  <div>2</div>
-{:else}
-  <div class="contentsWrap">
-    <nav class="tabMenu">
-      <ul>
-        <li><a href="./inspection_result_create.html">결과등록</a></li>
-        <li><a href="./inspection_result_view.html">결과조회/변경</a></li>
-        <li><a href="./inspection_report_create.html">보고서생성</a></li>
-        <li><a href="./inspection_log.html">이력관리</a></li>
-      </ul>
-    </nav>
-
+  /> -->
+  {:else}
     <article class="contentArea">
       <section class="filterWrap">
         <div>
@@ -388,7 +237,12 @@
             <tbody>
               {#if filteredProjects && filteredProjects?.length !== 0}
                 {#each filteredProjects as project, index}
-                  <tr>
+                  <tr
+                    on:click={() => {
+                      currentPage = ProjectDetail;
+                      projectIndex = project.ccp_index;
+                    }}
+                  >
                     <td class="circleTd">
                       <div class="circle" data-percent="100" data-offset="440">
                         <svg width="" height="" viewBox="0 0 150 150">
@@ -554,5 +408,5 @@
         </div> -->
       </section>
     </article>
-  </div>
-{/if}
+  {/if}
+</div>

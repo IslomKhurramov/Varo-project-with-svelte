@@ -32,25 +32,91 @@
   });
 </script>
 
-<main>
-  <Router>
-    <!-- {#if $userData.isLoggedIn} -->
-    <Header class="header" />
-    <Route path="/" component={Page1} />
-    <Route path="/page1" component={Page1} />
-    <Route path="/page2" component={Page2} />
-    <Route path="/page3" component={Page3} />
-    <Route path="/page4" component={Page4} />
-    <Route path="/page5" component={Page5} />
-    <Route path="/page6" component={Page6} />
-    <!-- {:else} -->
-    <Route path="/login" component={Login} />
-    <!-- {/if} -->
-  </Router>
-</main>
+<Router>
+  <!-- {#if $userData.isLoggedIn} -->
+  <body>
+    <div id="wrap">
+      <Header class="header" />
+      <div class="container">
+        <nav class="titleWrap">
+          <h1>점검관리</h1>
+          <section>
+            <div class="alarmWrap">
+              <button
+                type="button"
+                class="alarm on"
+                onclick="toggleTooltip(this)"
+                ><img src="./assets/images/icon/alarm.svg" /></button
+              >
+              <div class="tooltip-modal" style="display: none;">
+                <h3 class="title">알림</h3>
+                <section class="content">
+                  <div>
+                    <a href="">
+                      <div class="title">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry.
+                      </div>
+                      <div class="day">1일</div>
+                    </a>
+                  </div>
+                  <div>
+                    <a href="">
+                      <div class="title">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry.
+                      </div>
+                      <div class="day">4일</div>
+                    </a>
+                  </div>
+                  <div>
+                    <a href="">
+                      <div class="title">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry.
+                      </div>
+                      <div class="day">5주</div>
+                    </a>
+                  </div>
+                  <div>
+                    <a href="">
+                      <div class="title">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry.
+                      </div>
+                      <div class="day">12주</div>
+                    </a>
+                  </div>
+                  <div>
+                    <a href="">
+                      <div class="title">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry.
+                      </div>
+                      <div class="day">60주</div>
+                    </a>
+                  </div>
+                </section>
+              </div>
+            </div>
+            <article>
+              <img src="./assets/images/icon/person.svg" />
+              <div class="user"><span>홍길동</span>님</div>
+            </article>
+          </section>
+        </nav>
 
-<style>
-  main {
-    padding-top: 0px; /* Adjust based on your header height */
-  }
-</style>
+        <Route path="/" component={Page1} />
+        <Route path="/page1" component={Page1} />
+        <Route path="/page2" component={Page2} />
+        <Route path="/page3" component={Page3} />
+        <Route path="/page4" component={Page4} />
+        <Route path="/page5" component={Page5} />
+        <Route path="/page6" component={Page6} />
+      </div>
+    </div>
+  </body>
+  <!-- {:else} -->
+  <Route path="/login" component={Login} />
+  <!-- {/if} -->
+</Router>

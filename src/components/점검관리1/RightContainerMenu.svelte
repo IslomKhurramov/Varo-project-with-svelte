@@ -17,7 +17,7 @@
 </script>
 
 <div
-  class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"}`}
+  class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"} ${tabMenu == "보고서생성" && "reportCreate"}`}
 >
   <nav class="tabMenu">
     <ul>

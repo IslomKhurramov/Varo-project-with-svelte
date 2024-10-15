@@ -26,6 +26,8 @@
 
   let totalPercentage = 0;
   let showModal = false;
+  let inputFile;
+  let alertConfirm = false;
 
   let updateInfo = {
     ccp_index: "",
@@ -138,6 +140,7 @@
       }
 
       await setPlanChange(formData);
+      alertConfirm = false;
     } catch (error) {
       console.error("Error updateInfoHandler:", error);
       errorAlert(error?.message);
@@ -174,6 +177,7 @@
   };
 
   const calculateAllSecurityLevel = (target_group_securitypoint) => {
+    console.log("target_group_securitypoint:", target_group_securitypoint);
     const allItems = Object.values(target_group_securitypoint).flat();
     const totalY = allItems.reduce((sum, item) => sum + item.y, 0);
 
@@ -193,7 +197,7 @@
   };
 
   $: {
-    console.log("updateInfo:", updateInfo);
+    console.log("projectDetails:", projectDetails);
   }
 </script>
 
@@ -745,16 +749,44 @@
             cx="75"
             cy="75"
             r="55"
-            stroke="#0067ff"
+            stroke={projectDetails?.ccp_security_point > 0
+              ? projectDetails?.ccp_security_point <= 33
+                ? "#FF1500"
+                : projectDetails?.ccp_security_point <= 66
+                  ? "#4AC93F"
+                  : "#0067FF"
+              : "#0067FF"}
             stroke-width="18"
             fill="none"
             stroke-dasharray="345"
             stroke-linecap="round"
             transform="rotate(-90 75 75)"
+            style={`stroke: ${
+              projectDetails?.ccp_security_point > 0
+                ? projectDetails?.ccp_security_point <= 33
+                  ? "#FF1500"
+                  : projectDetails?.ccp_security_point <= 66
+                    ? "#4AC93F"
+                    : "#0067FF"
+                : "#0067FF"
+            }; stroke-dashoffset: ${
+              345 -
+              (345 *
+                parseInt(
+                  projectDetails?.ccp_security_point > 0
+                    ? projectDetails?.ccp_security_point
+                    : 0,
+                )) /
+                100
+            };`}
           />
         </svg>
         <div class="percent">
-          <span>80%</span>
+          <span>
+            {projectDetails?.ccp_security_point > 0
+              ? projectDetails?.ccp_security_point
+              : 0}%
+          </span>
         </div>
       </div>
     </article>
@@ -780,53 +812,165 @@
             cx="75"
             cy="75"
             r="55"
-            stroke="#0067ff"
+            stroke={totalPercentage > 0
+              ? totalPercentage <= 33
+                ? "#FF1500"
+                : totalPercentage <= 66
+                  ? "#4AC93F"
+                  : "#0067FF"
+              : "#0067FF"}
             stroke-width="18"
             fill="none"
             stroke-dasharray="345"
             stroke-linecap="round"
             transform="rotate(-90 75 75)"
+            style={`stroke: ${
+              totalPercentage > 0
+                ? totalPercentage <= 33
+                  ? "#FF1500"
+                  : totalPercentage <= 66
+                    ? "#4AC93F"
+                    : "#0067FF"
+                : "#0067FF"
+            }; stroke-dashoffset: ${
+              345 -
+              (345 * parseInt(totalPercentage > 0 ? totalPercentage : 0)) / 100
+            };`}
           />
         </svg>
         <div class="percent">
-          <span>75%</span>
+          <span>{totalPercentage ? totalPercentage : 0}%</span>
         </div>
       </div>
       <div>
         <ul class="progressbarWrap result">
-          <li onclick="modalOpen('detail')">
-            <div class="progress-info">
-              <h4>UNIX</h4>
-              <span>70%</span>
-            </div>
-            <div class="progress light">
-              <div class="progress-bar orange" style="width: 70%;"></div>
-            </div>
-          </li>
-          <li onclick="modalOpen('detail')">
-            <div class="progress-info">
-              <h4>UNIX</h4>
-              <span>70%</span>
-            </div>
-            <div class="progress light">
-              <div class="progress-bar orange" style="width: 70%;"></div>
-            </div>
-          </li>
-          <li onclick="modalOpen('detail')">
-            <div class="progress-info">
-              <h4>UNIX</h4>
-              <span>70%</span>
-            </div>
-            <div class="progress light">
-              <div class="progress-bar orange" style="width: 70%;"></div>
-            </div>
-          </li>
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "UNIX")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) => asset.ast_uuid__ast_target__cct_target === "UNIX",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>UNIX</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "UNIX",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "UNIX",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
+
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "NETWORK")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) =>
+                    asset.ast_uuid__ast_target__cct_target === "NETWORK",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>NETWORK</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "NETWORK",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "NETWORK",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
+
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "DBMS")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) => asset.ast_uuid__ast_target__cct_target === "DBMS",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>DBMS</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "DBMS",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "DBMS",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
+
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "SECURITY")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) =>
+                    asset.ast_uuid__ast_target__cct_target === "SECURITY",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>SECURITY</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "SECURITY",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "SECURITY",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
         </ul>
-        <div class="slidePager">
+        <!-- <div class="slidePager">
           <a href="#" class="active"></a>
           <a href="#"></a>
           <a href="#"></a>
-        </div>
+        </div> -->
       </div>
     </article>
   </div>
@@ -846,60 +990,96 @@
             <input
               type="text"
               placeholder="점검플랜명"
-              value="프로젝트1 어쩌구..저쩌구…"
+              bind:value={updateInfo["ccp_title"]}
             />
           </td>
         </tr>
         <tr>
           <th>점검대상</th>
-          <td colspan="3">
-            <input
-              type="text"
-              placeholder="생성자"
-              value="자산그룹1 (총 28대) (유닉스:11대, 윈도우 20대, PC : 100대"
-            />
+          <td>
+            <select bind:value={updateInfo["asg_index"]}>
+              <option value="" selected disabled>자산 그룹목록</option>
+
+              {#if planOptions.asset_group}
+                {#each planOptions.asset_group as asset}
+                  <option value={asset.asg_index}>
+                    {asset.asg_title}
+                  </option>
+                {/each}
+              {/if}
+            </select>
           </td>
         </tr>
         <tr>
           <th>점검항목</th>
           <td colspan="3">
-            <input type="text" placeholder="생성자" value="체크리스트 11번째" />
+            <select bind:value={updateInfo["ccp_ruleset"]}>
+              <option value="" selected disabled>점검항목 목록</option>
+              {#if planOptions.checklist_group}
+                {#each planOptions.checklist_group as item}
+                  <option value={item.ccg_index}>
+                    {item.ccg_group}
+                  </option>
+                {/each}
+              {/if}
+            </select>
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <th>생성자</th>
           <td colspan="3">
             <input type="text" placeholder="생성자" value="홍길동" />
           </td>
-        </tr>
+        </tr> -->
         <tr>
           <th>진행상태</th>
           <td colspan="3">
             <input
               type="text"
-              placeholder="생성자"
+              placeholder="진행상태"
               disabled
-              value="점검진행 진행완료 ( 28/28대, 100% 결과 수집 )"
+              value={projectDetails?.ccp_b_finalized ? "완료" : "진행 중"}
             />
           </td>
         </tr>
         <tr>
           <th>점검방법</th>
           <td>
-            <select>
-              <option>신규점검</option>
-              <option selected>이행점검</option>
+            <select bind:value={updateInfo["recheck"]}>
+              <option value={0}> 신규점겅검 </option>
+              <option value={1}> 이행점검 </option>
             </select>
           </td>
-          <th>이전점검</th>
-          <td>
-            <input type="text" placeholder="생성자" value="프로젝트명" />
-          </td>
+          {#if updateInfo?.recheck === 1}
+            <th>이전점검</th>
+            <td>
+              <select bind:value={updateInfo["recheck_pno"]}>
+                <option value="" selected disabled>이전 점검플랜명</option>
+
+                {#if planList}
+                  {#each planList as plan}
+                    <option value={plan.ccp_index}>
+                      {plan.ccp_title}
+                    </option>
+                  {/each}
+                {/if}
+              </select>
+            </td>
+          {/if}
         </tr>
         <tr>
           <th>점검담당자</th>
-          <td colspan="3">
-            <input type="text" placeholder="생성자" value="홍길동" />
+          <td>
+            <select bind:value={updateInfo["plan_planer_info"]}>
+              <option value="" selected disabled>선택</option>
+              {#if planOptions.member_group}
+                {#each planOptions.member_group as member}
+                  <option value={member.user_index}>
+                    {member.user_name}
+                  </option>
+                {/each}
+              {/if}
+            </select>
           </td>
         </tr>
         <tr>
@@ -907,13 +1087,21 @@
           <td colspan="3">
             <div class="dateWrap">
               <div class="date">
-                <input type="text" class="datepicker" placeholder="시작일시" />
-                <img src="./assets/images/icon/date.svg" />
+                <input
+                  type="datetime-local"
+                  class="datepicker"
+                  placeholder="시작일시"
+                  bind:value={updateInfo["plan_start_date"]}
+                />
               </div>
               <img src="./assets/images/icon/dash.svg" />
               <div class="date">
-                <input type="text" class="datepicker" placeholder="종료일시" />
-                <img src="./assets/images/icon/date.svg" />
+                <input
+                  type="datetime-local"
+                  class="datepicker"
+                  placeholder="종료일시"
+                  bind:value={updateInfo["plan_end_date"]}
+                />
               </div>
             </div>
           </td>
@@ -921,11 +1109,20 @@
         <tr>
           <th>점검스케쥴</th>
           <td colspan="3">
-            <input
-              type="text"
-              placeholder="생성자"
-              value="반복수행 / 어쩌구..저저구…"
-            />
+            <select>
+              <option
+                value="0"
+                selected={updateInfo?.plan_execution_type === true}
+              >
+                즉시실행
+              </option>
+              <option
+                value="1"
+                selected={updateInfo?.plan_execution_type === false}
+              >
+                반복실행
+              </option>
+            </select>
           </td>
         </tr>
         <tr>
@@ -933,16 +1130,39 @@
           <td colspan="3">
             <div class="dateWrap">
               <div class="date">
-                <input type="text" class="datepicker" placeholder="조치일정" />
-                <img src="./assets/images/icon/date.svg" />
+                <input
+                  type="date"
+                  class="datepicker"
+                  placeholder="시작일시"
+                  bind:value={updateInfo["fix_start_date"]}
+                />
+              </div>
+              <img src="./assets/images/icon/dash.svg" />
+              <div class="date">
+                <input
+                  type="date"
+                  class="datepicker"
+                  placeholder="종료일시"
+                  bind:value={updateInfo["fix_end_date"]}
+                />
               </div>
             </div>
           </td>
         </tr>
+
         <tr>
           <th>조치담당자</th>
           <td colspan="3">
-            <input type="text" placeholder="생성자" value="홍길동" />
+            <select bind:value={updateInfo["fix_conductor_info"]}>
+              <option value="" selected disabled>선택</option>
+              {#if planOptions.member_group}
+                {#each planOptions.member_group as member}
+                  <option value={member.user_index}>
+                    {member.user_name}
+                  </option>
+                {/each}
+              {/if}
+            </select>
           </td>
         </tr>
         <tr>
@@ -955,235 +1175,501 @@
                 id="file-upload"
                 accept=".xls,.xlsx"
                 class="file-input"
+                bind:this={inputFile}
+                on:change={(e) => {
+                  updateInfo = {
+                    ...updateInfo,
+                    assessment_command: e.target.files[0],
+                  };
+                }}
               />
-              <button id="upload-btn" class="upload-btn btn btnPrimary"
-                >Upload</button
+              <button
+                id="upload-btn"
+                class="upload-btn btn btnPrimary"
+                on:click={() => {
+                  inputFile.click();
+                }}
               >
+                Upload
+              </button>
             </div>
           </td>
           <td class="flex btnWrap">
             <button
               type="button"
               class="btn btnBlue btnSave"
-              onclick="modalOpen('alert')">변경저장</button
+              onclick="modalOpen('alert')"
+              on:click={() => (alertConfirm = true)}
             >
+              변경저장
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </article>
 </section>
-<section class="rowContents">
-  <article class="contentArea securityLevel">
-    <h4 class="title border">보안수준</h4>
-    <div class="flex">
-      <div class="circleGraph">
-        <div class="summary">
-          <h6>80%</h6>
-          <span>전체보안수준</span>
-        </div>
 
-        <div class="circle" data-percent="80" data-offset="345">
-          <svg width="" height="" viewBox="0 0 139 139">
-            <circle
-              cx="75"
-              cy="75"
-              r="55"
-              stroke="#F2F2F2"
-              stroke-width="18"
-              fill="none"
-            />
-            <circle
-              class="progress"
-              cx="75"
-              cy="75"
-              r="55"
-              stroke="#0067ff"
-              stroke-width="18"
-              fill="none"
-              stroke-dasharray="345"
-              stroke-linecap="round"
-              transform="rotate(-90 75 75)"
-            />
-          </svg>
-          <div class="percent">
-            <span><img src="./assets/images/icon/guard.svg" /></span>
+{#if projectDetails?.ccp_index}
+  <section class="rowContents">
+    <article class="contentArea securityLevel">
+      <h4 class="title border">보안수준</h4>
+      <div class="flex">
+        <div class="circleGraph">
+          <div class="summary">
+            <h6>
+              {calculateAllSecurityLevel(
+                projectDetails?.target_group_securitypoint,
+              )}%
+            </h6>
+            <span>전체보안수준</span>
+          </div>
+
+          <div class="circle" data-percent="80" data-offset="345">
+            <svg width="" height="" viewBox="0 0 139 139">
+              <circle
+                cx="75"
+                cy="75"
+                r="55"
+                stroke="#F2F2F2"
+                stroke-width="18"
+                fill="none"
+              />
+              <circle
+                class="progress"
+                cx="75"
+                cy="75"
+                r="55"
+                stroke={calculateAllSecurityLevel(
+                  projectDetails?.target_group_securitypoint,
+                ) > 0
+                  ? calculateAllSecurityLevel(
+                      projectDetails?.target_group_securitypoint,
+                    ) <= 33
+                    ? "#FF1500"
+                    : calculateAllSecurityLevel(
+                          projectDetails?.target_group_securitypoint,
+                        ) <= 66
+                      ? "#4AC93F"
+                      : "#0067FF"
+                  : "#0067FF"}
+                stroke-width="18"
+                fill="none"
+                stroke-dasharray="345"
+                stroke-linecap="round"
+                transform="rotate(-90 75 75)"
+                style={`stroke: ${
+                  calculateAllSecurityLevel(
+                    projectDetails?.target_group_securitypoint,
+                  ) > 0
+                    ? calculateAllSecurityLevel(
+                        projectDetails?.target_group_securitypoint,
+                      ) <= 33
+                      ? "#FF1500"
+                      : calculateAllSecurityLevel(
+                            projectDetails?.target_group_securitypoint,
+                          ) <= 66
+                        ? "#4AC93F"
+                        : "#0067FF"
+                    : "#0067FF"
+                }; stroke-dashoffset: ${
+                  345 -
+                  (345 *
+                    parseInt(
+                      calculateAllSecurityLevel(
+                        projectDetails?.target_group_securitypoint,
+                      ) > 0
+                        ? calculateAllSecurityLevel(
+                            projectDetails?.target_group_securitypoint,
+                          )
+                        : 0,
+                    )) /
+                    100
+                };`}
+              />
+            </svg>
+            <div class="percent">
+              <span><img src="./assets/images/icon/guard.svg" /></span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="progressSection">
-        <ul class="progressbarWrap">
-          <li>
-            <div class="progress-info">
-              <h4>UNIX</h4>
-              <span>30%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar blue" style="width: 30%;"></div>
-            </div>
-          </li>
-          <li>
-            <div class="progress-info">
-              <h4>WINDOWS</h4>
-              <span>50%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar blue" style="width: 50%;"></div>
-            </div>
-          </li>
-          <li>
-            <div class="progress-info">
-              <h4>예시항목</h4>
-              <span>50%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar blue" style="width: 50%;"></div>
-            </div>
-          </li>
-        </ul>
-        <div class="slidePager">
-          <a href="#" class="active"></a>
-          <a href="#"></a>
-          <a href="#"></a>
+        <div class="progressSection">
+          <ul class="progressbarWrap">
+            <li>
+              <div class="progress-info">
+                <h4>UNIX</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "UNIX",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "UNIX",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>WINDOWS</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "WINDOWS",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "WINDOWS",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>SECURITY</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "SECURITY",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "SECURITY",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>NETWORK</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "NETWORK",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "NETWORK",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+          </ul>
+          <!-- <div class="slidePager">
+            <a href="#" class="active"></a>
+            <a href="#"></a>
+            <a href="#"></a>
+          </div> -->
+        </div>
+
+        <div class="progressSection">
+          <ul class="progressbarWrap">
+            <li>
+              <div class="progress-info">
+                <h4>계정관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "계정 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "계정 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>접근관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "접근 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "접근 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>패치관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "패치 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "패치 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>로그관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "로그 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "로그 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>기능관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "기능 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "기능 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+          </ul>
+          <!-- <div class="slidePager">
+            <a href="#" class="active"></a>
+            <a href="#"></a>
+            <a href="#"></a>
+          </div> -->
         </div>
       </div>
+    </article>
+  </section>
 
-      <div class="progressSection">
-        <ul class="progressbarWrap">
-          <li>
-            <div class="progress-info">
-              <h4>계정관리</h4>
-              <span>10%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar blue" style="width: 10%;"></div>
-            </div>
-          </li>
-          <li>
-            <div class="progress-info">
-              <h4>서비스관리</h4>
-              <span>40%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar blue" style="width: 40%;"></div>
-            </div>
-          </li>
-          <li>
-            <div class="progress-info">
-              <h4>항목</h4>
-              <span>70%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar blue" style="width: 70%;"></div>
-            </div>
-          </li>
-        </ul>
-        <div class="slidePager">
-          <a href="#" class="active"></a>
-          <a href="#"></a>
-          <a href="#"></a>
+  <section class="rowContents">
+    <article class="contentArea securityVulnerability">
+      <h4 class="title border">주요 취약점</h4>
+      <div class="tableListWrap">
+        <table class="tableList hdBorder">
+          <colgroup>
+            <col style="width:60px;" />
+            <col style="width:122px;" />
+            <col style="width:220px;" />
+            <col />
+            <col />
+            <!-- <col style="width:100px;" /> -->
+          </colgroup>
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>대상</th>
+              <th>점검그룹</th>
+              <th>점검항목</th>
+              <th>위험도</th>
+              <!-- <th class="text-center">점검결과</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            {#each projectDetails?.vuln_list as vuln, index}
+              <tr>
+                <td class="text-center">{index + 1}</td>
+                <td>{vuln?.cct_index__cct_target}</td>
+                <td>{vuln?.ccr_item_no__ccc_item_group}</td>
+                <td>
+                  {vuln?.ccr_item_no__ccc_item_title}
+                </td>
+                <td>{vuln?.ccr_item_no__ccc_item_level}</td>
+                <!-- <td class="text-center">
+                  <span class="badge badgePrimary"> 양호 </span>
+                </td> -->
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+      <!-- <div class="paginationWrap">
+        <div class="pagination">
+          <a href="" class="active">1</a>
+          <a href="">2</a>
+          <a href="">...</a>
+          <a href="">4</a>
+          <a href="">&gt;</a>
         </div>
-      </div>
-    </div>
-  </article>
-</section>
-
-<section class="rowContents">
-  <article class="contentArea securityVulnerability">
-    <h4 class="title border">주요 취약점</h4>
-    <div class="tableListWrap">
-      <table class="tableList hdBorder">
-        <colgroup>
-          <col style="width:60px;" />
-          <col style="width:122px;" />
-          <col style="width:220px;" />
-          <col />
-          <col />
-          <col style="width:100px;" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>번호</th>
-            <th>호스트명</th>
-            <th>항목</th>
-            <th>점검항목</th>
-            <th>시스템상태</th>
-            <th class="text-center">점검결과</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="text-center">2</td>
-            <td>User_L2_51</td>
-            <td>[N-01] 패스워드 설정</td>
-            <td>
-              <div>양호: 기본 패스워드를 변경한 경우</div>
-              <div>
-                취약: 기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은
-                경우
-              </div>
-            </td>
-            <td>계정목록(동일패스워드 없음)</td>
-            <td class="text-center"
-              ><span class="badge badgePrimary">양호</span></td
-            >
-          </tr>
-          <tr>
-            <td class="text-center">1</td>
-            <td>User_L2_51</td>
-            <td>[N-01] 패스워드 설정</td>
-            <td>
-              <div>양호: 기본 패스워드를 변경한 경우</div>
-              <div>
-                취약: 기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은
-                경우
-              </div>
-            </td>
-            <td>계정목록(동일패스워드 없음)</td>
-            <td class="text-center">
-              <span class="badge badgeGreen">수동점검</span>
-              <!--취약일 경우 badgeRed 로 표시-->
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="paginationWrap">
-      <div class="pagination">
-        <!-- <a href="">&lt;</a> -->
-        <a href="" class="active">1</a>
-        <a href="">2</a>
-        <a href="">...</a>
-        <a href="">4</a>
-        <a href="">&gt;</a>
-      </div>
-    </div>
-  </article>
-</section>
+      </div> -->
+    </article>
+  </section>
+{/if}
 
 <!--Modal:초기화-->
-<div class="modalWrap alert">
+<div class={`modalWrap alert ${alertConfirm ? "active" : ""}`}>
   <div class="modalContents small">
     <div class="contents">
       <div class="closeWrap">
-        <button type="button" class="btnImg" onclick="modalOpen('alert')"
-          ><img src="./assets/images/icon/close.svg" /></button
+        <button
+          type="button"
+          class="btnImg"
+          on:click={() => {
+            alertConfirm = false;
+            updateProjectDetails();
+          }}
         >
+          <img src="./assets/images/icon/close.svg" />
+        </button>
       </div>
       <div class="msg">변경저장할 경우 이전 정보가 모두 초기화됩니다.</div>
       <div class="flex bottom-buttons normal">
         <button
           type="button"
           class="btn btnDefault"
-          onclick="modalOpen('alert')">취소</button
+          on:click={() => {
+            alertConfirm = false;
+            updateProjectDetails();
+          }}
         >
-        <button type="button" class="btn btnBlue" onclick="modalOpen('alert')"
-          >확인</button
+          취소
+        </button>
+        <button
+          type="button"
+          class="btn btnBlue"
+          on:click={() => updateInfoHandler(updateInfo)}
         >
+          확인
+        </button>
       </div>
     </div>
   </div>
 </div>
-
 <!--//Modal:초기화-->
+
+<!--Modal:자산 상세-->
+<div class={`modalWrap detail table ${showModal ? "active" : ""}`}>
+  {#if showModal}
+    <div class="modalContents big">
+      <div class="contents">
+        <div class="closeWrap">
+          <button
+            type="button"
+            class="btnImg"
+            on:click={() => {
+              showModal = false;
+            }}
+          >
+            <img src="./assets/images/icon/close.svg" />
+          </button>
+        </div>
+        <div class="content">
+          <div class="flex head">
+            <h3 class="title">점검결과 등록 내역</h3>
+          </div>
+          <div class="tableListWrap">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col style="width:90px;" />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">번호</th>
+                  <th class="text-center">호스트명</th>
+                  <th class="text-center">아이피주소</th>
+                  <th class="text-center">점검대상</th>
+                  <!-- <th class="text-center">에이전트</th> -->
+                  <th class="text-center">보안점수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#if modalData && modalData?.length !== 0}
+                  {#each modalData as data, index}
+                    <tr>
+                      <td class="text-center">{index + 1}</td>
+                      <td class="text-center"
+                        >{data?.ast_uuid__ass_uuid__ast_hostname}</td
+                      >
+                      <td class="text-center"
+                        >{data?.ast_uuid__ass_uuid__ast_ipaddr}</td
+                      >
+                      <td class="text-center"
+                        >{data?.ast_uuid__ast_target__cct_target}</td
+                      >
+                      <!-- <td class="text-center">Y</td> -->
+                      <td class="text-center"
+                        >{data?.ast_security_point > 0
+                          ? `${data?.ast_security_point}%`
+                          : "결과미등록"}</td
+                      >
+                    </tr>
+                  {/each}
+                {/if}
+              </tbody>
+            </table>
+          </div>
+          <!-- <div class="paginationWrap">
+        <div class="pagination">
+          <a href="" class="active">1</a>
+          <a href="">2</a>
+          <a href="">...</a>
+          <a href="">4</a>
+          <a href="">&gt;</a>
+        </div>
+      </div> -->
+        </div>
+      </div>
+    </div>
+  {/if}
+</div>
+<!--//Modal:자산 상세-->

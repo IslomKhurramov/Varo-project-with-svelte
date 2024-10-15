@@ -604,3 +604,14 @@
     </div>
   </section>
 </article>
+
+{#if showModal}
+  <Modal bind:showModal bind:insertData>
+    <ModalPage
+      bind:modalData
+      bind:insertData
+      planIndex={search?.plan_index}
+      {changeDataHandler}
+    />
+  </Modal>
+{/if}

@@ -482,3 +482,35 @@
     </div>
   </div>
 </article>
+
+{#if modalData}
+  <ModalDynamic
+    bind:showModal
+    modalWidth={60}
+    modalHeight={modalData?.length > 10 ? 70 : null}
+  >
+    <ResultPopup bind:modalData />
+  </ModalDynamic>
+{/if}
+
+{#if modalErrorData}
+  <ModalDynamic
+    bind:showModal={showErrorModal}
+    modalWidth={80}
+    modalHeight={modalErrorData?.length > 10 ? 70 : null}
+  >
+    <ResultErrorPopup bind:modalErrorData />
+  </ModalDynamic>
+{/if}
+
+{#if uploadStatusModalData}
+  <ModalDynamic
+    bind:showModal={uploadStatusModalData}
+    modalWidth={80}
+    modalHeight={uploadStatusModalData?.uploaded_status?.length > 10
+      ? 70
+      : null}
+  >
+    <ResultUploadStatusPopup bind:uploadStatusModalData />
+  </ModalDynamic>
+{/if}

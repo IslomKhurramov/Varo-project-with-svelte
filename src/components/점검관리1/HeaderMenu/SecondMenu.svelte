@@ -159,7 +159,7 @@
   }
 </script>
 
-<body>
+<!-- <body>
   <div class="container">
     <div class="firstLine">
       <div class="dropdown-group">
@@ -284,7 +284,6 @@
             {#each resultData as data, index}
               <tr>
                 <td>{index + 1}</td>
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <td
                   style="cursor: pointer;"
                   on:click={() => {
@@ -389,180 +388,219 @@
       </Modal>
     {/if}
   </div>
-</body>
+</body> -->
 
-<style>
-  body {
-    display: flex;
-    justify-content: center;
-    background-color: #f4f4f4;
-  }
-  .table_container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: auto;
-    width: 100%;
-  }
-  .container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
+<article class="contentArea">
+  <section class="filterWrap">
+    <div>
+      <select
+        bind:value={search["plan_index"]}
+        on:change={(e) => selectPlan(e.target.value)}
+      >
+        <option value="" selected disabled>프로젝트</option>
+        {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+          {#each searchFilters?.plans as plan}
+            <option value={plan.ccp_index}>{plan.ccp_title}</option>
+          {/each}
+        {/if}
+      </select>
+      <select
+        bind:value={search["assessment_target"]}
+        on:change={(e) => selectTarget(e.target.value)}
+      >
+        <option value="" selected>점검대상</option>
+        {#if targets && targets.length !== 0}
+          {#each targets as target}
+            <option value={target}>{target}</option>
+          {/each}
+        {/if}
+      </select>
 
-  .firstLine {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .dropdown-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .dropdown-container {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-    white-space: nowrap;
-  }
-
-  .dropdown-container label {
-    font-weight: bold;
-    margin: 0;
-    font-size: 12px;
-  }
-
-  .firstlineButton {
-    background-color: #0056b3;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    font-size: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .firstlineButton:hover {
-    background-color: #003366;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .secondLine {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    gap: 10px;
-    background-color: #f4f4f4;
-    border-radius: 5px;
-  }
-
-  .secondLine div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-size: 12px;
-    justify-content: center;
-  }
-
-  .bold-text {
-    font-weight: bold;
-    margin: 0;
-  }
-  .button-group {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-  }
-
-  .thirdLine {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-bottom: 10px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #dddddd;
-    padding: 10px;
-  }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  td {
-    word-wrap: break-word;
-    max-width: 150px;
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  tbody tr:hover {
-    background-color: #e0f7fa;
-  }
-
-  .checklist p {
-    margin: 0;
-  }
-
-  .save_button {
-    background-color: #28a745;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 12px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .save_button:hover {
-    background-color: #247e39;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  span.수동점검 {
-    color: blue;
-  }
-
-  span.취약 {
-    color: red;
-  }
-
-  button:disabled {
-    background-color: #838383;
-  }
-</style>
+      <select bind:value={search["hostname"]} on:change={refetchDataHandler}>
+        <option value="" selected>호스트</option>
+        {#if assets && assets.length !== 0}
+          {#each assets as asset}
+            <option value={asset}>{asset}</option>
+          {/each}
+        {/if}
+      </select>
+      <select
+        id="result"
+        bind:value={search["checklist_item_no"]}
+        on:change={refetchDataHandler}
+      >
+        <option value="" selected>점검항목</option>
+        {#if checklist && checklist.length !== 0}
+          {#each checklist as check}
+            <option value={check}>{check}</option>
+          {/each}
+        {/if}
+      </select>
+      <select
+        bind:value={search["check_result"]}
+        on:change={refetchDataHandler}
+      >
+        <option value="" selected>점검결과</option>
+        {#if results && results.length !== 0}
+          {#each results as result}
+            <option value={result?.ccr_item_result}
+              >{result?.ccr_item_result}</option
+            >
+          {/each}
+        {/if}
+      </select>
+      <!-- <button type="button" class="btn btnPrimary">
+        <img src="./assets/images/icon/search.svg" />
+        조회
+      </button> -->
+      <button
+        type="button"
+        class={`btn ${!search?.plan_index || !resultData ? "btnPrimary" : "btnBlue"}`}
+        disabled={!search?.plan_index || !resultData}
+        on:click={() => clickSecyurityPoint(search?.plan_index)}
+      >
+        보안점수확정
+      </button>
+    </div>
+  </section>
+  <section class="flex totalSecurityLevel">
+    <h4>프로젝트 전체 보안수준</h4>
+    <ul class="flex">
+      <li class="flex">
+        <h6 class="name">보안수준</h6>
+        <b>75%</b>
+        <div class="badge badgeRedW">결과 미확정</div>
+      </li>
+      <li class="flex">
+        <h6 class="name">점검대상</h6>
+        <b>( NETWORKS: 1대 WINDOWS: 1대 )</b>
+      </li>
+      <li class="flex">
+        <h6 class="name">점검시작일시</h6>
+        <b>2024년 7월 10일 6:38 오전</b>
+      </li>
+    </ul>
+  </section>
+  <section class="tableWrap">
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:90px;" />
+          <col style="width:110px;" />
+          <col style="width:200px;" />
+          <col />
+          <col style="width:90px;" />
+          <col style="width:200px;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center">번호</th>
+            <th class="text-center">호스트명</th>
+            <th>항목</th>
+            <th>점검항목</th>
+            <th>시스템상태</th>
+            <th class="text-center">점검결과</th>
+            <th>결과변경</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#if resultData && resultData?.length !== 0}
+            {#each resultData as data, index}
+              <tr>
+                <td class="text-center">{index + 1}</td>
+                <td
+                  on:click={() => {
+                    modalData = { ...data };
+                    showModal = true;
+                  }}
+                  class="cursor-pointer"
+                >
+                  {data?.ast_uuid__ass_uuid__ast_hostname}
+                </td>
+                <td>
+                  [{data?.ccr_item_no__ccc_item_no}] {data?.ccr_item_no__ccc_item_title}
+                </td>
+                <td onclick="modalOpen('detail')" class="cursor-pointer">
+                  <div>{@html data?.ccr_item_no__ccc_item_criteria}</div>
+                </td>
+                <td> {@html data.ccr_item_status}</td>
+                <td class="text-center">
+                  <span class="badge badgePrimary">
+                    {data.ccr_item_result}
+                  </span>
+                </td>
+                <td>
+                  <div class="flex gap-4">
+                    <select
+                      class="xs"
+                      on:change={(e) =>
+                        changeItemResult({
+                          plan_index: search.plan_index,
+                          result_index: data?.ccr_index,
+                          checklist_index: data?.ccr_item_no__ccc_index,
+                          change_result: e.target.value,
+                          change_option: change_option,
+                        })}
+                    >
+                      <option
+                        value=""
+                        disabled
+                        selected={data?.ccr_item_result === ""}
+                      >
+                        없음
+                      </option>
+                      <option
+                        value="양호"
+                        selected={data?.ccr_item_result === "양호"}
+                      >
+                        양호
+                      </option>
+                      <option
+                        value="취약"
+                        selected={data?.ccr_item_result === "취약"}
+                      >
+                        취약
+                      </option>
+                      <option
+                        value="예외처리"
+                        selected={data?.ccr_item_result === "예외처리"}
+                      >
+                        예외처리
+                      </option>
+                      <option
+                        value="해당없음"
+                        selected={data?.ccr_item_result === "해당없음"}
+                      >
+                        해당없음
+                      </option>
+                    </select>
+                    <select
+                      class="xs"
+                      on:change={(e) => {
+                        change_option = e.target.value;
+                      }}
+                    >
+                      <option value="ONE"> 해당 </option>
+                      <option value="ALL"> 전체 </option>
+                    </select>
+                    <!-- <button type="button" class="btn btnBlue xs">변경</button> -->
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          {/if}
+        </tbody>
+      </table>
+    </div>
+    <div class="paginationWrap end">
+      <div class="pagination">
+        <!-- <a href="">&lt;</a> -->
+        <a href="" class="active">1</a>
+        <a href="">2</a>
+        <a href="">...</a>
+        <a href="">4</a>
+        <a href="">&gt;</a>
+      </div>
+    </div>
+  </section>
+</article>

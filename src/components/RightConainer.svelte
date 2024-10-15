@@ -122,7 +122,9 @@
   }
 </script>
 
-<div class={`contentsWrap ${tabMenu == "결과등록" ? "resultCreate" : ""}`}>
+<div
+  class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"}`}
+>
   <nav class="tabMenu">
     <ul>
       <li>
@@ -130,7 +132,6 @@
           href="javascript:void(0)"
           on:click={() => {
             currentPage = FirstMenu;
-
             tabMenu = "결과등록";
           }}
         >
@@ -142,6 +143,7 @@
           href="javascript:void(0)"
           on:click={() => {
             currentPage = SecondMenu;
+            tabMenu = "결과조회/변경";
           }}
         >
           결과조회/변경

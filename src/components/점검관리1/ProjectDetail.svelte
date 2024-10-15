@@ -197,11 +197,10 @@
   }
 </script>
 
-<main>
+<!-- <main>
   <div class="main-container">
     {#if projectDetails?.ccp_title}
       <div class="container">
-        <!-- Overview Section -->
         <h2>[개요]</h2>
         <div class="overview">
           <div class="first_cont">
@@ -224,8 +223,6 @@
 
               <p>
                 점검대상:
-                <!-- {projectDetails?.asg_index__asg_title} -->
-
                 <select bind:value={updateInfo["asg_index"]}>
                   <option value="" selected disabled>자산 그룹목록</option>
 
@@ -238,7 +235,6 @@
                   {/if}
                 </select>
               </p>
-              <!-- <p>{inspectionDetails}</p> -->
               <p>
                 점검항목:
 
@@ -295,9 +291,6 @@
               {/if}
               <p>
                 점검일시:
-                <!-- {moment(projectDetails?.plan_start_date).format("YYYY MM DD")} ~
-                {moment(projectDetails?.plan_end_date).format("YYYY MM DD")} -->
-                <!-- {projectDetails?.plan_start_date} -->
                 <input
                   type="datetime-local"
                   bind:value={updateInfo["plan_start_date"]}
@@ -364,12 +357,6 @@
                 />
               </p>
             </div>
-            <!-- <div class="actions">
-              <button>결과등록</button>
-              <button>결과조회</button>
-              <button>변경</button>
-              <button>삭제</button>
-            </div> -->
           </div>
         </div>
         <div class="actions">
@@ -378,7 +365,6 @@
           </button>
         </div>
 
-        <!-- Registration Status Section -->
         <h2>[결과 등록 현황]</h2>
         <div class="registration-status">
           {#if projectDetails.target_securitypoint.length !== 0}
@@ -412,7 +398,6 @@
                 </svg>
               </div>
 
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div class="bar-charts">
                 {#if projectDetails.target_securitypoint.filter((ele) => ele.label === "UNIX")[0]?.["y"]}
                   <div
@@ -545,7 +530,6 @@
           {/if}
         </div>
 
-        <!-- Security Level Section -->
         <h2>[보안수준]</h2>
         <div class="security-level-section">
           <div class="third_cont">
@@ -696,8 +680,6 @@
           </div>
         </div>
 
-        <!-- Critical Weaknesses Section -->
-
         <h2>[주요 취약점]</h2>
         <div class="critical-weaknesses">
           {#if projectDetails?.vuln_list?.length !== 0}
@@ -742,279 +724,466 @@
       <ResultPopUp bind:modalData />
     </ModalDynamic>
   {/if}
-</main>
+</main> -->
 
-<style>
-  /* Main container centered and adjusted width */
-  .main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-  .third_cont {
-    align-items: center;
-    width: 30%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .first_cont {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30%;
-  }
-  .first_cont2 {
-    display: flex;
-    width: 70%;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .container {
-    width: 100%; /* Optional max-width for larger screens */
-    padding: 10px; /* Reduced padding from 20px to 10px */
-    background-color: #f7f9fb;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    font-size: 12px; /* Set base font size to 12px */
-    /* Reduced height */
-    height: auto; /* Let the height adjust based on content */
-  }
+<section class="rowContents">
+  <div class="graphWrap">
+    <article class="contentArea securityWrap">
+      <h4 class="title border">보안점수</h4>
+      <div class="circle" data-percent="80" data-offset="345">
+        <svg width="" height="" viewBox="0 0 139 139">
+          <circle
+            cx="75"
+            cy="75"
+            r="55"
+            stroke="#F2F2F2"
+            stroke-width="18"
+            fill="none"
+          />
+          <circle
+            class="progress"
+            cx="75"
+            cy="75"
+            r="55"
+            stroke="#0067ff"
+            stroke-width="18"
+            fill="none"
+            stroke-dasharray="345"
+            stroke-linecap="round"
+            transform="rotate(-90 75 75)"
+          />
+        </svg>
+        <div class="percent">
+          <span>80%</span>
+        </div>
+      </div>
+    </article>
+    <article class="contentArea">
+      <h4 class="title border">결과 등록 현황</h4>
+      <div
+        class="circle"
+        data-percent="75"
+        data-offset="345"
+        data-color="primary"
+      >
+        <svg width="" height="" viewBox="0 0 139 139">
+          <circle
+            cx="75"
+            cy="75"
+            r="55"
+            stroke="#F2F2F2"
+            stroke-width="18"
+            fill="none"
+          />
+          <circle
+            class="progress"
+            cx="75"
+            cy="75"
+            r="55"
+            stroke="#0067ff"
+            stroke-width="18"
+            fill="none"
+            stroke-dasharray="345"
+            stroke-linecap="round"
+            transform="rotate(-90 75 75)"
+          />
+        </svg>
+        <div class="percent">
+          <span>75%</span>
+        </div>
+      </div>
+      <div>
+        <ul class="progressbarWrap result">
+          <li onclick="modalOpen('detail')">
+            <div class="progress-info">
+              <h4>UNIX</h4>
+              <span>70%</span>
+            </div>
+            <div class="progress light">
+              <div class="progress-bar orange" style="width: 70%;"></div>
+            </div>
+          </li>
+          <li onclick="modalOpen('detail')">
+            <div class="progress-info">
+              <h4>UNIX</h4>
+              <span>70%</span>
+            </div>
+            <div class="progress light">
+              <div class="progress-bar orange" style="width: 70%;"></div>
+            </div>
+          </li>
+          <li onclick="modalOpen('detail')">
+            <div class="progress-info">
+              <h4>UNIX</h4>
+              <span>70%</span>
+            </div>
+            <div class="progress light">
+              <div class="progress-bar orange" style="width: 70%;"></div>
+            </div>
+          </li>
+        </ul>
+        <div class="slidePager">
+          <a href="#" class="active"></a>
+          <a href="#"></a>
+          <a href="#"></a>
+        </div>
+      </div>
+    </article>
+  </div>
+  <article class="contentArea">
+    <h4 class="title border">개요</h4>
+    <table class="tableForm">
+      <colgroup>
+        <col style="width:130px;" />
+        <col style="width:380px;" />
+        <col style="width:70px;" />
+        <col />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>제목</th>
+          <td colspan="3">
+            <input
+              type="text"
+              placeholder="점검플랜명"
+              value="프로젝트1 어쩌구..저쩌구…"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>점검대상</th>
+          <td colspan="3">
+            <input
+              type="text"
+              placeholder="생성자"
+              value="자산그룹1 (총 28대) (유닉스:11대, 윈도우 20대, PC : 100대"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>점검항목</th>
+          <td colspan="3">
+            <input type="text" placeholder="생성자" value="체크리스트 11번째" />
+          </td>
+        </tr>
+        <tr>
+          <th>생성자</th>
+          <td colspan="3">
+            <input type="text" placeholder="생성자" value="홍길동" />
+          </td>
+        </tr>
+        <tr>
+          <th>진행상태</th>
+          <td colspan="3">
+            <input
+              type="text"
+              placeholder="생성자"
+              disabled
+              value="점검진행 진행완료 ( 28/28대, 100% 결과 수집 )"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>점검방법</th>
+          <td>
+            <select>
+              <option>신규점검</option>
+              <option selected>이행점검</option>
+            </select>
+          </td>
+          <th>이전점검</th>
+          <td>
+            <input type="text" placeholder="생성자" value="프로젝트명" />
+          </td>
+        </tr>
+        <tr>
+          <th>점검담당자</th>
+          <td colspan="3">
+            <input type="text" placeholder="생성자" value="홍길동" />
+          </td>
+        </tr>
+        <tr>
+          <th>점검일시</th>
+          <td colspan="3">
+            <div class="dateWrap">
+              <div class="date">
+                <input type="text" class="datepicker" placeholder="시작일시" />
+                <img src="./assets/images/icon/date.svg" />
+              </div>
+              <img src="./assets/images/icon/dash.svg" />
+              <div class="date">
+                <input type="text" class="datepicker" placeholder="종료일시" />
+                <img src="./assets/images/icon/date.svg" />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>점검스케쥴</th>
+          <td colspan="3">
+            <input
+              type="text"
+              placeholder="생성자"
+              value="반복수행 / 어쩌구..저저구…"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>조치일정</th>
+          <td colspan="3">
+            <div class="dateWrap">
+              <div class="date">
+                <input type="text" class="datepicker" placeholder="조치일정" />
+                <img src="./assets/images/icon/date.svg" />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>조치담당자</th>
+          <td colspan="3">
+            <input type="text" placeholder="생성자" value="홍길동" />
+          </td>
+        </tr>
+        <tr>
+          <th>점검정보파일<br />재업로드</th>
+          <td colspan="2">
+            <div class="upload-section">
+              <label for="file-upload" class="file-label">엑셀파일업로드</label>
+              <input
+                type="file"
+                id="file-upload"
+                accept=".xls,.xlsx"
+                class="file-input"
+              />
+              <button id="upload-btn" class="upload-btn btn btnPrimary"
+                >Upload</button
+              >
+            </div>
+          </td>
+          <td class="flex btnWrap">
+            <button
+              type="button"
+              class="btn btnBlue btnSave"
+              onclick="modalOpen('alert')">변경저장</button
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
+</section>
+<section class="rowContents">
+  <article class="contentArea securityLevel">
+    <h4 class="title border">보안수준</h4>
+    <div class="flex">
+      <div class="circleGraph">
+        <div class="summary">
+          <h6>80%</h6>
+          <span>전체보안수준</span>
+        </div>
 
-  .overview,
-  .registration-status,
-  .security-level-section,
-  .critical-weaknesses {
-    margin-bottom: 15px; /* Reduced margin */
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #fafafa;
-    padding: 10px; /* Added padding for content */
-  }
+        <div class="circle" data-percent="80" data-offset="345">
+          <svg width="" height="" viewBox="0 0 139 139">
+            <circle
+              cx="75"
+              cy="75"
+              r="55"
+              stroke="#F2F2F2"
+              stroke-width="18"
+              fill="none"
+            />
+            <circle
+              class="progress"
+              cx="75"
+              cy="75"
+              r="55"
+              stroke="#0067ff"
+              stroke-width="18"
+              fill="none"
+              stroke-dasharray="345"
+              stroke-linecap="round"
+              transform="rotate(-90 75 75)"
+            />
+          </svg>
+          <div class="percent">
+            <span><img src="./assets/images/icon/guard.svg" /></span>
+          </div>
+        </div>
+      </div>
 
-  h2 {
-    margin-bottom: 10px; /* Reduced margin */
-    font-size: 16px; /* Adjusted font size */
-    color: #333;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 5px; /* Reduced padding */
-  }
+      <div class="progressSection">
+        <ul class="progressbarWrap">
+          <li>
+            <div class="progress-info">
+              <h4>UNIX</h4>
+              <span>30%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar blue" style="width: 30%;"></div>
+            </div>
+          </li>
+          <li>
+            <div class="progress-info">
+              <h4>WINDOWS</h4>
+              <span>50%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar blue" style="width: 50%;"></div>
+            </div>
+          </li>
+          <li>
+            <div class="progress-info">
+              <h4>예시항목</h4>
+              <span>50%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar blue" style="width: 50%;"></div>
+            </div>
+          </li>
+        </ul>
+        <div class="slidePager">
+          <a href="#" class="active"></a>
+          <a href="#"></a>
+          <a href="#"></a>
+        </div>
+      </div>
 
-  .overview {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+      <div class="progressSection">
+        <ul class="progressbarWrap">
+          <li>
+            <div class="progress-info">
+              <h4>계정관리</h4>
+              <span>10%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar blue" style="width: 10%;"></div>
+            </div>
+          </li>
+          <li>
+            <div class="progress-info">
+              <h4>서비스관리</h4>
+              <span>40%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar blue" style="width: 40%;"></div>
+            </div>
+          </li>
+          <li>
+            <div class="progress-info">
+              <h4>항목</h4>
+              <span>70%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar blue" style="width: 70%;"></div>
+            </div>
+          </li>
+        </ul>
+        <div class="slidePager">
+          <a href="#" class="active"></a>
+          <a href="#"></a>
+          <a href="#"></a>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
 
-  .percentage1 {
-    width: 60px; /* Reduced size */
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px; /* Reduced margin */
-  }
+<section class="rowContents">
+  <article class="contentArea securityVulnerability">
+    <h4 class="title border">주요 취약점</h4>
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:60px;" />
+          <col style="width:122px;" />
+          <col style="width:220px;" />
+          <col />
+          <col />
+          <col style="width:100px;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>호스트명</th>
+            <th>항목</th>
+            <th>점검항목</th>
+            <th>시스템상태</th>
+            <th class="text-center">점검결과</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center">2</td>
+            <td>User_L2_51</td>
+            <td>[N-01] 패스워드 설정</td>
+            <td>
+              <div>양호: 기본 패스워드를 변경한 경우</div>
+              <div>
+                취약: 기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은
+                경우
+              </div>
+            </td>
+            <td>계정목록(동일패스워드 없음)</td>
+            <td class="text-center"
+              ><span class="badge badgePrimary">양호</span></td
+            >
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>User_L2_51</td>
+            <td>[N-01] 패스워드 설정</td>
+            <td>
+              <div>양호: 기본 패스워드를 변경한 경우</div>
+              <div>
+                취약: 기본 패스워드를 변경하지 않거나 패스워드를 설정하지 않은
+                경우
+              </div>
+            </td>
+            <td>계정목록(동일패스워드 없음)</td>
+            <td class="text-center">
+              <span class="badge badgeGreen">수동점검</span>
+              <!--취약일 경우 badgeRed 로 표시-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="paginationWrap">
+      <div class="pagination">
+        <!-- <a href="">&lt;</a> -->
+        <a href="" class="active">1</a>
+        <a href="">2</a>
+        <a href="">...</a>
+        <a href="">4</a>
+        <a href="">&gt;</a>
+      </div>
+    </div>
+  </article>
+</section>
 
-  .security-level {
-    background-color: #4caf50;
-    color: white;
-    width: 60px; /* Reduced size */
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px; /* Adjusted font size */
-    border-radius: 50%;
-    box-shadow:
-      inset 0 0 25px 3px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0.5px 0.5px rgba(255, 255, 255, 0.5),
-      inset 0 -1px 0.5px rgba(0, 0, 0, 0.1);
-  }
+<!--Modal:초기화-->
+<div class="modalWrap alert">
+  <div class="modalContents small">
+    <div class="contents">
+      <div class="closeWrap">
+        <button type="button" class="btnImg" onclick="modalOpen('alert')"
+          ><img src="./assets/images/icon/close.svg" /></button
+        >
+      </div>
+      <div class="msg">변경저장할 경우 이전 정보가 모두 초기화됩니다.</div>
+      <div class="flex bottom-buttons normal">
+        <button
+          type="button"
+          class="btn btnDefault"
+          onclick="modalOpen('alert')">취소</button
+        >
+        <button type="button" class="btn btnBlue" onclick="modalOpen('alert')"
+          >확인</button
+        >
+      </div>
+    </div>
+  </div>
+</div>
 
-  .project-details {
-    width: 100%;
-  }
-
-  .project-details p {
-    margin: 3px 0; /* Reduced margin */
-    font-size: 12px;
-    color: #555;
-  }
-
-  .actions {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .actions button {
-    width: 90px;
-    height: 30px;
-    padding: 6px 10px; /* Reduced padding */
-    background-color: #4682b4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px; /* Adjusted font size */
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .actions button:hover {
-    background-color: #1565c0;
-    transform: translateY(-2px);
-  }
-
-  .status {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .pie-chart {
-    width: 30%; /* Reduced size */
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .chart-label {
-    margin-bottom: 5px; /* Reduced margin */
-    font-weight: bold;
-    font-size: 12px; /* Adjusted font size */
-    color: #555;
-  }
-
-  .bar-charts,
-  .bar-charts2 {
-    flex-grow: 1;
-    padding-left: 10px;
-    width: 70%;
-  }
-
-  .bar-charts2 {
-    height: 300px;
-    display: flex;
-    flex-direction: row;
-  }
-
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 5px; /* Reduced margin */
-    cursor: pointer;
-  }
-
-  .bar-second {
-    margin-right: 50px;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .bar .label {
-    width: 60px; /* Reduced width */
-    font-weight: bold;
-    font-size: 12px; /* Adjusted font size */
-    color: #555;
-    text-align: center;
-  }
-
-  .bar .bar-fill {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 30px; /* Reduced height */
-    background-color: #4caf50;
-    color: white;
-    text-align: right;
-    padding-right: 10px; /* Reduced padding */
-    line-height: 15px;
-    border-radius: 5px;
-    font-size: 12px; /* Adjusted font size */
-  }
-
-  .bar .bar-fill2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 15px;
-    width: 70px;
-    background-color: #2196f3;
-    color: white;
-    text-align: right;
-    padding-right: 3px;
-    line-height: 15px;
-    border-radius: 5px;
-    font-size: 12px;
-  }
-
-  .security-level-section p {
-    margin: 3px 0; /* Reduced margin */
-    font-size: 12px; /* Adjusted font size */
-    color: #555;
-  }
-  .security-level-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    max-width: 100%;
-    align-items: center;
-  }
-  .critical-weaknesses .bar-chart {
-    padding: 5px; /* Reduced padding */
-    color: #555;
-    font-size: 12px; /* Adjusted font size */
-  }
-
-  .critical-weaknesses .table_container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 500px;
-    width: 100%;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #dddddd;
-    padding: 10px;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  tbody tr:hover {
-    background-color: #e0f7fa;
-  }
-
-  input {
-    width: 25%;
-    outline: none;
-  }
-</style>
+<!--//Modal:초기화-->

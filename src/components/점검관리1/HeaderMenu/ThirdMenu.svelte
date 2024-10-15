@@ -10,7 +10,7 @@
 
   export let projectIndex;
 
-  let selectedPlan = null;
+  let selectedPlan = "";
   let planList = [];
   let planReports = null;
 
@@ -355,6 +355,7 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
+                disabled={!planReports?.v_excel?.length}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -394,6 +395,7 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
+                disabled={!planReports?.v_word?.length}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,

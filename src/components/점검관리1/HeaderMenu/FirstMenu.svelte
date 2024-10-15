@@ -24,7 +24,7 @@
   let excelFiles = [];
 
   let planList = [];
-  let selectedPlan = null;
+  let selectedPlan = "";
   let resultStatus = null;
   let resultErrors = null;
   let uploadStatus = null;

@@ -123,11 +123,11 @@
 </script>
 
 <div
-  class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"} ${tabMenu == "보고서생성" && "reportCreate"}`}
+  class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"} ${tabMenu == "보고서생성" && "reportCreate"} ${tabMenu == "이력관리" && "logWrap"}`}
 >
   <nav class="tabMenu">
     <ul>
-      <li>
+      <li class={tabMenu == "결과등록" && "active"}>
         <a
           href="javascript:void(0)"
           on:click={() => {
@@ -138,7 +138,7 @@
           결과등록
         </a>
       </li>
-      <li>
+      <li class={tabMenu == "결과조회/변경" && "active"}>
         <a
           href="javascript:void(0)"
           on:click={() => {
@@ -149,7 +149,7 @@
           결과조회/변경
         </a>
       </li>
-      <li>
+      <li class={tabMenu == "보고서생성" && "active"}>
         <a
           href="javascript:void(0)"
           on:click={() => {
@@ -160,13 +160,16 @@
           보고서생성
         </a>
       </li>
-      <li>
+      <li class={tabMenu == "이력관리" && "active"}>
         <a
           href="javascript:void(0)"
           on:click={() => {
             currentPage = FourthMenu;
-          }}>이력관리</a
+            tabMenu = "이력관리";
+          }}
         >
+          이력관리
+        </a>
       </li>
     </ul>
   </nav>

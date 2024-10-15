@@ -16,7 +16,7 @@
   };
 </script>
 
-<div class="contentsWrap">
+<div class={`contentsWrap ${tabMenu == "결과등록" ? "resultCreate" : ""}`}>
   <nav class="tabMenu">
     <ul>
       <li>

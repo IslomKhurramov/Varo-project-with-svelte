@@ -116,9 +116,13 @@
     tabMenu = menu;
     // projectIndex = plan_index;
   };
+
+  $: {
+    console.log("+tabMenu:", tabMenu);
+  }
 </script>
 
-<div class="contentsWrap">
+<div class={`contentsWrap ${tabMenu == "결과등록" ? "resultCreate" : ""}`}>
   <nav class="tabMenu">
     <ul>
       <li>
@@ -126,7 +130,8 @@
           href="javascript:void(0)"
           on:click={() => {
             currentPage = FirstMenu;
-            projectIndex = project.ccp_index;
+
+            tabMenu = "결과등록";
           }}
         >
           결과등록
@@ -137,7 +142,6 @@
           href="javascript:void(0)"
           on:click={() => {
             currentPage = SecondMenu;
-            projectIndex = project.ccp_index;
           }}
         >
           결과조회/변경
@@ -148,7 +152,6 @@
           href="javascript:void(0)"
           on:click={() => {
             currentPage = ThirdMenu;
-            projectIndex = project.ccp_index;
           }}>보고서생성</a
         >
       </li>
@@ -157,7 +160,6 @@
           href="javascript:void(0)"
           on:click={() => {
             currentPage = FourthMenu;
-            projectIndex = project.ccp_index;
           }}>이력관리</a
         >
       </li>

@@ -224,8 +224,20 @@
 <div class="contentsWrap">
   <div class="contentArea">
     <section class="subTabWrap">
-      <a class="active" on:click={() => toggleList("form")}>CCE점검</a>
-      <a on:click={() => toggleList("table")}>자산정보수집</a>
+      <a
+        href="javascript:void(0);"
+        class={!showTable ? "active" : ""}
+        on:click={() => toggleList("form")}
+      >
+        CCE점검
+      </a>
+      <a
+        href="javascript:void(0);"
+        class={showTable ? "active" : ""}
+        on:click={() => toggleList("table")}
+      >
+        자산정보수집
+      </a>
     </section>
 
     {#if !showTable}

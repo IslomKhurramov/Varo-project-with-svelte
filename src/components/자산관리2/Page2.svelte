@@ -17,6 +17,9 @@
   import GetLog from "./getLog.svelte";
   import GetLogHeader from "./getLogHeader.svelte";
   import { getAuditNLog, getPlanFilter } from "../../services/logs/logsService";
+  import axios from "axios";
+  import { serverApi } from "../../lib/config";
+
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
@@ -35,6 +38,8 @@
   let assetOs = "";
   let assetHost = "전체";
   let showSwiperComponent = false;
+  let selectedUUID = [];
+  let selected = [];
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
     try {
@@ -56,58 +61,40 @@
     showSwiperComponent = false;
   }
   /*************************************************************/
+  function isNotFiltered(value, filter) {
+    return !filter || filter === "전체" || value === filter;
+  }
 
   function filterAssets() {
     console.log("Selected Group:", selectedGroup);
 
     filteredAssets = $allAssetList.filter((asset) => {
-      let matchesGroup = true; // Default to true if no group filter is applied
+      const conditions = [
+        () =>
+          selectedGroup === "전체" ||
+          (Array.isArray(asset.asset_group) &&
+            asset.asset_group.some(
+              (group) => group.asg_index === selectedGroup,
+            )),
+        () => isNotFiltered(asset.ast_ostype, asset_ostype),
+        () =>
+          assetTargetReg
+            ? asset.asset_target_registered === assetTargetReg
+            : true,
+        () =>
+          assetAcitve !== ""
+            ? asset.ast_activate === !!Number(assetAcitve)
+            : true,
+        () => isNotFiltered(asset.ast_hostname, assetHost),
+      ];
 
-      // Check if selectedGroup is not empty and not '전체' (All)
-      if (selectedGroup && selectedGroup !== "전체") {
-        if (Array.isArray(asset.asset_group)) {
-          matchesGroup = asset.asset_group.some(
-            (group) => group.asg_index === selectedGroup,
-          );
-        } else {
-          matchesGroup = false; // If asset_group is not an array, it doesn't match
-        }
-      }
-
-      // Other filters (OS Type, Target Registered, Active Status)
-      const matchesOsType =
-        asset_ostype && asset_ostype !== "전체"
-          ? asset.ast_ostype === asset_ostype
-          : true;
-
-      const matchesTargetReg = assetTargetReg
-        ? asset.asset_target_registered === assetTargetReg
-        : true;
-
-      const matchesActive =
-        assetAcitve !== ""
-          ? asset.ast_activate === (assetAcitve === "1")
-          : true;
-
-      const matchesHostName =
-        assetHost && assetHost !== "전체"
-          ? asset.ast_hostname === assetHost
-          : true;
-      // Return true if all conditions match
-      return (
-        matchesGroup &&
-        matchesOsType &&
-        matchesTargetReg &&
-        matchesActive &&
-        matchesHostName
-      );
+      return conditions.every((condition) => condition());
     });
   }
+
   function handleFilter() {
     filterAssets();
-    console.log("assetHost", assetHost);
-    console.log("assetOst", asset_ostype);
-    console.log("result search", filteredAssets);
+    console.table(filteredAssets); // Use table for better visibility in console
   }
 
   function resetFilters() {
@@ -116,8 +103,9 @@
     asset_ostype = "전체";
     assetTargetReg = "";
     assetAcitve = "";
-    filteredAssets = $allAssetList; // Reset the filtered assets to show all
+    filterAssets(); // Apply the reset immediately
   }
+
   /***********************************************************/
   const addNewGroup = async () => {
     if (!newGroupName.trim()) {
@@ -205,6 +193,42 @@
   const searchDataHandler = async () => {
     logData = await getAuditNLog(search);
   };
+
+  /**********************************************************************/
+  async function saveAssetToExcel() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${serverApi}/api/setSaveAssetInformationToExcel/`,
+        { ass_uuid: selectedUUID },
+        { responseType: "blob" },
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"] || "application/octet-stream",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const assetNames = selected.map((asset) => asset.ast_hostname).join("_"); // Avoid special characters like commas
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx"; // Customize filename if needed
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      selectedUUID = [];
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      alert("An error occurred while downloading the report.");
+    }
+  }
 </script>
 
 <div id="wrap"></div>
@@ -348,7 +372,9 @@
                 >검색</button
               >
             {/if}
-            <button class="btn btnPrimary padding_button"
+            <button
+              on:click={saveAssetToExcel}
+              class="btn btnPrimary padding_button"
               ><img
                 src="./assets/images/icon/download.svg"
                 alt="download"
@@ -387,6 +413,8 @@
             {showSearchResult}
             {filteredAssets}
             {showSwiperComponent}
+            bind:selectedUUID
+            bind:selected
           />
         {/if}
       </div>

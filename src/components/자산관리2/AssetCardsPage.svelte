@@ -15,11 +15,10 @@
   import axios from "axios";
   import { serverApi } from "../../lib/config";
   import Swiper from "./Swiper.svelte";
-  import { stop_propagation } from "svelte/internal";
 
   let showModal = false;
-  let selected = [];
-  let selectedUUID = [];
+  export let selected = [];
+  export let selectedUUID = [];
   let selectedAsset = null;
   export let filteredAssets = [];
   export let showSwiperComponent;
@@ -229,6 +228,10 @@
       alert("An error occurred while downloading the report.");
     }
   }
+
+  /********************************************************************************/
+
+  /***********************************************************************/
   function cancel() {
     showModal = false;
   }

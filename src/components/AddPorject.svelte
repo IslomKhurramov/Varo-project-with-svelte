@@ -54,7 +54,7 @@
   // SECOND DATA
   let assetInsertData = {
     target_group: "",
-    command_type: "",
+    command_type: "1",
     target: "",
     command_str: "",
     search_path: "",
@@ -218,7 +218,6 @@
 
   $: {
     console.log("assetInsertData:", assetInsertData);
-    console.log("actionSchedule:", actionSchedule);
   }
 </script>
 
@@ -923,172 +922,303 @@
         >
       </div> -->
 
-      <article class="contentArea">
-        <section class="subTabWrap">
-          <a href="./inspection_create_cce.html">CCE점검</a>
-          <a href="./inspection_create_colection.html" class="active"
-            >자산정보수집</a
-          >
-        </section>
-        <article class="formWrap">
-          <div class="formControlWrap">
-            <div class="formControl">
-              <label>대상</label>
-              <select>
-                <option>전체에이전트 / 자산그룹1</option>
+      <article class="formWrap">
+        <div class="formControlWrap">
+          <div class="formControl">
+            <label>대상</label>
+            {#if assetGroup?.CODE?.length !== 0}
+              <select bind:value={assetInsertData.target_group}>
+                <option selected disabled value="">
+                  전체에이전트 / 자산그룹
+                </option>
+                <option value="ALL"> 전체에이전트 </option>
+
+                {#each assetGroup?.CODE as asset}
+                  <option value={asset.asg_index}>{asset.asg_title}</option>
+                {/each}
               </select>
-            </div>
+            {/if}
           </div>
-          <div class="formControlWrap">
-            <div class="formControl">
-              <label>명령구분</label>
-              <select id="commandSelect" onchange="showContentByType()">
-                <option value="1">에이전트 시스템 정보수집</option>
-                <option value="2">임의 명령수행</option>
-                <option value="3">파일 정보 검색</option>
-              </select>
-            </div>
+        </div>
+        <div class="formControlWrap">
+          <div class="formControl">
+            <label>명령구분</label>
+            <select
+              id="commandSelect"
+              bind:value={assetInsertData.command_type}
+              required
+              on:change={() => {
+                assetInsertData = {
+                  ...assetInsertData,
+                  target: "",
+                  command_str: "",
+                  search_path: "",
+                  search_extension: "",
+                  search_target: "",
+                  reserved: "",
+                  start_date: "",
+                  end_date: "",
+                  repeat_interval: "",
+                  repeat_term: "",
+                };
+              }}
+            >
+              <option value="1">시스템 정보수집</option>
+              <option value="2">임의 명령수행</option>
+              <option value="3">파일 정보 검색</option>
+            </select>
           </div>
+        </div>
+        {#if assetInsertData?.command_type == 1}
           <div class="formControlWrap type" type="1">
             <div class="formControl">
               <label>점검대상</label>
               <div class="checkboxWrap">
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    on:change={(e) => {
+                      changeTarget("basic", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>시스템 기본정보</span>
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    on:change={(e) => {
+                      changeTarget("process", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>프로세스 정보</span>
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    on:change={(e) => {
+                      changeTarget("network", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>네트워크 연결정보</span>
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    on:change={(e) => {
+                      changeTarget("dll", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>로딩된 DLL 정보</span>
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    on:change={(e) => {
+                      changeTarget("program", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>설치된 프로그램 목록 정보</span>
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    on:change={(e) => {
+                      changeTarget("patch", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>패치 내역 정보(윈도우만 해당)</span>
                 </label>
               </div>
             </div>
           </div>
-          <div class="formControlWrap type col" type="2" style="display: none;">
+        {/if}
+
+        {#if assetInsertData?.command_type == 2}
+          <div class="formControlWrap type col" type="2">
             <div class="formControl noLabel">
               <label class="middle">명령어</label>
-              <select>
-                <option>윈도우 PowerShell</option>
+              <select
+                on:change={(e) => {
+                  changeTarget(e.target.value, null, "select");
+                }}
+              >
+                <option selected disabled value="">선택</option>
+                <option value="powershell">PowerShell</option>
+                <option value="batchscript">Batchscript</option>
               </select>
             </div>
             <div class="formControl noLabel">
-              <textarea rows="5"></textarea>
+              <textarea rows="5" bind:value={assetInsertData.command_str}
+              ></textarea>
             </div>
           </div>
-          <div class="formControlWrap type" type="3" style="display: none;">
+        {/if}
+
+        {#if assetInsertData?.command_type == 3}
+          <div class="formControlWrap type" type="3">
             <div class="formControl">
               <label>검색조건</label>
               <div class="checkboxWrap">
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    bind:value={assetInsertData.search_path}
+                    on:change={(e) => {
+                      changeTarget("linux", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>리눅스 시스템</span>
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" name="target" />
+                  <input
+                    type="checkbox"
+                    name="target"
+                    bind:value={assetInsertData.search_extension}
+                    on:change={(e) => {
+                      changeTarget("windows", e.target.checked, "checkbox");
+                    }}
+                  />
                   <span>윈도우 시스템</span>
                 </label>
               </div>
             </div>
           </div>
-          <div class="formControlWrap type" type="3" style="display: none;">
+
+          <div class="formControlWrap type" type="3">
             <div class="formControl">
               <label>수집대상</label>
               <div class="badgeWrap w390">
                 <h6>경로지정</h6>
-                <input type="text" placeholder="c:/path/ or /home/" />
+                <input
+                  type="text"
+                  placeholder="c:/path/ or /home/"
+                  bind:value={assetInsertData.search_path}
+                />
               </div>
               <div class={"badgeWrap w390"}>
                 <h6>확장자 지정</h6>
-                <input type={"text"} placeholder={"all.exe.dll"} />
+                <input
+                  type="text"
+                  placeholder={"all.exe.dll"}
+                  bind:value={assetInsertData.search_extension}
+                />
               </div>
               <div class={"badgeWrap w390"}>
-                <h6>경로지정</h6>
-                <div class="checkboxwrap">
+                <h6>검색위치</h6>
+                <div class="checkboxWrap">
                   <label class="checkbox-label">
-                    <input type="checkbox" name="target1" />
+                    <input
+                      type="checkbox"
+                      name="target"
+                      on:change={(e) => {
+                        changeSearchTarget("database", e.target.checked);
+                      }}
+                    />
                     <span>데이터베이스</span>
                   </label>
 
                   <label class="checkbox-label">
-                    <input type="checkbox" name="target2" />
+                    <input
+                      type="checkbox"
+                      name="target"
+                      on:change={(e) => {
+                        changeSearchTarget("agent", e.target.checked);
+                      }}
+                    />
                     <span>에이전트</span>
                   </label>
                 </div>
               </div>
             </div>
           </div>
+        {/if}
 
-          <div class="formControlWrap">
-            <div class="formControl">
-              <label>시간지정</label>
-              <div class="radioWrap">
-                <label class="radio-label">
-                  <input type="radio" name="repeat" checked />
-                  <span>즉시실행</span>
-                </label>
-                <label class="radio-label">
-                  <input type="radio" name="repeat" />
-                  <span>반복실행</span>
-                </label>
+        <div class="formControlWrap">
+          <div class="formControl">
+            <label>시간지정</label>
+            <div class="radioWrap">
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="repeat"
+                  checked={assetInsertData.reserved == "1"}
+                  on:change={(e) => {
+                    if (e.target.checked) assetInsertData.reserved = "1";
+                  }}
+                />
+                <span>예약실행</span>
+              </label>
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="repeat"
+                  checked={assetInsertData.reserved == "0"}
+                  on:change={(e) => {
+                    if (e.target.checked) assetInsertData.reserved = "0";
+                  }}
+                />
+                <span>즉시실행</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="formControlWrap col">
+          <div class="formControl">
+            <label>반복</label>
+            <div class="dateWrap">
+              <div class="date">
+                <input
+                  type="datetime-local"
+                  class="datepicker"
+                  placeholder="시작일시"
+                  bind:value={assetInsertData.start_date}
+                />
+              </div>
+              <img src="./assets/images/icon/dash.svg" />
+              <div class="date">
+                <input
+                  type="datetime-local"
+                  class="datepicker"
+                  placeholder="종료일시"
+                  bind:value={assetInsertData.end_date}
+                />
               </div>
             </div>
           </div>
-          <div class="formControlWrap col">
-            <div class="formControl">
-              <label>반복</label>
-              <div class="dateWrap">
-                <div class="date">
-                  <input
-                    type="text"
-                    class="datepicker"
-                    placeholder="시작일시"
-                  />
-                  <img src="./assets/images/icon/date.svg" />
-                </div>
-                <img src="./assets/images/icon/dash.svg" />
-                <div class="date">
-                  <input
-                    type="text"
-                    class="datepicker"
-                    placeholder="종료일시"
-                  />
-                  <img src="./assets/images/icon/date.svg" />
-                </div>
-              </div>
-            </div>
-            <div class="formControl noLabel">
-              <div class="controlWrap">
-                <input type="text" placeholder="0" class="w90" />
-                <select class="w120">
-                  <option>월</option>
-                  <option>주</option>
-                  <option>일</option>
-                  <option>시</option>
-                  <option>분</option>
-                </select>
-              </div>
+          <div class="formControl noLabel">
+            <div class="controlWrap">
+              <input
+                type="text"
+                placeholder="0"
+                class="w90"
+                bind:value={assetInsertData.repeat_interval}
+              />
+              <select class="w120" bind:value={assetInsertData.repeat_term}>
+                <option value="" selected disabled>시/일/주/월/년</option>
+                <option value="hours">시</option>
+                <option value="days">일</option>
+                <option value="weeks">주</option>
+                <option value="months">월</option>
+                <option value="years">년</option>
+              </select>
             </div>
           </div>
-        </article>
-        <button type="button" class="btn btnBlue btnSave">저장하기</button>
-        <!--//FORM-->
+        </div>
       </article>
+      <button
+        type="button"
+        class="btn btnBlue btnSave"
+        on:click={submitNewSystemCommand}
+      >
+        저장하기
+      </button>
     {/if}
   </div>
 </div>

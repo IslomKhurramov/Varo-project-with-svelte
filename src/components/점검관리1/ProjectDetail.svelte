@@ -26,6 +26,8 @@
 
   let totalPercentage = 0;
   let showModal = false;
+  let inputFile;
+  let alertConfirm = false;
 
   let updateInfo = {
     ccp_index: "",
@@ -138,6 +140,7 @@
       }
 
       await setPlanChange(formData);
+      alertConfirm = false;
     } catch (error) {
       console.error("Error updateInfoHandler:", error);
       errorAlert(error?.message);
@@ -174,6 +177,7 @@
   };
 
   const calculateAllSecurityLevel = (target_group_securitypoint) => {
+    console.log("target_group_securitypoint:", target_group_securitypoint);
     const allItems = Object.values(target_group_securitypoint).flat();
     const totalY = allItems.reduce((sum, item) => sum + item.y, 0);
 
@@ -193,15 +197,14 @@
   };
 
   $: {
-    console.log("updateInfo:", updateInfo);
+    console.log("projectDetails:", projectDetails);
   }
 </script>
 
-<main>
+<!-- <main>
   <div class="main-container">
     {#if projectDetails?.ccp_title}
       <div class="container">
-        <!-- Overview Section -->
         <h2>[개요]</h2>
         <div class="overview">
           <div class="first_cont">
@@ -224,8 +227,6 @@
 
               <p>
                 점검대상:
-                <!-- {projectDetails?.asg_index__asg_title} -->
-
                 <select bind:value={updateInfo["asg_index"]}>
                   <option value="" selected disabled>자산 그룹목록</option>
 
@@ -238,7 +239,6 @@
                   {/if}
                 </select>
               </p>
-              <!-- <p>{inspectionDetails}</p> -->
               <p>
                 점검항목:
 
@@ -295,9 +295,6 @@
               {/if}
               <p>
                 점검일시:
-                <!-- {moment(projectDetails?.plan_start_date).format("YYYY MM DD")} ~
-                {moment(projectDetails?.plan_end_date).format("YYYY MM DD")} -->
-                <!-- {projectDetails?.plan_start_date} -->
                 <input
                   type="datetime-local"
                   bind:value={updateInfo["plan_start_date"]}
@@ -364,12 +361,6 @@
                 />
               </p>
             </div>
-            <!-- <div class="actions">
-              <button>결과등록</button>
-              <button>결과조회</button>
-              <button>변경</button>
-              <button>삭제</button>
-            </div> -->
           </div>
         </div>
         <div class="actions">
@@ -378,7 +369,6 @@
           </button>
         </div>
 
-        <!-- Registration Status Section -->
         <h2>[결과 등록 현황]</h2>
         <div class="registration-status">
           {#if projectDetails.target_securitypoint.length !== 0}
@@ -412,7 +402,6 @@
                 </svg>
               </div>
 
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div class="bar-charts">
                 {#if projectDetails.target_securitypoint.filter((ele) => ele.label === "UNIX")[0]?.["y"]}
                   <div
@@ -545,7 +534,6 @@
           {/if}
         </div>
 
-        <!-- Security Level Section -->
         <h2>[보안수준]</h2>
         <div class="security-level-section">
           <div class="third_cont">
@@ -696,8 +684,6 @@
           </div>
         </div>
 
-        <!-- Critical Weaknesses Section -->
-
         <h2>[주요 취약점]</h2>
         <div class="critical-weaknesses">
           {#if projectDetails?.vuln_list?.length !== 0}
@@ -742,279 +728,948 @@
       <ResultPopUp bind:modalData />
     </ModalDynamic>
   {/if}
-</main>
+</main> -->
 
-<style>
-  /* Main container centered and adjusted width */
-  .main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-  .third_cont {
-    align-items: center;
-    width: 30%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .first_cont {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30%;
-  }
-  .first_cont2 {
-    display: flex;
-    width: 70%;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .container {
-    width: 100%; /* Optional max-width for larger screens */
-    padding: 10px; /* Reduced padding from 20px to 10px */
-    background-color: #f7f9fb;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    font-size: 12px; /* Set base font size to 12px */
-    /* Reduced height */
-    height: auto; /* Let the height adjust based on content */
-  }
+<section class="rowContents">
+  <div class="graphWrap">
+    <article class="contentArea securityWrap">
+      <h4 class="title border">보안점수</h4>
+      <div class="circle" data-percent="80" data-offset="345">
+        <svg width="" height="" viewBox="0 0 139 139">
+          <circle
+            cx="75"
+            cy="75"
+            r="55"
+            stroke="#F2F2F2"
+            stroke-width="18"
+            fill="none"
+          />
+          <circle
+            class="progress"
+            cx="75"
+            cy="75"
+            r="55"
+            stroke={projectDetails?.ccp_security_point > 0
+              ? projectDetails?.ccp_security_point <= 33
+                ? "#FF1500"
+                : projectDetails?.ccp_security_point <= 66
+                  ? "#4AC93F"
+                  : "#0067FF"
+              : "#0067FF"}
+            stroke-width="18"
+            fill="none"
+            stroke-dasharray="345"
+            stroke-linecap="round"
+            transform="rotate(-90 75 75)"
+            style={`stroke: ${
+              projectDetails?.ccp_security_point > 0
+                ? projectDetails?.ccp_security_point <= 33
+                  ? "#FF1500"
+                  : projectDetails?.ccp_security_point <= 66
+                    ? "#4AC93F"
+                    : "#0067FF"
+                : "#0067FF"
+            }; stroke-dashoffset: ${
+              345 -
+              (345 *
+                parseInt(
+                  projectDetails?.ccp_security_point > 0
+                    ? projectDetails?.ccp_security_point
+                    : 0,
+                )) /
+                100
+            };`}
+          />
+        </svg>
+        <div class="percent">
+          <span>
+            {projectDetails?.ccp_security_point > 0
+              ? projectDetails?.ccp_security_point
+              : 0}%
+          </span>
+        </div>
+      </div>
+    </article>
+    <article class="contentArea">
+      <h4 class="title border">결과 등록 현황</h4>
+      <div
+        class="circle"
+        data-percent="75"
+        data-offset="345"
+        data-color="primary"
+      >
+        <svg width="" height="" viewBox="0 0 139 139">
+          <circle
+            cx="75"
+            cy="75"
+            r="55"
+            stroke="#F2F2F2"
+            stroke-width="18"
+            fill="none"
+          />
+          <circle
+            class="progress"
+            cx="75"
+            cy="75"
+            r="55"
+            stroke={totalPercentage > 0
+              ? totalPercentage <= 33
+                ? "#FF1500"
+                : totalPercentage <= 66
+                  ? "#4AC93F"
+                  : "#0067FF"
+              : "#0067FF"}
+            stroke-width="18"
+            fill="none"
+            stroke-dasharray="345"
+            stroke-linecap="round"
+            transform="rotate(-90 75 75)"
+            style={`stroke: ${
+              totalPercentage > 0
+                ? totalPercentage <= 33
+                  ? "#FF1500"
+                  : totalPercentage <= 66
+                    ? "#4AC93F"
+                    : "#0067FF"
+                : "#0067FF"
+            }; stroke-dashoffset: ${
+              345 -
+              (345 * parseInt(totalPercentage > 0 ? totalPercentage : 0)) / 100
+            };`}
+          />
+        </svg>
+        <div class="percent">
+          <span>{totalPercentage ? totalPercentage : 0}%</span>
+        </div>
+      </div>
+      <div>
+        <ul class="progressbarWrap result">
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "UNIX")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) => asset.ast_uuid__ast_target__cct_target === "UNIX",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>UNIX</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "UNIX",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "UNIX",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
 
-  .overview,
-  .registration-status,
-  .security-level-section,
-  .critical-weaknesses {
-    margin-bottom: 15px; /* Reduced margin */
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #fafafa;
-    padding: 10px; /* Added padding for content */
-  }
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "NETWORK")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) =>
+                    asset.ast_uuid__ast_target__cct_target === "NETWORK",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>NETWORK</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "NETWORK",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "NETWORK",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
 
-  h2 {
-    margin-bottom: 10px; /* Reduced margin */
-    font-size: 16px; /* Adjusted font size */
-    color: #333;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 5px; /* Reduced padding */
-  }
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "DBMS")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) => asset.ast_uuid__ast_target__cct_target === "DBMS",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>DBMS</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "DBMS",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "DBMS",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
 
-  .overview {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+          {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "SECURITY")[0]?.["y"]}
+            <li
+              on:click={() => {
+                showModal = true;
+                modalData = assetsInfo["assets_info"].filter(
+                  (asset) =>
+                    asset.ast_uuid__ast_target__cct_target === "SECURITY",
+                );
+              }}
+            >
+              <div class="progress-info">
+                <h4>SECURITY</h4>
+                <span
+                  >{projectDetails.target_securitypoint.filter(
+                    (ele) => ele.label === "SECURITY",
+                  )[0]?.["y"]}%</span
+                >
+              </div>
+              <div class="progress light">
+                <div
+                  class="progress-bar orange"
+                  style={`width: ${
+                    projectDetails.target_securitypoint.filter(
+                      (ele) => ele.label === "SECURITY",
+                    )[0]?.["y"]
+                  }%;`}
+                ></div>
+              </div>
+            </li>
+          {/if}
+        </ul>
+        <!-- <div class="slidePager">
+          <a href="#" class="active"></a>
+          <a href="#"></a>
+          <a href="#"></a>
+        </div> -->
+      </div>
+    </article>
+  </div>
+  <article class="contentArea">
+    <h4 class="title border">개요</h4>
+    <table class="tableForm">
+      <colgroup>
+        <col style="width:130px;" />
+        <col style="width:380px;" />
+        <col style="width:70px;" />
+        <col />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>제목</th>
+          <td colspan="3">
+            <input
+              type="text"
+              placeholder="점검플랜명"
+              bind:value={updateInfo["ccp_title"]}
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>점검대상</th>
+          <td>
+            <select bind:value={updateInfo["asg_index"]}>
+              <option value="" selected disabled>자산 그룹목록</option>
 
-  .percentage1 {
-    width: 60px; /* Reduced size */
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px; /* Reduced margin */
-  }
+              {#if planOptions.asset_group}
+                {#each planOptions.asset_group as asset}
+                  <option value={asset.asg_index}>
+                    {asset.asg_title}
+                  </option>
+                {/each}
+              {/if}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>점검항목</th>
+          <td colspan="3">
+            <select bind:value={updateInfo["ccp_ruleset"]}>
+              <option value="" selected disabled>점검항목 목록</option>
+              {#if planOptions.checklist_group}
+                {#each planOptions.checklist_group as item}
+                  <option value={item.ccg_index}>
+                    {item.ccg_group}
+                  </option>
+                {/each}
+              {/if}
+            </select>
+          </td>
+        </tr>
+        <!-- <tr>
+          <th>생성자</th>
+          <td colspan="3">
+            <input type="text" placeholder="생성자" value="홍길동" />
+          </td>
+        </tr> -->
+        <tr>
+          <th>진행상태</th>
+          <td colspan="3">
+            <input
+              type="text"
+              placeholder="진행상태"
+              disabled
+              value={projectDetails?.ccp_b_finalized ? "완료" : "진행 중"}
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>점검방법</th>
+          <td>
+            <select bind:value={updateInfo["recheck"]}>
+              <option value={0}> 신규점겅검 </option>
+              <option value={1}> 이행점검 </option>
+            </select>
+          </td>
+          {#if updateInfo?.recheck === 1}
+            <th>이전점검</th>
+            <td>
+              <select bind:value={updateInfo["recheck_pno"]}>
+                <option value="" selected disabled>이전 점검플랜명</option>
 
-  .security-level {
-    background-color: #4caf50;
-    color: white;
-    width: 60px; /* Reduced size */
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px; /* Adjusted font size */
-    border-radius: 50%;
-    box-shadow:
-      inset 0 0 25px 3px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0.5px 0.5px rgba(255, 255, 255, 0.5),
-      inset 0 -1px 0.5px rgba(0, 0, 0, 0.1);
-  }
+                {#if planList}
+                  {#each planList as plan}
+                    <option value={plan.ccp_index}>
+                      {plan.ccp_title}
+                    </option>
+                  {/each}
+                {/if}
+              </select>
+            </td>
+          {/if}
+        </tr>
+        <tr>
+          <th>점검담당자</th>
+          <td>
+            <select bind:value={updateInfo["plan_planer_info"]}>
+              <option value="" selected disabled>선택</option>
+              {#if planOptions.member_group}
+                {#each planOptions.member_group as member}
+                  <option value={member.user_index}>
+                    {member.user_name}
+                  </option>
+                {/each}
+              {/if}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>점검일시</th>
+          <td colspan="3">
+            <div class="dateWrap">
+              <div class="date">
+                <input
+                  type="datetime-local"
+                  class="datepicker"
+                  placeholder="시작일시"
+                  bind:value={updateInfo["plan_start_date"]}
+                />
+              </div>
+              <img src="./assets/images/icon/dash.svg" />
+              <div class="date">
+                <input
+                  type="datetime-local"
+                  class="datepicker"
+                  placeholder="종료일시"
+                  bind:value={updateInfo["plan_end_date"]}
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>점검스케쥴</th>
+          <td colspan="3">
+            <select>
+              <option
+                value="0"
+                selected={updateInfo?.plan_execution_type === true}
+              >
+                즉시실행
+              </option>
+              <option
+                value="1"
+                selected={updateInfo?.plan_execution_type === false}
+              >
+                반복실행
+              </option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>조치일정</th>
+          <td colspan="3">
+            <div class="dateWrap">
+              <div class="date">
+                <input
+                  type="date"
+                  class="datepicker"
+                  placeholder="시작일시"
+                  bind:value={updateInfo["fix_start_date"]}
+                />
+              </div>
+              <img src="./assets/images/icon/dash.svg" />
+              <div class="date">
+                <input
+                  type="date"
+                  class="datepicker"
+                  placeholder="종료일시"
+                  bind:value={updateInfo["fix_end_date"]}
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
 
-  .project-details {
-    width: 100%;
-  }
+        <tr>
+          <th>조치담당자</th>
+          <td colspan="3">
+            <select bind:value={updateInfo["fix_conductor_info"]}>
+              <option value="" selected disabled>선택</option>
+              {#if planOptions.member_group}
+                {#each planOptions.member_group as member}
+                  <option value={member.user_index}>
+                    {member.user_name}
+                  </option>
+                {/each}
+              {/if}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>점검정보파일<br />재업로드</th>
+          <td colspan="2">
+            <div class="upload-section">
+              <label for="file-upload" class="file-label">엑셀파일업로드</label>
+              <input
+                type="file"
+                id="file-upload"
+                accept=".xls,.xlsx"
+                class="file-input"
+                bind:this={inputFile}
+                on:change={(e) => {
+                  updateInfo = {
+                    ...updateInfo,
+                    assessment_command: e.target.files[0],
+                  };
+                }}
+              />
+              <button
+                id="upload-btn"
+                class="upload-btn btn btnPrimary"
+                on:click={() => {
+                  inputFile.click();
+                }}
+              >
+                Upload
+              </button>
+            </div>
+          </td>
+          <td class="flex btnWrap">
+            <button
+              type="button"
+              class="btn btnBlue btnSave"
+              onclick="modalOpen('alert')"
+              on:click={() => (alertConfirm = true)}
+            >
+              변경저장
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
+</section>
 
-  .project-details p {
-    margin: 3px 0; /* Reduced margin */
-    font-size: 12px;
-    color: #555;
-  }
+{#if projectDetails?.ccp_index}
+  <section class="rowContents">
+    <article class="contentArea securityLevel">
+      <h4 class="title border">보안수준</h4>
+      <div class="flex">
+        <div class="circleGraph">
+          <div class="summary">
+            <h6>
+              {calculateAllSecurityLevel(
+                projectDetails?.target_group_securitypoint,
+              )}%
+            </h6>
+            <span>전체보안수준</span>
+          </div>
 
-  .actions {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
+          <div class="circle" data-percent="80" data-offset="345">
+            <svg width="" height="" viewBox="0 0 139 139">
+              <circle
+                cx="75"
+                cy="75"
+                r="55"
+                stroke="#F2F2F2"
+                stroke-width="18"
+                fill="none"
+              />
+              <circle
+                class="progress"
+                cx="75"
+                cy="75"
+                r="55"
+                stroke={calculateAllSecurityLevel(
+                  projectDetails?.target_group_securitypoint,
+                ) > 0
+                  ? calculateAllSecurityLevel(
+                      projectDetails?.target_group_securitypoint,
+                    ) <= 33
+                    ? "#FF1500"
+                    : calculateAllSecurityLevel(
+                          projectDetails?.target_group_securitypoint,
+                        ) <= 66
+                      ? "#4AC93F"
+                      : "#0067FF"
+                  : "#0067FF"}
+                stroke-width="18"
+                fill="none"
+                stroke-dasharray="345"
+                stroke-linecap="round"
+                transform="rotate(-90 75 75)"
+                style={`stroke: ${
+                  calculateAllSecurityLevel(
+                    projectDetails?.target_group_securitypoint,
+                  ) > 0
+                    ? calculateAllSecurityLevel(
+                        projectDetails?.target_group_securitypoint,
+                      ) <= 33
+                      ? "#FF1500"
+                      : calculateAllSecurityLevel(
+                            projectDetails?.target_group_securitypoint,
+                          ) <= 66
+                        ? "#4AC93F"
+                        : "#0067FF"
+                    : "#0067FF"
+                }; stroke-dashoffset: ${
+                  345 -
+                  (345 *
+                    parseInt(
+                      calculateAllSecurityLevel(
+                        projectDetails?.target_group_securitypoint,
+                      ) > 0
+                        ? calculateAllSecurityLevel(
+                            projectDetails?.target_group_securitypoint,
+                          )
+                        : 0,
+                    )) /
+                    100
+                };`}
+              />
+            </svg>
+            <div class="percent">
+              <span><img src="./assets/images/icon/guard.svg" /></span>
+            </div>
+          </div>
+        </div>
 
-  .actions button {
-    width: 90px;
-    height: 30px;
-    padding: 6px 10px; /* Reduced padding */
-    background-color: #4682b4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px; /* Adjusted font size */
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
+        <div class="progressSection">
+          <ul class="progressbarWrap">
+            <li>
+              <div class="progress-info">
+                <h4>UNIX</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "UNIX",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "UNIX",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>WINDOWS</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "WINDOWS",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "WINDOWS",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>SECURITY</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "SECURITY",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "SECURITY",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>NETWORK</h4>
+                <span
+                  >{calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "NETWORK",
+                  )}%</span
+                >
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityLevelByGroup(
+                    projectDetails?.target_group_securitypoint,
+                    "NETWORK",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+          </ul>
+          <!-- <div class="slidePager">
+            <a href="#" class="active"></a>
+            <a href="#"></a>
+            <a href="#"></a>
+          </div> -->
+        </div>
 
-  .actions button:hover {
-    background-color: #1565c0;
-    transform: translateY(-2px);
-  }
+        <div class="progressSection">
+          <ul class="progressbarWrap">
+            <li>
+              <div class="progress-info">
+                <h4>계정관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "계정 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "계정 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>접근관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "접근 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "접근 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>패치관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "패치 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "패치 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>로그관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "로그 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "로그 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+            <li>
+              <div class="progress-info">
+                <h4>기능관리</h4>
+                <span>
+                  {calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "기능 관리",
+                  )}%
+                </span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar blue"
+                  style={`width: ${calculateSecurityStatistic(
+                    projectDetails?.target_group_securitypoint,
+                    "기능 관리",
+                  )}%;`}
+                ></div>
+              </div>
+            </li>
+          </ul>
+          <!-- <div class="slidePager">
+            <a href="#" class="active"></a>
+            <a href="#"></a>
+            <a href="#"></a>
+          </div> -->
+        </div>
+      </div>
+    </article>
+  </section>
 
-  .status {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+  <section class="rowContents">
+    <article class="contentArea securityVulnerability">
+      <h4 class="title border">주요 취약점</h4>
+      <div class="tableListWrap">
+        <table class="tableList hdBorder">
+          <colgroup>
+            <col style="width:60px;" />
+            <col style="width:122px;" />
+            <col style="width:220px;" />
+            <col />
+            <col />
+            <!-- <col style="width:100px;" /> -->
+          </colgroup>
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>대상</th>
+              <th>점검그룹</th>
+              <th>점검항목</th>
+              <th>위험도</th>
+              <!-- <th class="text-center">점검결과</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            {#each projectDetails?.vuln_list as vuln, index}
+              <tr>
+                <td class="text-center">{index + 1}</td>
+                <td>{vuln?.cct_index__cct_target}</td>
+                <td>{vuln?.ccr_item_no__ccc_item_group}</td>
+                <td>
+                  {vuln?.ccr_item_no__ccc_item_title}
+                </td>
+                <td>{vuln?.ccr_item_no__ccc_item_level}</td>
+                <!-- <td class="text-center">
+                  <span class="badge badgePrimary"> 양호 </span>
+                </td> -->
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+      <!-- <div class="paginationWrap">
+        <div class="pagination">
+          <a href="" class="active">1</a>
+          <a href="">2</a>
+          <a href="">...</a>
+          <a href="">4</a>
+          <a href="">&gt;</a>
+        </div>
+      </div> -->
+    </article>
+  </section>
+{/if}
 
-  .pie-chart {
-    width: 30%; /* Reduced size */
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+<!--Modal:초기화-->
+<div class={`modalWrap alert ${alertConfirm ? "active" : ""}`}>
+  <div class="modalContents small">
+    <div class="contents">
+      <div class="closeWrap">
+        <button
+          type="button"
+          class="btnImg"
+          on:click={() => {
+            alertConfirm = false;
+            updateProjectDetails();
+          }}
+        >
+          <img src="./assets/images/icon/close.svg" />
+        </button>
+      </div>
+      <div class="msg">변경저장할 경우 이전 정보가 모두 초기화됩니다.</div>
+      <div class="flex bottom-buttons normal">
+        <button
+          type="button"
+          class="btn btnDefault"
+          on:click={() => {
+            alertConfirm = false;
+            updateProjectDetails();
+          }}
+        >
+          취소
+        </button>
+        <button
+          type="button"
+          class="btn btnBlue"
+          on:click={() => updateInfoHandler(updateInfo)}
+        >
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--//Modal:초기화-->
 
-  .chart-label {
-    margin-bottom: 5px; /* Reduced margin */
-    font-weight: bold;
-    font-size: 12px; /* Adjusted font size */
-    color: #555;
-  }
-
-  .bar-charts,
-  .bar-charts2 {
-    flex-grow: 1;
-    padding-left: 10px;
-    width: 70%;
-  }
-
-  .bar-charts2 {
-    height: 300px;
-    display: flex;
-    flex-direction: row;
-  }
-
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 5px; /* Reduced margin */
-    cursor: pointer;
-  }
-
-  .bar-second {
-    margin-right: 50px;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .bar .label {
-    width: 60px; /* Reduced width */
-    font-weight: bold;
-    font-size: 12px; /* Adjusted font size */
-    color: #555;
-    text-align: center;
-  }
-
-  .bar .bar-fill {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 30px; /* Reduced height */
-    background-color: #4caf50;
-    color: white;
-    text-align: right;
-    padding-right: 10px; /* Reduced padding */
-    line-height: 15px;
-    border-radius: 5px;
-    font-size: 12px; /* Adjusted font size */
-  }
-
-  .bar .bar-fill2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 15px;
-    width: 70px;
-    background-color: #2196f3;
-    color: white;
-    text-align: right;
-    padding-right: 3px;
-    line-height: 15px;
-    border-radius: 5px;
-    font-size: 12px;
-  }
-
-  .security-level-section p {
-    margin: 3px 0; /* Reduced margin */
-    font-size: 12px; /* Adjusted font size */
-    color: #555;
-  }
-  .security-level-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    max-width: 100%;
-    align-items: center;
-  }
-  .critical-weaknesses .bar-chart {
-    padding: 5px; /* Reduced padding */
-    color: #555;
-    font-size: 12px; /* Adjusted font size */
-  }
-
-  .critical-weaknesses .table_container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 500px;
-    width: 100%;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #dddddd;
-    padding: 10px;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  tbody tr:hover {
-    background-color: #e0f7fa;
-  }
-
-  input {
-    width: 25%;
-    outline: none;
-  }
-</style>
+<!--Modal:자산 상세-->
+<div class={`modalWrap detail table ${showModal ? "active" : ""}`}>
+  {#if showModal}
+    <div class="modalContents big">
+      <div class="contents">
+        <div class="closeWrap">
+          <button
+            type="button"
+            class="btnImg"
+            on:click={() => {
+              showModal = false;
+            }}
+          >
+            <img src="./assets/images/icon/close.svg" />
+          </button>
+        </div>
+        <div class="content">
+          <div class="flex head">
+            <h3 class="title">점검결과 등록 내역</h3>
+          </div>
+          <div class="tableListWrap">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col style="width:90px;" />
+                <col />
+                <col />
+                <col />
+                <!-- <col /> -->
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">번호</th>
+                  <th class="text-center">호스트명</th>
+                  <th class="text-center">아이피주소</th>
+                  <th class="text-center">점검대상</th>
+                  <!-- <th class="text-center">에이전트</th> -->
+                  <th class="text-center">보안점수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#if modalData && modalData?.length !== 0}
+                  {#each modalData as data, index}
+                    <tr>
+                      <td class="text-center">{index + 1}</td>
+                      <td class="text-center"
+                        >{data?.ast_uuid__ass_uuid__ast_hostname}</td
+                      >
+                      <td class="text-center"
+                        >{data?.ast_uuid__ass_uuid__ast_ipaddr}</td
+                      >
+                      <td class="text-center"
+                        >{data?.ast_uuid__ast_target__cct_target}</td
+                      >
+                      <!-- <td class="text-center">Y</td> -->
+                      <td class="text-center"
+                        >{data?.ast_security_point > 0
+                          ? `${data?.ast_security_point}%`
+                          : "결과미등록"}</td
+                      >
+                    </tr>
+                  {/each}
+                {/if}
+              </tbody>
+            </table>
+          </div>
+          <!-- <div class="paginationWrap">
+        <div class="pagination">
+          <a href="" class="active">1</a>
+          <a href="">2</a>
+          <a href="">...</a>
+          <a href="">4</a>
+          <a href="">&gt;</a>
+        </div>
+      </div> -->
+        </div>
+      </div>
+    </div>
+  {/if}
+</div>
+<!--//Modal:자산 상세-->

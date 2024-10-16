@@ -24,7 +24,7 @@
   let excelFiles = [];
 
   let planList = [];
-  let selectedPlan = null;
+  let selectedPlan = "";
   let resultStatus = null;
   let resultErrors = null;
   let uploadStatus = null;
@@ -90,7 +90,7 @@
   }
 </script>
 
-<div class="container_page">
+<!-- <div class="container_page">
   <div class="header">
     {#if resultStatus?.assets_info?.length > 0}
       <button
@@ -117,8 +117,6 @@
     {:else}
       <button style="background-color:  #33333342;">에러내역확인</button>
     {/if}
-
-    <!-- <button>등록결과조회</button> -->
   </div>
 
   <div class="table_center">
@@ -266,7 +264,224 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
+
+<!-- {#if modalData}
+  <ModalDynamic
+    bind:showModal
+    modalWidth={60}
+    modalHeight={modalData?.length > 10 ? 70 : null}
+  >
+    <ResultPopup bind:modalData />
+  </ModalDynamic>
+{/if}
+
+{#if modalErrorData}
+  <ModalDynamic
+    bind:showModal={showErrorModal}
+    modalWidth={80}
+    modalHeight={modalErrorData?.length > 10 ? 70 : null}
+  >
+    <ResultErrorPopup bind:modalErrorData />
+  </ModalDynamic>
+{/if}
+
+{#if uploadStatusModalData}
+  <ModalDynamic
+    bind:showModal={uploadStatusModalData}
+    modalWidth={80}
+    modalHeight={uploadStatusModalData?.uploaded_status?.length > 10
+      ? 70
+      : null}
+  >
+    <ResultUploadStatusPopup bind:uploadStatusModalData />
+  </ModalDynamic>
+{/if} -->
+
+<article class="flex contentArea projectTitle">
+  <div class="flex">
+    <div class="formControlWrap">
+      <div class="formControl">
+        <label>프로젝트명</label>
+        <select bind:value={selectedPlan}>
+          <option value="" selected disabled>선택</option>
+          {#if planList}
+            {#each planList as plan}
+              <option value={plan.ccp_index}>{plan.ccp_title}</option>
+            {/each}
+          {/if}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="flex btnWrap">
+    <button
+      type="button"
+      class={`btn ${resultStatus?.assets_info?.length > 0 ? "btnBlue" : ""}`}
+      on:click={() => {
+        showModal = true;
+        modalData = resultStatus?.assets_info;
+      }}
+    >
+      등록현황조회
+    </button>
+    <button
+      type="button"
+      class={`btn ${resultErrors?.length > 0 ? "btnGray" : ""}`}
+      on:click={() => {
+        showErrorModal = true;
+        modalErrorData = resultErrors;
+      }}
+    >
+      에러내역확인
+    </button>
+  </div>
+</article>
+
+<article class="contentArea mt-40">
+  <h4 class="title border">전체등록현황</h4>
+  <div class="flex semiProgressWrap">
+    <h5>등록현황</h5>
+    <div class="semi-oval-progress">
+      <div
+        class="progress-bar"
+        style={`width: ${(uploadStatus?.uploaded_asset_count / uploadStatus?.total_asset_count) * 100}%;`}
+      ></div>
+      <div class="progress-text">
+        <span>{uploadStatus?.uploaded_asset_count ?? 0}</span> / {uploadStatus?.total_asset_count ??
+          0}
+      </div>
+    </div>
+    <button
+      type="button"
+      class={`btn ${selectedPlan ? "btnBlue" : "btnPrimary"}`}
+      disabled={!selectedPlan}
+      on:click={getResultStatus}>등록내역확인</button
+    >
+  </div>
+</article>
+
+<article class="contentArea mt-40">
+  <h4 class="title border">수동등록</h4>
+  <div class="formControlWrap fileUploadWrap col">
+    <div class="formControl">
+      <label>점검결과파일</label>
+      <div class="upload-section">
+        <label for="file-upload" class="file-label">
+          {jsonFiles && jsonFiles.length
+            ? `${jsonFiles.length} files uploaded`
+            : " JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)"}
+        </label>
+        <input
+          type="file"
+          id="file-upload"
+          accept=".json"
+          class="file-input"
+          multiple
+          bind:this={jsonInput}
+          on:change={(event) => {
+            jsonFiles = Array.from(event.target.files);
+          }}
+        />
+        <button
+          id="upload-btn"
+          class="upload-btn btn btnPrimary"
+          on:click={() => {
+            jsonInput.click();
+          }}
+          disabled={!selectedPlan}
+        >
+          파일업로드
+        </button>
+        <button
+          class={`btn ${!selectedPlan || !jsonFiles.length ? "btnPrimary" : "btnBlue"} `}
+          on:click={() => submitNewSystemCommand("JSON", jsonFiles)}
+          disabled={!selectedPlan || !jsonFiles.length}
+        >
+          저장
+        </button>
+      </div>
+    </div>
+
+    <div class="formControl">
+      <label>네트워크설정파일</label>
+      <div class="upload-section">
+        <label for="file-upload" class="file-label">
+          {txtFiles && txtFiles.length
+            ? `${txtFiles.length} files uploaded`
+            : "설정파일(TXT) 파일 업로드"}
+        </label>
+        <input
+          type="file"
+          id="file-upload"
+          accept=".txt"
+          class="file-input"
+          multiple
+          bind:this={txtInput}
+          on:change={(event) => {
+            txtFiles = Array.from(event.target.files);
+          }}
+        />
+        <button
+          id="upload-btn"
+          class="upload-btn btn btnPrimary"
+          on:click={() => {
+            txtInput.click();
+          }}
+          disabled={!selectedPlan}
+        >
+          파일업로드
+        </button>
+        <button
+          class={`btn ${!selectedPlan || !txtFiles.length ? "btnPrimary" : "btnBlue"} `}
+          on:click={() => submitNewSystemCommand("TXT", txtFiles)}
+          disabled={!selectedPlan || !txtFiles.length}
+        >
+          저장
+        </button>
+      </div>
+    </div>
+
+    <div class="formControl">
+      <label>정보보호시스템</label>
+      <div class="upload-section">
+        <label for="file-upload" class="file-label">
+          {excelFiles && excelFiles.length
+            ? `${excelFiles.length} files uploaded`
+            : "인터뷰파일(EXCEL) 파일 업로드"}
+        </label>
+        <input
+          type="file"
+          id="file-upload"
+          accept=".xls,.xlsx"
+          class="file-input"
+          multiple
+          bind:this={excelInput}
+          on:change={(event) => {
+            excelFiles = Array.from(event.target.files);
+          }}
+        />
+        <button
+          id="upload-btn"
+          class="upload-btn btn btnPrimary"
+          on:click={() => {
+            excelInput.click();
+          }}
+          disabled={!selectedPlan}
+        >
+          파일업로드
+        </button>
+        <button
+          class={`btn ${!selectedPlan || !excelFiles.length ? "btnPrimary" : "btnBlue"} `}
+          on:click={() => submitNewSystemCommand("EXCEL", excelFiles)}
+          disabled={!selectedPlan || !excelFiles.length}
+        >
+          저장
+        </button>
+      </div>
+    </div>
+  </div>
+</article>
 
 {#if modalData}
   <ModalDynamic
@@ -299,198 +514,3 @@
     <ResultUploadStatusPopup bind:uploadStatusModalData />
   </ModalDynamic>
 {/if}
-
-<style>
-  /* Main Container */
-  .container_page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-    width: 100%;
-  }
-
-  /* Header Buttons */
-  .header {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-  .header button {
-    background-color: #0056b3;
-    color: #ffffff;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .header button:hover {
-    background-color: #003366;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Table Centering */
-  .table_center {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* Table Container Styling */
-  .table_container {
-    width: 100%;
-    padding: 10px;
-    background-color: #f7f9fb;
-    border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dddddd;
-    margin-bottom: 30px;
-  }
-
-  .word {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333333;
-    margin-bottom: 10px;
-  }
-
-  /* Row Styling */
-  .first_line,
-  .secondLine {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .secondLine {
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Button Styling */
-  .button1,
-  .button2 {
-    background-color: #f0f0f0;
-    color: #333333;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    border-radius: 5px;
-    padding: 8px 12px;
-    width: 150px;
-    text-align: center;
-    border: 1px solid #cccccc;
-  }
-
-  .button2 {
-    background-color: #e0e0e0;
-  }
-
-  /* Input Styling */
-  .input {
-    flex-grow: 0.7;
-    background-color: #f9f9f9;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    padding: 8px;
-    font-size: 12px;
-    color: #555555;
-  }
-
-  .input[readonly] {
-    color: #666666;
-  }
-
-  .upload {
-    border: none;
-    background-color: transparent;
-    font-size: 12px;
-    color: #333333;
-    cursor: pointer;
-  }
-
-  /* Save Button Styling */
-  .save_button {
-    background-color: #0056b3;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 16px;
-    font-size: 12px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .save_button:hover {
-    background-color: #003366;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .span_at {
-    width: 260px;
-    font-size: 12px;
-    color: #666666;
-    display: flex;
-    align-items: center;
-  }
-
-  /* Column Layout */
-  .thirdCol {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .row {
-    width: 70%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .label {
-    flex-shrink: 0;
-    width: 150px;
-    padding: 5px 0;
-    text-align: left;
-    font-size: 14px;
-    font-weight: bold;
-  }
-
-  .dropdown {
-    flex: 1;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-    appearance: none;
-    background-color: #fff;
-  }
-
-  .dropdown:focus {
-    border-color: #2980b9;
-    outline: none;
-  }
-
-  button:disabled {
-    background-color: #838383;
-  }
-</style>

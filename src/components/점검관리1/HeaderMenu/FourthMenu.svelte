@@ -39,7 +39,7 @@
   }
 </script>
 
-<main>
+<!-- <main>
   <div class="firstLine">
     <div class="dropdown-group">
       <div class="dropdown-container">
@@ -125,119 +125,117 @@
       {/if}
     </tbody>
   </table>
-</main>
+</main> -->
 
-<style>
-  main {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    margin-bottom: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ccc;
-    height: 600px;
-    background-color: #f9f9f9;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: "Arial", sans-serif;
-    font-size: 12px;
-    background-color: #ffffff;
-  }
-
-  th,
-  td {
-    padding: 12px 15px;
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f4f4f4;
-  }
-
-  tr:hover {
-    background-color: #e6f7ff;
-    cursor: pointer;
-  }
-
-  tr td {
-    border-bottom: 1px solid #dddddd;
-  }
-
-  thead th {
-    border-bottom: 2px solid #dddddd;
-  }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  .firstLine {
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-  }
-
-  .dropdown-group {
-    margin-right: 20px;
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .dropdown-container {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-    white-space: nowrap;
-  }
-
-  .dropdown-container label {
-    font-weight: bold;
-    margin: 0;
-    font-size: 16px;
-  }
-
-  .firstlineButton {
-    background-color: #0056b3;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .firstlineButton:hover {
-    background-color: #003366;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-</style>
+<article class="contentArea">
+  <section class="filterWrap">
+    <div>
+      <select
+        id="project"
+        bind:value={search.plan_index}
+        on:change={searchDataHandler}
+      >
+        <option value="" selected disabled>프로젝트명</option>
+        {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+          {#each searchFilters?.plans as plan}
+            <option value={plan.ccp_index}>{plan.ccp_title}</option>
+          {/each}
+        {/if}
+      </select>
+      <select
+        id="target"
+        bind:value={search.order_user}
+        on:change={searchDataHandler}
+      >
+        <option value="" selected>수행자</option>
+        {#if searchFilters?.users && searchFilters?.users?.length !== 0}
+          {#each searchFilters?.users as user}
+            <option value={user.user_name}>{user.user_name}</option>
+          {/each}
+        {/if}
+      </select>
+      <div class="dateWrap">
+        <div class="date">
+          <input
+            type="date"
+            class="datepicker"
+            placeholder="시작일시"
+            bind:value={search.search_start_date}
+            on:change={searchDataHandler}
+          />
+        </div>
+        <img src="./assets/images/icon/dash.svg" />
+        <div class="date">
+          <input
+            type="date"
+            class="datepicker"
+            placeholder="종료일시"
+            bind:value={search.search_end_date}
+            on:change={searchDataHandler}
+          />
+        </div>
+      </div>
+      <!-- <button type="button" class="btn btnPrimary"
+        ><img src="./assets/images/icon/search.svg" />조회</button
+      > -->
+    </div>
+  </section>
+  <section class="tableWrap">
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center">번호</th>
+            <th class="text-center">프로젝트명</th>
+            <th class="text-center">자산명</th>
+            <th class="text-center">분류코드</th>
+            <th class="text-center">로그내용</th>
+            <th class="text-center">수행자</th>
+            <th class="text-center">날짜</th>
+            <th class="text-center">비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#if logData && logData.length !== 0}
+            {#each logData as data, index}
+              <tr>
+                <td class="text-center">{index + 1}</td>
+                <td class="text-center">{data?.ccp_index}</td>
+                <td class="text-center">{data?.ast_uuid}</td>
+                <td class="text-center">{data?.his_type}</td>
+                <td class="text-center">{data?.his_orig_data}</td>
+                <td class="text-center">{data?.his_order_user}</td>
+                <td class="text-center"
+                  >{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td
+                >
+                <td class="text-center">
+                  <Tooltip text={data?.his_full_data}>비고</Tooltip>
+                </td>
+              </tr>
+            {/each}
+          {/if}
+        </tbody>
+      </table>
+    </div>
+    <div class="paginationWrap end">
+      <div class="pagination">
+        <!-- <a href="">&lt;</a> -->
+        <a href="" class="active">1</a>
+        <a href="">2</a>
+        <a href="">...</a>
+        <a href="">4</a>
+        <a href="">&gt;</a>
+      </div>
+    </div>
+  </section>
+</article>

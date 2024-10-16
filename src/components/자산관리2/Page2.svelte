@@ -21,7 +21,7 @@
   let currentPage = null;
   let activeMenu = null;
   let showModal = false;
-  let newGroupName = "";
+  let newGroupName = "전체";
   let isAddingNewGroup = false;
   let inputRef;
   let selectedGroup = "전체";
@@ -33,7 +33,7 @@
   let showSearchResult = false;
   let showGetPlanHeader = false;
   let assetOs = "";
-  let assetHost = "";
+  let assetHost = "전체";
   let showSwiperComponent = false;
   /*************************GetAllAssetList*****************************************/
   async function assetGroupList() {
@@ -89,17 +89,31 @@
           ? asset.ast_activate === (assetAcitve === "1")
           : true;
 
+      const matchesHostName =
+        assetHost && assetHost !== "전체"
+          ? asset.ast_hostname === assetHost
+          : true;
       // Return true if all conditions match
-      return matchesGroup && matchesOsType && matchesTargetReg && matchesActive;
+      return (
+        matchesGroup &&
+        matchesOsType &&
+        matchesTargetReg &&
+        matchesActive &&
+        matchesHostName
+      );
     });
   }
   function handleFilter() {
     filterAssets();
+    console.log("assetHost", assetHost);
+    console.log("assetOst", asset_ostype);
+    console.log("result search", filteredAssets);
   }
 
   function resetFilters() {
-    selectedGroup = "";
-    asset_ostype = "";
+    assetHost = "전체";
+    selectedGroup = "전체";
+    asset_ostype = "전체";
     assetTargetReg = "";
     assetAcitve = "";
     filteredAssets = $allAssetList; // Reset the filtered assets to show all
@@ -270,7 +284,7 @@
                 bind:value={selectedGroup}
                 on:change={handleFilter}
               >
-                <option value="전체">전체</option>
+                <option value="전체" selected>전체</option>
                 {#if $allAssetGroupList.length > 0}
                   {#each $allAssetGroupList as group}
                     <option value={group.asg_index}>{group.asg_title}</option>
@@ -285,7 +299,7 @@
                 bind:value={asset_ostype}
                 on:change={handleFilter}
               >
-                <option value="전체">전체 </option>
+                <option value="전체" selected>전체 </option>
                 {#each $allAssetList as asset}
                   {#if asset.ast_ostype !== ""}
                     <option value={asset.ast_ostype}>
@@ -327,11 +341,8 @@
               <button
                 on:click={resetFilters}
                 class="btn btnPrimary padding_button"
-                ><img
-                  src="./assets/images/icon/search.svg"
-                  alt="search"
-                />조회</button
-              >
+                ><img src="./assets/images/reset.png" alt="search" />초기화
+              </button>
             {:else}
               <button on:click={searchDataHandler} class="btn btnPrimary"
                 >검색</button
@@ -366,7 +377,9 @@
             {filteredAssets}
             {logData}
             bind:assetHost
-            bind:assetOs
+            bind:asset_ostype
+            {handleFilter}
+            {resetFilters}
           />
         {:else}
           <AssetCardsPage

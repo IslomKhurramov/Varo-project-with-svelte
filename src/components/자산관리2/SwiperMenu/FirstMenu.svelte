@@ -17,148 +17,175 @@
 </script>
 
 <main>
-  {#if Object.keys(assetDetails).length > 0}
-    <div class="table_container">
-      <table>
-        <tr>
-          <th>아이피주소</th>
-          <td>{assetDetails.ast_ipaddr}</td>
-          <th>IP추적처리</th>
-          <td>{assetDetails.ast_ipaddrs}</td>
-          <th>자산코드</th>
-          <td>{assetDetails.ast_code}</td>
-          <th>용도</th>
-          <td>{assetDetails.ast_usage}</td>
-        </tr>
-        <tr>
-          <th>제조사</th>
-          <td>{assetDetails.ast_brand}</td>
-          <th>운영체제</th>
-          <td>{assetDetails.ast_os}</td>
-          <th>모델</th>
-          <td>{assetDetails.ast_model}</td>
-          <th>점검대상</th>
-          <td>NETWORK</td>
-        </tr>
-        <tr>
-          <th>호스트명</th>
-          <td>{assetDetails.ast_hostname}</td>
-          <th>위치</th>
-          <td>{assetDetails.ast_location}</td>
-          <th>운영팀</th>
-          <td>{assetDetails.ast_operator_team}</td>
-          <th>관리자</th>
-          <td>{assetDetails.ast_operator_person}</td>
-        </tr>
-        <tr>
-          <th>관리전화</th>
-          <td>{assetDetails.ast_operator_phone}</td>
-          <th>기밀성</th>
-          <td>{assetDetails.ast_confidentiality}</td>
-          <th>무결성</th>
-          <td>{assetDetails.ast_integrity}</td>
-          <th>가용성</th>
-          <td>{assetDetails.ast_availability}</td>
-        </tr>
-        <tr>
-          <th>보안점수</th>
-          <td>{assetDetails.ast_security_point}</td>
-          <th>등급</th>
-          <td>{assetDetails.ast_security_level}</td>
-          <th>ISMS인증</th>
-          <td>{assetDetails.ast_isms_target ? "True" : "False"}</td>
-          <th>활성화여부</th>
-          <td>{assetDetails.ast_activate ? "활성화상태" : "비활성화"}</td>
-        </tr>
-      </table>
+  <div class="flex col detail">
+    <h3 class="title">자산상세정보</h3>
+    <div class="tableListWrap nohead">
+      {#if Object.keys(assetDetails).length > 0}
+        <table class="tableList">
+          <colgroup>
+            <col style="width:140px;" />
+            <col />
+            <col style="width:140px;" />
+            <col />
+            <col style="width:140px;" />
+            <col />
+            <col style="width:140px;" />
+            <col />
+          </colgroup>
+          <tbody>
+            <tr>
+              <th>아이피주소</th>
+              <td>{assetDetails.ast_ipaddr}</td>
+              <th>IP추적처리</th>
+              <td>{assetDetails.ast_ipaddrs}</td>
+              <th>자산코드</th>
+              <td>{assetDetails.ast_code}</td>
+              <th>용도</th>
+              <td>{assetDetails.ast_usage}</td>
+            </tr>
+            <tr>
+              <th>제조사</th>
+              <td>{assetDetails.ast_brand}</td>
+              <th>운영체제</th>
+              <td>{assetDetails.ast_os}</td>
+              <th>모델</th>
+              <td>{assetDetails.ast_model}</td>
+              <th>점검대상</th>
+              <td>NETWORK</td>
+            </tr>
+            <tr>
+              <th>호스트명</th>
+              <td>{assetDetails.ast_hostname}</td>
+              <th>위치</th>
+              <td>{assetDetails.ast_location}</td>
+              <th>운영팀</th>
+              <td>{assetDetails.ast_operator_team}</td>
+              <th>관리자</th>
+              <td>{assetDetails.ast_operator_person}</td>
+            </tr>
+            <tr>
+              <th>관리전화</th>
+              <td>{assetDetails.ast_operator_phone}</td>
+              <th>기밀성</th>
+              <td>{assetDetails.ast_confidentiality}</td>
+              <th>무결성</th>
+              <td>{assetDetails.ast_integrity}</td>
+              <th>가용성</th>
+              <td>{assetDetails.ast_availability}</td>
+            </tr>
+            <tr>
+              <th>보안점수</th>
+              <td>{assetDetails.ast_security_point}</td>
+              <th>등급</th>
+              <td>{assetDetails.ast_security_level}</td>
+              <th>ISMS인증</th>
+              <td>{assetDetails.ast_isms_target ? "True" : "False"}</td>
+              <th>활성화여부</th>
+              <td>{assetDetails.ast_activate ? "활성화상태" : "비활성화"}</td>
+            </tr>
+          </tbody>
+        </table>
+      {:else}
+        <div class="empty-state-message">
+          <h3>Please select an asset to see details</h3>
+        </div>
+      {/if}
     </div>
-  {:else}
-    <div class="empty-state-message">
-      <h3>Please select an asset to see details</h3>
-    </div>
-  {/if}
-  <div class="input_container">
-    <textarea rows="3" cols="100" placeholder="비고란"></textarea>
-    <div class="input_buttons">
-      <button style="background: #007bff;">수정하기</button>
-      <button style="background: #dc3545;">비활성하기</button>
-      <button style="background: #28a745;">활성하기</button>
+    <textarea rows="5" placeholder="비고란" style="margin-top: 20px;"
+    ></textarea>
+    <div class="flex align-center btnWrap gap-6">
+      <button class="btn w140 btnBlue">수정하기</button>
+      <button class="btn w140 btnPrimaryFontGray">비활성하기</button>
+      <button class="btn w140 btnPrimaryFontGray">활성하기</button>
     </div>
   </div>
+
   <div>
-    <div class="header">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click={() =>
-          selectData(
-            assetHistory[0]?.system_info?.osinfo || [],
-            "운영체제정보",
-          )}
-        class={activeData === "운영체제정보" ? "active" : ""}
-      >
-        운영체제정보
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click={() =>
-          selectData(
-            assetHistory[0].system_info?.installedprog || [],
-            "설치된 프로그램 목록",
-          )}
-        class={activeData === "설치된 프로그램 목록" ? "active" : ""}
-      >
-        설치된 프로그램 목록
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click={() =>
-          selectData(
-            assetHistory[0].system_info?.process || [],
-            "프로세스목록",
-          )}
-        class={activeData === "프로세스목록" ? "active" : ""}
-      >
-        프로세스목록
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click={() =>
-          selectData(
-            assetHistory[0].system_info?.process_network || [],
-            "네트워크 정보",
-          )}
-        class={activeData === "네트워크 정보" ? "active" : ""}
-      >
-        네트워크 정보
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click={() =>
-          selectData(assetHistory[0].system_info?.dlls || [], "DLL 정보")}
-        class={activeData === "DLL 정보" ? "active" : ""}
-      >
-        DLL 정보
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click={() =>
-          selectData(
-            assetHistory[0].system_info?.patchstatus || [],
-            "패치내역",
-          )}
-        class={activeData === "패치내역" ? "active" : ""}
-      >
-        패치내역/대상
-      </h3>
+    <div class="section" style="margin-top:20px">
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <section class="subTabWrap">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          on:click={() =>
+            selectData(
+              assetHistory[0]?.system_info?.osinfo || [],
+              "운영체제정보",
+            )}
+          class={activeData === "운영체제정보" ? "active" : ""}
+        >
+          운영체제정보
+        </a>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a
+          on:click={() =>
+            selectData(
+              assetHistory[0].system_info?.installedprog || [],
+              "설치된 프로그램 목록",
+            )}
+          class={activeData === "설치된 프로그램 목록" ? "active" : ""}
+        >
+          설치된 프로그램 목록
+        </a>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a
+          on:click={() =>
+            selectData(
+              assetHistory[0].system_info?.process || [],
+              "프로세스목록",
+            )}
+          class={activeData === "프로세스목록" ? "active" : ""}
+        >
+          프로세스목록
+        </a>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a
+          on:click={() =>
+            selectData(
+              assetHistory[0].system_info?.process_network || [],
+              "네트워크 정보",
+            )}
+          class={activeData === "네트워크 정보" ? "active" : ""}
+        >
+          네트워크 정보
+        </a>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a
+          on:click={() =>
+            selectData(assetHistory[0].system_info?.dlls || [], "DLL 정보")}
+          class={activeData === "DLL 정보" ? "active" : ""}
+        >
+          DLL 정보
+        </a>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a
+          on:click={() =>
+            selectData(
+              assetHistory[0].system_info?.patchstatus || [],
+              "패치내역",
+            )}
+          class={activeData === "패치내역" ? "active" : ""}
+        >
+          패치내역/대상
+        </a>
+      </section>
     </div>
 
     {#if currentData && currentData.length > 0}
-      <div class="last_container">
-        <table border="1" cellpadding="10" cellspacing="0">
+      <div class="tableListWrap">
+        <table class="tableList hdBorder">
+          <colgroup>
+            <col style="width:60px;" />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+          </colgroup>
           <thead>
             <tr>
-              <th>Field</th>
-              <th>Value</th>
+              <th class="text-center">Field</th>
+              <th class="text-center">Value</th>
             </tr>
           </thead>
           <tbody>
@@ -180,175 +207,6 @@
 </main>
 
 <style>
-  main {
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb;
-    padding: 10px;
-    margin-bottom: 40px;
-    font-family: "Arial", sans-serif;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .table_container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 300px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dddddd;
-  }
-
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    background: #ffffff;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-
-  textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-
-  th {
-    background-color: #f0f0f0;
-    font-weight: bold;
-    color: #333;
-  }
-
-  tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
-  }
-
-  /* Optional styling for better visual appeal */
-  td {
-    background-color: #fff;
-  }
-
-  tr:nth-child(even) td {
-    background-color: #f9f9f9; /* Light gray for alternate rows */
-  }
-  .input_container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-top: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dddddd;
-  }
-  .input_container textarea {
-    margin: 6px;
-    width: 99%;
-  }
-
-  .input_buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 20px;
-  }
-
-  .input_buttons button {
-    background-color: #007bff; /* Primary button color */
-    color: #ffffff;
-    width: 100px;
-    height: 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .input_buttons button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .header {
-    display: flex;
-    flex-direction: row;
-    gap: 50px;
-    padding-left: 40px;
-    width: 100%;
-    color: #000000;
-  }
-
-  .header h3 {
-    color: black;
-    font-weight: bold;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .header h3 {
-    background-image: linear-gradient(to right, #5486d6, #54b3d6 50%, #000 50%);
-    background-size: 200% 100%;
-    background-position: -100%;
-    display: inline-block;
-    padding: 5px 0;
-    position: relative;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .header h3:before {
-    content: "";
-    background: #54b3d6;
-    display: block;
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .header h3:hover {
-    background-position: 0;
-  }
-
-  .header h3:hover::before {
-    width: 100%;
-  }
-  .header h3.active {
-    color: #3183a0; /* Ensures active text color is visible */
-    -webkit-text-fill-color: #3183a0; /* Override webkit text fill */
-    background-image: none; /* Remove the gradient on active */
-    text-decoration: underline;
-  }
-  .last_container {
-    width: 100%;
-    height: auto;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dddddd;
-    margin-bottom: 40px;
-    width: 100%;
-  }
   .empty_state {
     display: flex;
     justify-content: center;

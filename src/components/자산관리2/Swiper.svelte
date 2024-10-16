@@ -33,6 +33,7 @@
   export let closeSwiper;
   export let selectedAsset;
   export let filteredAssets = [];
+  let activeAsset = null;
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -79,9 +80,6 @@
     ast_activate: "",
     ast_agent_installed: "",
   };
-  function cancel() {
-    showModalSecond = false;
-  }
 
   // Only populate formData if it's uninitialized
   $: if (Object.keys(assetDetails).length > 0 && !formData.ass_uuid) {
@@ -130,6 +128,7 @@
   function handleAssetClick(uid, asset) {
     uuid_asset = uid;
     approve_status = asset.ast_approve_status;
+    activeAsset = asset;
 
     // Check if the asset belongs to any group
     if (asset.asset_group && asset.asset_group.length > 0) {
@@ -294,284 +293,175 @@
       alert(`Error: ${err.message || "An unknown error occurred."}`);
     }
   }
+  let scrollAmount = 0;
+  const itemWidth = 146; // Each menu item width including gap
+  const menuWidth = 1260; // Total width of the menu
+
+  let menuWrapper;
+
+  // This function will handle the horizontal scroll on next and prev clicks
+  const handleScroll = (direction) => {
+    if (direction === "prev") {
+      scrollAmount -= itemWidth;
+      if (scrollAmount < 0) scrollAmount = 0;
+    } else if (direction === "next") {
+      scrollAmount += itemWidth;
+      const maxScroll = menuWrapper.scrollWidth - menuWidth;
+      if (scrollAmount > maxScroll) scrollAmount = maxScroll;
+    }
+    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+  };
+
+  onMount(() => {
+    // This runs once the component is mounted
+    menuWrapper = document.getElementById("menuWrapper");
+  });
+
+  function closeModalEdit() {
+    currentPage = FirstMenu; // This will unmount ModalEdit when called
+  }
 </script>
 
 <main>
   <button on:click={closeSwiper} class="close-button">X</button>
-  <div class="swiper_container1">
-    <img src="./images/left.png" alt="left" />
-    <div bind:this={swiperContainer} class="swiper-container">
-      <div class="swiper-wrapper">
-        {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div
-            value={asset}
-            name={asset}
-            class="swiper-slide"
-            on:click={() => handleAssetClick(asset.ass_uuid, asset)}
-          >
-            {asset.ast_hostname}
+
+  <article class="contentArea flex col">
+    <section bind:this={swiperContainer} class="topCon">
+      <div class="menu-container">
+        <button class="arrow-btn" on:click={() => handleScroll("prev")}
+          >◀</button
+        >
+        <div class="menu-wrapper-container">
+          <div class="menu-wrapper" id="menuWrapper">
+            {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <div
+                value={asset}
+                name={asset}
+                class="menu-item {activeAsset &&
+                activeAsset.ass_uuid === asset.ass_uuid
+                  ? 'active'
+                  : ''}"
+                on:click={() => handleAssetClick(asset.ass_uuid, asset)}
+              >
+                {asset.ast_hostname}
+              </div>
+            {/each}
           </div>
-        {/each}
+        </div>
+        <button class="arrow-btn" on:click={() => handleScroll("next")}
+          >▶</button
+        >
       </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-    <img
-      src="./images/left.png"
-      style="transform: rotate(180deg);"
-      alt="right"
-    />
-  </div>
+    </section>
 
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="header">
-    <div class="header_3menu">
-      <h3
-        on:click={() => selectPage(FirstMenu, "자산개요")}
-        class={activeMenu === "자산개요" ? "active" : ""}
-      >
-        자산개요
-      </h3>
+    <section class="content">
+      <div>
+        <div class="section" style="margin-top: 20px;">
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div class="flex justify-between submenuWrap">
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <section class="subTabWrap">
+              <!-- svelte-ignore a11y-missing-attribute -->
+              <a
+                on:click={() => selectPage(FirstMenu, "자산개요")}
+                class={activeMenu === "자산개요" ? "active" : ""}
+              >
+                자산개요
+              </a>
 
-      <h3
-        on:click={() => selectPage(FourthMenu, "CCE점검이력")}
-        class={activeMenu === "CCE점검이력" ? "active" : ""}
-      >
-        CCE점검이력
-      </h3>
-      <h3
-        on:click={() => selectPage(FifthMenu, "자산현황보고서")}
-        class={activeMenu === "자산현황보고서" ? "active" : ""}
-      >
-        자산현황보고서
-      </h3>
-    </div>
-    <div class="button_container">
-      <button on:click={() => (showModal = true)}>자산그룹이동 </button>
-      <button on:click={() => (showModalSecond = true)}>정보수정</button>
-      {#if approve_status === 0}
-        <button on:click={assetRegisterChange}>등록승인</button>
-      {:else}
-        <button on:click={assetRegisterChange}>등록해제</button>
-      {/if}
-      {#if !assetDetails.ast_activate}
-        <button on:click={activateAsset}>자산삭제</button>
-      {:else}
-        <button on:click={unactivate}>자산삭제</button>
-      {/if}
-    </div>
-  </div>
-
-  {#if currentPage}
-    <div class="right_menu">
-      <svelte:component this={currentPage} />
-    </div>
-  {/if}
-
-  {#if showModal}
-    <dialog open on:close={() => (showModal = false)}>
-      <div class="modal-content">
-        <h2>Change Group Index</h2>
-        <label for="group-select">Select Group:</label>
-        <select id="group-select" on:change={handleGroupChange}>
-          {#each $allAssetGroupList as group}
-            <option
-              value={group.asg_index}
-              selected={group.asg_index == selectedGroupIndex}
-            >
-              {group.asg_index} - {group.asg_title}
-            </option>
-          {/each}
-        </select>
-        <p>Selected Group Index: {selectedGroupIndex}</p>
-        <div class="modal-buttons">
-          <button class="primary-button" on:click={assetGroupChange}>OK</button>
-          <button class="secondary-button" on:click={() => (showModal = false)}
-            >Cancel</button
-          >
+              <a
+                on:click={() => selectPage(FourthMenu, "CCE점검이력")}
+                class={activeMenu === "CCE점검이력" ? "active" : ""}
+              >
+                CCE점검이력
+              </a>
+              <a
+                on:click={() => selectPage(FifthMenu, "자산현황보고서")}
+                class={activeMenu === "자산현황보고서" ? "active" : ""}
+              >
+                자산현황보고서
+              </a>
+            </section>
+            <section class="flex btnWrap gap-4">
+              <button class="btn btnGray xs" on:click={() => (showModal = true)}
+                >자산그룹이동
+              </button>
+              <button
+                class="btn btnGray xs"
+                on:click={() => selectPage(ModalEdit, "ModalEdit")}
+                >정보수정</button
+              >
+              {#if approve_status === 0}
+                <button class="btn btnGray xs" on:click={assetRegisterChange}
+                  >등록승인</button
+                >
+              {:else}
+                <button class="btn btnGray xs" on:click={assetRegisterChange}
+                  >등록해제</button
+                >
+              {/if}
+              {#if !assetDetails.ast_activate}
+                <button class="btn btnGray xs" on:click={activateAsset}
+                  >자산삭제</button
+                >
+              {:else}
+                <button class="btn btnGray xs" on:click={unactivate}
+                  >자산삭제</button
+                >
+              {/if}
+            </section>
+          </div>
+          {#if currentPage}
+            <div class="right_menu">
+              <svelte:component
+                this={currentPage}
+                {showModalSecond}
+                {handleSubmit}
+                {formData}
+                {assetDetails}
+                {closeModalEdit}
+              />
+            </div>
+          {/if}
         </div>
       </div>
-    </dialog>
-  {/if}
 
-  {#if showModalSecond}
-    <div class="dialog2" open on:close={() => (showModalSecond = false)}>
-      <ModalEdit
-        {showModalSecond}
-        {handleSubmit}
-        {formData}
-        {assetDetails}
-        {cancel}
-      />
-    </div>
-  {/if}
+      {#if showModal}
+        <dialog open on:close={() => (showModal = false)}>
+          <div class="modal-content">
+            <h2>Change Group Index</h2>
+            <label for="group-select">Select Group:</label>
+            <select id="group-select" on:change={handleGroupChange}>
+              {#each $allAssetGroupList as group}
+                <option
+                  value={group.asg_index}
+                  selected={group.asg_index == selectedGroupIndex}
+                >
+                  {group.asg_index} - {group.asg_title}
+                </option>
+              {/each}
+            </select>
+            <p>Selected Group Index: {selectedGroupIndex}</p>
+            <div class="modal-buttons">
+              <button class="primary-button" on:click={assetGroupChange}
+                >OK</button
+              >
+              <button
+                class="secondary-button"
+                on:click={() => (showModal = false)}>Cancel</button
+              >
+            </div>
+          </div>
+        </dialog>
+      {/if}
+    </section>
+  </article>
 </main>
 
 <style>
-  main {
-    width: 100%;
-    background-color: #f7f9fb;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  .dialog2 {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    position: fixed;
-    top: 60%;
-    left: 55%;
-    transform: translate(-50%, -50%);
-    animation: fadeIn 0.3s ease;
-  }
-  /* Swiper Styles */
-  .swiper-container {
-    width: 100%;
-    margin: 20px auto;
-    padding: 10px 0;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    position: relative;
-  }
-  .swiper_container1 {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: -25px;
-  }
-  .swiper_container1 img {
-    width: 50px;
-    height: auto;
-  }
-  .swiper-wrapper {
-    display: flex;
-  }
-
-  .swiper-slide {
-    height: 50px;
-    max-width: 300px;
-    color: #333;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.1),
-      0 4px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-
-  .swiper-slide:hover {
-    transform: scale(1.1);
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.2),
-      0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  .swiper-pagination {
-    color: #007acc;
-  }
-
-  /* Move the left and right navigation buttons outside the swiper container */
-  .swiper-button-prev,
-  .swiper-button-next {
-    color: #007acc;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-
-  .swiper-button-prev {
-    left: -50px;
-  }
-
-  .swiper-button-next {
-    right: -50px;
-  }
-
-  /* Header Styles */
-  .header {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-
-  .header h3 {
-    color: #202020;
-    font-weight: bold;
-    font-size: 12px;
-    cursor: pointer;
-    position: relative;
-    padding-bottom: 5px;
-    transition: color 0.3s ease;
-  }
-
-  .header h3.active {
-    color: #54b3d6;
-    text-decoration: underline;
-  }
-
-  .header h3:hover::before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: #54b3d6;
-  }
-  .button_container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-
-  .button_container button {
-    background-color: #0056b3; /* Darker Blue */
-    color: #ffffff;
-
-    width: 130px;
-    height: 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .button_container button:hover {
-    background-color: #002244;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .header_3menu {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-evenly;
-    width: 50%;
+  .menu-item {
+    overflow-wrap: break-word;
   }
 
   /* Right Menu Styles */
@@ -598,12 +488,6 @@
   /* Modal content container */
   .modal-content {
     text-align: center;
-  }
-
-  h2 {
-    font-size: 1.5em;
-    margin-bottom: 20px;
-    color: #333;
   }
 
   /* Styled select dropdown */

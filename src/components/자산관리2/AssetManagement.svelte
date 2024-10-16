@@ -12,13 +12,14 @@
   let showAssetReg = true;
   let showCopyReg = false;
   export let filteredAssets = [];
-  export let filterAssets;
-  export let selectedGroup = "";
-  export let assetHost = "";
-  export let assetOs = "";
+  export let resetFilters;
+  export let selectedGroup = "전체";
+  export let assetHost = "전체";
+  export let asset_ostype = "전체";
+  export let handleFilter;
   let assetRegHow = "add";
   let uploadedFile = null;
-  let newRegGroupIndex = "";
+  let newRegGroupIndex = "전체";
   /****************************************************/
   async function assetGroupList() {
     try {
@@ -37,13 +38,8 @@
 
   onMount(() => {
     assetGroupList();
-    handleFilter();
   });
   /***************************************************/
-
-  function handleFilter() {
-    filterAssets();
-  }
 
   function handleSelectChange(event) {
     const value = event.target.value;
@@ -132,20 +128,9 @@
   }
   function check() {
     console.log("assetHost", assetHost);
-    console.log("assetOst", assetOs);
+    console.log("assetOst", asset_ostype);
     console.log("assetRegHow", assetRegHow);
     console.log("newRegGroupIndex", newRegGroupIndex);
-  }
-  // Handle changes in asset hostname selection
-  function handleHostnameChange(event) {
-    assetHost = event.target.value;
-    // No need to call filterAssets manually, Svelte will reactively update filteredAssets
-  }
-
-  // Handle changes in asset OS type selection
-  function handleOSTypeChange(event) {
-    assetOs = event.target.value;
-    // No need to call filterAssets manually
   }
 </script>
 
@@ -193,7 +178,7 @@
               on:change={handleFileUpload}
             />
 
-            <p class="btn btnPrimary w160 h50">대용량업로드(엑셀파일)</p>
+            <p class="btn btnPrimary w190 h50">대용량업로드(엑셀파일)</p>
             <a
               href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
               style="color: black;">샘플다운로드</a
@@ -206,13 +191,13 @@
 
   <article class="contentArea flex col gap-20">
     <div class="second_line_container">
-      <div class="right_container">
+      <div class="right_container" style="overflow-y: hidden;">
         <div class="top registCon">
           <section class="filterWrap">
             <div>
               <p>선택된 자산 그룹:</p>
               <select bind:value={selectedGroup} on:change={handleFilter}>
-                <option value="">자산 그룹</option>
+                <option value="전체" selected>전체</option>
                 {#if $allAssetGroupList.length > 0}
                   {#each $allAssetGroupList as group}
                     <option value={group.asg_index}>{group.asg_title}</option>
@@ -223,7 +208,7 @@
             <div>
               <p>자산에 대한 새 그룹을 선택하세요:</p>
               <select bind:value={newRegGroupIndex}>
-                <option value="">자산 그룹</option>
+                <option value="전체" selected>전체</option>
                 {#if $allAssetGroupList.length > 0}
                   {#each $allAssetGroupList as group}
                     <option value={group.asg_index}>{group.asg_title}</option>
@@ -237,9 +222,9 @@
         <div class="top registCon">
           <section class="filterWrap">
             <div>
-              <select bind:value={assetHost} on:change={handleHostnameChange}>
-                <option value="">Select Hostname</option>
-                {#each $allAssetList as asset (asset.ass_uuid)}
+              <select bind:value={assetHost} on:change={handleFilter}>
+                <option value="전체" selected>전체</option>
+                {#each $allAssetList as asset}
                   <option value={asset.ast_hostname}>
                     {asset.ast_hostname}
                   </option>
@@ -247,9 +232,9 @@
               </select>
 
               <!-- Select for ast_ostype -->
-              <select bind:value={assetOs} on:change={handleOSTypeChange}>
-                <option value="">Select OS Type</option>
-                {#each $allAssetList as asset (asset.ass_uuid)}
+              <select bind:value={asset_ostype} on:change={handleFilter}>
+                <option value="전체" selected>전체</option>
+                {#each $allAssetList as asset}
                   {#if asset.ast_ostype !== ""}
                     <option value={asset.ast_ostype}>
                       {asset.ast_ostype}
@@ -259,9 +244,11 @@
               </select>
 
               <button
-                class="btn btnBlue w140"
-                on:click|preventDefault={filterAssets}>저장</button
+                class="btn btnPrimary"
+                on:click|preventDefault={resetFilters}
               >
+                <img src="./assets/images/reset.png" alt="search" />초기화
+              </button>
             </div>
           </section>
         </div>
@@ -275,7 +262,7 @@
           />
           <p>전체선택</p>
         </div>
-        <section class="maxheight registCon">
+        <section class="maxheight registCon" style="overflow-y: auto;">
           <div class="cardWrap col5">
             {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
               <article class="card">
@@ -323,31 +310,6 @@
 </form>
 
 <style>
-  .second_container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .second_container p {
-    color: #333;
-    margin-bottom: 10px;
-  }
-
-  .inside_container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    color: #333;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-
   .second_line_container {
     display: flex;
     flex-direction: row;
@@ -369,107 +331,6 @@
     overflow-x: hidden; /* Prevent horizontal overflow */
   }
 
-  .option_container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .option_container select {
-    width: 120px;
-    background-color: #f2f3f4;
-    color: #333;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-  }
-
-  .option_container select:hover {
-    background-color: #cccccc;
-  }
-
-  .option_container button {
-    background-color: #0056b3;
-    color: #f2f3f4;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .option_container button:hover {
-    background-color: #005a99;
-  }
-
-  .card_container {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(150px, 1fr)
-    ); /* Responsive grid */
-    gap: 10px;
-    row-gap: 20px;
-    overflow-y: auto;
-    max-height: 300px; /* Limit height */
-    padding: 10px;
-    box-shadow:
-      inset 0 0 35px 5px rgba(0, 0, 0, 0.25),
-      inset 0 2px 1px 1px rgba(255, 255, 255, 0.9),
-      inset 0 -2px 1px rgba(0, 0, 0, 0.25);
-  }
-
-  .img_container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .img_container img {
-    width: 40px;
-    height: 40px;
-    display: block;
-    transition: transform 0.3s ease;
-  }
-
-  .img_container:hover img {
-    transform: scale(1.1);
-  }
-
-  .img_overlay {
-    color: #000;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .img_overlay p {
-    margin: 0;
-    font-size: 10px;
-  }
-
-  .info_card {
-    padding-top: 5px;
-  }
-
-  .info_card p {
-    margin: 2px 0;
-    font-size: 10px;
-    color: #333;
-  }
-
   .first_checkbox {
     width: 13px;
     cursor: pointer;
@@ -485,60 +346,8 @@
     width: 100%;
     margin-top: 10px;
   }
-  .headerSelect {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .headerSelect div {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-  }
-
-  .headerSelect p {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #333;
-  }
-
-  .headerSelect select {
-    font-size: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border 0.3s ease;
-    width: 61%;
-    margin-top: 12px;
-  }
-
-  .headerSelect select:hover {
-    border-color: #888;
-  }
-
-  .headerSelect select:focus {
-    border-color: #007bff;
-    outline: none;
-  }
 
   .headerSelect select option {
     padding: 8px;
-  }
-
-  /* Add subtle shadow to the container */
-  .headerSelect {
-    padding: 5;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  }
-
-  /* For better spacing between elements */
-  .headerSelect div {
-    margin-right: 20px;
   }
 </style>

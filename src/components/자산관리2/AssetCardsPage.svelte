@@ -259,16 +259,6 @@
         <input type="checkbox" on:click={toggleAll} checked={allSelected} />
         <strong class="selectButton">전체선택</strong>
       </div>
-      <div class="color_group">
-        <div class="colors">
-          <div class="blue_button"></div>
-          <span>편집</span>
-        </div>
-        <div class="colors">
-          <div class="red_button"></div>
-          <span>삭제</span>
-        </div>
-      </div>
     </div>
 
     <div class="graphCardWrap col3 car_container">

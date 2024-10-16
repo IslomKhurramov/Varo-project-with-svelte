@@ -42,40 +42,42 @@
   // Set detail of asset
   $: if (DetailOfAsset.asset && Array.isArray(DetailOfAsset.asset)) {
     detailofAsset = DetailOfAsset.asset;
-    console.log("Detail of asset:", detailofAsset);
+    console.log("Detail of asset:", $assetDeatilInfo);
+    console.log("cceHistory:", cceHistory);
   }
-
   // Variables for filtering
-  let selectedProject = "";
-  let selectedTarget = "";
-  let selectedHost = "";
-  let selectedResult = "";
-  let selectedCheckList = "";
-  let selectedViewOption = "상세보기";
+  let selectedProject = "점검대상"; // Default value
+  let selectedTarget = "점검대상"; // Default value
+  let selectedResult = "점검결과"; // Default value
 
   // Function to filter vulnerabilities
   function searchResults() {
     filteredVulns = allVulns.filter((vuln) => {
       const projectMatch =
-        selectedProject === "" || vuln.ccp_index__ccp_title === selectedProject;
+        selectedProject === "점검대상" ||
+        vuln.ccp_index__ccp_title === selectedProject;
       const targetMatch =
-        selectedTarget === "" || vuln.cct_index__cct_target === selectedTarget;
+        selectedTarget === "점검대상" ||
+        vuln.cct_index__cct_target === selectedTarget;
       const resultMatch =
-        selectedResult === "" || vuln.ccr_item_result === selectedResult;
-      const hostMatch =
-        selectedHost === "" || detailofAsset[0]?.ast_hostname === selectedHost;
-      const checkListMatch =
-        selectedCheckList === "" ||
-        vuln.ccr_item_no__ccc_item_title === selectedCheckList;
+        selectedResult === "점검결과" ||
+        vuln.ccr_item_result === selectedResult;
 
-      return (
-        projectMatch &&
-        targetMatch &&
-        resultMatch &&
-        hostMatch &&
-        checkListMatch
-      );
+      return projectMatch && targetMatch && resultMatch;
     });
+  }
+
+  // Trigger filter when dropdown changes
+  function handleFilter() {
+    searchResults();
+  }
+
+  // Reset filters to default values
+  function resetFilters() {
+    selectedProject = "점검대상"; // Reset to default
+    selectedTarget = "점검대상"; // Reset to default
+    selectedResult = "점검결과"; // Reset to default
+    searchResults(); // Apply the reset filter
   }
   // Count occurrences of each target
   let getTargetEntries;
@@ -86,230 +88,256 @@
 
   // Check function for debugging
   function check() {
-    console.log("plantoshow:", plantoSHow);
-    console.log("Detail of Asset:", DetailOfAsset);
+    console.log("selectedResult:", selectedResult);
+    console.log("filteredVulns:", filteredVulns);
     console.log("Project Data:", projectData);
     console.log("Target Counts:", targetCounts); // Use targetCounts here
   }
 </script>
 
-<main class="container1">
-  <div class="table_container">
-    <table>
-      <thead>
-        <tr>
-          <th on:click={check}>넘버</th>
-          <th>프로젝트명</th>
-          <th>점검항목</th>
-          <th>생성일</th>
-          <th>프로젝트보안수준</th>
-          <th>점검대상 / 자산보안수준</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Check if cceHistory contains any data -->
-        {#if plantoSHow.length > 0}
-          {#each plantoSHow as historyItem, index}
-            {#if historyItem.plans}
-              <tr>
-                <td>{index + 1}</td>
-                <td>{historyItem.plans.ccp_index__ccp_title}</td>
-                <td>{historyItem.plans.asg_index__asg_title}</td>
-                <td
-                  >{new Date(detailofAsset[0]?.ast_createdate).toLocaleString(
-                    "ko-KR",
-                  )}</td
-                >
-
-                {#if detailofAsset[0]?.ast_security_point === -1}
-                  <td>0</td>
-                {:else}
-                  <td>{detailofAsset[0]?.ast_security_point}</td>
-                {/if}
-                {#if historyItem.plans.ast_security_point === -1}
-                  <td
-                    >{historyItem.plans.ast_uuid__ast_target__cct_target}(0)</td
-                  >
-                {:else}
-                  <td
-                    >{historyItem.plans
-                      .ast_uuid__ast_target__cct_target}({historyItem.plans
-                      .ast_security_point})</td
-                  >
-                {/if}
-              </tr>
-            {/if}
-          {/each}
-        {:else}
-          <tr>
-            <td colspan="6">No data available</td>
-          </tr>
-        {/if}
-      </tbody>
-    </table>
-  </div>
-  <div class="container">
-    <div class="firstLine">
-      <div class="dropdown-group">
-        <!-- 프로젝트 (Project) -->
-        <div class="dropdown-container">
-          <label for="project">프로젝트:</label>
-          <select id="project" bind:value={selectedProject}>
-            <option value="">전체</option>
-            <!-- 전체 means "All" -->
-            {#each plantoSHow as project}
-              <option value={project.plans.ccp_index__ccp_title}>
-                {project.plans.ccp_index__ccp_title}
-              </option>
-            {/each}
-          </select>
-        </div>
-
-        <!-- 점검대상 (Inspection Target) -->
-        <div class="dropdown-container">
-          <label for="target">점검대상:</label>
-          <select id="target" bind:value={selectedTarget}>
-            <option value="">전체</option>
-            <option value="WINDOWS">WINDOWS</option>
-            <option value="PC">PC</option>
-            <option value="NETWORK">NETWORK</option>
-            <option value="DBMS">DBMS</option>
-            <option value="WEB">WEB</option>
-            <option value="WAS">WAS</option>
-            <option value="CLOUD">CLOUD</option>
-            <option value="SECURITY">SECURITY</option>
-          </select>
-        </div>
-
-        <!-- 호스트 (Host) Dropdown -->
-        <div class="dropdown-container">
-          <label for="item">호스트:</label>
-          <select id="item" bind:value={selectedHost}>
-            <option value="">전체</option>
-            {#each vulnerabilityData as vuln}
-              <option value={vuln.hostName}>
-                {vuln.hostName}
-              </option>
-            {/each}
-          </select>
-        </div>
-
-        <div class="dropdown-container">
-          <label for="result">점검결과:</label>
-          <select id="result" bind:value={selectedResult}>
-            <option value="">전체</option>
-            <option value="양호">양호</option>
-            <!-- Good -->
-            <option value="취약">취약</option>
-            <!-- Vulnerable -->
-            <option value="수동점검">수동점검</option>
-          </select>
-        </div>
-
-        <!-- 점검항목 (Check List) -->
-        <div class="dropdown-container">
-          <label for="viewOption">점검항목:</label>
-          <select id="viewOption" bind:value={selectedCheckList}>
-            <option value="">전체</option>
-            {#each vulnerabilityData as vuln}
-              <option value={vuln.item}>
-                {vuln.item}
-              </option>
-            {/each}
-          </select>
-        </div>
-
-        <!-- 보기옵션 (View Options) -->
-        <div class="dropdown-container">
-          <label for="viewOption">보기옵션:</label>
-          <select id="viewOption" bind:value={selectedViewOption}>
-            <option value="상세보기">상세보기</option>
-            <!-- Detailed view -->
-            <option value="간략보기">간략보기</option>
-            <!-- Summary view -->
-          </select>
-        </div>
-      </div>
-
-      <!-- Button Group -->
-      <div class="button-group">
-        <button class="firstlineButton" on:click={searchResults}>
-          조회하기
-        </button>
-        <button class="firstlineButton"> 보안점수확정 </button>
-      </div>
-    </div>
-
-    <div class="secondLine">
-      <div>
-        <p class="bold-text">프로젝트 전체 보안수준:</p>
-        {#if detailofAsset[0]?.ast_security_point === -1}
-          <p>0</p>
-        {:else}
-          <p>{detailofAsset[0]?.ast_security_point}</p>
-        {/if}
-      </div>
-      <div>
-        <p class="bold-text">점검대상:</p>
-        {#if Object.keys(targetCounts).length > 0}
-          {#each getTargetEntries() as [target, count]}
-            <p>{target} {count}개</p>
-          {/each}
-        {:else}
-          <p>No targets available</p>
-        {/if}
-      </div>
-      <div>
-        <p class="bold-text">점검일시:</p>
-        <p>
-          {new Date(detailofAsset[0]?.ast_createdate).toLocaleString("ko-KR")}
-        </p>
-      </div>
-    </div>
-
-    <div class="thirdLine">
-      <p class="bold-text">
-        Show <select><option value="">100</option></select> entries
-      </p>
-    </div>
-
-    <div class="table_container table2">
-      <table>
+<main>
+  <div class="flex col detail">
+    <h3 class="title">관련프로젝트</h3>
+    <div class="tableListWrap nofirstth">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:80px;" />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
         <thead>
           <tr>
-            <th style="width: 5%;">번호</th>
-            <th style="width: 20%;">호스트명</th>
-            <th style="width: 15%;">항목</th>
-            <th style="width: 30%;">점검항목</th>
-            <th style="width: 15%;">시스템상태</th>
-            <th style="width: 10%;">점검결과</th>
+            <th on:click={check} class="text-center">넘버</th>
+            <th class="text-center">프로젝트명</th>
+            <th class="text-center">점검항목</th>
+            <th class="text-center">생성일</th>
+            <th class="text-center">프로젝트보안수준</th>
+            <th class="text-center">점검대상 / 자산보안수준</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Check if cceHistory contains any data -->
+          {#if plantoSHow.length > 0}
+            {#each plantoSHow as historyItem, index}
+              {#if historyItem.plans}
+                <tr>
+                  <td class="text-center">{index + 1}</td>
+                  <td class="text-center"
+                    >{historyItem.plans.ccp_index__ccp_title}</td
+                  >
+                  <td class="text-center"
+                    >{historyItem.plans.asg_index__asg_title}</td
+                  >
+                  <td class="text-center"
+                    >{new Intl.DateTimeFormat("ko-KR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    }).format(new Date(detailofAsset[0]?.ast_createdate))}</td
+                  >
+
+                  {#if detailofAsset[0]?.ast_security_point === -1}
+                    <td class="text-center">0</td>
+                  {:else}
+                    <td class="text-center"
+                      >{detailofAsset[0]?.ast_security_point}</td
+                    >
+                  {/if}
+                  {#if historyItem.plans.ast_security_point === -1}
+                    <td class="text-center"
+                      >{historyItem.plans
+                        .ast_uuid__ast_target__cct_target}(0)</td
+                    >
+                  {:else}
+                    <td class="text-center"
+                      >{historyItem.plans
+                        .ast_uuid__ast_target__cct_target}({historyItem.plans
+                        .ast_security_point})</td
+                    >
+                  {/if}
+                </tr>
+              {/if}
+            {/each}
+          {:else}
+            <tr>
+              <td class="text-center" colspan="6">No data available</td>
+            </tr>
+          {/if}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="section">
+    <section class="filterWrap" style="margin-top: 20px;">
+      <!-- 프로젝트 (Project) -->
+      <div>
+        <select
+          id="project"
+          bind:value={selectedProject}
+          on:change={handleFilter}
+        >
+          <option value="점검대상">점검대상</option>
+          <!-- 전체 means "All" -->
+          {#each plantoSHow as project}
+            <option value={project.plans.ccp_index__ccp_title}>
+              {project.plans.ccp_index__ccp_title}
+            </option>
+          {/each}
+        </select>
+
+        <select
+          id="target"
+          bind:value={selectedTarget}
+          on:change={handleFilter}
+        >
+          <option value="점검대상">점검대상</option>
+          <option value="WINDOWS">WINDOWS</option>
+          <option value="PC">PC</option>
+          <option value="NETWORK">NETWORK</option>
+          <option value="DBMS">DBMS</option>
+          <option value="WEB">WEB</option>
+          <option value="WAS">WAS</option>
+          <option value="CLOUD">CLOUD</option>
+          <option value="SECURITY">SECURITY</option>
+        </select>
+
+        <select
+          id="result"
+          bind:value={selectedResult}
+          on:change={handleFilter}
+        >
+          <option value="점검결과">점검결과</option>
+          <option value="양호">양호</option>
+          <!-- Good -->
+          <option value="취약">취약</option>
+          <!-- Vulnerable -->
+          <option value="수동점검">수동점검</option>
+        </select>
+
+        <button on:click={resetFilters} class="btn btnPrimary">
+          <img src="./assets/images/reset.png" alt="search" /> 초기화
+        </button>
+        <button class="btn btnPrimary"> 보안점수확정 </button>
+      </div>
+    </section>
+
+    <section class="flex totalSecurityLevel" style="margin-top: 20px;">
+      <h4>프로젝트 전체 보안수준</h4>
+
+      <p class="bold-text">프로젝트 전체 보안수준:</p>
+      <ul class="flex">
+        <li class="flex">
+          <h6 class="name">보안수준</h6>
+          {#if detailofAsset[0]?.ast_security_point === -1}
+            <b>0</b>
+          {:else}
+            <b>{detailofAsset[0]?.ast_security_point}</b>
+          {/if}
+          <div class="badge badgeRedW">결과 미확정</div>
+        </li>
+        <li class="flex">
+          <h6 class="name">점검대상</h6>
+          {#if Object.keys(targetCounts).length > 0}
+            {#each getTargetEntries() as [target, count]}
+              <b>{target} {count}개</b>
+            {/each}
+          {:else}
+            <b>No targets available</b>
+          {/if}
+        </li>
+        <li class="flex">
+          <h6 class="name">점검시작일시</h6>
+          <b>
+            {new Intl.DateTimeFormat("ko-KR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            }).format(new Date(detailofAsset[0]?.ast_createdate))}
+          </b>
+        </li>
+      </ul>
+    </section>
+
+    <div
+      class="tableListWrap maxh"
+      style="height: 500px; overflow-y: auto; margin-top: 20px;"
+    >
+      <table
+        class="tableList hdBorder tableScroll"
+        style="margin-top: 20px; height:500px overflow-y:auto"
+      >
+        <colgroup>
+          <col style="width:90px;" />
+          <col style="width:110px;" />
+          <col style="width:200px;" />
+          <col />
+          <col />
+          <col style="width:160px;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center">번호</th>
+            <th class="text-center">호스트명</th>
+            <th>항목</th>
+            <th>점검항목</th>
+            <th>시스템상태</th>
+            <th class="text-center">점검결과</th>
           </tr>
         </thead>
         <tbody>
           {#if filteredVulns.length > 0}
             {#each filteredVulns as vuln, vulnIndex}
               <tr>
-                <td>{vulnIndex + 1}</td>
+                <td class=" wordBreak">{vulnIndex + 1}</td>
                 <td>{detailofAsset[0]?.ast_hostname || "No Title"}</td>
                 <td>
                   [{vuln?.ccr_item_no__ccc_item_no ||
                     "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
                     "No Title"}
                 </td>
-                <td>
+                <td class=" wordBreak">
                   <div class="checklist">
                     <p>
                       {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
                     </p>
                   </div>
                 </td>
-                <td>{vuln?.ccr_item_status || "No Status"}</td>
-                <td>{vuln?.ccr_item_result || "No Result"}</td>
+                <td class=" wordBreak"
+                  >{vuln?.ccr_item_status || "No Status"}</td
+                >
+                {#if vuln?.ccr_item_result === "양호"}
+                  <td class="text-center">
+                    <span class="badge badgePrimary">
+                      {vuln?.ccr_item_result || "No Result"}
+                    </span>
+                  </td>
+                {:else if vuln?.ccr_item_result === "취약"}
+                  <td class="text-center">
+                    <span class="badge badgeRed">
+                      {vuln?.ccr_item_result || "No Result"}
+                    </span>
+                  </td>
+                {:else}
+                  <td class="text-center">
+                    <span class="badge badgeGreen">
+                      {vuln?.ccr_item_result || "No Result"}
+                    </span>
+                  </td>
+                {/if}
               </tr>
             {/each}
           {:else}
             <tr>
-              <td colspan="6">No data available</td>
+              <td class="text-center" colspan="6">No data available</td>
             </tr>
           {/if}
         </tbody>
@@ -319,160 +347,15 @@
 </main>
 
 <style>
-  .container1 {
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb;
-    padding: 10px;
-    font-family: "Arial", sans-serif;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .table_container {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: auto;
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  .container {
-    width: 97%;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 40px;
-    padding: 20px;
-  }
-
-  .firstLine {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .dropdown-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .dropdown-container {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-    white-space: nowrap;
-  }
-
-  .dropdown-container label {
-    font-weight: bold;
-    margin: 0;
-    font-size: 12px;
-  }
-
-  .firstlineButton {
-    background-color: #0056b3;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    font-size: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .firstlineButton:hover {
-    background-color: #003366;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .secondLine {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: #f4f4f4;
-    border-radius: 5px;
-  }
-
-  .secondLine div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-size: 12px;
-    justify-content: center;
-  }
-
-  .bold-text {
-    font-weight: bold;
-    margin: 0;
-  }
-  .button-group {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-  }
-
-  .thirdLine {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-bottom: 10px;
-  }
-
-  .table2 {
-    height: 500px;
-    width: 100%; /* Full width of the container */
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 0 auto; /* Center the table */
-  }
-
-  table {
-    width: 100%;
-    table-layout: fixed; /* Make sure columns don't stretch unexpectedly */
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #dddddd;
-    padding: 10px;
-    text-align: left;
+  .wordBreak {
     white-space: pre-wrap; /* Ensures the text wraps within the cells */
-    word-wrap: break-word; /* Forces text to break if it's too long */
+    word-wrap: break-word;
+    text-align: left;
+    padding: 10px;
   }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  tbody tr:hover {
-    background-color: #e0f7fa;
-  }
-  .checklist p {
-    white-space: pre-wrap;
+  .tableScroll {
+    height: 500px; /* Full width of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto;
   }
 </style>

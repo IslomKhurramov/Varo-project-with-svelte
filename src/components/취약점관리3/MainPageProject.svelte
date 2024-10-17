@@ -468,15 +468,189 @@
       <!-- 탭메뉴 -->
       <div class="flex justify-between submenuWrap">
         <section class="subTabWrap">
-          <a href="./vulnerability.html" class="active">조치계획</a>
-          <a href="./vulnerability_result.html">조치결과</a>
+          <a
+            href="javascript:void(0);"
+            class={setView == "plan" ? "active" : ""}
+            on:click={async () => {
+              setView = "plan";
+              selectedItems = [];
+
+              if (showProject) {
+                const data = await getVulnsOfPlan();
+                tableData = data?.vulns;
+              } else {
+                const data = await getVulnsOfAsset();
+                tableData = data?.vulns;
+              }
+            }}
+          >
+            조치계획
+          </a>
+          {#if isAgenUser}
+            <a
+              href="javascript:void(0);"
+              class={setView == "result" ? "active" : ""}
+              on:click={async () => {
+                setView = "result";
+                selectedItems = [];
+                const data = await getFixDoneLists(selectedSendData);
+
+                tableData = Object.fromEntries(
+                  Object.entries(data?.vulns).filter(([key, value]) =>
+                    value.some(
+                      (item) =>
+                        item.result &&
+                        item.result.cfi_fix_status__cvs_index === 3,
+                    ),
+                  ),
+                );
+              }}
+            >
+              조치결과
+            </a>
+          {/if}
         </section>
-        <section class="flex btnWrap gap-4">
-          <button type="button" class="btn btnGray xs">선택항목승인</button>
-          <button type="button" class="btn btnGray xs">선택항목반려</button>
-          <button type="button" class="btn btnGray xs">일괄승인</button>
-          <button type="button" class="btn btnGray xs">일괄반려</button>
-        </section>
+        {#if isAgenUser && selectedSendData?.plan_index}
+          {#if setView == "plan"}
+            <section class="flex btnWrap gap-4">
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "1",
+                    approved_targets: selectedItems,
+                    approved_comment: "",
+                  };
+                  fixApproveHandler(data);
+                  selectedItems = [];
+                }}
+              >
+                선택항목승인
+              </button>
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "0",
+                    approved_targets: selectedItems,
+                    approved_comment: "",
+                  };
+                  fixApproveHandler(data);
+                  selectedItems = [];
+                }}
+              >
+                선택항목반려
+              </button>
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "1",
+                    approved_targets: "ALL",
+                    approved_comment: "",
+                  };
+                  fixApproveHandler(data);
+                }}
+              >
+                일괄승인
+              </button>
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "0",
+                    approved_targets: "ALL",
+                    approved_comment: "",
+                  };
+                  fixApproveHandler(data);
+                }}
+              >
+                일괄반려
+              </button>
+            </section>
+          {/if}
+
+          {#if setView == "result"}
+            <section class="flex btnWrap gap-4">
+              <button
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "1",
+                    approved_targets: selectedItems,
+                    approved_comment: "",
+                  };
+                  fixDoneApproveHandler(data);
+                  selectedItems = [];
+                }}
+              >
+                선택항목승인
+              </button>
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "0",
+                    approved_targets: selectedItems,
+                    approved_comment: "",
+                  };
+                  fixDoneApproveHandler(data);
+                  selectedItems = [];
+                }}
+              >
+                선택항목반려
+              </button>
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "1",
+                    approved_targets: "ALL",
+                    approved_comment: "",
+                  };
+                  fixDoneApproveHandler(data);
+                }}
+              >
+                일괄승인
+              </button>
+              <button
+                type="button"
+                class="btn btnGray xs"
+                on:click={() => {
+                  const data = {
+                    plan_index: selectedSendData?.plan_index,
+                    asset_target_uuid: selectedSendData?.asset_target_uuid,
+                    approved: "0",
+                    approved_targets: "ALL",
+                    approved_comment: "",
+                  };
+                  fixDoneApproveHandler(data);
+                }}
+              >
+                일괄반려
+              </button>
+            </section>
+          {/if}
+        {/if}
       </div>
 
       <!-- 테이블리스트 -->
@@ -495,18 +669,22 @@
               <col />
               <col />
               <col />
+              <col />
             </colgroup>
             <thead>
               <tr>
-                <th class="text-center">
-                  <div class="checkboxWrap">
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="target" />
-                      <span></span>
-                    </label>
-                  </div>
-                </th>
-                <th class="text-center">번호</th>
+                {#if isAgenUser}
+                  <th class="text-center">
+                    <div class="checkboxWrap">
+                      <label class="checkbox-label">
+                        <input type="checkbox" name="target" />
+                        <span></span>
+                      </label>
+                    </div>
+                  </th>
+                {/if}
+
+                <th class="text-center">순번</th>
                 <th class="text-center">자산명</th>
                 <th class="text-center">점검대상</th>
                 <th class="text-center">대분류</th>
@@ -516,43 +694,151 @@
                 <th class="text-center">조치분류상태</th>
                 <th class="text-center">운영부서</th>
                 <th class="text-center">운영담당자</th>
+                {#if isAgenUser}
+                  <th> 승인 </th>
+                {/if}
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="text-center">
-                  <div class="checkboxWrap">
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="target" />
-                      <span></span>
-                    </label>
-                  </div>
-                </td>
-                <td class="text-center">1</td>
-                <td class="text-center">-</td>
-                <td class="text-center">UNIX</td>
-                <td
-                  class="text-center cursor-pointer"
-                  onclick="window.location.href='./vulnerability_create.html';"
-                  >계정관리</td
-                >
-                <td class="text-center">Setuid설정</td>
-                <td class="text-center">상</td>
-                <td class="text-center">조치전</td>
-                <td class="text-center">조치계획등록</td>
-                <td class="text-center">홍길동</td>
-                <td class="text-center">02-102-0922</td>
-              </tr>
+              {#if data?.length !== 0}
+                {#each data as item, index}
+                  <tr
+                    on:click={() => {
+                      wholePage = true;
+                      targetData = item;
+                      if (setView == "plan") {
+                        wholeOption = "plan";
+                      } else {
+                        wholeOption = "result";
+                      }
+                    }}
+                  >
+                    {#if isAgenUser}
+                      <td
+                        class="text-center"
+                        on:click={(e) => e.stopPropagation()}
+                      >
+                        <div class="checkboxWrap">
+                          <label class="checkbox-label">
+                            <input
+                              type="checkbox"
+                              name="target"
+                              on:click={(e) => e.stopPropagation()}
+                              on:change={() => toggleSelection(item?.ccr_index)}
+                              checked={selectedItems.includes(item?.ccr_index)}
+                            />
+                            <span></span>
+                          </label>
+                        </div>
+                      </td>
+                    {/if}
+
+                    <td class="text-center">{index + 1}</td>
+                    <td class="text-center">
+                      {item.ast_uuid__ass_uuid__ast_hostname}
+                    </td>
+                    <td class="text-center">{item?.cct_index__cct_target}</td>
+                    <td class="text-center cursor-pointer">
+                      {item.ccr_item_no__ccc_item_group}
+                    </td>
+                    <td class="text-center"
+                      >{item.ccr_item_no__ccc_item_title}</td
+                    >
+                    <td class="text-center"
+                      >{item.ccr_item_no__ccc_item_level}</td
+                    >
+                    <td class="text-center"
+                      >{test[item?.cfi_fix_status__cvs_index] ?? "조치전"}</td
+                    >
+                    <td class="text-center"
+                      >{item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
+                        "조치전"}</td
+                    >
+                    <td class="text-center"
+                      >{item.ast_uuid__ass_uuid__ast_operator_person}</td
+                    >
+                    <td class="text-center">
+                      {item.ast_uuid__ass_uuid__ast_operator_phone}
+                    </td>
+                    {#if isAgenUser}
+                      <td
+                        class="text-center"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <select
+                          class="xs"
+                          on:change={(e) => {
+                            if (setView == "plan") {
+                              const data = {
+                                plan_index: item?.ccp_index,
+                                asset_target_uuid: item?.ast_uuid,
+                                approved: e.target.value == "승인" ? "1" : "0",
+                                approved_targets: [item?.ccr_index],
+                                approved_comment: e.target.value,
+                              };
+
+                              fixApproveHandler(data);
+                              selectedItems = [];
+                            } else {
+                              const data = {
+                                plan_index: item?.ccp_index,
+                                asset_target_uuid: item?.ast_uuid,
+                                approved: e.target.value == "승인" ? "1" : "0",
+                                approved_targets: [item?.ccr_index],
+                                approved_comment: e.target.value,
+                              };
+
+                              fixDoneApproveHandler(data);
+                              selectedItems = [];
+                            }
+                          }}
+                        >
+                          <option
+                            value="없음"
+                            selected={setView == "plan"
+                              ? item?.cfi_fix_status__cvs_index != 3 ||
+                                item?.cfi_fix_status__cvs_index != 4
+                              : item?.cfi_fix_status__cvs_index != 3 ||
+                                item?.cfr_fix_status__cvs_index != 4}
+                          >
+                            없음
+                          </option>
+                          <option
+                            value="승인"
+                            selected={setView == "plan"
+                              ? item?.cfi_fix_status__cvs_index == 3 ||
+                                item?.cfi_fix_status__cvs_index == 4
+                              : item?.cfi_fix_status__cvs_index == 3 ||
+                                item?.cfr_fix_status__cvs_index == 4}
+                          >
+                            승인
+                          </option>
+                          <option
+                            value="반려"
+                            selected={setView == "plan"
+                              ? item?.cfi_fix_status__cvs_index == 4 ||
+                                item?.cfi_fix_status__cvs_index == 7
+                              : item?.cfi_fix_status__cvs_index == 4 ||
+                                item?.cfr_fix_status__cvs_index == 7}
+                          >
+                            반려
+                          </option>
+                        </select>
+                      </td>{/if}
+                  </tr>
+                {/each}
+              {/if}
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
-  <div class="flex align-end">
+  <!-- <div class="flex align-end">
     <div class="paginationWrap end">
       <div class="pagination">
-        <!-- <a href="">&lt;</a> -->
         <a href="" class="active">1</a>
         <a href="">2</a>
         <a href="">...</a>
@@ -560,5 +846,5 @@
         <a href="">&gt;</a>
       </div>
     </div>
-  </div>
+  </div> -->
 </section>

@@ -385,7 +385,7 @@
                                     };
                                   }}
                                 >
-                                  <a href="javascriptLvoid(0);">
+                                  <a href="javascript:void(0);">
                                     {host.ast_uuid__ass_uuid__ast_hostname}
                                   </a>
                                 </li>
@@ -443,7 +443,10 @@
     <!--//SUBMENU-->
 
     <div class="contentsWrap assetview vulnerability">
-      <article class="contentArea flex col">
+      <article
+        class="contentArea flex col"
+        style="overflow: auto; height: calc(100vh - 134px);"
+      >
         <section class="topCon">
           <section class="filterWrap">
             <div>

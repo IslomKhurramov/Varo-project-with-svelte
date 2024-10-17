@@ -700,13 +700,6 @@
       ◀
     </button>
     <div class="menu-wrapper-container">
-      <!--
-          조치계획승인 요청: yellow
-          조치계획승인 항목: green
-          조치계획승인 반려: orange
-          조치완료된 항목: blue
-          조치결과 반려: X(클래스명 없음)
-          -->
       {#if data?.length !== 0}
         <div class="menu-wrapper" id="menuWrapper">
           {#each data as item, index}
@@ -718,15 +711,6 @@
             >
               {item?.ccr_item_no__ccc_item_no}
             </div>
-            <!-- <div class="menu-item yellow">자산2</div>
-          <div class="menu-item green">자산3</div>
-          <div class="menu-item blue">자산4</div>
-          <div class="menu-item blue">자산5</div>
-          <div class="menu-item">User_L2_51_LLL</div>
-          <div class="menu-item green">User_L2_51</div>
-          <div class="menu-item orange">자산8</div>
-          <div class="menu-item">자산9</div>
-          <div class="menu-item yellow">자산10</div> -->
           {/each}
         </div>
       {/if}

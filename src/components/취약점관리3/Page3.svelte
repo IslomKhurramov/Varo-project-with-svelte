@@ -442,7 +442,9 @@
     </article>
     <!--//SUBMENU-->
 
-    <div class="contentsWrap assetview vulnerability">
+    <div
+      class={`contentsWrap assetview  ${currentView === "default" && !wholePage ? "vulnerability" : "vulnerability_create"}`}
+    >
       <article
         class="contentArea flex col"
         style="overflow: auto; height: calc(100vh - 134px);"

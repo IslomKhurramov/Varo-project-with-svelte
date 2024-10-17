@@ -335,123 +335,164 @@
     editingChecklistId = null;
     editedChecklistName = "";
   }
+  let scrollAmount = 0;
+  const itemWidth = 146; // Each menu item width including gap
+  const menuWidth = 1260; // Total width of the menu
+
+  let menuWrapper;
+
+  const handleScroll = (direction) => {
+    if (direction === "prev") {
+      scrollAmount -= itemWidth;
+      if (scrollAmount < 0) scrollAmount = 0;
+    } else if (direction === "next") {
+      scrollAmount += itemWidth;
+      const maxScroll = menuWrapper.scrollWidth - menuWidth;
+      if (scrollAmount > maxScroll) scrollAmount = maxScroll;
+    }
+    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+  };
+  onMount(() => {
+    // This runs once the component is mounted
+    menuWrapper = document.getElementById("menuWrapper");
+  });
 </script>
 
 <main class="container">
-  <div class="container_aside">
-    <aside>
-      <div class="add_delete_container">
-        <button class="menu_button" on:click={addProject}>그룹추가</button>
-        <button class="menu_button">그룹삭제</button>
+  <section>
+    <article class="sideMenu">
+      <div class="btnWrap">
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a
+          class="btn btnPrimary"
+          on:click={() => {
+            showModal = true;
+          }}><img src="./assets/images/icon/add.svg" />그룹추가</a
+        >
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a class="btn btnRed"
+          ><img
+            src="./assets/images/icon/delete.svg"
+            alt="createGroup"
+          />그룹삭제</a
+        >
       </div>
 
-      <div class="project_container">
+      <div class="project_button">
         {#if loading}
           <p>Loading...</p>
         {:else if error}
           <p>Error: {error}</p>
         {:else}
-          {#each allChecklistArray as checkList (checkList.ccg_index)}
-            <div class="project_button" bind:this={activeChecklistElement}>
-              <div class="icon_title">
-                <img src="./images/file.png" alt="project" />
-                <!-- svelte-ignore a11y-invalid-attribute -->
-                <a
-                  href="#"
-                  on:click|preventDefault={() =>
-                    selectPage(ItemPage, checkList)}
-                  class={activeMenu === checkList ? "active" : ""}
-                  title={checkList.ccg_group}
-                >
-                  <i class="fa fa-user-o" aria-hidden="true"></i>
-                  <span class="truncate-text">
-                    {checkList.ccg_group
-                      ? checkList.ccg_group
-                      : "No group info"}</span
-                  >
-                </a>
-              </div>
-              <div style="display: flex; flex-direction:column">
-                <button
-                  class="menu_button1 copy"
-                  on:click={() => {
-                    showModal = true;
-                    selectedChecklistForCopyId = checkList.ccg_index;
-                  }}>복사</button
-                >
-              </div>
-            </div>
-          {/each}
-
-          <!-- Render newly created checklists with Edit/Delete buttons -->
-          {#each createdChecklists as checklist (checklist.ccg_index)}
-            <div class="project_button new-project">
-              <div class="icon_title">
-                <img src="./images/file.png" alt="new project" />
-
-                {#if editingChecklistId === checklist.ccg_index}
-                  <!-- Edit mode: render input field -->
-                  <input
-                    type="text"
-                    bind:value={editedChecklistName}
-                    placeholder="Edit name"
-                  />
-                {:else}
-                  <!-- Normal mode: render the checklist name -->
+          <ul class="prMenuList">
+            {#each allChecklistArray as checkList (checkList.ccg_index)}
+              <div class="project_button" bind:this={activeChecklistElement}>
+                <li>
                   <!-- svelte-ignore a11y-invalid-attribute -->
-                  <a href="#">
-                    {checklist.ccg_group}
+                  <a
+                    href="#"
+                    style="width:200px"
+                    on:click|preventDefault={() =>
+                      selectPage(ItemPage, checkList)}
+                    class={activeMenu === checkList ? "active" : ""}
+                    title={checkList.ccg_group}
+                  >
+                    <span class="truncate-text">
+                      {checkList.ccg_group
+                        ? checkList.ccg_group
+                        : "No group info"}</span
+                    >
+                    <button
+                      class="asset_button copy"
+                      on:click={() => {
+                        showModal = true;
+                        selectedChecklistForCopyId = checkList.ccg_index;
+                      }}>복사</button
+                    >
                   </a>
-                {/if}
+                </li>
               </div>
+            {/each}
+            <!-- Render newly created checklists with Edit/Delete buttons -->
+            {#each createdChecklists as checklist (checklist.ccg_index)}
+              <li>
+                <div class="project_button">
+                  <div class="new_input">
+                    {#if editingChecklistId === checklist.ccg_index}
+                      <!-- Edit mode: render input field -->
+                      <input
+                        type="text"
+                        bind:value={editedChecklistName}
+                        placeholder="Edit name"
+                        class="editable_input"
+                      />
+                    {:else}
+                      <!-- Normal mode: render the checklist name -->
+                      <!-- svelte-ignore a11y-invalid-attribute -->
+                      <a href="#" style="width: 120px;">
+                        {checklist.ccg_group}
+                      </a>
+                    {/if}
+                  </div>
 
-              <div style="display: flex; flex-direction:column">
-                {#if editingChecklistId === checklist.ccg_index}
-                  <!-- Show Save/Cancel buttons in edit mode -->
-                  <button
-                    class="menu_button1 save"
-                    on:click={() =>
-                      editChecklist(checklist.ccg_index, editedChecklistName)}
-                  >
-                    Save
-                  </button>
-                  <button class="menu_button1 cancel" on:click={cancelEditing}>
-                    Cancel
-                  </button>
-                {:else}
-                  <!-- Normal mode: show Edit, Copy, Delete buttons -->
-                  <button
-                    class="menu_button1 edit"
-                    on:click={() =>
-                      startEditing(checklist.ccg_index, checklist.ccg_group)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    class="menu_button1 delete"
-                    on:click={() => deleteChecklist(checklist.ccg_index)}
-                  >
-                    Delete
-                  </button>
-                {/if}
-              </div>
-            </div>
-          {/each}
+                  <div style="display: flex; flex-direction:column">
+                    {#if editingChecklistId === checklist.ccg_index}
+                      <!-- Show Save/Cancel buttons in edit mode -->
+                      <button
+                        class="menu_button1 save"
+                        on:click={() =>
+                          editChecklist(
+                            checklist.ccg_index,
+                            editedChecklistName,
+                          )}
+                      >
+                        Save
+                      </button>
+                      <button
+                        class="menu_button1 cancel"
+                        on:click={cancelEditing}
+                      >
+                        Cancel
+                      </button>
+                    {:else}
+                      <!-- Normal mode: show Edit, Copy, Delete buttons -->
+                      <button
+                        class="menu_button1 edit"
+                        on:click={() =>
+                          startEditing(
+                            checklist.ccg_index,
+                            checklist.ccg_group,
+                          )}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        class="menu_button1 delete"
+                        on:click={() => deleteChecklist(checklist.ccg_index)}
+                      >
+                        Delete
+                      </button>
+                    {/if}
+                  </div>
+                </div>
+              </li>
+            {/each}
+          </ul>
         {/if}
       </div>
-    </aside>
-  </div>
-  <div class="right_menu">
-    <header class="header">
-      <div class="header_option">
-        <form action="/action_page.php" class="form_select">
-          <div class="select_container">
+    </article>
+
+    <div class="contentsWrap logWrap inspectionitems">
+      <article class="contentArea mt-0">
+        <section class="filterWrap">
+          <div>
             <select
               name="asset_group"
               id="asset_group"
-              class="select_input"
               bind:value={selectedCategory}
               on:change={filterData}
+              style="width: 150px;"
             >
               <option value="점검대상">점검대상</option>
               <option value="UNIX">UNIX</option>
@@ -464,78 +505,84 @@
               <option value="CLOUD">CLOUD</option>
               <option value="SECURITY">SECURITY</option>
             </select>
-          </div>
-          <div class="select_container">
+
             <input
               placeholder="입력 점검항목"
               type="text"
-              class="select_input"
               bind:value={item_no}
             />
-          </div>
-          <div class="select_container">
+
             <select
               bind:value={selectedRisk}
               name="agent_status"
               id="agent_status"
-              class="select_input"
+              style="width: 120px;"
             >
               <option value="위험도">위험도</option>
               <option value="상">상</option>
               <option value="중">중</option>
               <option value="하">하</option>
             </select>
-          </div>
-        </form>
-      </div>
-      <div class="header_button">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p
-          on:click={() =>
-            searchItem(
-              selectedChecklist,
-              selectedCategory,
-              item_no,
-              selectedRisk,
-            )}
-        >
-          조회
-        </p>
 
-        <p>엑셀저장</p>
-      </div>
-    </header>
-    {#if showSlide}
-      <div class="swiper_container1">
-        <img src="./images/left.png" alt="left" />
-        <div bind:this={swiperContainer} class="swiper-container">
-          <div class="swiper-wrapper">
-            {#each slides as slide}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() =>
+                searchItem(
+                  selectedChecklist,
+                  selectedCategory,
+                  item_no,
+                  selectedRisk,
+                )}
+            >
+              조회
+            </button>
+          </div>
+        </section>
+      </article>
+      {#if showSlide}
+        <section bind:this={swiperContainer} class="topCon">
+          <div class="menu-container" style="margin-top:20px">
+            <button
+              class="arrow-btn"
+              id="prevBtn"
+              on:click={() => handleScroll("prev")}>◀</button
+            >
+
+            <div class="menu-wrapper-container" style="width:100%; ">
+              <!-- Bind the menuWrapper directly here -->
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
-                class="swiper-slide"
-                on:click={() => {
-                  showModalSecond = true;
-                  selectedSlide = slide;
-                }}
+                class="menu-wrapper"
+                id="menuWrapper"
+                bind:this={menuWrapper}
               >
-                {slide.ccc_item_no}
+                {#each slides as slide}
+                  <div
+                    value={slide}
+                    name={slide}
+                    class="menu-item"
+                    on:click={() => {
+                      showModalSecond = true;
+                      selectedSlide = slide;
+                    }}
+                  >
+                    {slide.ccc_item_no}
+                  </div>
+                {/each}
               </div>
-            {/each}
+            </div>
+
+            <button
+              id="nextBtn"
+              class="arrow-btn"
+              on:click={() => handleScroll("next")}>▶</button
+            >
           </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
-        <img
-          src="./images/left.png"
-          style="transform: rotate(180deg);"
-          alt="right"
-        />
-      </div>
-    {/if}
-    <div class="swiper_container">
-      <div class="swiper_container">
+        </section>
+      {/if}
+      <div class="flex col detail">
         <svelte:component
           this={currentPage}
           {allChecklistArray}
@@ -549,74 +596,51 @@
         />
       </div>
     </div>
-  </div>
 
-  <Modal2 bind:showModalSecond>
-    <ModalSwiper {selectedSlide} {selectedCategory} />
-  </Modal2>
-  {#if showModal}
-    <dialog open on:close={() => (showModal = false)}>
-      <div class="modal-content">
-        <div class="modal">
-          <h3>새로운 진단 그룹 생성</h3>
-          <div>
-            <label for="source-group">복사 대상:</label>
-            <select bind:value={selectedChecklistForCopyId} id="source-group">
-              {#each allChecklistArray as checklist}
-                <option value={checklist.ccg_index}
-                  >{checklist.ccg_group}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div>
-            <label for="new-group">신규 그룹명:</label>
-            <input
-              type="text"
-              bind:value={newChecklistName}
-              id="new-group"
-              placeholder="새로운 진단 그룹명을 입력하세요"
-            />
-          </div>
-          <div class="modal-buttons">
-            <button class="primary-button" on:click={createNewChecklistGroup}
-              >저장하기</button
-            >
-            <button
-              class="secondary-button"
-              on:click={() => (showModal = false)}>Cancel</button
-            >
+    <Modal2 bind:showModalSecond>
+      <ModalSwiper {selectedSlide} {selectedCategory} />
+    </Modal2>
+    {#if showModal}
+      <dialog open on:close={() => (showModal = false)}>
+        <div class="modal-content">
+          <div class="modal">
+            <h3>새로운 진단 그룹 생성</h3>
+            <div>
+              <label for="source-group">복사 대상:</label>
+              <select bind:value={selectedChecklistForCopyId} id="source-group">
+                {#each allChecklistArray as checklist}
+                  <option value={checklist.ccg_index}
+                    >{checklist.ccg_group}</option
+                  >
+                {/each}
+              </select>
+            </div>
+            <div>
+              <label for="new-group">신규 그룹명:</label>
+              <input
+                type="text"
+                bind:value={newChecklistName}
+                id="new-group"
+                placeholder="새로운 진단 그룹명을 입력하세요"
+              />
+            </div>
+            <div class="modal-buttons">
+              <button class="primary-button" on:click={createNewChecklistGroup}
+                >저장하기</button
+              >
+              <button
+                class="secondary-button"
+                on:click={() => (showModal = false)}>Cancel</button
+              >
+            </div>
           </div>
         </div>
-      </div>
-    </dialog>
-  {/if}
+      </dialog>
+    {/if}
+  </section>
 </main>
 
 <style>
-  .right_menu {
-    flex-grow: 1;
-    margin: 10px 20px;
-    width: 80%;
-  }
-
-  /* Scrollbar styling */
-  .right_menu::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .right_menu::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  .right_menu::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 8px;
-  }
-
-  .right_menu::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
   /* General Reset */
   * {
     margin: 0;
@@ -625,139 +649,6 @@
     font-family: "Arial", sans-serif;
   }
 
-  /* Main container for layout */
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    border-radius: 20px;
-    padding: 10px;
-    min-height: 100vh;
-    box-shadow:
-      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
-      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-  }
-
-  /* Sidebar container */
-  .container_aside {
-    background-color: #f7f9fb; /* Use white background for cleanliness */
-    color: #343a40;
-    padding: 20px;
-    width: 250px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 20px;
-    top: 0;
-    bottom: 0;
-    box-shadow:
-      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
-      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; /* Soft shadow for depth */
-    border-right: 1px solid #e0e0e0; /* Subtle border for separation */
-    height: 110vh;
-  }
-
-  /* Sidebar styling */
-  aside {
-    font-size: 16px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-  .icon_title {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  /* Project buttons */
-  .project_button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: auto;
-    transition:
-      box-shadow 0.3s ease,
-      transform 0.3s ease;
-    cursor: pointer;
-    margin-top: 15px;
-    border-radius: 15px;
-    border-bottom: 1px solid #cbcbcb;
-  }
-
-  .project_container {
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb; /* Soft background color */
-    border-radius: 8px; /* Smooth rounded corners */
-    transition:
-      box-shadow 0.3s ease,
-      transform 0.3s ease;
-    box-shadow:
-      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
-      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
-    overflow-y: auto; /* Enables vertical scrolling */
-    overflow-x: hidden; /* Prevents horizontal overflow */
-    height: 100vh; /* Adjust height to fit inside sidebar */
-    margin-right: 5px;
-  }
-
-  .project_button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hover effect */
-  }
-
-  .project_button img {
-    width: 30px; /* Slightly larger project icon */
-    height: auto;
-  }
-
-  aside a {
-    display: block;
-    color: #495057;
-    font-weight: 600;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    margin-top: 5px;
-    margin-right: 5px;
-  }
-
-  aside a:hover,
-  aside a.active {
-    text-decoration: underline;
-    color: #3498db; /* Add underline for active/hover */
-  }
-
-  /* Add/Delete buttons */
-  .add_delete_container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-    justify-content: space-between;
-
-    background-color: #f7f9fb; /* Soft background color */
-    border-radius: 8px; /* Smooth rounded corners */
-    transition:
-      box-shadow 0.3s ease,
-      transform 0.3s ease;
-    cursor: pointer;
-    box-shadow:
-      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
-      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
-  }
-
-  .menu_button {
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 6px;
-    transition: all 0.3s ease;
-    font-weight: bold;
-    color: #495057;
-    text-align: center;
-    width: 110px; /* Slightly wider button */
-  }
   .menu_button1 {
     border-radius: 5px;
     cursor: pointer;
@@ -768,13 +659,6 @@
     color: #495057;
     text-align: center;
     width: 60px;
-  }
-  .menu_button:hover,
-  .menu_button1:hover {
-    text-decoration: underline;
-    box-shadow:
-      rgba(50, 50, 93, 0.2) 0px 2px 5px -1px,
-      rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
   }
 
   /***edit delete copy buttons*/
@@ -802,17 +686,6 @@
     transform: translateY(-2px);
   }
 
-  /* Copy Button - Green */
-  .menu_button1.copy {
-    background-color: #2ecc71;
-    color: #ffffff;
-  }
-
-  .menu_button1.copy:hover {
-    background-color: #27ae60;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-  }
   /* Save Button - Green */
   .menu_button1.save {
     background-color: #2ecc71;
@@ -831,77 +704,6 @@
 
   .menu_button1.cancel:hover {
     background-color: #c0392b;
-  }
-  /* Header Styles */
-  /* Header Styles */
-  .header {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #f7f9fb;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    margin-bottom: 20px;
-  }
-
-  .header_option {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .header_button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 40px;
-  }
-
-  /* Form Select */
-  .form_select {
-    display: flex;
-    gap: 15px;
-  }
-
-  .select_container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .select_input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      border-color 0.3s ease;
-  }
-
-  .select_input:hover {
-    background-color: #e9ecef;
-    border-color: #007acc;
-  }
-
-  .select_input:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 122, 204, 0.5);
-    border-color: #007acc;
-  }
-
-  /* Header Buttons */
-  .header_button p {
-    color: #34495e;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-
-  .header_button p:hover {
-    color: #3498db;
-    text-decoration: underline;
   }
 
   /* Swiper Styles */
@@ -996,33 +798,6 @@
     text-align: center;
   }
 
-  /* Styled select dropdown */
-  select {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f5f5f5;
-    transition: border 0.2s ease;
-  }
-
-  select:focus {
-    outline: none;
-    border-color: #54b3d6;
-  }
-  .modal-content input {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f5f5f5;
-    transition: border 0.2s ease;
-  }
-
   /* Paragraph showing the selected group */
   p {
     font-size: 1em;
@@ -1106,34 +881,46 @@
     position: relative;
     cursor: pointer;
   }
-
-  /* Tooltip on hover */
-  .project_button a[title]:hover::after {
-    content: attr(title); /* The full text from the title attribute */
-    position: absolute;
-    bottom: 100%; /* Position the tooltip above the text */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 5px;
-    font-size: 12px;
-    white-space: nowrap;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+  .project_button {
+    display: flex;
+    flex-direction: row;
   }
 
-  /* Tooltip arrow */
-  .project_button a[title]:hover::before {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    z-index: 1000;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent #333 transparent;
+  .asset_button {
+    background-color: rgba(0, 103, 255, 0.05);
+    color: #0067ff;
+    border-color: rgba(0, 103, 255, 0.1);
+    width: 60px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .asset_button:hover {
+    background-color: #fff;
+    color: #0067ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .editable_input {
+    border: 1px solid #555;
+    height: 40px;
+    width: 120px;
+  }
+  .filterWrap select,
+  input {
+    padding: 0 32px 0 15px;
+    height: 40px;
+    background-size: 8px;
+    color: #626677;
+    border: 1px solid rgba(98, 102, 119, 0.2);
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-size: 10px;
+    font-weight: 400;
+    font-size: 16px;
   }
 </style>

@@ -87,193 +87,220 @@
   // Convert to a more human-readable format
   function formatDate(dateString) {
     const date = new Date(dateString);
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    const timeOptions = {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     };
-    return `${date.toLocaleDateString("en-US", options)} ${date.toLocaleTimeString("en-US", timeOptions)}`;
+
+    const timeOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true, // This ensures that we get "오후" or "오전" for AM/PM in Korean.
+    };
+
+    return `${date.toLocaleDateString("ko-KR", options)} ${date.toLocaleTimeString("ko-KR", timeOptions)}`;
   }
 </script>
 
-<main>
-  <p>점검그룹</p>
-  <div class="table1">
+<div style="margin-top: 20px;">
+  <article class="contentArea mt-0">
+    <p style="padding:15px; font-size:12px">점검그룹</p>
     {#if isSearchActive}
-      <table>
+      <div class="tableListWrap table1">
+        <table class="tableList hdBorder">
+          <colgroup>
+            <col style="width:90px;" />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col style="width:40%;" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="text-center">남버</th>
+              <th class="text-center">점검대상</th>
+              <th class="text-center">항목그룹</th>
+              <th class="text-center">식별코드</th>
+              <th>점검항목</th>
+              <th class="text-center">위험도</th>
+              <th>평가기준</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#if searchResult.length > 0}
+              {#each searchResult as item, index}
+                <tr
+                  on:click={() => {
+                    selected = item;
+                    showModal = true;
+                  }}
+                >
+                  <td class="text-center">{index + 1}</td>
+                  <td class="text-center">{selectedCategory}</td>
+                  <td class="text-center">{item.ccc_index}</td>
+                  <td class="text-center">{item.ccc_item_no}</td>
+                  <td class="text-center">{item.ccc_item_title}</td>
+                  <td class="text-center">{item.ccc_item_level}</td>
+                  <td>{item.ccc_item_criteria}</td>
+                </tr>
+              {/each}
+            {:else}
+              <tr>
+                <td colspan="7">점검대상 선택해 주세요</td>
+              </tr>
+            {/if}
+          </tbody>
+        </table>
+        <div class="reset">
+          <button
+            class="reset_button"
+            on:click={() => {
+              isSearchActive = false;
+            }}>테이블 재설정</button
+          >
+        </div>
+      </div>
+    {:else}
+      <div class="tableListWrap table1">
+        <table class="tableList hdBorder">
+          <colgroup>
+            <col style="width:90px;" />
+            <col />
+            <col style="width:90px;" />
+            <col style="width:30%;" />
+            <col style="width:20%;" />
+            <col style="width:120px;" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="text-center">넘버</th>
+              <th class="text-center">점검항목이름</th>
+              <th class="text-center">분류</th>
+              <th>지원대상</th>
+              <th class="text-center">등록일</th>
+              <th class="text-center">삭제</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each allChecklistArray as data}
+              <tr>
+                <td class="text-center">{data.cgl_index_id}</td>
+                <td class="text-center">{data.ccg_group}</td>
+                <td class="text-center">{data.ccg_checklist_year}</td>
+                <td class="text-center">{data.ccg_support_part}</td>
+                <td class="text-center">{formatDate(data.ccg_createdate)}</td>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td class="text-center" on:click|stopPropagation>
+                  <button class="btn btnRed"
+                    ><img
+                      src="./assets/images/icon/delete.svg"
+                      alt="createGroup"
+                    />삭제</button
+                  >
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    {/if}
+
+    <p style="padding:15px ; margin-top:15px; font-size:12px">
+      점검그룹 세부내용
+    </p>
+    {#if isNewlyCreatedChecklist}
+      <div class="control-buttons">
+        <input
+          type="checkbox"
+          on:click={selectAll}
+          checked={allSelected}
+        /><strong> 전체선택 </strong>
+
+        <button on:click={deleteSelectedItem}>선택항목삭제</button>
+      </div>
+    {/if}
+    <div class="tableListWrap table2">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col style="width:40%;" />
+        </colgroup>
         <thead>
           <tr>
-            <th>남버</th>
-            <th>점검대상</th>
-            <th>항목그룹</th>
-            <th>식별코드</th>
+            {#if isNewlyCreatedChecklist}
+              <th on:click|stopPropagation></th>
+            {/if}
+            <th class="text-center">남버</th>
+            <th class="text-center">점검대상</th>
+            <th class="text-center">항목그룹</th>
+            <th class="text-center">식별코드</th>
             <th>점검항목</th>
-            <th>위험도</th>
+            <th class="text-center">위험도</th>
             <th>평가기준</th>
           </tr>
         </thead>
         <tbody>
-          {#if searchResult.length > 0}
-            {#each searchResult as item, index}
+          {#if $filteredChecklistData.length > 0}
+            {#each $filteredChecklistData as item, index}
               <tr
                 on:click={() => {
-                  selected = item;
+                  selectedItem = item;
                   showModal = true;
                 }}
               >
-                <td>{index + 1}</td>
-                <td>{selectedCategory}</td>
-                <td>{item.ccc_index}</td>
-                <td>{item.ccc_item_no}</td>
-                <td>{item.ccc_item_title}</td>
-                <td>{item.ccc_item_level}</td>
+                {#if isNewlyCreatedChecklist}
+                  <!-- svelte-ignore a11y-click-events-have-key-events -->
+                  <td on:click|stopPropagation
+                    ><input
+                      type="checkbox"
+                      bind:group={selected}
+                      value={item}
+                      name={item}
+                    /></td
+                  >
+                {/if}
+                <td class="text-center">{index + 1}</td>
+                <td class="text-center">{selectedCategory}</td>
+                <td class="text-center">{item.ccc_index}</td>
+                <td class="text-center">{item.ccc_item_no}</td>
+                <td class="text-center">{item.ccc_item_title}</td>
+                <td class="text-center">{item.ccc_item_level}</td>
                 <td>{item.ccc_item_criteria}</td>
               </tr>
             {/each}
           {:else}
-            <tr>
-              <td colspan="7">점검대상 선택해 주세요</td>
-            </tr>
+            <tr
+              ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                >점검대상 선택해 주세요</td
+              ></tr
+            >
           {/if}
         </tbody>
       </table>
-      <div class="reset">
-        <button
-          class="reset_button"
-          on:click={() => {
-            isSearchActive = false;
-          }}>테이블 재설정</button
-        >
-      </div>
-    {:else}
-      <table>
-        <tr>
-          <th>넘버</th>
-          <th>점검항목이름</th>
-          <th>분류</th>
-          <th>지원대상</th>
-          <th>등록일</th>
-          <th>삭제</th>
-        </tr>
-        {#each allChecklistArray as data}
-          <tr>
-            <td>{data.cgl_index_id}</td>
-            <td>{data.ccg_group}</td>
-            <td>{data.ccg_checklist_year}</td>
-            <td>{data.ccg_support_part}</td>
-            <td>{formatDate(data.ccg_createdate)}</td>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <td on:click|stopPropagation>
-              <button class="delete_button">삭제</button>
-            </td>
-          </tr>
-        {/each}
-      </table>
-    {/if}
-  </div>
-
-  <p>점검그룹 세부내용</p>
-  {#if isNewlyCreatedChecklist}
-    <div class="control-buttons">
-      <input
-        type="checkbox"
-        on:click={selectAll}
-        checked={allSelected}
-      /><strong> 전체선택 </strong>
-
-      <button on:click={deleteSelectedItem}>선택항목삭제</button>
     </div>
-  {/if}
-  <div class="table2">
-    <table>
-      <thead>
-        <tr>
-          {#if isNewlyCreatedChecklist}
-            <th on:click|stopPropagation></th>
-          {/if}
-          <th>남버</th>
-          <th>점검대상</th>
-          <th>항목그룹</th>
-          <th>식별코드</th>
-          <th>점검항목</th>
-          <th>위험도</th>
-          <th>평가기준</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#if $filteredChecklistData.length > 0}
-          {#each $filteredChecklistData as item, index}
-            <tr
-              on:click={() => {
-                selectedItem = item;
-                showModal = true;
-              }}
-            >
-              {#if isNewlyCreatedChecklist}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <td on:click|stopPropagation
-                  ><input
-                    type="checkbox"
-                    bind:group={selected}
-                    value={item}
-                    name={item}
-                  /></td
-                >
-              {/if}
-              <td>{index + 1}</td>
-              <td>{selectedCategory}</td>
-              <td>{item.ccc_index}</td>
-              <td>{item.ccc_item_no}</td>
-              <td>{item.ccc_item_title}</td>
-              <td>{item.ccc_item_level}</td>
-              <td>{item.ccc_item_criteria}</td>
-            </tr>
-          {/each}
-        {:else}
-          <tr
-            ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
-              >점검대상 선택해 주세요</td
-            ></tr
-          >
-        {/if}
-      </tbody>
-    </table>
-  </div>
 
-  <Modal bind:showModal>
-    <ModalEditItem {selectedItem} {selectedCategory} />
-  </Modal>
-</main>
+    <Modal bind:showModal>
+      <ModalEditItem {selectedItem} {selectedCategory} />
+    </Modal>
+  </article>
+</div>
 
 <style>
-  main {
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb;
-    padding: 10px;
-    margin-bottom: 40px;
-    font-family: "Arial", sans-serif;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
-  }
-  main p {
-    font-size: 16px;
-    font-weight: bold;
-  }
   .table1,
   .table2 {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
     width: 100%;
     font-size: 12px;
-    color: #333;
     overflow-y: auto;
     overflow-x: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f7f9fb;
   }
 
   .table1 {
@@ -286,20 +313,16 @@
   }
 
   table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
     width: 100%;
-    font-size: 12px;
   }
 
-  th,
+  /* th,
   td {
-    border: 1px solid #ddd;
     padding: 10px;
-    text-align: left;
+    text-align: center;
     vertical-align: middle;
-  }
-
+  } */
+  /* 
   th {
     background-color: #005fa3;
     color: #ffffff;
@@ -308,15 +331,7 @@
     z-index: 1;
     font-size: 14px;
     white-space: nowrap;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  tr:hover {
-    background-color: #e0f7fa;
-  }
+  } */
 
   tr {
     cursor: pointer;

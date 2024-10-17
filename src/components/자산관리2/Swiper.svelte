@@ -328,8 +328,10 @@
   <article class="contentArea flex col">
     <section bind:this={swiperContainer} class="topCon">
       <div class="menu-container">
-        <button class="arrow-btn" on:click={() => handleScroll("prev")}
-          >◀</button
+        <button
+          class="arrow-btn"
+          id="prevBtn"
+          on:click={() => handleScroll("prev")}>◀</button
         >
         <div class="menu-wrapper-container">
           <div class="menu-wrapper" id="menuWrapper">
@@ -349,8 +351,10 @@
             {/each}
           </div>
         </div>
-        <button class="arrow-btn" on:click={() => handleScroll("next")}
-          >▶</button
+        <button
+          class="arrow-btn"
+          id="nextBtn"
+          on:click={() => handleScroll("next")}>▶</button
         >
       </div>
     </section>

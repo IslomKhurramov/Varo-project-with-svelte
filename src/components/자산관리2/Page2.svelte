@@ -231,7 +231,6 @@
   }
 </script>
 
-<div id="wrap"></div>
 <div class="container">
   <section>
     <!--SUB MENU-->

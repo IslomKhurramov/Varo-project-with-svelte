@@ -156,7 +156,7 @@
   }
 </script>
 
-<main>
+<!-- <main>
   <div class="second_line">
     <div>
       <button
@@ -385,7 +385,6 @@
             </td>
             <td>{item.ast_uuid__ass_uuid__ast_operator_person}</td>
             <td>{item.ast_uuid__ass_uuid__ast_operator_phone}</td>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             {#if isAgenUser}
               <td
                 on:click={(e) => {
@@ -460,125 +459,106 @@
       {/if}
     </table>
   </div>
-</main>
+</main> -->
 
-<style>
-  main {
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb;
-    padding: 10px;
-    margin-bottom: 40px;
-    font-family: "Arial", sans-serif;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  .main_container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    height: 600px;
-    overflow-y: auto;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
-    background-color: #fff;
-  }
+<section class="content">
+  <div>
+    <!-- 자산상세 -->
+    <div class="section">
+      <!-- 탭메뉴 -->
+      <div class="flex justify-between submenuWrap">
+        <section class="subTabWrap">
+          <a href="./vulnerability.html" class="active">조치계획</a>
+          <a href="./vulnerability_result.html">조치결과</a>
+        </section>
+        <section class="flex btnWrap gap-4">
+          <button type="button" class="btn btnGray xs">선택항목승인</button>
+          <button type="button" class="btn btnGray xs">선택항목반려</button>
+          <button type="button" class="btn btnGray xs">일괄승인</button>
+          <button type="button" class="btn btnGray xs">일괄반려</button>
+        </section>
+      </div>
 
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 14px;
-    color: #333;
-  }
-
-  th,
-  td {
-    padding: 12px 15px;
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase;
-    font-size: 13px;
-  }
-
-  td {
-    border-bottom: 1px solid #ddd;
-    font-size: 13px;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f5f5f5;
-  }
-
-  tr:hover {
-    background-color: #e9f3ff;
-  }
-
-  .second_line {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin: 20px 0;
-    padding-left: 20px;
-    box-sizing: border-box;
-  }
-
-  .second_line button {
-    background-color: #0056b3;
-    color: #ffffff;
-    border-radius: 5px;
-    height: 36px;
-    width: 130px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .second_line button.active {
-    background-color: rgb(225 143 45 / 62%);
-  }
-
-  .second_line button:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .select_input {
-    padding: 8px 10px;
-    color: #333;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 13px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      border-color 0.3s ease;
-  }
-
-  .select_input:hover {
-    background-color: #e0e0e0;
-    border-color: #bbb;
-  }
-
-  .select_input:focus {
-    outline: none;
-    border-color: #0068d7;
-    box-shadow: 0 0 4px rgba(0, 104, 215, 0.5);
-  }
-</style>
+      <!-- 테이블리스트 -->
+      <div class="flex col detail">
+        <div class="tableListWrap nofirstth">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col style="width:40px;" />
+              <col style="width:80px;" />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">
+                  <div class="checkboxWrap">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="target" />
+                      <span></span>
+                    </label>
+                  </div>
+                </th>
+                <th class="text-center">번호</th>
+                <th class="text-center">자산명</th>
+                <th class="text-center">점검대상</th>
+                <th class="text-center">대분류</th>
+                <th class="text-center">취약점명</th>
+                <th class="text-center">위험도</th>
+                <th class="text-center">조치현황</th>
+                <th class="text-center">조치분류상태</th>
+                <th class="text-center">운영부서</th>
+                <th class="text-center">운영담당자</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">
+                  <div class="checkboxWrap">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="target" />
+                      <span></span>
+                    </label>
+                  </div>
+                </td>
+                <td class="text-center">1</td>
+                <td class="text-center">-</td>
+                <td class="text-center">UNIX</td>
+                <td
+                  class="text-center cursor-pointer"
+                  onclick="window.location.href='./vulnerability_create.html';"
+                  >계정관리</td
+                >
+                <td class="text-center">Setuid설정</td>
+                <td class="text-center">상</td>
+                <td class="text-center">조치전</td>
+                <td class="text-center">조치계획등록</td>
+                <td class="text-center">홍길동</td>
+                <td class="text-center">02-102-0922</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex align-end">
+    <div class="paginationWrap end">
+      <div class="pagination">
+        <!-- <a href="">&lt;</a> -->
+        <a href="" class="active">1</a>
+        <a href="">2</a>
+        <a href="">...</a>
+        <a href="">4</a>
+        <a href="">&gt;</a>
+      </div>
+    </div>
+  </div>
+</section>

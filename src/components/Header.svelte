@@ -4,6 +4,7 @@
   import { navigate } from "svelte-routing";
   import { userData } from "../stores/user.store";
   import { toggleNav } from "../../public/assets/js/common.js";
+  import { toggleMenu } from "../../public/assets/js/common.js";
 
   export let activeMenu = "점검관리";
 
@@ -220,7 +221,7 @@
       </li>
       <li
         class={`menu ${activeMenu === "취약점관리" ? "active" : ""}`}
-        onclick="toggleMenu(this)"
+        on:click={(e) => toggleMenu(e)}
       >
         <Link to="/page3" on:click={() => (activeMenu = "취약점관리")}>
           <div class="menuItme toggleMenu">

@@ -70,11 +70,13 @@ function modalOpen(type) {
   }
 }
 
-function toggleMenu(e) {
-  if (e.classList.contains("active")) {
-    e.classList.remove("active");
+export function toggleMenu(e) {
+  console.log("toggleMenu:", e);
+  const element = e.currentTarget;
+  if (element.classList.contains("active")) {
+    element.classList.remove("active");
   } else {
-    e.classList.add("active");
+    element.classList.add("active");
   }
 }
 

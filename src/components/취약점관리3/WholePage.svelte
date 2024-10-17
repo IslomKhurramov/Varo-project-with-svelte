@@ -237,19 +237,41 @@
     }
   };
 
+  let swiperContainer;
+  let menuWrapper;
+  let scrollAmount = 0;
+  let itemWidth = 146;
+  let menuWidth = 1260;
+
+  const handleScroll = (direction) => {
+    menuWrapper = document.getElementById("menuWrapper");
+    if (!menuWrapper) return;
+    const maxScroll = menuWrapper.scrollWidth - menuWidth;
+
+    if (direction === "prev") {
+      scrollAmount -= itemWidth;
+      if (scrollAmount < 0) scrollAmount = 0;
+    } else if (direction === "next") {
+      scrollAmount += itemWidth;
+      if (scrollAmount > maxScroll) scrollAmount = maxScroll;
+    }
+
+    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+  };
+
   $: {
     console.log("targetData:", targetData);
+    console.log("data:", data);
   }
 </script>
 
-<main>
+<!-- <main>
   <div class="swiper_container1">
     <img src="./images/left.png" alt="left" />
     <div class="scroll">
       {#if data?.length !== 0}
         <div class="scroll-container">
           {#each data as item, index}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
               class={`slide ${item?.fi_fix_status__cvs_index == 2 && "color1"} ${item?.fi_fix_status__cvs_index == 3 && "color2"}  ${item?.fi_fix_status__cvs_index == 4 && "color4"} ${item?.cfr_fix_status__cvs_index == 6 && "color6"}  ${item?.cfr_fix_status__cvs_index == 7 && "color7"}`}
               on:click={() => {
@@ -277,14 +299,12 @@
       <div class="content">
         <div class="actions">
           <div class="action-header">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>조치계획등록</label>
           </div>
 
           <div class="action-content">
             {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치방법</label>
                 <select
                   bind:value={sendFixDone["fixed_method"]}
@@ -304,7 +324,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치일정</label>
                 <input
                   class="input"
@@ -321,14 +340,12 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치내역</label>
 
                 <textarea bind:value={sendFixDone["fixed_comment"]}></textarea>
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>증적자료</label>
                 <input
                   type="file"
@@ -339,7 +356,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치수행자</label>
                 <select bind:value={sendFixDone["fixed_user_index"]}>
                   <option value={""}> 조치담당자</option>
@@ -354,7 +370,6 @@
               </div>
             {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치방법</label>
                 <input
                   type="text"
@@ -364,7 +379,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치일정</label>
                 <input
                   type="text"
@@ -379,7 +393,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치내역</label>
 
                 <textarea readonly>
@@ -388,7 +401,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>증적자료</label>
                 <input
                   type="text"
@@ -406,7 +418,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치수행자</label>
                 <input
                   type="text"
@@ -416,7 +427,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치계획승인</label>
                 <select bind:value={sendSetFixDoneApprove["approved"]}>
                   <option value={""}> 조치계획승인 / 조치계획반려 </option>
@@ -426,7 +436,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치승인자의견 </label>
                 <input
                   type="text"
@@ -435,7 +444,6 @@
               </div>
             {:else if isAgentUser && setView == "plan"}
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치방법</label>
                 <input
                   type="text"
@@ -446,7 +454,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치수준</label>
                 <input
                   type="text"
@@ -456,7 +463,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치일정</label>
                 <input
                   type="text"
@@ -471,7 +477,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치방법</label>
 
                 <textarea
@@ -481,7 +486,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치담당자</label>
                 <input
                   type="text"
@@ -491,7 +495,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치계획승인</label>
                 <select bind:value={sendApproveData["approved"]}>
                   <option value={""}> 조치계획승인 / 조치계획반려 </option>
@@ -501,7 +504,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치승인자의견 </label>
                 <input
                   type="text"
@@ -510,7 +512,6 @@
               </div>
             {:else}
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치방법</label>
                 <select
                   bind:value={sendPlanRegisterData["fix_method"]}
@@ -530,7 +531,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치수준</label>
                 <select bind:value={sendPlanRegisterData["fix_level"]}>
                   <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
@@ -542,7 +542,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치일정</label>
                 <input
                   class="input"
@@ -559,7 +558,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치방법</label>
 
                 <textarea bind:value={sendPlanRegisterData["fix_comment"]}
@@ -567,7 +565,6 @@
               </div>
 
               <div class="row">
-                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label>조치담당자</label>
                 <select bind:value={sendPlanRegisterData["fix_user_index"]}>
                   <option value={""}> 조치담당자</option>
@@ -605,12 +602,10 @@
               </button>
             </div>
           {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <button class="list-button" on:click={setFixDoneRegisterHandler}
               >조치결과등록</button
             >
           {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <button class="list-button" on:click={setFixDoneApproveHandler}
               >의견등록</button
             >
@@ -622,7 +617,6 @@
             </div>
           {/if}
 
-          <!-- svelte-ignore a11y-label-has-associated-control -->
           {#if historyItemData?.length !== 0}
             <div class="row">
               <label>이전조치이력</label>
@@ -651,7 +645,6 @@
 
         <div class="info">
           <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>취약점정보</label>
             <textarea rows="3" readonly>
               ${targetData?.ccr_item_no__ccc_item_criteria}
@@ -659,26 +652,17 @@
           </div>
 
           <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>평가기준</label>
             <textarea rows="3" readonly>
               {targetData?.ccr_item_no__ccc_item_title}
             </textarea>
           </div>
           <div class="row">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>조치방법</label>
             <textarea rows="3" readonly>
               {targetData?.ccr_item_no__ccc_mitigation_example}
             </textarea>
           </div>
-
-          <!-- <div class="row"> -->
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-          <!-- <label>관련자산</label>
-            <textarea class="data3" bind:value={relatedAssets} rows="3" readonly
-            ></textarea>
-          </div> -->
 
           <div class="row">
             <label>관련자산</label>
@@ -702,323 +686,269 @@
           </div>
         </div>
       </div>
-      <!-- <button class="register_button">조치계획 등록함</button> -->
     </div>
   </div>
+</main> -->
 
-  <!-- <Modal bind:showModal>
-    <ModalRegisteredAdmin {closeModal} />
-  </Modal> -->
-</main>
+<section class="topCon" bind:this={swiperContainer}>
+  <div class="menu-container">
+    <button
+      class="arrow-btn"
+      id="prevBtn"
+      on:click={() => handleScroll("prev")}
+    >
+      ◀
+    </button>
+    <div class="menu-wrapper-container">
+      {#if data?.length !== 0}
+        <div class="menu-wrapper" id="menuWrapper">
+          {#each data as item, index}
+            <div
+              class={`menu-item ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+              on:click={() => {
+                targetData = item;
+              }}
+            >
+              {item?.ccr_item_no__ccc_item_no}
+            </div>
+          {/each}
+        </div>
+      {/if}
+    </div>
+    <button
+      class="arrow-btn"
+      id="nextBtn"
+      on:click={() => handleScroll("next")}
+    >
+      ▶
+    </button>
+  </div>
+</section>
 
-<style>
-  /* Main container centered */
-  .main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0;
-    width: 100%;
-  }
+<section class="content">
+  <div>
+    <!-- 자산상세 -->
+    <div class="section">
+      <!-- 등록 -->
+      <div class="flex detail">
+        <section class="flex col gap-40">
+          <article class="flex col">
+            <h3 class="title border">조치계획등록</h3>
+            <table class="tableForm">
+              <colgroup>
+                <col style="width:80px;" />
+                <col />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th>조치방법</th>
+                  <td>
+                    <select>
+                      <option>조치예정</option>
+                      <option>조치완료</option>
+                      <option>예외처리</option>
+                      <option>대체적용</option>
+                      <option>기타</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>조치수준</th>
+                  <td>
+                    <select>
+                      <option>긴급</option>
+                      <option>단기</option>
+                      <option>중기</option>
+                      <option>장기</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>조치일정</th>
+                  <td>
+                    <div class="dateWrap">
+                      <div class="date">
+                        <input
+                          type="text"
+                          class="datepicker"
+                          placeholder="시작일시"
+                          value="2024년 7월 11일"
+                        />
+                        <img src="./assets/images/icon/date.svg" />
+                      </div>
+                      <img src="./assets/images/icon/dash.svg" />
+                      <div class="date">
+                        <input
+                          type="text"
+                          class="datepicker"
+                          placeholder="종료일시"
+                          value="2024년 7월 12일"
+                        />
+                        <img src="./assets/images/icon/date.svg" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>조치방법</th>
+                  <td>
+                    <textarea rows="10"
+                      >[조치전] 조치 결과…... [조치후] 조치
+                      이후..어쩌구..저쩌구..</textarea
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th>조치담당자</th>
+                  <td>
+                    <select>
+                      <option>홍길동</option>
+                      <option>가나다</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="flex justify-center btnActionWrap">
+              <button
+                type="button"
+                class="btn btnBlue btnAction btnSave w220 h50"
+                onclick="modalOpen('alert')">조치계획등록</button
+              >
+            </div>
+          </article>
 
-  .container {
-    width: 100%;
-    padding: 30px;
-    background-color: #f7f9fb;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    position: relative;
-  }
+          <article>
+            <h3 class="title border">이전조치이력</h3>
+            <div class="tableListWrap nofirstth">
+              <table class="tableList hdBorder">
+                <colgroup>
+                  <col style="width:120px;" />
+                  <col />
+                  <col />
+                  <col style="width:120px;" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="text-center">조치방법</th>
+                    <th class="text-center">일정</th>
+                    <th class="text-center">의견</th>
+                    <th class="text-center">조치담당자</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">-</td>
+                    <td class="text-center">2024.10.10~2024.10.10</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">홍길동</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">-</td>
+                    <td class="text-center">2024.10.10~2024.10.10</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">홍길동</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </section>
 
-  .header {
-    text-align: left;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
+        <section class="flex col">
+          <div class="bg-gray">
+            <article class="formWrap font13">
+              <div class="formControlWrap">
+                <div class="formControl align-start">
+                  <label class="mt-12">취약점정보</label>
+                  <textarea rows="8"
+                    >어쩌구..저쩌구…. 어쩌구..저쩌구…. 어쩌구..저쩌구….
+                    어쩌구..저쩌구….</textarea
+                  >
+                </div>
+              </div>
+              <div class="formControlWrap">
+                <div class="formControl align-start">
+                  <label class="mt-12">평가기준</label>
+                  <textarea rows="8">양호 : 취약 :</textarea>
+                </div>
+              </div>
+              <div class="formControlWrap">
+                <div class="formControl align-start">
+                  <label class="mt-12">조치방법</label>
+                  <textarea rows="8"
+                    >어쩌구..저쩌구…. 어쩌구..저쩌구…. 어쩌구..저쩌구….
+                    어쩌구..저쩌구….</textarea
+                  >
+                </div>
+              </div>
+            </article>
+            <div class="flex flex-end btnActionWrap gap-12">
+              <button
+                type="button"
+                class="btn btnGray w140 h50 golist btnAction">목록으로</button
+              >
+              <button
+                type="button"
+                class="btn btnBlue btnSave w220 h50 btnAction"
+                >조치계획을 등록함</button
+              >
+            </div>
 
-  .select_input:hover {
-    background-color: #b0b0b0;
-  }
-
-  .content {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .info {
-    width: 55%;
-  }
-
-  .row {
-    margin-bottom: 10px;
-  }
-
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-
-  textarea {
-    width: 100%;
-    height: 120px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    resize: none;
-    background-color: #f9f9f9;
-  }
-
-  input,
-  select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: #f9f9f9;
-  }
-
-  .input1 {
-    height: 150px;
-  }
-
-  .actions {
-    width: 40%;
-    height: auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #e9e9e9;
-  }
-
-  .action-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .action-footer {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .register_button {
-    background-color: #28a745;
-    padding: 10px;
-    font-weight: bold;
-    color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .register_button:hover {
-    background-color: #28863e;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .list-button {
-    background-color: #007bff; /* Primary button color */
-    color: #ffffff;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .list-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .data3 {
-    height: 40px;
-  }
-
-  .table_container {
-    display: flex;
-    justify-content: center;
-    width: 94%;
-    margin: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100px;
-
-    margin: 20px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-  }
-
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    background: #ffffff;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
-    text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
-  }
-
-  th {
-    background-color: #005fa3; /* Header background color */
-    color: #ffffff; /* Header text color */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
-  }
-
-  tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
-  }
-
-  /* Swiper Styles */
-  .swiper-container {
-    width: 100%;
-    margin: 20px auto;
-    padding: 10px 0;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    position: relative;
-  }
-
-  .swiper_container1 {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .swiper_container1 img {
-    width: 50px;
-    height: auto;
-  }
-
-  .swiper-wrapper {
-    display: flex;
-  }
-
-  .swiper-slide {
-    height: 50px;
-    max-width: 300px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.1),
-      0 4px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-
-  .swiper-slide:hover {
-    transform: scale(1.1);
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.2),
-      0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  .swiper-pagination {
-    color: #007acc;
-  }
-
-  /* Move the left and right navigation buttons outside the swiper container */
-  .swiper-button-prev,
-  .swiper-button-next {
-    color: #007acc;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-
-  .swiper-button-prev {
-    left: -50px;
-  }
-
-  .swiper-button-next {
-    right: -50px;
-  }
-
-  .scroll {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .scroll-container {
-    display: flex; /* Flexbox layout to align items horizontally */
-  }
-
-  .slide {
-    min-width: 100px; /* Adjust item width as needed */
-    padding: 10px;
-    background-color: #f7f7f7;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .color1 {
-    background-color: #ffff00;
-  }
-
-  .color2 {
-    background-color: #92d051;
-  }
-
-  .color3 {
-    background-color: #fec100;
-  }
-
-  /* .color4 {
-    background-color: #b4c6e7;
-  } */
-
-  .color5 {
-    background-color: #b4c6e7;
-  }
-
-  .color7 {
-    background-color: #c55a11;
-  }
-</style>
+            <article>
+              <h3 class="title border">관련자산</h3>
+              <div class="tableListWrap nofirstth">
+                <table class="tableList hdBorder">
+                  <colgroup>
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th class="text-center">자산명</th>
+                      <th class="text-center">아이피주소</th>
+                      <th class="text-center">자산그룹</th>
+                      <th class="text-center">식별코드</th>
+                      <th class="text-center">등록일</th>
+                      <th class="text-center">보안점수</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                      <td class="text-center">-</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>

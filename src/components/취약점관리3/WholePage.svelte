@@ -240,28 +240,28 @@
   let swiperContainer;
   let menuWrapper;
   let scrollAmount = 0;
-  const itemWidth = 146; // Each menu item width including gap
-  const menuWidth = 1260; // Total width of the menu
-
-  onMount(() => {
-    // This runs once the component is mounted
-    menuWrapper = document.getElementById("menuWrapper");
-  });
+  let itemWidth = 146;
+  let menuWidth = 1260;
 
   const handleScroll = (direction) => {
+    menuWrapper = document.getElementById("menuWrapper");
+    if (!menuWrapper) return;
+    const maxScroll = menuWrapper.scrollWidth - menuWidth;
+
     if (direction === "prev") {
       scrollAmount -= itemWidth;
       if (scrollAmount < 0) scrollAmount = 0;
     } else if (direction === "next") {
       scrollAmount += itemWidth;
-      const maxScroll = menuWrapper.scrollWidth - menuWidth;
       if (scrollAmount > maxScroll) scrollAmount = maxScroll;
     }
+
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
 
   $: {
     console.log("targetData:", targetData);
+    console.log("data:", data);
   }
 </script>
 
@@ -707,18 +707,29 @@
           조치완료된 항목: blue
           조치결과 반려: X(클래스명 없음)
           -->
-      <div class="menu-wrapper" id="menuWrapper">
-        <div class="menu-item">자산1</div>
-        <div class="menu-item yellow">자산2</div>
-        <div class="menu-item green">자산3</div>
-        <div class="menu-item blue">자산4</div>
-        <div class="menu-item blue">자산5</div>
-        <div class="menu-item">User_L2_51_LLL</div>
-        <div class="menu-item green">User_L2_51</div>
-        <div class="menu-item orange">자산8</div>
-        <div class="menu-item">자산9</div>
-        <div class="menu-item yellow">자산10</div>
-      </div>
+      {#if data?.length !== 0}
+        <div class="menu-wrapper" id="menuWrapper">
+          {#each data as item, index}
+            <div
+              class={`menu-item ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+              on:click={() => {
+                targetData = item;
+              }}
+            >
+              {item?.ccr_item_no__ccc_item_no}
+            </div>
+            <!-- <div class="menu-item yellow">자산2</div>
+          <div class="menu-item green">자산3</div>
+          <div class="menu-item blue">자산4</div>
+          <div class="menu-item blue">자산5</div>
+          <div class="menu-item">User_L2_51_LLL</div>
+          <div class="menu-item green">User_L2_51</div>
+          <div class="menu-item orange">자산8</div>
+          <div class="menu-item">자산9</div>
+          <div class="menu-item yellow">자산10</div> -->
+          {/each}
+        </div>
+      {/if}
     </div>
     <button
       class="arrow-btn"

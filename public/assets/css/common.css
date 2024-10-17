@@ -2403,6 +2403,12 @@ label.file-label {
   color: #fff;
   border-color: #0067ff;
 }
+
+.menu-container .menu-item.red {
+  background-color: #c55a11;
+  color: #fff;
+  border-color: #c55a11;
+}
 .menu-container .arrow-btn {
   width: 30px;
   height: 40px;

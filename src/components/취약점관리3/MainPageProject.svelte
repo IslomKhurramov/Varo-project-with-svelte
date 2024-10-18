@@ -18,7 +18,7 @@
   export let targetData;
   export let wholeOption;
 
-  let isAgenUser = false;
+  let isAgenUser = true;
 
   let selectedItems = [];
 

@@ -19,8 +19,10 @@
 
   export let targetData;
   export let setView;
+  export let currentView;
+  export let wholePage;
 
-  let isAgentUser = false;
+  let isAgentUser = true;
 
   // let swiperContainer;
   // let swiperInstance;
@@ -741,17 +743,260 @@
               </colgroup>
               <tbody>
                 {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
-                  <div>
-                    isAgentUser && setView == "result" &&
-                    Object.keys(targetData?.fix_result).length === 0
-                  </div>
+                  <tr>
+                    <th>조치방법</th>
+                    <td>
+                      <select bind:value={sendFixDone["fixed_method"]}>
+                        <option value={""}>
+                          조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                        </option>
+                        {#if options?.length !== 0}
+                          {#each options as option}
+                            <option value={option?.cvf_index}
+                              >{option?.cvf_desc}</option
+                            >
+                          {/each}
+                        {/if}
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치일정</th>
+                    <td>
+                      <div class="dateWrap">
+                        <div class="date">
+                          <input
+                            type="date"
+                            class="datepicker"
+                            placeholder="시작일시"
+                            bind:value={sendFixDone["fixed_start_date"]}
+                          />
+                        </div>
+                        <img src="./assets/images/icon/dash.svg" />
+                        <div class="date">
+                          <input
+                            type="date"
+                            class="datepicker"
+                            placeholder="종료일시"
+                            bind:value={sendFixDone["fixed_end_date"]}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치내역</th>
+                    <td>
+                      <textarea
+                        rows="10"
+                        bind:value={sendFixDone["fixed_comment"]}
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치내역</th>
+                    <td>
+                      <input
+                        type="file"
+                        on:change={(e) => {
+                          handleFileUpload(e);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치수행자</th>
+                    <td>
+                      <select bind:value={sendFixDone["fixed_user_index"]}>
+                        <option value={""}> 조치담당자</option>
+                        {#if usernames?.length !== 0}
+                          {#each usernames as username}
+                            <option value={username?.user_index}
+                              >{username?.user_name}</option
+                            >
+                          {/each}
+                        {/if}
+                      </select>
+                    </td>
+                  </tr>
                 {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
-                  <div>
-                    isAgentUser && setView == "result" &&
-                    Object.keys(targetData?.fix_result).length !== 0
-                  </div>
+                  <tr>
+                    <th>조치방법</th>
+                    <td>
+                      <input
+                        type="text"
+                        readonly
+                        value={targetData?.fix_result?.[0]
+                          ?.cfr_fix_method__cvf_desc}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치일정</th>
+                    <td>
+                      <input
+                        type="text"
+                        readonly
+                        value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
+                      />
+                      <input
+                        type="text"
+                        readonly
+                        value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치내역</th>
+                    <td>
+                      <textarea readonly>
+                        {targetData?.fix_result?.[0]?.cfr_fix_etc}
+                      </textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>증적자료</th>
+                    <td>
+                      <input
+                        type="text"
+                        value={targetData?.fix_result?.[0]?.cfr_evidence_file
+                          .split("/")
+                          .pop() + " ( 다운로드 )"}
+                        readonly
+                        on:click={() => {
+                          sampleClick(
+                            targetData?.fix_result?.[0]?.cfr_index,
+                            targetData?.fix_result?.[0]?.cfr_evidence_file,
+                          );
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치수행자</th>
+                    <td>
+                      <input
+                        type="text"
+                        value={targetData?.fix_result?.[0]
+                          ?.user_index__user_name}
+                        readonly
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치계획승인</th>
+                    <td>
+                      <select bind:value={sendSetFixDoneApprove["approved"]}>
+                        <option value={""}>
+                          조치계획승인 / 조치계획반려
+                        </option>
+                        <option value={"1"}> 조치계획승인</option>
+                        <option value={"0"}> 조치계획반려</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치승인자의견</th>
+                    <td>
+                      <input
+                        type="text"
+                        bind:value={sendSetFixDoneApprove["approved_comment"]}
+                      />
+                    </td>
+                  </tr>
                 {:else if isAgentUser && setView == "plan"}
-                  <div>isAgentUser && setView == "plan"</div>
+                  <tr>
+                    <th>조치방법</th>
+                    <td>
+                      <input
+                        type="text"
+                        readonly
+                        value={targetData?.fix_plan?.[0]
+                          ?.cfi_fix_method__cvf_desc ?? ""}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치수준</th>
+                    <td>
+                      <input
+                        type="text"
+                        readonly
+                        value={targetData?.fix_plan?.[0]?.cfi_fix_term ?? ""}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치일정</th>
+                    <td>
+                      <div class="dateWrap">
+                        <div class="date">
+                          <input
+                            type="text"
+                            class="datepicker"
+                            readonly
+                            value={targetData?.fix_plan?.[0]
+                              ?.cfi_fix_startdate ?? ""}
+                          />
+                          <img src="./assets/images/icon/date.svg" />
+                        </div>
+                        <img src="./assets/images/icon/dash.svg" />
+                        <div class="date">
+                          <input
+                            type="text"
+                            class="datepicker"
+                            placeholder="종료일시"
+                            readonly
+                            value={targetData?.fix_plan?.[0]?.cfi_fix_enddate ??
+                              ""}
+                          />
+                          <img src="./assets/images/icon/date.svg" />
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치방법</th>
+                    <td>
+                      <textarea
+                        rows="10"
+                        value={targetData?.fix_plan?.[0]?.cfi_fix_etc ?? ""}
+                        readonly
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치담당자</th>
+                    <td>
+                      <input
+                        type="text"
+                        readonly
+                        value={targetData?.fix_plan?.[0]
+                          ?.user_index__user_name ?? ""}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치계획승인</th>
+                    <td>
+                      <select bind:value={sendApproveData["approved"]}>
+                        <option value={""}>
+                          조치계획승인 / 조치계획반려
+                        </option>
+                        <option value={"1"}> 조치계획승인</option>
+                        <option value={"0"}> 조치계획반려</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치승인자의견</th>
+                    <td>
+                      <input
+                        type="text"
+                        bind:value={sendApproveData["approved_comment"]}
+                      />
+                    </td>
+                  </tr>
                 {:else}
                   <tr>
                     <th>조치방법</th>
@@ -833,73 +1078,6 @@
                     </td>
                   </tr>
                 {/if}
-                <!-- <tr>
-                  <th>조치방법</th>
-                  <td>
-                    <select>
-                      <option>조치예정</option>
-                      <option>조치완료</option>
-                      <option>예외처리</option>
-                      <option>대체적용</option>
-                      <option>기타</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <th>조치수준</th>
-                  <td>
-                    <select>
-                      <option>긴급</option>
-                      <option>단기</option>
-                      <option>중기</option>
-                      <option>장기</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <th>조치일정</th>
-                  <td>
-                    <div class="dateWrap">
-                      <div class="date">
-                        <input
-                          type="text"
-                          class="datepicker"
-                          placeholder="시작일시"
-                          value="2024년 7월 11일"
-                        />
-                        <img src="./assets/images/icon/date.svg" />
-                      </div>
-                      <img src="./assets/images/icon/dash.svg" />
-                      <div class="date">
-                        <input
-                          type="text"
-                          class="datepicker"
-                          placeholder="종료일시"
-                          value="2024년 7월 12일"
-                        />
-                        <img src="./assets/images/icon/date.svg" />
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>조치방법</th>
-                  <td>
-                    <textarea rows="10"
-                      >[조치전] 조치 결과…... [조치후] 조치
-                      이후..어쩌구..저쩌구..</textarea
-                    >
-                  </td>
-                </tr>
-                <tr>
-                  <th>조치담당자</th>
-                  <td>
-                    <select>
-                      <option>홍길동</option>
-                      <option>가나다</option>
-                    </select>
-                  </td>
-                </tr> -->
               </tbody>
             </table>
             <div class="flex justify-center btnActionWrap">
@@ -1028,8 +1206,14 @@
             <div class="flex flex-end btnActionWrap gap-12">
               <button
                 type="button"
-                class="btn btnGray w140 h50 golist btnAction">목록으로</button
+                class="btn btnGray w140 h50 golist btnAction"
+                on:click={() => {
+                  currentView === "default";
+                  wholePage = false;
+                }}
               >
+                목록으로
+              </button>
               <!-- <button
                 type="button"
                 class="btn btnBlue btnSave w220 h50 btnAction"

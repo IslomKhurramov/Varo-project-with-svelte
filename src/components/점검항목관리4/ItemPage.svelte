@@ -1,8 +1,14 @@
 <script>
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
-  import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
-  import { filteredChecklistData } from "../../services/page4/checklistStore";
+  import {
+    setDeleteChecklistGroup,
+    setDeleteChecklistItem,
+  } from "../../services/page4/getAllCheckList";
+  import {
+    checklistStore,
+    filteredChecklistData,
+  } from "../../services/page4/checklistStore";
   import { successAlert } from "../../shared/sweetAlert";
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
@@ -14,6 +20,7 @@
   let selected = [];
   let showModal = false;
   let isNewlyCreatedChecklist = false;
+  let selectedGroup = null;
 
   /**********************************************************************/
   $: if (selectedChecklist) {
@@ -102,6 +109,26 @@
 
     return `${date.toLocaleDateString("ko-KR", options)} ${date.toLocaleTimeString("ko-KR", timeOptions)}`;
   }
+  import { createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher();
+
+  async function deleteProject(id) {
+    console.log("delete", id);
+    try {
+      const response = await setDeleteChecklistGroup(id);
+
+      if (response.success) {
+        // Dispatch an event to notify the parent of the deletion
+        dispatch("projectDeleted", id);
+      } else {
+        alert("Failed to delete the project."); // Provide user feedback
+      }
+    } catch (err) {
+      console.log("ERROR deleteProject:", err);
+      alert("An error occurred while deleting the project."); // Provide user feedback
+    }
+  }
 </script>
 
 <div style="margin-top: 20px;">
@@ -141,7 +168,7 @@
                 >
                   <td class="text-center">{index + 1}</td>
                   <td class="text-center">{selectedCategory}</td>
-                  <td class="text-center">{item.ccc_index}</td>
+                  <td class="text-center">{item.ccc_item_group}</td>
                   <td class="text-center">{item.ccc_item_no}</td>
                   <td class="text-center">{item.ccc_item_title}</td>
                   <td class="text-center">{item.ccc_item_level}</td>
@@ -195,7 +222,9 @@
                 <td class="text-center">{formatDate(data.ccg_createdate)}</td>
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <td class="text-center" on:click|stopPropagation>
-                  <button class="btn btnRed"
+                  <button
+                    class="btn btnRed"
+                    on:click={() => deleteProject(data.ccg_index)}
                     ><img
                       src="./assets/images/icon/delete.svg"
                       alt="createGroup"
@@ -225,15 +254,28 @@
     {/if}
     <div class="tableListWrap table2">
       <table class="tableList hdBorder">
-        <colgroup>
-          <col style="width:90px;" />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col style="width:40%;" />
-        </colgroup>
+        {#if isNewlyCreatedChecklist}
+          <colgroup>
+            <col style="width:90px;" />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col style="width:40%;" />
+          </colgroup>
+        {:else}
+          <colgroup>
+            <col style="width:90px;" />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col style="width:40%;" />
+          </colgroup>
+        {/if}
         <thead>
           <tr>
             {#if isNewlyCreatedChecklist}
@@ -270,7 +312,7 @@
                 {/if}
                 <td class="text-center">{index + 1}</td>
                 <td class="text-center">{selectedCategory}</td>
-                <td class="text-center">{item.ccc_index}</td>
+                <td class="text-center">{item.ccc_item_group}</td>
                 <td class="text-center">{item.ccc_item_no}</td>
                 <td class="text-center">{item.ccc_item_title}</td>
                 <td class="text-center">{item.ccc_item_level}</td>

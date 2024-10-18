@@ -229,6 +229,14 @@
       alert("An error occurred while downloading the report.");
     }
   }
+  const handleClickOutside = (event) => {
+    if (event.target === event.currentTarget) {
+      closeModal();
+    }
+  };
+  const closeModal = () => {
+    showModal = false;
+  };
 </script>
 
 <div class="container">
@@ -419,10 +427,16 @@
       </div>
     </div>
   </section>
-
-  <Modal bind:showModal>
-    <ModalChasanGroup />
-  </Modal>
+  {#if showModal}
+    <!-- Modal background, closes when clicked outside modal content -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="showModal" on:click={handleClickOutside}>
+      <!-- Modal content goes here -->
+      <div class="modal-content">
+        <ModalChasanGroup {closeModal} />
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -431,6 +445,14 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Arial", sans-serif;
+  }
+  .showModal {
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
   }
 
   .asset_button {

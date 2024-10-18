@@ -146,3 +146,5 @@ export const setDeleteChecklistItem = async (ccg_index, ccc_indexes) => {
     throw error;
   }
 };
+
+/************************************************** */

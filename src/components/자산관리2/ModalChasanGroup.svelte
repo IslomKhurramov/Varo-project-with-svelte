@@ -7,6 +7,7 @@
   let current_day = "";
   let svg1, svg2;
   let selectedGroupIndex = 0;
+  export let closeModal;
 
   async function registerStatus() {
     try {
@@ -145,45 +146,63 @@
   }
 </script>
 
-<main class="container">
-  <div class="first_container">
-    <div class="first_line1">
-      <p>기간선택</p>
-      <p class="options"><input type="date" bind:value={current_day} /></p>
-    </div>
-    <div class="second_line1">
-      <svg bind:this={svg1}></svg>
-      <p class="chart_title">전체자산 등록 추세</p>
+<div class="modalContents big content">
+  <div class="contents">
+    <div class=" containerModal" style="display: flex; flex-direction:column">
+      <div class="flex head justify-between">
+        <h3 class="title">등록현황</h3>
+        <button type="button" class="btnImg" on:click={closeModal}
+          ><img src="./assets/images/icon/close.svg" /></button
+        >
+      </div>
+      <div class="containerModal">
+        <div class="first_container">
+          <div class="first_line1">
+            <p>기간선택</p>
+            <p class="options">
+              <input type="date" bind:value={current_day} />
+            </p>
+          </div>
+          <div class="second_line1">
+            <svg bind:this={svg1}></svg>
+            <p class="chart_title">전체자산 등록 추세</p>
+          </div>
+        </div>
+        <div class="second_container">
+          <div class="second_line2">
+            <p>
+              <select bind:value={selectedGroupIndex} class="dropdown">
+                {#if $assetRegisterStatus && $assetRegisterStatus.groups}
+                  {#each Object.keys($assetRegisterStatus.groups) as groupTitle, index}
+                    <option value={index}>{groupTitle}</option>
+                  {/each}
+                {:else}
+                  <option disabled>No data available</option>
+                {/if}
+              </select>
+            </p>
+            <svg bind:this={svg2}></svg>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="second_container">
-    <div class="second_line2">
-      <p>
-        <select bind:value={selectedGroupIndex} class="dropdown">
-          {#if $assetRegisterStatus && $assetRegisterStatus.groups}
-            {#each Object.keys($assetRegisterStatus.groups) as groupTitle, index}
-              <option value={index}>{groupTitle}</option>
-            {/each}
-          {:else}
-            <option disabled>No data available</option>
-          {/if}
-        </select>
-      </p>
-      <svg bind:this={svg2}></svg>
-    </div>
-  </div>
-</main>
+</div>
 
 <style>
-  .container {
+  .main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .containerModal {
     width: 100%;
     display: flex;
     flex-direction: row;
     gap: 20px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   .first_container,
@@ -192,7 +211,6 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   .first_line1 {

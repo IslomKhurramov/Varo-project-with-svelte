@@ -196,6 +196,23 @@
     }
   }
 
+  const deleteProject = async () => {
+    try {
+      if (allChecklistArray.length > 0) {
+        const lastProject = allChecklistArray[allChecklistArray.length - 1];
+        await setDeleteChecklistGroup(lastProject.ccg_index);
+        allChecklistArray = allChecklistArray.filter(
+          (checklist) => checklist.ccg_index !== lastProject.ccg_index,
+        );
+        createdChecklists = createdChecklists.filter(
+          (checklist) => checklist.ccg_index !== lastProject.ccg_index,
+        );
+      }
+    } catch (err) {
+      console.log("ERROR deleteProject:", err);
+    }
+  };
+
   /************************************************************************/
   // Filter data based on selected category
   function filterData() {
@@ -228,13 +245,6 @@
   });
   /*************************************************************/
 
-  /**********************************************/
-
-  const addProject = () => {
-    const newProjectNumber = assets.length + 1;
-    assets = [...assets, `자산그룹${newProjectNumber}`];
-    editingIndex = assets.length - 1;
-  };
   /***********************************************************/
   // Edit checklist function (to be defined)
   async function editChecklist(checklistId, editedName) {
@@ -371,7 +381,8 @@
           }}><img src="./assets/images/icon/add.svg" />그룹추가</a
         >
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a class="btn btnRed"
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <a class="btn btnRed" on:click={deleteProject}
           ><img
             src="./assets/images/icon/delete.svg"
             alt="createGroup"
@@ -593,6 +604,12 @@
           {isSearchActive}
           {activeMenu}
           {lastCreatedChecklistId}
+          on:projectDeleted={(event) => {
+            const id = event.detail;
+            allChecklistArray = allChecklistArray.filter(
+              (checklist) => checklist.ccg_index !== id,
+            );
+          }}
         />
       </div>
     </div>

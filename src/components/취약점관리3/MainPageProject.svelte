@@ -668,8 +668,10 @@
               <col />
               <col />
               <col />
-              <col />
-              <col />
+              {#if isAgenUser}
+                <col />
+                <col />
+              {/if}
             </colgroup>
             <thead>
               <tr>

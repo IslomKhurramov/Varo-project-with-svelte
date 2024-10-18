@@ -5,13 +5,31 @@
   import { userData } from "../stores/user.store";
   import { toggleNav } from "../../public/assets/js/common.js";
   import { toggleMenu } from "../../public/assets/js/common.js";
+  import { onMount } from "svelte";
 
   export let activeMenu = "점검관리";
 
-  // const handleLogout = () => {
-  //   authToken.set(null); // Clear the token, effectively logging the user out
-  //   navigate("/login"); // Redirect to login
-  // };
+  onMount(() => {
+    switch (window.location.pathname) {
+      case "/page2":
+        activeMenu = "자산관리";
+        break;
+      case "/page3":
+        activeMenu = "취약점관리";
+        break;
+      case "/page4":
+        activeMenu = "점검항목관리";
+        break;
+      case "/page5":
+        activeMenu = "대시보드";
+        break;
+      case "/page6":
+        activeMenu = "환경설정";
+        break;
+      default:
+        activeMenu = "점검관리";
+    }
+  });
 </script>
 
 <!-- <main>
@@ -47,7 +65,7 @@
     <ul>
       <li class={`menu ${activeMenu === "점검관리" ? "active" : ""}`}>
         <Link to="/page1" on:click={() => (activeMenu = "점검관리")}>
-          <a href="./index.html" class="menuItme">
+          <a href="javascript:void(0);" class="menuItme">
             <div class="iconMenu stroke">
               <svg
                 width="24"
@@ -134,7 +152,7 @@
       </li>
       <li class={`menu ${activeMenu === "자산관리" ? "active" : ""}`}>
         <Link to="/page2" on:click={() => (activeMenu = "자산관리")}>
-          <a href="./asset.html" class="menuItme">
+          <a href="javascript:void(0);" class="menuItme">
             <div class="iconMenu stroke">
               <svg
                 width="24"
@@ -219,12 +237,9 @@
           </a>
         </Link>
       </li>
-      <li
-        class={`menu ${activeMenu === "취약점관리" ? "active" : ""}`}
-        on:click={(e) => toggleMenu(e)}
-      >
+      <li class={`menu ${activeMenu === "취약점관리" ? "active" : ""}`}>
         <Link to="/page3" on:click={() => (activeMenu = "취약점관리")}>
-          <div class="menuItme toggleMenu">
+          <a href="javascript:void(0);" class="menuItme">
             <div class="iconMenu stroke">
               <svg
                 width="24"
@@ -284,34 +299,13 @@
                 />
               </svg>
             </div>
-            <span class="iconToggle iconMenu stroke">
-              취약점관리
-              <svg
-                width="10"
-                height="6"
-                viewBox="0 0 10 6"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1 1L5 5L9 1"
-                  stroke="#0067FF"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </div>
-          <ul class="submenu">
-            <li><a href="./vulnerability.html">- 조치계획관리</a></li>
-            <li><a href="./vulnerability_result.html">- 조치결과관리</a></li>
-          </ul>
+            <span>취약점관리</span>
+          </a>
         </Link>
       </li>
       <li class={`menu ${activeMenu === "점검항목관리" ? "active" : ""}`}>
         <Link to="/page4" on:click={() => (activeMenu = "점검항목관리")}>
-          <a href="./inspection_items.html" class="menuItme">
+          <a href="javascript:void(0);" class="menuItme">
             <div class="iconMenu stroke">
               <svg
                 width="24"
@@ -372,7 +366,7 @@
         class={`menu dashboard ${activeMenu === "대시보드" ? "active" : ""} `}
       >
         <Link to="/page5" on:click={() => (activeMenu = "대시보드")}>
-          <a href="./dashboard.html" class="menuItme">
+          <a href="javascript:void(0);" class="menuItme">
             <div class="iconMenu stroke">
               <svg
                 width="24"
@@ -519,7 +513,7 @@
       </li>
       <li class={`menu setting ${activeMenu === "환경설정" ? "active" : ""}`}>
         <Link to="/page6" on:click={() => (activeMenu = "환경설정")}>
-          <a href="#" class="menuItme">
+          <a href="javascript:void(0);" class="menuItme">
             <div class="iconMenu stroke">
               <svg
                 width="24"

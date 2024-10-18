@@ -19,6 +19,29 @@
   console.log("$userData:", $userData);
 
   let openNotificaiton = false;
+  let activeMenu = "점검관리";
+
+  $: {
+    switch (window.location.pathname) {
+      case "/page2":
+        activeMenu = "자산관리";
+        break;
+      case "/page3":
+        activeMenu = "취약점관리";
+        break;
+      case "/page4":
+        activeMenu = "점검항목관리";
+        break;
+      case "/page5":
+        activeMenu = "대시보드";
+        break;
+      case "/page6":
+        activeMenu = "환경설정";
+        break;
+      default:
+        activeMenu = "점검관리";
+    }
+  }
 
   onMount(() => {
     checkAuth();
@@ -33,84 +56,97 @@
     //   navigate("/login");
     // }
   });
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    userData.set({
+      isLoggedIn: false,
+      userInfo: null,
+    });
+    navigate("/login"); // Redirect to login
+  };
 </script>
 
 <Router>
   <!-- {#if $userData.isLoggedIn} -->
   <body>
     <div id="wrap">
-      <Header class="header" />
+      <Header bind:activeMenu />
       <div class="container">
         <nav class="titleWrap">
-          <h1>점검관리</h1>
-          <section>
-            <div class="alarmWrap">
-              <button
-                type="button"
-                class="alarm on"
-                on:click={() => {
-                  openNotificaiton = !openNotificaiton;
-                }}><img src="./assets/images/icon/alarm.svg" /></button
-              >
-              <div
-                class="tooltip-modal"
-                style={`display: ${openNotificaiton ? "block" : "none"};`}
-              >
-                <h3 class="title">알림</h3>
-                <section class="content">
-                  <div>
-                    <a href="">
-                      <div class="title">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </div>
-                      <div class="day">1일</div>
-                    </a>
-                  </div>
-                  <div>
-                    <a href="">
-                      <div class="title">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </div>
-                      <div class="day">4일</div>
-                    </a>
-                  </div>
-                  <div>
-                    <a href="">
-                      <div class="title">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </div>
-                      <div class="day">5주</div>
-                    </a>
-                  </div>
-                  <div>
-                    <a href="">
-                      <div class="title">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </div>
-                      <div class="day">12주</div>
-                    </a>
-                  </div>
-                  <div>
-                    <a href="">
-                      <div class="title">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </div>
-                      <div class="day">60주</div>
-                    </a>
-                  </div>
-                </section>
+          <h1>{activeMenu}</h1>
+          {#if $userData?.userInfo}
+            <section>
+              <div class="alarmWrap">
+                <button
+                  type="button"
+                  class="alarm on"
+                  on:click={() => {
+                    openNotificaiton = !openNotificaiton;
+                  }}><img src="./assets/images/icon/alarm.svg" /></button
+                >
+                <div
+                  class="tooltip-modal"
+                  style={`display: ${openNotificaiton ? "block" : "none"};`}
+                >
+                  <h3 class="title">알림</h3>
+                  <section class="content">
+                    <div>
+                      <a href="javascript:void(0);">
+                        <div class="title">
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </div>
+                        <div class="day">1일</div>
+                      </a>
+                    </div>
+                    <div>
+                      <a href="javascript:void(0);">
+                        <div class="title">
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </div>
+                        <div class="day">4일</div>
+                      </a>
+                    </div>
+                    <div>
+                      <a href="javascript:void(0);">
+                        <div class="title">
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </div>
+                        <div class="day">5주</div>
+                      </a>
+                    </div>
+                    <div>
+                      <a href="javascript:void(0);">
+                        <div class="title">
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </div>
+                        <div class="day">12주</div>
+                      </a>
+                    </div>
+                    <div>
+                      <a href="javascript:void(0);">
+                        <div class="title">
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </div>
+                        <div class="day">60주</div>
+                      </a>
+                    </div>
+                  </section>
+                </div>
               </div>
-            </div>
-            <article>
-              <img src="./assets/images/icon/person.svg" />
-              <div class="user"><span>홍길동</span>님</div>
-            </article>
-          </section>
+              <article>
+                <img src="./assets/images/icon/person.svg" />
+                <div class="user">
+                  <span>{$userData?.userInfo?.user_name}</span>님
+                </div>
+              </article>
+            </section>
+          {/if}
         </nav>
 
         <Route path="/" component={Page1} />
@@ -128,9 +164,3 @@
   <Route path="/login" component={Login} />
   <!-- {/if} -->
 </Router>
-
-<style>
-  main {
-    padding-top: 0px; /* Adjust based on your header height */
-  }
-</style>

@@ -535,7 +535,13 @@
         {/if}
 
         {#if wholePage}
-          <WholePage bind:plans bind:targetData bind:setView />
+          <WholePage
+            bind:plans
+            bind:targetData
+            bind:setView
+            bind:currentView
+            bind:wholePage
+          />
         {/if}
       </article>
     </div>

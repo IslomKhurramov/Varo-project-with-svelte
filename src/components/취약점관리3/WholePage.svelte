@@ -20,7 +20,7 @@
   export let targetData;
   export let setView;
 
-  let isAgentUser = true;
+  let isAgentUser = false;
 
   // let swiperContainer;
   // let swiperInstance;
@@ -740,7 +740,100 @@
                 <col />
               </colgroup>
               <tbody>
-                <tr>
+                {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+                  <div>
+                    isAgentUser && setView == "result" &&
+                    Object.keys(targetData?.fix_result).length === 0
+                  </div>
+                {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+                  <div>
+                    isAgentUser && setView == "result" &&
+                    Object.keys(targetData?.fix_result).length !== 0
+                  </div>
+                {:else if isAgentUser && setView == "plan"}
+                  <div>isAgentUser && setView == "plan"</div>
+                {:else}
+                  <tr>
+                    <th>조치방법</th>
+                    <td>
+                      <select bind:value={sendPlanRegisterData["fix_method"]}>
+                        <option value={""}>
+                          조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                        </option>
+                        {#if options?.length !== 0}
+                          {#each options as option}
+                            <option value={option?.cvf_index}
+                              >{option?.cvf_desc}</option
+                            >
+                          {/each}
+                        {/if}
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치수준</th>
+                    <td>
+                      <select bind:value={sendPlanRegisterData["fix_level"]}>
+                        <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
+                        <option value="긴급">긴급</option>
+                        <option value="단기">단기</option>
+                        <option value="중기">중기</option>
+                        <option value="장기">장기</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치일정</th>
+                    <td>
+                      <div class="dateWrap">
+                        <div class="date">
+                          <input
+                            type="date"
+                            class="datepicker"
+                            placeholder="시작일시"
+                            bind:value={sendPlanRegisterData["fix_start_date"]}
+                          />
+                        </div>
+                        <img src="./assets/images/icon/dash.svg" />
+                        <div class="date">
+                          <input
+                            type="date"
+                            class="datepicker"
+                            placeholder="종료일시"
+                            bind:value={sendPlanRegisterData["fix_end_date"]}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치방법</th>
+                    <td>
+                      <textarea
+                        rows="10"
+                        bind:value={sendPlanRegisterData["fix_comment"]}
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>조치담당자</th>
+                    <td>
+                      <select
+                        bind:value={sendPlanRegisterData["fix_user_index"]}
+                      >
+                        <option value={""}> 조치담당자</option>
+                        {#if usernames?.length !== 0}
+                          {#each usernames as username}
+                            <option value={username?.user_index}
+                              >{username?.user_name}</option
+                            >
+                          {/each}
+                        {/if}
+                      </select>
+                    </td>
+                  </tr>
+                {/if}
+                <!-- <tr>
                   <th>조치방법</th>
                   <td>
                     <select>
@@ -806,53 +899,102 @@
                       <option>가나다</option>
                     </select>
                   </td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
             <div class="flex justify-center btnActionWrap">
-              <button
-                type="button"
-                class="btn btnBlue btnAction btnSave w220 h50"
-                onclick="modalOpen('alert')">조치계획등록</button
-              >
+              {#if isAgentUser && setView == "plan"}
+                <button
+                  type="button"
+                  class="btn btnBlue btnAction btnSave w220 h50"
+                  onclick="modalOpen('alert')"
+                  on:click={async () => {
+                    sendApproveData.asset_target_uuid = targetData?.ast_uuid;
+                    sendApproveData.plan_index = targetData?.ccp_index;
+                    sendApproveData.approved_targets = [targetData?.ccr_index];
+                    await fixApproveHandler(sendApproveData);
+                    sendApproveData = {
+                      asset_target_uuid: "",
+                      plan_index: "",
+                      approved: "",
+                      approved_targets: "",
+                      approved_comment: "",
+                    };
+                  }}
+                >
+                  의견등록
+                </button>
+              {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+                <button
+                  type="button"
+                  class="btn btnBlue btnAction btnSave w220 h50"
+                  onclick="modalOpen('alert')"
+                  on:click={setFixDoneRegisterHandler}
+                >
+                  조치결과등록
+                </button>
+              {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+                <button
+                  type="button"
+                  class="btn btnBlue btnAction btnSave w220 h50"
+                  onclick="modalOpen('alert')"
+                  on:click={setFixDoneApproveHandler}
+                >
+                  의견등록
+                </button>
+              {:else}
+                <button
+                  type="button"
+                  class="btn btnBlue btnAction btnSave w220 h50"
+                  onclick="modalOpen('alert')"
+                  on:click={fixPlanRegister}
+                >
+                  조치계획등록
+                </button>
+              {/if}
             </div>
           </article>
 
-          <article>
-            <h3 class="title border">이전조치이력</h3>
-            <div class="tableListWrap nofirstth">
-              <table class="tableList hdBorder">
-                <colgroup>
-                  <col style="width:120px;" />
-                  <col />
-                  <col />
-                  <col style="width:120px;" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th class="text-center">조치방법</th>
-                    <th class="text-center">일정</th>
-                    <th class="text-center">의견</th>
-                    <th class="text-center">조치담당자</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="text-center">-</td>
-                    <td class="text-center">2024.10.10~2024.10.10</td>
-                    <td class="text-center">-</td>
-                    <td class="text-center">홍길동</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">-</td>
-                    <td class="text-center">2024.10.10~2024.10.10</td>
-                    <td class="text-center">-</td>
-                    <td class="text-center">홍길동</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
+          {#if historyItemData?.length !== 0}
+            <article>
+              <h3 class="title border">이전조치이력</h3>
+              <div class="tableListWrap nofirstth">
+                <table class="tableList hdBorder">
+                  <colgroup>
+                    <col style="width:120px;" />
+                    <col />
+                    <col />
+                    <col style="width:120px;" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th class="text-center">조치방법</th>
+                      <th class="text-center">플랜</th>
+                      <th class="text-center">일정</th>
+                      <th class="text-center">조치담당자</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {#each historyItemData as data}
+                      <tr>
+                        <td class="text-center"
+                          >{data.cfi_fix_status__cvs_desc}</td
+                        >
+                        <td class="text-center"
+                          >{data.ccr_index__ccp_index__ccp_title}</td
+                        >
+                        <td class="text-center"
+                          >{data.cfi_fix_startdate} {data.cfi_fix_enddate}</td
+                        >
+                        <td class="text-center">{data.user_index__user_name}</td
+                        >
+                      </tr>
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          {/if}
         </section>
 
         <section class="flex col">
@@ -861,24 +1003,24 @@
               <div class="formControlWrap">
                 <div class="formControl align-start">
                   <label class="mt-12">취약점정보</label>
-                  <textarea rows="8"
-                    >어쩌구..저쩌구…. 어쩌구..저쩌구…. 어쩌구..저쩌구….
-                    어쩌구..저쩌구….</textarea
+                  <textarea rows="8" readonly
+                    >${targetData?.ccr_item_no__ccc_item_criteria}</textarea
                   >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
                   <label class="mt-12">평가기준</label>
-                  <textarea rows="8">양호 : 취약 :</textarea>
+                  <textarea rows="8" readonly>
+                    {targetData?.ccr_item_no__ccc_item_title}</textarea
+                  >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
                   <label class="mt-12">조치방법</label>
-                  <textarea rows="8"
-                    >어쩌구..저쩌구…. 어쩌구..저쩌구…. 어쩌구..저쩌구….
-                    어쩌구..저쩌구….</textarea
+                  <textarea rows="8" readonly>
+                    {targetData?.ccr_item_no__ccc_mitigation_example}</textarea
                   >
                 </div>
               </div>
@@ -888,11 +1030,11 @@
                 type="button"
                 class="btn btnGray w140 h50 golist btnAction">목록으로</button
               >
-              <button
+              <!-- <button
                 type="button"
                 class="btn btnBlue btnSave w220 h50 btnAction"
                 >조치계획을 등록함</button
-              >
+              > -->
             </div>
 
             <article>
@@ -904,43 +1046,29 @@
                     <col />
                     <col />
                     <col />
-                    <col />
-                    <col />
                   </colgroup>
                   <thead>
                     <tr>
                       <th class="text-center">자산명</th>
                       <th class="text-center">아이피주소</th>
                       <th class="text-center">자산그룹</th>
-                      <th class="text-center">식별코드</th>
-                      <th class="text-center">등록일</th>
-                      <th class="text-center">보안점수</th>
+                      <th class="text-center">OS</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
-                      <td class="text-center">-</td>
+                      <td class="text-center"
+                        >{targetData?.ast_uuid__ass_uuid__ast_hostname}</td
+                      >
+                      <td class="text-center"
+                        >{targetData?.ast_uuid__ass_uuid__ast_ipaddr}</td
+                      >
+                      <td class="text-center"
+                        >{targetData?.cct_index__cct_target}</td
+                      >
+                      <td class="text-center"
+                        >{targetData?.ast_uuid__ass_uuid__ast_os}</td
+                      >
                     </tr>
                   </tbody>
                 </table>

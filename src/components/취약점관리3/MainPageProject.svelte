@@ -18,7 +18,7 @@
   export let targetData;
   export let wholeOption;
 
-  let isAgenUser = true;
+  let isAgenUser = false;
 
   let selectedItems = [];
 
@@ -668,8 +668,10 @@
               <col />
               <col />
               <col />
-              <col />
-              <col />
+              {#if isAgenUser}
+                <col />
+                <col />
+              {/if}
             </colgroup>
             <thead>
               <tr>

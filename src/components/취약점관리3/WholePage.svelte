@@ -16,33 +16,15 @@
     setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
   import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
+  import { userData } from "../../stores/user.store.js";
 
   export let targetData;
   export let setView;
   export let currentView;
   export let wholePage;
 
+  // let isAgentUser = $userData?.userInfo?.user_roletype__role_index == 1;
   let isAgentUser = true;
-
-  // let swiperContainer;
-  // let swiperInstance;
-
-  // onMount(() => {
-  //   swiperInstance = new Swiper(swiperContainer, {
-  //     modules: [Navigation, Pagination],
-  //     loop: false,
-  //     slidesPerView: 8,
-  //     spaceBetween: 15,
-  //     pagination: {
-  //       el: ".swiper-pagination",
-  //       clickable: true,
-  //     },
-  //     navigation: {
-  //       nextEl: ".swiper-button-next",
-  //       prevEl: ".swiper-button-prev",
-  //     },
-  //   });
-  // });
 
   let usernames = [];
   let options = [];

@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import {
     getFixDoneLists,
     getVulnsOfAsset,
@@ -7,6 +8,7 @@
     setFixDoneApprove,
   } from "../../services/vulns/vulnsService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
+  import { userData } from "../../stores/user.store";
 
   export let tableData;
   export let vulnerabilityStatusValue;
@@ -18,6 +20,7 @@
   export let targetData;
   export let wholeOption;
 
+  // let isAgenUser = $userData?.userInfo?.user_roletype__role_index == 1;
   let isAgenUser = true;
 
   let selectedItems = [];
@@ -149,10 +152,6 @@
         actionStatusValue,
       );
     }
-  }
-
-  $: {
-    console.log();
   }
 </script>
 

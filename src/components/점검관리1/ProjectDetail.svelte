@@ -197,7 +197,9 @@
   };
 
   $: {
-    console.log("projectDetails:", projectDetails);
+    console.log("+projectDetails:", projectDetails);
+    console.log("+updateInfo:", updateInfo);
+    console.log("+planList:", planList);
   }
 </script>
 
@@ -997,7 +999,7 @@
         <tr>
           <th>점검대상</th>
           <td>
-            <select bind:value={updateInfo["asg_index"]}>
+            <select bind:value={updateInfo["asg_index"]} style="width: 740px;">
               <option value="" selected disabled>자산 그룹목록</option>
 
               {#if planOptions.asset_group}
@@ -1013,7 +1015,10 @@
         <tr>
           <th>점검항목</th>
           <td colspan="3">
-            <select bind:value={updateInfo["ccp_ruleset"]}>
+            <select
+              bind:value={updateInfo["ccp_ruleset"]}
+              style="width: 740px;"
+            >
               <option value="" selected disabled>점검항목 목록</option>
               {#if planOptions.checklist_group}
                 {#each planOptions.checklist_group as item}
@@ -1039,38 +1044,49 @@
               placeholder="진행상태"
               disabled
               value={projectDetails?.ccp_b_finalized ? "완료" : "진행 중"}
+              style="width: 740px;"
             />
           </td>
         </tr>
         <tr>
           <th>점검방법</th>
           <td>
-            <select bind:value={updateInfo["recheck"]}>
-              <option value={0}> 신규점겅검 </option>
-              <option value={1}> 이행점검 </option>
-            </select>
-          </td>
-          {#if updateInfo?.recheck === 1}
-            <th>이전점검</th>
-            <td>
-              <select bind:value={updateInfo["recheck_pno"]}>
-                <option value="" selected disabled>이전 점검플랜명</option>
+            <div class="dateWrap">
+              <div class="date">
+                <select
+                  bind:value={updateInfo["recheck"]}
+                  style={`width: ${updateInfo?.recheck === 1 ? "340" : "740"}px;`}
+                >
+                  <option value={0}> 신규점겅검 </option>
+                  <option value={1}> 이행점검 </option>
+                </select>
+              </div>
+              {#if updateInfo?.recheck === 1}
+                <img src="./assets/images/icon/dash.svg" />
+                <div class="date">
+                  <select bind:value={updateInfo["recheck_pno"]}>
+                    <option value={0} disabled>이전 점검플랜명</option>
 
-                {#if planList}
-                  {#each planList as plan}
-                    <option value={plan.ccp_index}>
-                      {plan.ccp_title}
-                    </option>
-                  {/each}
-                {/if}
-              </select>
-            </td>
-          {/if}
+                    {#if planList}
+                      {#each planList as plan}
+                        <option value={plan.ccp_index}>
+                          {plan.ccp_title}
+                        </option>
+                      {/each}
+                    {/if}
+                  </select>
+                </div>
+              {/if}
+            </div>
+          </td>
         </tr>
         <tr>
           <th>점검담당자</th>
           <td>
-            <select bind:value={updateInfo["plan_planer_info"]}>
+            <select
+              bind:value={updateInfo["plan_planer_info"]}
+              style="width: 740px;"
+            >
               <option value="" selected disabled>선택</option>
               {#if planOptions.member_group}
                 {#each planOptions.member_group as member}
@@ -1109,7 +1125,7 @@
         <tr>
           <th>점검스케쥴</th>
           <td colspan="3">
-            <select>
+            <select style="width: 740px;">
               <option
                 value="0"
                 selected={updateInfo?.plan_execution_type === true}
@@ -1153,7 +1169,10 @@
         <tr>
           <th>조치담당자</th>
           <td colspan="3">
-            <select bind:value={updateInfo["fix_conductor_info"]}>
+            <select
+              bind:value={updateInfo["fix_conductor_info"]}
+              style="width: 740px;"
+            >
               <option value="" selected disabled>선택</option>
               {#if planOptions.member_group}
                 {#each planOptions.member_group as member}
@@ -1166,10 +1185,14 @@
           </td>
         </tr>
         <tr>
-          <th>점검정보파일<br />재업로드</th>
+          <th>점검정보파일</th>
           <td colspan="2">
             <div class="upload-section">
-              <label for="file-upload" class="file-label">엑셀파일업로드</label>
+              <label for="file-upload" class="file-label" style="width: 576px;"
+                >{updateInfo?.assessment_command
+                  ? "파일 업로드됨"
+                  : "엑셀파일업로드"}</label
+              >
               <input
                 type="file"
                 id="file-upload"
@@ -1194,19 +1217,19 @@
               </button>
             </div>
           </td>
-          <td class="flex btnWrap">
-            <button
-              type="button"
-              class="btn btnBlue btnSave"
-              onclick="modalOpen('alert')"
-              on:click={() => (alertConfirm = true)}
-            >
-              변경저장
-            </button>
-          </td>
         </tr>
       </tbody>
     </table>
+    <div class="flex btnWrap">
+      <button
+        type="button"
+        class="btn btnBlue btnSave"
+        onclick="modalOpen('alert')"
+        on:click={() => (alertConfirm = true)}
+      >
+        변경저장
+      </button>
+    </div>
   </article>
 </section>
 
@@ -1672,4 +1695,19 @@
     </div>
   {/if}
 </div>
+
 <!--//Modal:자산 상세-->
+
+<style>
+  .btnSave {
+    width: 224px;
+    height: 50px;
+    justify-content: center;
+  }
+
+  .btnWrap {
+    margin-top: 20px;
+    width: 56%;
+    justify-content: flex-end;
+  }
+</style>

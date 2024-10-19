@@ -223,22 +223,22 @@
         <div class="tableListWrap">
           <table class="tableList">
             <colgroup>
-              <col style="width:100px;" />
-              <col />
-              <col style="width:200px;" />
-              <col style="width:100px;" />
-              <col />
-              <col />
-              <col style="width:190px;" />
-              <col style="width:30px;" />
+              <col style="width:6%;" />
+              <col style="width: 16%;" />
+              <col style="width:30%;" />
+              <col style="width:5%;" />
+              <col style="width:5%;" />
+              <col style="width:12%;" />
+              <col style="width:5%;" />
+              <col style="width:2%;" />
             </colgroup>
             <thead>
               <tr>
-                <th>보안점수</th>
+                <th class="text-center">보안점수</th>
                 <th>제목</th>
                 <th>점검대상</th>
                 <th>생성자</th>
-                <th>진행상태</th>
+                <th class="text-center">진행상태</th>
                 <th>점검일시</th>
                 <th>점검방법</th>
                 <th></th>
@@ -330,11 +330,11 @@
                       </div>
                     </td>
                     <td> {project.plan_planer_info__user_name} </td>
-                    <td>
+                    <td class="text-center">
                       <span class="badge badgePrimary">
                         {project?.ccp_b_finalized ? "완료" : "진행 중"}
                       </span>
-                      <div class="tableSummary">(18/28대, 78% 결과 수집)</div>
+                      <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
                     </td>
                     <td>
                       {moment(project?.plan_start_date).format("YYYY MM DD")} ~ {moment(

@@ -288,7 +288,7 @@ th.pl-20 {
   border-right: 1px solid #e8e8e8;
 }
 #wrap .headerWrap.on {
-  width: 258px;
+  width: 190px;
   background-color: white;
 }
 #wrap .headerWrap .logoWrap,
@@ -832,7 +832,7 @@ th.pl-20 {
   margin-right: 6px;
 }
 #wrap .headerWrap.on + .container {
-  width: calc(100% - 258px);
+  width: calc(100% - 190px);
 }
 #wrap .headerWrap.off + .container {
   width: calc(100% - 80px);
@@ -862,7 +862,7 @@ button.tableTootip {
 }
 
 #wrap .container .sideMenu {
-  width: 220px;
+  width: 252px;
   min-height: calc(100vh - 134px);
   padding: 10px 12px;
   position: relative;

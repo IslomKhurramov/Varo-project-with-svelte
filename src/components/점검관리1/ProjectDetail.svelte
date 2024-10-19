@@ -19,6 +19,8 @@
   let projectDetails = {};
   let assetsInfo = null;
   let modalData = null;
+  let securityPointData = [];
+  let securityMenu = "";
 
   let planOptions = [];
   let planList = [];
@@ -147,59 +149,19 @@
     }
   };
 
-  function calculatePieSlice(value, total, radius, startAngle) {
-    const angle = (value / total) * 2 * Math.PI;
-    const x1 = radius * Math.cos(startAngle);
-    const y1 = radius * Math.sin(startAngle);
-    const x2 = radius * Math.cos(startAngle + angle);
-    const y2 = radius * Math.sin(startAngle + angle);
-    const largeArcFlag = angle > Math.PI ? 1 : 0;
-
-    return `
-      M 0 0 
-      L ${x1} ${y1} 
-      A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} 
-      Z
-    `;
-  }
-
-  const calculateSecurityStatistic = (target_group_securitypoint, group) => {
-    const accountManagementYs = Object.values(target_group_securitypoint)
-      .flat()
-      .filter((item) => item.label === group)
-      .map((item) => item.y);
-
-    const totalY = accountManagementYs.reduce((sum, value) => sum + value, 0);
-    const data = (totalY / accountManagementYs.length).toFixed(2);
-
-    const returndata = isNaN(data) ? 0 : parseInt(data);
-    return returndata;
-  };
-
-  const calculateAllSecurityLevel = (target_group_securitypoint) => {
+  const calculateSecurityLevelByGroup = (target_group_securitypoint) => {
     console.log("target_group_securitypoint:", target_group_securitypoint);
-    const allItems = Object.values(target_group_securitypoint).flat();
-    const totalY = allItems.reduce((sum, item) => sum + item.y, 0);
-
-    const data = (totalY / allItems.length).toFixed(2);
-
-    return isNaN(data) ? 0 : parseInt(data);
-  };
-
-  const calculateSecurityLevelByGroup = (target_group_securitypoint, group) => {
-    const filteredItems = Object.entries(target_group_securitypoint)
-      .filter(([key]) => group.includes(key))
-      .flatMap(([, items]) => items);
-
-    const totalY = filteredItems.reduce((sum, item) => sum + item.y, 0);
-    const data = (totalY / filteredItems.length).toFixed(2);
+    const totalY = target_group_securitypoint?.reduce(
+      (sum, item) => sum + item.y,
+      0,
+    );
+    const data = (totalY / target_group_securitypoint?.length).toFixed(2);
     return isNaN(data) ? 0 : parseInt(data);
   };
 
   $: {
     console.log("+projectDetails:", projectDetails);
-    console.log("+updateInfo:", updateInfo);
-    console.log("+planList:", planList);
+    console.log("+securityPointData:", securityPointData);
   }
 </script>
 
@@ -1241,9 +1203,9 @@
         <div class="circleGraph">
           <div class="summary">
             <h6>
-              {calculateAllSecurityLevel(
-                projectDetails?.target_group_securitypoint,
-              )}%
+              {projectDetails?.ccp_security_point > 0
+                ? projectDetails?.ccp_security_point
+                : 0}%
             </h6>
             <span>전체보안수준</span>
           </div>
@@ -1263,16 +1225,10 @@
                 cx="75"
                 cy="75"
                 r="55"
-                stroke={calculateAllSecurityLevel(
-                  projectDetails?.target_group_securitypoint,
-                ) > 0
-                  ? calculateAllSecurityLevel(
-                      projectDetails?.target_group_securitypoint,
-                    ) <= 33
+                stroke={projectDetails?.ccp_security_point > 0
+                  ? projectDetails?.ccp_security_point <= 33
                     ? "#FF1500"
-                    : calculateAllSecurityLevel(
-                          projectDetails?.target_group_securitypoint,
-                        ) <= 66
+                    : projectDetails?.ccp_security_point <= 66
                       ? "#4AC93F"
                       : "#0067FF"
                   : "#0067FF"}
@@ -1282,16 +1238,10 @@
                 stroke-linecap="round"
                 transform="rotate(-90 75 75)"
                 style={`stroke: ${
-                  calculateAllSecurityLevel(
-                    projectDetails?.target_group_securitypoint,
-                  ) > 0
-                    ? calculateAllSecurityLevel(
-                        projectDetails?.target_group_securitypoint,
-                      ) <= 33
+                  projectDetails?.ccp_security_point > 0
+                    ? projectDetails?.ccp_security_point <= 33
                       ? "#FF1500"
-                      : calculateAllSecurityLevel(
-                            projectDetails?.target_group_securitypoint,
-                          ) <= 66
+                      : projectDetails?.ccp_security_point <= 66
                         ? "#4AC93F"
                         : "#0067FF"
                     : "#0067FF"
@@ -1299,12 +1249,8 @@
                   345 -
                   (345 *
                     parseInt(
-                      calculateAllSecurityLevel(
-                        projectDetails?.target_group_securitypoint,
-                      ) > 0
-                        ? calculateAllSecurityLevel(
-                            projectDetails?.target_group_securitypoint,
-                          )
+                      projectDetails?.ccp_security_point > 0
+                        ? projectDetails?.ccp_security_point
                         : 0,
                     )) /
                     100
@@ -1319,196 +1265,97 @@
 
         <div class="progressSection">
           <ul class="progressbarWrap">
-            <li>
-              <div class="progress-info">
-                <h4>UNIX</h4>
-                <span
-                  >{calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "UNIX",
-                  )}%</span
-                >
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "UNIX",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>WINDOWS</h4>
-                <span
-                  >{calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "WINDOWS",
-                  )}%</span
-                >
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "WINDOWS",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>SECURITY</h4>
-                <span
-                  >{calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "SECURITY",
-                  )}%</span
-                >
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "SECURITY",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>NETWORK</h4>
-                <span
-                  >{calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "NETWORK",
-                  )}%</span
-                >
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityLevelByGroup(
-                    projectDetails?.target_group_securitypoint,
-                    "NETWORK",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
+            {#each Object.entries(projectDetails?.target_group_securitypoint) as [key, security]}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <li
+                on:click={() => {
+                  securityPointData = security;
+                  securityMenu = key;
+                }}
+              >
+                <div class="progress-info">
+                  <h4 class={securityMenu == key ? "active" : ""}>{key}</h4>
+                  <span>
+                    {calculateSecurityLevelByGroup(security)}%
+                  </span>
+                </div>
+                <div class="progress">
+                  <div
+                    class="progress-bar blue"
+                    style={`width: ${calculateSecurityLevelByGroup(security)}%;`}
+                  ></div>
+                </div>
+              </li>
+            {/each}
           </ul>
-          <!-- <div class="slidePager">
-            <a href="#" class="active"></a>
-            <a href="#"></a>
-            <a href="#"></a>
-          </div> -->
         </div>
 
         <div class="progressSection">
           <ul class="progressbarWrap">
-            <li>
-              <div class="progress-info">
-                <h4>계정관리</h4>
-                <span>
-                  {calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "계정 관리",
-                  )}%
-                </span>
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "계정 관리",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>접근관리</h4>
-                <span>
-                  {calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "접근 관리",
-                  )}%
-                </span>
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "접근 관리",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>패치관리</h4>
-                <span>
-                  {calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "패치 관리",
-                  )}%
-                </span>
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "패치 관리",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>로그관리</h4>
-                <span>
-                  {calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "로그 관리",
-                  )}%
-                </span>
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "로그 관리",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
-            <li>
-              <div class="progress-info">
-                <h4>기능관리</h4>
-                <span>
-                  {calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "기능 관리",
-                  )}%
-                </span>
-              </div>
-              <div class="progress">
-                <div
-                  class="progress-bar blue"
-                  style={`width: ${calculateSecurityStatistic(
-                    projectDetails?.target_group_securitypoint,
-                    "기능 관리",
-                  )}%;`}
-                ></div>
-              </div>
-            </li>
+            {#if securityPointData?.length !== 0}
+              {#each securityPointData as data}
+                <li>
+                  <div class="progress-info">
+                    <h4>{data?.label}</h4>
+                    <span>
+                      {data?.y}%
+                    </span>
+                  </div>
+                  <div class="progress">
+                    <div
+                      class="progress-bar blue"
+                      style={`width: ${data?.y}%;`}
+                    ></div>
+                  </div>
+                </li>
+              {/each}
+            {:else}
+              <li>
+                <div class="progress-info">
+                  <h4>계정관리</h4>
+                  <span> 0% </span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar blue" style={`width: 0%;`}></div>
+                </div>
+              </li>
+              <li>
+                <div class="progress-info">
+                  <h4>접근관리</h4>
+                  <span> 0% </span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar blue" style={`width: 0%;`}></div>
+                </div>
+              </li>
+              <li>
+                <div class="progress-info">
+                  <h4>패치관리</h4>
+                  <span> 0% </span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar blue" style={`width: 0%;`}></div>
+                </div>
+              </li>
+              <li>
+                <div class="progress-info">
+                  <h4>로그관리</h4>
+                  <span> 0% </span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar blue" style={`width: 0%;`}></div>
+                </div>
+              </li>
+              <li>
+                <div class="progress-info">
+                  <h4>기능관리</h4>
+                  <span> 0% </span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar blue" style={`width: 0%;`}></div>
+                </div>
+              </li>
+            {/if}
           </ul>
           <!-- <div class="slidePager">
             <a href="#" class="active"></a>
@@ -1523,7 +1370,7 @@
   <section class="rowContents">
     <article class="contentArea securityVulnerability">
       <h4 class="title border">주요 취약점</h4>
-      <div class="tableListWrap">
+      <div class="tableListWrap" style="max-height: 256px;">
         <table class="tableList hdBorder">
           <colgroup>
             <col style="width:60px;" />
@@ -1553,23 +1400,11 @@
                   {vuln?.ccr_item_no__ccc_item_title}
                 </td>
                 <td>{vuln?.ccr_item_no__ccc_item_level}</td>
-                <!-- <td class="text-center">
-                  <span class="badge badgePrimary"> 양호 </span>
-                </td> -->
               </tr>
             {/each}
           </tbody>
         </table>
       </div>
-      <!-- <div class="paginationWrap">
-        <div class="pagination">
-          <a href="" class="active">1</a>
-          <a href="">2</a>
-          <a href="">...</a>
-          <a href="">4</a>
-          <a href="">&gt;</a>
-        </div>
-      </div> -->
     </article>
   </section>
 {/if}
@@ -1709,5 +1544,19 @@
     margin-top: 20px;
     width: 56%;
     justify-content: flex-end;
+  }
+
+  .progressbarWrap li {
+    cursor: pointer;
+  }
+
+  .progress-info,
+  .progress-info h4:hover {
+    cursor: pointer;
+    color: blue;
+  }
+
+  .progress-info h4.active {
+    color: blue;
   }
 </style>

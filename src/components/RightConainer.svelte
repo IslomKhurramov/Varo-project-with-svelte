@@ -147,6 +147,7 @@
 </script>
 
 <div
+  style="overflow: scroll; height: 100vh;"
   class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"} ${tabMenu == "보고서생성" && "reportCreate"} ${tabMenu == "이력관리" && "logWrap"}`}
 >
   <nav class="tabMenu">
@@ -448,5 +449,9 @@
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;
+  }
+
+  .contentsWrap::-webkit-scrollbar {
+    display: none;
   }
 </style>

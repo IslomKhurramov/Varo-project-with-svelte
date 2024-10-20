@@ -66,6 +66,66 @@
     plans = await getVulnsOfPlan(search);
     tableData = plans?.vulns;
   };
+
+  function downloadCSV(data) {
+    // ***************
+
+    const transformed = [];
+
+    for (const key in tableData) {
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      tableData[key].forEach((item) => {
+        if (item.result) {
+          currentResult = item?.result;
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
+          }
+        }
+      });
+
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    // ***************
+    const csvRows = [];
+    const headers = Object.keys(transformed[0]);
+
+    csvRows.push(headers.join(",")); // Add headers
+
+    for (const row of transformed) {
+      const values = headers.map((header) => {
+        const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
+        return `"${escaped}"`; // Wrap in quotes
+      });
+      csvRows.push(values.join(","));
+    }
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link to download the file
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "table_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 </script>
 
 <!-- <main class="container">
@@ -508,12 +568,11 @@
                 <option value="6">조치결과승인</option>
                 <option value="7">조치결과반려</option>
               </select>
-              <!-- <select>
-                <option>담당자별</option>
-                <option>홍길동</option>
-                <option>가나다</option>
-              </select> -->
-              <button type="button" class="btn btnPrimary">
+              <button
+                type="button"
+                class="btn btnPrimary"
+                on:click={downloadCSV}
+              >
                 <img src="./assets/images/icon/download.svg" /> 엑셀 다운로드
               </button>
             </div>

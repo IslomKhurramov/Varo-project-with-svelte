@@ -104,7 +104,7 @@
   ];
 </script>
 
-<main>
+<!-- <main>
   <div class="container">
     <header>
       <p>Registered Projects: 10</p>
@@ -342,141 +342,428 @@
       </div>
     </div>
   </div>
-</main>
+</main> -->
 
-<style>
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    border-radius: 20px;
-    min-height: 100vh;
-  }
-  .container {
-    background-color: #f7f9fb; /* Use white background for cleanliness */
-    color: #343a40;
-    padding: 20px;
-    width: 98%;
-    display: flex;
-    flex-direction: column;
-    border-radius: 20px;
-    top: 0;
-    bottom: 0;
-    box-shadow:
-      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
-      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; /* Soft shadow for depth */
-    border-right: 1px solid #e0e0e0; /* Subtle border for separation */
-  }
-  .announcement_container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
+<section class="dashboard">
+  <div class="contentsWrap w100">
+    <ul class="countWrap flex">
+      <li>
+        <div class="count">10개</div>
+        <span>등록된프로젝트</span>
+      </li>
+      <li>
+        <div class="count">10개</div>
+        <span>완료된프로젝트</span>
+      </li>
+      <li>
+        <div class="count">10개</div>
+        <span>등록된자산</span>
+      </li>
+      <li>
+        <div class="count">10개</div>
+        <span>자동등록</span>
+      </li>
+      <li>
+        <div class="count">10개</div>
+        <span>수동등록</span>
+      </li>
+    </ul>
 
-  header {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: #007acc;
+    <section class="rowContents col3">
+      <article class="contentArea">
+        <h4 class="title border">공지사항</h4>
+        <div class="tableListWrap nofirstth">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
 
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-  }
+      <article class="contentArea">
+        <h4 class="title border">조치사항 알림</h4>
+        <div class="tableListWrap nofirstth">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
 
-  .charts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    padding: 20px;
-  }
+      <article class="contentArea">
+        <h4 class="title border">자료실</h4>
+        <div class="tableListWrap nofirstth">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
 
-  .chart-container {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    transition: transform 0.3s;
-  }
+    <section class="rowContents">
+      <div class="graphWrap">
+        <article class="contentArea securityWrap">
+          <h4 class="title border">취약점조치현황</h4>
+          <div class="circle" data-percent="80" data-offset="345">
+            <svg width="" height="" viewBox="0 0 139 139">
+              <circle
+                cx="75"
+                cy="75"
+                r="55"
+                stroke="#F2F2F2"
+                stroke-width="18"
+                fill="none"
+              />
+              <circle
+                class="progress"
+                cx="75"
+                cy="75"
+                r="55"
+                stroke="#0067ff"
+                stroke-width="18"
+                fill="none"
+                stroke-dasharray="345"
+                stroke-linecap="round"
+                transform="rotate(-90 75 75)"
+              />
+            </svg>
+            <div class="percent">
+              <span>80%</span>
+            </div>
+          </div>
+        </article>
+        <article class="contentArea">
+          <h4 class="title border">결과 등록 현황</h4>
+          <div class="barGraphWrap h220 bottom">
+            <div class="bar-graph">
+              <div class="bar" data-label="text" style="height: 30%;"></div>
+              <div class="bar" data-label="text" style="height: 40%;"></div>
+              <div class="bar" data-label="text" style="height: 50%;"></div>
+              <div class="bar" data-label="text" style="height: 60%;"></div>
+              <div class="bar" data-label="text" style="height: 70%;"></div>
+              <div
+                class="bar active"
+                data-label="text"
+                style="height: 80%;"
+              ></div>
+              <div class="bar" data-label="text" style="height: 100%;"></div>
+            </div>
+          </div>
+        </article>
+      </div>
 
-  .chart-container:hover {
-    transform: translateY(-10px);
-  }
+      <article class="contentArea">
+        <div class="flex head title border justify-between">
+          <h4>대시보드</h4>
+          <ul class="flex barColorGuide">
+            <li class="green">월별취약점조치건수</li>
+            <li class="blue">전체자산 보안수준</li>
+            <li class="yellow">자산등록현황</li>
+          </ul>
+        </div>
+        <div class="barGraphWrap various bottom">
+          <div class="bar-graph">
+            <div class="flex bar-segment">
+              <div class="bar">
+                <div
+                  class="bar-con green"
+                  data-label="-"
+                  style="height: 30%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con blue"
+                  data-label="-"
+                  style="height: 60%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con yellow"
+                  data-label="-"
+                  style="height: 40%;"
+                ></div>
+              </div>
+            </div>
+            <div class="flex bar-segment">
+              <div class="bar">
+                <div
+                  class="bar-con green"
+                  data-label="-"
+                  style="height: 30%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con blue"
+                  data-label="-"
+                  style="height: 60%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con yellow"
+                  data-label="-"
+                  style="height: 40%;"
+                ></div>
+              </div>
+            </div>
+            <div class="flex bar-segment">
+              <div class="bar">
+                <div
+                  class="bar-con green"
+                  data-label="-"
+                  style="height: 30%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con blue"
+                  data-label="-"
+                  style="height: 60%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con yellow"
+                  data-label="-"
+                  style="height: 40%;"
+                ></div>
+              </div>
+            </div>
+            <div class="flex bar-segment">
+              <div class="bar">
+                <div
+                  class="bar-con green"
+                  data-label="-"
+                  style="height: 30%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con blue"
+                  data-label="-"
+                  style="height: 60%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con yellow"
+                  data-label="-"
+                  style="height: 40%;"
+                ></div>
+              </div>
+            </div>
+            <div class="flex bar-segment">
+              <div class="bar">
+                <div
+                  class="bar-con green"
+                  data-label="-"
+                  style="height: 30%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con blue"
+                  data-label="-"
+                  style="height: 60%;"
+                ></div>
+              </div>
+              <div class="bar">
+                <div
+                  class="bar-con yellow"
+                  data-label="-"
+                  style="height: 40%;"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
 
-  h3 {
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #555;
-  }
+    <section class="rowContents col2">
+      <article class="contentArea">
+        <h4 class="title border">취약점보유자산 Top5</h4>
+        <div class="tableListWrap nofirstth">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
 
-  .pie_container,
-  .chart {
-    width: 100%;
-    height: 230px;
-  }
-
-  .tick {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 0.75em;
-    font-weight: 400;
-  }
-
-  .tick line {
-    stroke: #ddd;
-    stroke-dasharray: 2;
-  }
-
-  .tick text {
-    fill: #888;
-    text-anchor: start;
-  }
-
-  .tick.tick-0 line {
-    stroke-dasharray: 0;
-  }
-
-  .x-axis .tick text {
-    text-anchor: middle;
-  }
-
-  .bars rect {
-    fill: #1e88e5;
-    stroke: none;
-    opacity: 0.85;
-    transition:
-      fill 0.3s,
-      transform 0.3s;
-  }
-
-  .bars rect:hover {
-    fill: #1565c0;
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-  .table {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    transition: transform 0.3s;
-    width: 30%;
-    height: 250px;
-  }
-</style>
+      <article class="contentArea">
+        <h4 class="title border">취약점 Top5</h4>
+        <div class="tableListWrap nofirstth">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+                <th class="text-center">타이틀명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+              <tr>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+                <td class="text-center">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </div>
+</section>

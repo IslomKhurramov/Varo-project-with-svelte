@@ -423,6 +423,7 @@
             {#each plans?.plans as plan, index}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <li
+                style="cursor: pointer;"
                 class={`menuItem ${
                   activePlan === plan.plan_index ? "active" : ""
                 } `}
@@ -496,6 +497,7 @@
                     {#each hosts as host}
                       <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <li
+                        style="cursor: pointer;"
                         class={`menuItem ${
                           activeMenu ===
                           host?.ast_uuid__ass_uuid__ast_hostname +

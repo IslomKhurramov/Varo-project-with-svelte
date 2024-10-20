@@ -24,7 +24,7 @@
   export let wholePage;
 
   // let isAgentUser = $userData?.userInfo?.user_roletype__role_index == 1;
-  let isAgentUser = true;
+  let isAgentUser = false;
 
   let usernames = [];
   let options = [];
@@ -225,7 +225,7 @@
   let menuWrapper;
   let scrollAmount = 0;
   let itemWidth = 146;
-  let menuWidth = 1260;
+  let menuWidth = 100;
 
   const handleScroll = (direction) => {
     menuWrapper = document.getElementById("menuWrapper");
@@ -1246,3 +1246,11 @@
     </div>
   </div>
 </section>
+
+<style>
+  .menu-item:hover {
+    background: blue;
+    color: white;
+    transition: 0.2s;
+  }
+</style>

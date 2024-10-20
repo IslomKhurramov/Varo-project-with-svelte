@@ -2354,7 +2354,7 @@ label.file-label {
   justify-content: space-between;
 }
 .menu-container .menu-wrapper-container {
-  width: 1260px;
+  width: 100%;
   overflow: hidden;
 }
 .menu-container .menu-wrapper {

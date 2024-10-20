@@ -54,12 +54,19 @@
       console.log("ERROR deleteProject:", err);
     }
   };
+
+  $: {
+    console.log("activeMenu:", activeMenu);
+  }
 </script>
 
 <section>
   <article class="sideMenu">
     <div class="btnWrap">
-      <a class="btn btnPrimary" on:click={() => selectPage(AddPorject, "add")}>
+      <a
+        class={`btn btnPrimary ${activeMenu == "add" ? "buttonActive" : ""}`}
+        on:click={() => selectPage(AddPorject, "add")}
+      >
         <img src="./assets/images/icon/add.svg" />
         신규점검
       </a>
@@ -96,3 +103,14 @@
     />
   {/if}
 </section>
+
+<style>
+  .buttonActive {
+    background-color: #0067ff;
+    color: #fff;
+    transition-duration: 0.2s;
+  }
+  .buttonActive img {
+    filter: brightness(0) invert(1);
+  }
+</style>

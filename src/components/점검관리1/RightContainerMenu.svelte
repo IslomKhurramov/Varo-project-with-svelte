@@ -5,6 +5,7 @@
   import FourthMenu from "./HeaderMenu/FourthMenu.svelte";
   import FifthMenu from "./HeaderMenu/FifthMenu.svelte";
   import ProjectDetail from "./ProjectDetail.svelte";
+  import { navigate } from "svelte-routing";
 
   export let projectIndex;
   let currentPage = null;
@@ -53,6 +54,14 @@
           이력관리
         </a>
       </li>
+      <div
+        class="backImage"
+        on:click={() => {
+          navigate(window.location?.pathname == "/" ? "/page1" : "/");
+        }}
+      >
+        <img src="./assets/images/icon/back.svg" alt="" />
+      </div>
     </ul>
   </nav>
   {#if tabMenu !== "no"}
@@ -61,3 +70,10 @@
     <ProjectDetail {projectIndex} />
   {/if}
 </div>
+
+<style>
+  .backImage {
+    cursor: pointer;
+    width: 24px;
+  }
+</style>

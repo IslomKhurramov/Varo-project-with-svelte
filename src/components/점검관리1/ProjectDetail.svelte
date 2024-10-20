@@ -938,8 +938,9 @@
       </div>
     </article>
   </div>
-  <article class="contentArea">
+  <article class="contentArea" style="position: relative;">
     <h4 class="title border">개요</h4>
+
     <table class="tableForm">
       <colgroup>
         <col style="width:130px;" />
@@ -952,6 +953,7 @@
           <th>제목</th>
           <td colspan="3">
             <input
+              style="width: 740px;"
               type="text"
               placeholder="점검플랜명"
               bind:value={updateInfo["ccp_title"]}
@@ -1367,7 +1369,7 @@
     </article>
   </section>
 
-  <section class="rowContents">
+  <section class="rowContents last">
     <article class="contentArea securityVulnerability">
       <h4 class="title border">주요 취약점</h4>
       <div class="tableListWrap" style="max-height: 256px;">
@@ -1558,5 +1560,10 @@
 
   .progress-info h4.active {
     color: blue;
+  }
+  .last tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
   }
 </style>

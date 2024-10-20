@@ -9,6 +9,7 @@
   import FourthMenu from "./점검관리1/HeaderMenu/FourthMenu.svelte";
   import ProjectDetail from "./점검관리1/ProjectDetail.svelte";
   import { toggleTooltip } from "../../public/assets/js/common.js";
+  import { navigate } from "svelte-routing";
 
   let projectData = {};
   let projectArray = [];
@@ -144,6 +145,9 @@
     link.click();
     document.body.removeChild(link);
   }
+  $: {
+    console.log("tabmenu:", tabMenu);
+  }
 </script>
 
 <div
@@ -196,6 +200,16 @@
           이력관리
         </a>
       </li>
+      {#if tabMenu}
+        <div
+          class="backImage"
+          on:click={() => {
+            navigate(window.location?.pathname == "/" ? "/page1" : "/");
+          }}
+        >
+          <img src="./assets/images/icon/back.svg" alt="" />
+        </div>
+      {/if}
     </ul>
   </nav>
 
@@ -449,9 +463,15 @@
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;
+    transition-duration: 0.3s;
   }
 
   .contentsWrap::-webkit-scrollbar {
     display: none;
+  }
+
+  .backImage {
+    cursor: pointer;
+    width: 24px;
   }
 </style>

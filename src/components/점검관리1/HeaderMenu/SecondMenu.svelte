@@ -592,16 +592,6 @@
         </tbody>
       </table>
     </div>
-    <div class="paginationWrap end">
-      <div class="pagination">
-        <!-- <a href="">&lt;</a> -->
-        <a href="" class="active">1</a>
-        <a href="">2</a>
-        <a href="">...</a>
-        <a href="">4</a>
-        <a href="">&gt;</a>
-      </div>
-    </div>
   </section>
 </article>
 
@@ -615,3 +605,11 @@
     />
   </Modal>
 {/if}
+
+<style>
+  tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
+  }
+</style>

@@ -24,6 +24,7 @@
   let wholePage = false;
   let selectedSendData;
   let wholeOption = null;
+  let selectedItems = [];
 
   let search = {
     plan_index: "",
@@ -40,6 +41,7 @@
     activeMenu = menu;
     currentView = "default";
     wholePage = false;
+    selectedItems = [];
   };
 
   function toggleView() {
@@ -125,6 +127,9 @@
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+  $: {
+    console.log("activePlan:", activePlan);
   }
 </script>
 
@@ -370,7 +375,7 @@
       <div class="btnWrap">
         <a
           href="javascript:void(0);"
-          class="btn btnPrimary"
+          class={`btn ${showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
             toggleList("project");
             plans = await getVulnsOfPlan();
@@ -380,13 +385,18 @@
               asset_target_uuid: "",
             };
             setView = "plan";
+            selectedSendData = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            selectedItems = [];
           }}
         >
           프로젝트별
         </a>
         <button
           type="button"
-          class="btn btnPrimary"
+          class={`btn ${!showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
             toggleList("asset");
             assets = await getVulnsOfAsset(search);
@@ -396,6 +406,12 @@
               asset_target_uuid: "",
             };
             setView = "plan";
+            selectedSendData = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            selectedItems = [];
+            activePlan = null;
           }}
         >
           자산별
@@ -405,11 +421,15 @@
         {#if showProject}
           {#if plans && plans?.plans && plans?.plans?.length !== 0}
             {#each plans?.plans as plan, index}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <li
                 class={`menuItem ${
-                  activeMenu === plan.plan_index ? "active" : ""
+                  activePlan === plan.plan_index ? "active" : ""
                 } `}
-                on:click={(e) => toggleMenu(e)}
+                on:click={(e) => {
+                  // toggleMenu(e);
+                  selectedItems = [];
+                }}
               >
                 <div
                   class="menu"
@@ -418,6 +438,10 @@
                     getPlanDataSearch();
                     toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
+                    selectedSendData = {
+                      plan_index: "",
+                      asset_target_uuid: "",
+                    };
                   }}
                 >
                   {plan?.plan_title} <span class="arrowIcon"></span>
@@ -432,7 +456,10 @@
                             <ul class="submenu">
                               {#each hosts as host}
                                 <li
-                                  class="active"
+                                  class={selectedSendData?.asset_target_uuid ==
+                                  host?.ast_uuid
+                                    ? "active"
+                                    : ""}
                                   on:click={async () => {
                                     assets = await getVulnsOfPlan({
                                       plan_index: plan?.plan_index,
@@ -467,16 +494,26 @@
                 {#each asset?.plan_target as target}
                   {#each Object.entries(target) as [osType, hosts]}
                     {#each hosts as host}
+                      <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <li
                         class={`menuItem ${
-                          activeMenu === asset ? "active" : ""
+                          activeMenu ===
+                          host?.ast_uuid__ass_uuid__ast_hostname +
+                            host?.ast_uuid +
+                            asset?.plan_index
+                            ? "active"
+                            : ""
                         } `}
-                        on:click={(e) => toggleMenu(e)}
                       >
                         <div
                           class="menu"
                           on:click={async () => {
-                            selectPage(MainPageProject, asset);
+                            selectPage(
+                              MainPageProject,
+                              host?.ast_uuid__ass_uuid__ast_hostname +
+                                host?.ast_uuid +
+                                asset?.plan_index,
+                            );
                             assets = await getVulnsOfAsset({
                               plan_index: asset?.plan_index,
                               asset_target_uuid: host?.ast_uuid,
@@ -590,6 +627,8 @@
             bind:showProject
             bind:targetData
             bind:wholeOption
+            bind:search
+            bind:selectedItems
           />
         {/if}
 

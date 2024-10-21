@@ -197,6 +197,7 @@
   }
   .containerModal {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: row;
     gap: 20px;
@@ -209,7 +210,7 @@
   .second_container {
     flex: 1;
     background-color: #ffffff;
-    padding: 20px;
+    height: 100%;
     border-radius: 10px;
   }
 

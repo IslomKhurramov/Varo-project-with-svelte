@@ -251,7 +251,7 @@
   }
 </script>
 
-<main>
+<main class="contentArea" style="background-color: #f5f6fa;">
   {#if !showSwiperComponent}
     <div class="header_buttons">
       <button on:click={downloadReport}>요약보고서</button>
@@ -268,7 +268,7 @@
       {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article
-          class="graphCard"
+          class="graphCard hoverCard"
           style="height: 250px;"
           on:click={() => {
             selectedAsset = asset;
@@ -442,13 +442,13 @@
 </main>
 
 <style>
-  main {
-    padding-bottom: 50px;
-  }
   .car_container {
-    height: 600px;
+    max-height: 1200px;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+  .contentArea {
+    background-color: #ccc;
   }
   .dialog2 {
     width: 100%;
@@ -462,7 +462,16 @@
     transform: translate(-50%, -50%);
     animation: fadeIn 0.3s ease;
   }
-
+  .hoverCard {
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .hoverCard:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* light blue tint */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* subtle blue shadow */
+    cursor: pointer;
+  }
   /* Header section for select and action buttons */
   .allselect {
     display: flex;

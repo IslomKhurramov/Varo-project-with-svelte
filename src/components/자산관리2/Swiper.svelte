@@ -333,7 +333,7 @@
           id="prevBtn"
           on:click={() => handleScroll("prev")}>◀</button
         >
-        <div class="menu-wrapper-container">
+        <div class="menu-wrapper-container" style="width:100%">
           <div class="menu-wrapper" id="menuWrapper">
             {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -388,29 +388,31 @@
               </a>
             </section>
             <section class="flex btnWrap gap-4">
-              <button class="btn btnGray xs" on:click={() => (showModal = true)}
+              <button
+                class="btn w140 btnBlue"
+                on:click={() => (showModal = true)}
                 >자산그룹이동
               </button>
               <button
-                class="btn btnGray xs"
+                class="btn w140 btnBlue"
                 on:click={() => selectPage(ModalEdit, "ModalEdit")}
                 >정보수정</button
               >
               {#if approve_status === 0}
-                <button class="btn btnGray xs" on:click={assetRegisterChange}
+                <button class="btn w140 btnBlue" on:click={assetRegisterChange}
                   >등록승인</button
                 >
               {:else}
-                <button class="btn btnGray xs" on:click={assetRegisterChange}
+                <button class="btn w140 btnBlue" on:click={assetRegisterChange}
                   >등록해제</button
                 >
               {/if}
               {#if !assetDetails.ast_activate}
-                <button class="btn btnGray xs" on:click={activateAsset}
-                  >자산삭제</button
-                >
+                <button class="btn w140 btnBlue" on:click={activateAsset}
+                  >자산등록
+                </button>
               {:else}
-                <button class="btn btnGray xs" on:click={unactivate}
+                <button class="btn w140 btnBlue" on:click={unactivate}
                   >자산삭제</button
                 >
               {/if}
@@ -464,6 +466,12 @@
 </main>
 
 <style>
+  .subTabWrap a {
+    cursor: pointer;
+  }
+  .subTabWrap {
+    margin-bottom: 0px;
+  }
   .menu-item {
     overflow-wrap: break-word;
   }

@@ -16,10 +16,11 @@
   export let isSearchActive;
   export let selectedChecklist;
   export let lastCreatedChecklistId;
+  export let cleanSearch;
   let selectedItem = null;
   let selected = [];
   let showModal = false;
-  let isNewlyCreatedChecklist = false;
+  export let isNewlyCreatedChecklist = false;
   let selectedGroup = null;
 
   /**********************************************************************/
@@ -182,14 +183,11 @@
             {/if}
           </tbody>
         </table>
-        <div class="reset">
-          <button
-            class="reset_button"
-            on:click={() => {
-              isSearchActive = false;
-            }}>테이블 재설정</button
-          >
-        </div>
+      </div>
+      <div class="reset">
+        <button class="reset_button" on:click={cleanSearch}
+          >테이블 재설정</button
+        >
       </div>
     {:else}
       <div class="tableListWrap table1">
@@ -331,7 +329,11 @@
     </div>
 
     <Modal bind:showModal>
-      <ModalEditItem {selectedItem} {selectedCategory} />
+      <ModalEditItem
+        {selectedItem}
+        {selectedCategory}
+        {isNewlyCreatedChecklist}
+      />
     </Modal>
   </article>
 </div>

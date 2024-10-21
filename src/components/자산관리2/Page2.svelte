@@ -30,8 +30,8 @@
   let selectedGroup = "전체";
   let filteredAssets = [];
   let asset_ostype = "전체";
-  let assetTargetReg = "";
-  let assetAcitve = "";
+  let assetTargetReg = "전체";
+  let assetAcitve = "전체";
   let searchedResult = [];
   let showSearchResult = false;
   let showGetPlanHeader = false;
@@ -78,11 +78,11 @@
             )),
         () => isNotFiltered(asset.ast_ostype, asset_ostype),
         () =>
-          assetTargetReg
+          assetTargetReg !== "전체"
             ? asset.asset_target_registered === assetTargetReg
             : true,
         () =>
-          assetAcitve !== ""
+          assetAcitve !== "전체"
             ? asset.ast_activate === !!Number(assetAcitve)
             : true,
         () => isNotFiltered(asset.ast_hostname, assetHost),
@@ -150,11 +150,17 @@
   /*****************************************/
 
   /************************************************************************/
+
   function selectPage(page, group) {
     currentPage = page;
-    activeMenu = group;
-    selectedGroup = group.asg_index;
-    filterAssets();
+    if (group === "전체") {
+      activeMenu = "전체";
+      selectedGroup = "전체"; // Explicitly set "전체" for filtering and dropdown
+    } else {
+      activeMenu = group; // Use group title for active menu
+      selectedGroup = group.asg_index; // Use group index for filtering
+    }
+    filterAssets(); // Apply filtering
     toggleSwiper();
   }
   /**********************************************************************/
@@ -258,6 +264,23 @@
       </div>
       <ul class="prMenuList">
         {#if $allAssetGroupList.length > 0}
+          <div class="project_button">
+            <li>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <!-- svelte-ignore a11y-missing-attribute -->
+              <a
+                on:click={() => {
+                  activeMenu = "전체"; // Highlight the active menu
+                  selectedGroup = "전체"; // Set the selected group explicitly
+                  selectPage(AssetCardsPage, "전체"); // Load all assets
+                }}
+                class={activeMenu === "전체" ? "active" : ""}
+                title="전체"
+              >
+                <span class="truncate-text">전체</span>
+              </a>
+            </li>
+          </div>
           {#each $allAssetGroupList as group, index}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-missing-attribute -->
@@ -267,6 +290,7 @@
                   on:click={() => {
                     selectPage(AssetCardsPage, group);
                   }}
+                  class={activeMenu === group ? "active" : ""}
                   title={group.asg_title}
                   ><span class="truncate-text">
                     {group.asg_title}
@@ -282,23 +306,27 @@
           {/each}
         {/if}
         {#if isAddingNewGroup}
-          <div class="new_input">
-            <input
-              type="text"
-              placeholder="Enter Group Name"
-              bind:value={newGroupName}
-              bind:this={inputRef}
-              class="editable_input"
-            />
-            <div>
-              <button class="asset_button save" on:click={addNewGroup}
-                >Save</button
-              >
-              <button class="asset_button cancel" on:click={cancelNewGroup}
-                >Cancel</button
-              >
+          <dialog open on:close={() => (isAddingNewGroup = false)}>
+            <div class="modal-content">
+              <div class="modal">
+                <input
+                  type="text"
+                  placeholder="Enter Group Name"
+                  bind:value={newGroupName}
+                  bind:this={inputRef}
+                  class="editable_input"
+                />
+                <div class="modal-buttons">
+                  <button class="primary-button" on:click={addNewGroup}
+                    >Save</button
+                  >
+                  <button class="secondary-button" on:click={cancelNewGroup}
+                    >Cancel</button
+                  >
+                </div>
+              </div>
             </div>
-          </div>
+          </dialog>
         {/if}
       </ul>
     </article>
@@ -315,12 +343,10 @@
                 bind:value={selectedGroup}
                 on:change={handleFilter}
               >
-                <option value="전체" selected>전체</option>
-                {#if $allAssetGroupList.length > 0}
-                  {#each $allAssetGroupList as group}
-                    <option value={group.asg_index}>{group.asg_title}</option>
-                  {/each}
-                {/if}
+                <option value="전체">전체</option>
+                {#each $allAssetGroupList as group}
+                  <option value={group.asg_index}>{group.asg_title}</option>
+                {/each}
               </select>
 
               <!-- OS Type Filter -->
@@ -347,7 +373,7 @@
                 bind:value={assetTargetReg}
                 on:change={handleFilter}
               >
-                <option value="" disabled selected hidden>에이전트여부</option>
+                <option value="전체" selected>전체</option>
                 <option value="YES">YES</option>
                 <option value="NO">NO</option>
               </select>
@@ -359,7 +385,7 @@
                 bind:value={assetAcitve}
                 on:change={handleFilter}
               >
-                <option value="" disabled selected hidden>등록승인여부</option>
+                <option value="전체" selected>전체</option>
                 <option value="1">Active</option>
                 <option value="0">Unactive</option>
               </select>
@@ -446,10 +472,76 @@
     box-sizing: border-box;
     font-family: "Arial", sans-serif;
   }
+  .modal-content {
+    text-align: center;
+  }
+  .active {
+    background-color: rgba(0, 103, 255, 0.06);
+    color: #0067ff;
+  }
+  .active .truncate-text {
+    color: #0067ff;
+  }
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+  .editable_input {
+    height: 40px;
+    width: 360px;
+  }
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .primary-button {
+    background-color: #54b3d6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-button:hover {
+    background-color: #48a2bf;
+  }
+
+  .secondary-button {
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .secondary-button:hover {
+    background-color: #e0e0e0;
+  }
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+  }
   .showModal {
     position: fixed;
+    width: 70%;
     top: 30%;
-    left: 40%;
+    left: 20%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease;
     z-index: 100;

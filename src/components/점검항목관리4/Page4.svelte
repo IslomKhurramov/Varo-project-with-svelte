@@ -4,8 +4,6 @@
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
   import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
   import { getChecklistItemBySearch } from "../../services/page4/getAllCheckList";
-  import AddedChecklist from "./AddedChecklist.svelte";
-  import Modal from "../../shared/Modal.svelte";
   import Modal2 from "../../shared/Modal2.svelte";
   import { setDeleteChecklistGroup } from "../../services/page4/getAllCheckList";
   import { setUpdateGroupName } from "../../services/page4/getAllCheckList";
@@ -17,6 +15,7 @@
     checklistStore,
     fetchChecklistData,
   } from "../../services/page4/checklistStore";
+  import CheckListDetail from "./checkListDetail.svelte";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -25,7 +24,7 @@
   let error = null;
   let allChecklistArray = [];
   let filteredData = [];
-  let selectedChecklist = null;
+  let selectedChecklist = "";
   let activeMenu = null;
   let newChecklistName = "";
   let showModal = false;
@@ -37,7 +36,7 @@
   let swiperContainer;
   let swiperInstance;
   let slides = [];
-  let showSlide = false;
+  let showSlide = true;
   let showModalSecond = false;
   let selectedSlide = null;
   let selectedRisk = "위험도";
@@ -45,6 +44,16 @@
   let searchResult = [];
   let isSearchActive = false;
   let activeChecklistElement = null;
+  let isNewlyCreatedChecklist = false;
+
+  $: if (
+    selectedChecklist &&
+    selectedChecklist.ccg_index === lastCreatedChecklistId
+  ) {
+    isNewlyCreatedChecklist = true;
+  } else {
+    isNewlyCreatedChecklist = false;
+  }
   /****************************************************************************/
   // Swiper
 
@@ -217,28 +226,37 @@
   // Filter data based on selected category
   function filterData() {
     if (selectedCategory && allChecklistArray.length > 0) {
-      // Flatten the checklist array and filter by category
+      // Filter by selected category or return all data
       filteredData = allChecklistArray.flatMap(
         (item) => item[selectedCategory] || [],
       );
 
-      // Map the filtered data to extract `ccc_item_no`
+      // Check if we have data to display
       slides = filteredData.map((item) => item);
       showSlide = slides.length > 0;
-      // Initialize or update Swiper only when the data is ready
+
+      // Initialize Swiper after updating the slides
       initializeSwiper();
     } else {
+      // No data case, hide slides
       showSlide = false;
     }
   }
-
+  onMount(async () => {
+    try {
+      await fetchChecklistData(); // Wait for the data to be fetched
+      filterData(); // Run the filter after the data is fetched
+    } catch (error) {
+      console.error("Error fetching checklist data:", error);
+    }
+  });
   /************************************************************************/
   // Run filterData every time `selectedCategory` or `allChecklistArray` updates
   $: filterData();
 
   /************************************************************************/
   // After component updates (e.g., after DOM updates), ensure Swiper is properly initialized
-  afterUpdate(() => {
+  $: afterUpdate(() => {
     if (slides.length > 0) {
       initializeSwiper();
     }
@@ -276,37 +294,10 @@
     item_no,
     selectedRisk,
   ) {
-    // Check if selectedChecklist is null or undefined before proceeding
-    if (!selectedChecklist) {
-      alert("Please select a checklist item.");
-      return;
-    }
-
-    const ccg_index = selectedChecklist.ccg_index;
-    const category = selectedCategory;
-    const item_number = item_no;
-    const riskLevel = selectedRisk;
-
-    // Check for empty fields before making the search request
-    if (!ccg_index) {
-      alert("Please select a valid checklist item.");
-      return;
-    }
-
-    if (category === "점검대상") {
-      alert("Please choose a category.");
-      return;
-    }
-
-    if (!item_number) {
-      alert("Please input the item number.");
-      return;
-    }
-
-    if (riskLevel === "위험도") {
-      alert("Please choose a risk level.");
-      return;
-    }
+    const ccg_index = selectedChecklist.ccg_index || "";
+    const category = selectedCategory || "";
+    const item_number = item_no || "";
+    const riskLevel = selectedRisk || "";
 
     try {
       const response = await getChecklistItemBySearch(
@@ -319,6 +310,7 @@
       console.log("SEARCH RESPONSE:", response);
 
       if (response.RESULT === "OK" && Array.isArray(response.CODE)) {
+        currentPage = ItemPage;
         if (response.CODE.length > 0) {
           console.log("SEARCH SUCCEED:", response.CODE);
           searchResult = response.CODE;
@@ -334,6 +326,13 @@
       alert(`ERROR searching checklistItem: ${err.message}`);
     }
   }
+  function cleanSearch() {
+    isSearchActive = false;
+    selectedCategory = "UNIX";
+    item_no = "";
+    selectedRisk = "위험도";
+    selectedChecklist = null;
+  }
 
   // Trigger edit mode
   function startEditing(checklistId, currentName) {
@@ -345,27 +344,6 @@
     editingChecklistId = null;
     editedChecklistName = "";
   }
-  let scrollAmount = 0;
-  const itemWidth = 146; // Each menu item width including gap
-  const menuWidth = 1260; // Total width of the menu
-
-  let menuWrapper;
-
-  const handleScroll = (direction) => {
-    if (direction === "prev") {
-      scrollAmount -= itemWidth;
-      if (scrollAmount < 0) scrollAmount = 0;
-    } else if (direction === "next") {
-      scrollAmount += itemWidth;
-      const maxScroll = menuWrapper.scrollWidth - menuWidth;
-      if (scrollAmount > maxScroll) scrollAmount = maxScroll;
-    }
-    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
-  };
-  onMount(() => {
-    // This runs once the component is mounted
-    menuWrapper = document.getElementById("menuWrapper");
-  });
 </script>
 
 <main class="container">
@@ -405,7 +383,7 @@
                     href="#"
                     style="width:200px"
                     on:click|preventDefault={() =>
-                      selectPage(ItemPage, checkList)}
+                      selectPage(CheckListDetail, checkList)}
                     class={activeMenu === checkList ? "active" : ""}
                     title={checkList.ccg_group}
                   >
@@ -505,7 +483,7 @@
               on:change={filterData}
               style="width: 150px;"
             >
-              <option value="점검대상">점검대상</option>
+              <option value="UNIX">점검대상</option>
               <option value="UNIX">UNIX</option>
               <option value="WINDOWS">WINDOWS</option>
               <option value="PC">PC</option>
@@ -536,6 +514,7 @@
             </select>
 
             <!-- svelte-ignore a11y-click-events-have-key-events -->
+
             <button
               style="padding: 15px;"
               class="btn btnPrimary"
@@ -549,50 +528,19 @@
             >
               조회
             </button>
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                selectPage(ItemPage);
+              }}
+            >
+              뒤로 가기
+            </button>
           </div>
         </section>
       </article>
-      {#if showSlide}
-        <section bind:this={swiperContainer} class="topCon">
-          <div class="menu-container" style="margin-top:20px">
-            <button
-              class="arrow-btn"
-              id="prevBtn"
-              on:click={() => handleScroll("prev")}>◀</button
-            >
 
-            <div class="menu-wrapper-container" style="width:100%; ">
-              <!-- Bind the menuWrapper directly here -->
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                class="menu-wrapper"
-                id="menuWrapper"
-                bind:this={menuWrapper}
-              >
-                {#each slides as slide}
-                  <div
-                    value={slide}
-                    name={slide}
-                    class="menu-item"
-                    on:click={() => {
-                      showModalSecond = true;
-                      selectedSlide = slide;
-                    }}
-                  >
-                    {slide.ccc_item_no}
-                  </div>
-                {/each}
-              </div>
-            </div>
-
-            <button
-              id="nextBtn"
-              class="arrow-btn"
-              on:click={() => handleScroll("next")}>▶</button
-            >
-          </div>
-        </section>
-      {/if}
       <div class="flex col detail">
         <svelte:component
           this={currentPage}
@@ -604,6 +552,13 @@
           {isSearchActive}
           {activeMenu}
           {lastCreatedChecklistId}
+          {showSlide}
+          {swiperContainer}
+          {showModalSecond}
+          {selectedSlide}
+          {cleanSearch}
+          {slides}
+          {isNewlyCreatedChecklist}
           on:projectDeleted={(event) => {
             const id = event.detail;
             allChecklistArray = allChecklistArray.filter(
@@ -614,17 +569,18 @@
       </div>
     </div>
 
-    <Modal2 bind:showModalSecond>
-      <ModalSwiper {selectedSlide} {selectedCategory} />
-    </Modal2>
     {#if showModal}
       <dialog open on:close={() => (showModal = false)}>
         <div class="modal-content">
           <div class="modal">
             <h3>새로운 진단 그룹 생성</h3>
-            <div>
+            <div class="first_line">
               <label for="source-group">복사 대상:</label>
-              <select bind:value={selectedChecklistForCopyId} id="source-group">
+              <select
+                class="first_line_input"
+                bind:value={selectedChecklistForCopyId}
+                id="source-group"
+              >
                 {#each allChecklistArray as checklist}
                   <option value={checklist.ccg_index}
                     >{checklist.ccg_group}</option
@@ -632,9 +588,10 @@
                 {/each}
               </select>
             </div>
-            <div>
+            <div class="second_line">
               <label for="new-group">신규 그룹명:</label>
               <input
+                class="second_line_input"
                 type="text"
                 bind:value={newChecklistName}
                 id="new-group"
@@ -665,6 +622,13 @@
     box-sizing: border-box;
     font-family: "Arial", sans-serif;
   }
+  .active {
+    background-color: rgba(0, 103, 255, 0.06);
+    color: #0067ff;
+  }
+  .active .truncate-text {
+    color: #0067ff;
+  }
 
   .menu_button1 {
     border-radius: 5px;
@@ -676,6 +640,19 @@
     color: #495057;
     text-align: center;
     width: 60px;
+  }
+  .first_line {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .second_line {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
   }
 
   /***edit delete copy buttons*/
@@ -723,78 +700,6 @@
     background-color: #c0392b;
   }
 
-  /* Swiper Styles */
-  .swiper-container {
-    width: 100%;
-    margin: 20px auto;
-    padding: 10px 0;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    position: relative;
-  }
-  .swiper_container1 {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .swiper_container1 img {
-    width: 50px;
-    height: auto;
-  }
-  .swiper-wrapper {
-    display: flex;
-  }
-
-  .swiper-slide {
-    height: 50px;
-    max-width: 300px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.1),
-      0 4px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-
-  .swiper-slide:hover {
-    transform: scale(1.1);
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.2),
-      0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  .swiper-pagination {
-    color: #007acc;
-  }
-
-  /* Move the left and right navigation buttons outside the swiper container */
-  .swiper-button-prev,
-  .swiper-button-next {
-    color: #007acc;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-
-  .swiper-button-prev {
-    left: -50px;
-  }
-
-  .swiper-button-next {
-    right: -50px;
-  }
   dialog {
     position: fixed;
     top: 50%;
@@ -814,20 +719,33 @@
   .modal-content {
     text-align: center;
   }
-
+  .modal {
+    margin-top: 10px;
+  }
   /* Paragraph showing the selected group */
   p {
     font-size: 1em;
     color: #666;
     margin-bottom: 20px;
   }
+  h3 {
+    margin-bottom: 10px;
+  }
 
   /* Modal buttons */
   .modal-buttons {
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
   }
-
+  .first_line_input {
+    width: 250px;
+    padding: 5px;
+  }
+  .second_line_input {
+    width: 250px;
+    padding: 5px;
+  }
   .primary-button {
     background-color: #54b3d6;
     color: white;

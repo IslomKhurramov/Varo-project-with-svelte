@@ -93,7 +93,7 @@
     </div>
     <textarea rows="5" placeholder="비고란" style="margin-top: 20px;"
     ></textarea>
-    <div class="flex align-center btnWrap gap-6">
+    <div class="flex align-center btnWrap gap-6" style="margin-top: 10px;">
       <button class="btn w140 btnBlue">수정하기</button>
       <button class="btn w140 btnPrimaryFontGray">비활성하기</button>
       <button class="btn w140 btnPrimaryFontGray">활성하기</button>
@@ -207,6 +207,9 @@
 </main>
 
 <style>
+  .subTabWrap a {
+    cursor: pointer;
+  }
   .empty_state {
     display: flex;
     justify-content: center;

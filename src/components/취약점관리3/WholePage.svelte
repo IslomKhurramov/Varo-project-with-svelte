@@ -24,7 +24,7 @@
   export let wholePage;
 
   // let isAgentUser = $userData?.userInfo?.user_roletype__role_index == 1;
-  let isAgentUser = false;
+  let isAgentUser = true;
 
   let usernames = [];
   let options = [];

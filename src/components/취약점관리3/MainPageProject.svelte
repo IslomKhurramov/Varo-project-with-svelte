@@ -23,7 +23,7 @@
   export let selectedItems = [];
 
   // let isAgenUser = $userData?.userInfo?.user_roletype__role_index == 1;
-  let isAgenUser = false;
+  let isAgenUser = true;
 
   let data = [];
 

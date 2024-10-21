@@ -488,12 +488,12 @@
       <table class="tableList hdBorder">
         <colgroup>
           <col style="width:4%;" />
-          <col style="width:9%;" />
+          <col style="width:4%;" />
+          <col style="width:8%;" />
           <col style="width:13%;" />
-          <col />
-          <col style="width:15%" />
-          <col style="width:7%;" />
-          <col style="width:12%;" />
+          <col style="width:22%" />
+          <col style="width:4%;" />
+          <col style="width:5%;" />
         </colgroup>
         <thead>
           <tr>
@@ -503,7 +503,7 @@
             <th>점검항목</th>
             <th>시스템상태</th>
             <th class="text-center">점검결과</th>
-            <th>결과변경</th>
+            <th class="text-center">결과변경</th>
           </tr>
         </thead>
         <tbody>
@@ -532,8 +532,8 @@
                     {data.ccr_item_result}
                   </span>
                 </td>
-                <td>
-                  <div class="flex gap-4">
+                <td class="text-center">
+                  <div class="flex gap-4" style="justify-content: center;">
                     <select
                       class="xs"
                       on:change={(e) =>

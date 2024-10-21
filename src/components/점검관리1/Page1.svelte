@@ -37,7 +37,7 @@
   const selectPage = (page, project) => {
     console.log("+selectPage Running!!");
     currentPage = page;
-    activeMenu = project;
+    activeMenu = project.ccp_index;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
     tabMenu = "no";
@@ -77,14 +77,14 @@
     </div>
     <ul class="prMenuList">
       {#if projectArray && projectArray?.length !== 0}
-        {#each projectArray as asset, index}
-          <li class={activeMenu === asset ? "active" : ""}>
+        {#each projectArray as project, index}
+          <li class={activeMenu === project.ccp_index ? "active" : ""}>
             <a
               href="javascript:void(0)"
-              on:click={() => selectPage(RightContainerMenu, asset)}
-              title={asset.ccp_title}
+              on:click={() => selectPage(RightContainerMenu, project)}
+              title={project.ccp_title}
             >
-              {asset.ccp_title} <span class="arrowIcon"></span></a
+              {project.ccp_title} <span class="arrowIcon"></span></a
             >
           </li>
         {/each}
@@ -93,7 +93,7 @@
   </article>
 
   {#if currentView === "default"}
-    <RightConainer />
+    <RightConainer selectPageMain={selectPage} />
   {:else if currentPage}
     <svelte:component
       this={currentPage}

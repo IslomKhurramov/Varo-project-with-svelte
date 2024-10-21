@@ -10,7 +10,9 @@
   import ProjectDetail from "./점검관리1/ProjectDetail.svelte";
   import { toggleTooltip } from "../../public/assets/js/common.js";
   import { navigate } from "svelte-routing";
+  import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
 
+  export let selectPageMain;
   let projectData = {};
   let projectArray = [];
   let filteredProjects = [];
@@ -288,6 +290,7 @@
                     on:click={() => {
                       currentPage = ProjectDetail;
                       projectIndex = project.ccp_index;
+                      selectPageMain(RightContainerMenu, project);
                     }}
                   >
                     <td class="circleTd">

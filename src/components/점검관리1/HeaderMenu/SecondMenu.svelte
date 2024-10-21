@@ -82,6 +82,8 @@
   };
 
   const selectPlan = async (plan_index) => {
+    await refetchDataHandler();
+
     search.assessment_target = "";
     search.hostname = "";
     search.checklist_item_no = "";
@@ -485,12 +487,13 @@
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>
-          <col style="width:90px;" />
-          <col style="width:110px;" />
-          <col style="width:200px;" />
+          <col style="width:4%;" />
+          <col style="width:9%;" />
+          <col style="width:13%;" />
           <col />
-          <col style="width:90px;" />
-          <col style="width:200px;" />
+          <col style="width:15%" />
+          <col style="width:7%;" />
+          <col style="width:12%;" />
         </colgroup>
         <thead>
           <tr>
@@ -523,7 +526,7 @@
                 <td onclick="modalOpen('detail')" class="cursor-pointer">
                   <div>{@html data?.ccr_item_no__ccc_item_criteria}</div>
                 </td>
-                <td> {@html data.ccr_item_status}</td>
+                <td style="overflow: hidden;"> {@html data.ccr_item_status}</td>
                 <td class="text-center">
                   <span class="badge badgePrimary">
                     {data.ccr_item_result}

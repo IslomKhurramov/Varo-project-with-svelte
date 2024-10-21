@@ -132,25 +132,29 @@
           id=""
           rows="5"
           cols="50"
+          style="width: 100%;"
           on:change={(e) => (insertData.change_status_text = e.target.value)}
           >{modalData?.ccr_item_status}</textarea
         >
       </td>
     </tr>
-    <tr>
-      <th>증적이미지</th>
-      <td class="line7">
-        <div>
-          [{modalData?.evidence_file?.length !== 0 &&
-            modalData?.evidence_file[0]?.ccs_image}]:
-        </div>
-        <input
-          type="file"
-          on:change={(e) =>
-            (insertData.change_evidence_file = e.target.files[0])}
-        />
-      </td>
-    </tr>
+    {#if modalData?.evidence_file?.length !== 0 && modalData?.evidence_file[0]?.ccs_image}
+      <tr>
+        <th>증적이미지</th>
+        <td class="line7">
+          <div>
+            [{modalData?.evidence_file?.length !== 0 &&
+              modalData?.evidence_file[0]?.ccs_image}]:
+          </div>
+          <input
+            type="file"
+            on:change={(e) =>
+              (insertData.change_evidence_file = e.target.files[0])}
+          />
+        </td>
+      </tr>
+    {/if}
+
     <tr>
       <th>개선방법</th>
       <td>{modalData?.ccr_item_no__ccc_mitigation_method}</td>

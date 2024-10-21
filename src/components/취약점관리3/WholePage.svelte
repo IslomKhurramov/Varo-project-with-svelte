@@ -16,33 +16,15 @@
     setFixPlanRegister,
   } from "../../services/vulns/vulnsService.js";
   import { errorAlert, successAlert } from "../../shared/sweetAlert.js";
+  import { userData } from "../../stores/user.store.js";
 
   export let targetData;
   export let setView;
   export let currentView;
   export let wholePage;
 
+  // let isAgentUser = $userData?.userInfo?.user_roletype__role_index == 1;
   let isAgentUser = true;
-
-  // let swiperContainer;
-  // let swiperInstance;
-
-  // onMount(() => {
-  //   swiperInstance = new Swiper(swiperContainer, {
-  //     modules: [Navigation, Pagination],
-  //     loop: false,
-  //     slidesPerView: 8,
-  //     spaceBetween: 15,
-  //     pagination: {
-  //       el: ".swiper-pagination",
-  //       clickable: true,
-  //     },
-  //     navigation: {
-  //       nextEl: ".swiper-button-next",
-  //       prevEl: ".swiper-button-prev",
-  //     },
-  //   });
-  // });
 
   let usernames = [];
   let options = [];
@@ -172,6 +154,18 @@
       asset_target_uuid: targetData?.ast_uuid,
     });
     data = transformVulns(assets?.vulns);
+
+    const targetIndex = data.findIndex(
+      (item) =>
+        item.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no,
+    );
+
+    console.log("targetIndex:", targetIndex);
+
+    if (targetIndex !== -1) {
+      const [targetElement] = data.splice(targetIndex, 1);
+      data.unshift(targetElement);
+    }
   };
 
   $: {
@@ -243,7 +237,7 @@
   let menuWrapper;
   let scrollAmount = 0;
   let itemWidth = 146;
-  let menuWidth = 1260;
+  let menuWidth = 100;
 
   const handleScroll = (direction) => {
     menuWrapper = document.getElementById("menuWrapper");
@@ -706,7 +700,7 @@
         <div class="menu-wrapper" id="menuWrapper">
           {#each data as item, index}
             <div
-              class={`menu-item ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+              class={`menu-item ${item?.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
               on:click={() => {
                 targetData = item;
               }}
@@ -1204,7 +1198,7 @@
               </div>
             </article>
             <div class="flex flex-end btnActionWrap gap-12">
-              <button
+              <!-- <button
                 type="button"
                 class="btn btnGray w140 h50 golist btnAction"
                 on:click={() => {
@@ -1213,7 +1207,7 @@
                 }}
               >
                 목록으로
-              </button>
+              </button> -->
               <!-- <button
                 type="button"
                 class="btn btnBlue btnSave w220 h50 btnAction"
@@ -1264,3 +1258,17 @@
     </div>
   </div>
 </section>
+
+<style>
+  .menu-item:hover {
+    background: blue;
+    color: white;
+    transition: 0.2s;
+  }
+
+  .menu-item.active {
+    background: blue;
+    color: white;
+    transition: 0.2s;
+  }
+</style>

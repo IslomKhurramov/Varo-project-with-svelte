@@ -37,7 +37,7 @@
   const selectPage = (page, project) => {
     console.log("+selectPage Running!!");
     currentPage = page;
-    activeMenu = project;
+    activeMenu = project.ccp_index;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
     tabMenu = "no";
@@ -54,12 +54,19 @@
       console.log("ERROR deleteProject:", err);
     }
   };
+
+  $: {
+    console.log("activeMenu:", activeMenu);
+  }
 </script>
 
 <section>
   <article class="sideMenu">
     <div class="btnWrap">
-      <a class="btn btnPrimary" on:click={() => selectPage(AddPorject, "add")}>
+      <a
+        class={`btn btnPrimary ${activeMenu == "add" ? "buttonActive" : ""}`}
+        on:click={() => selectPage(AddPorject, "add")}
+      >
         <img src="./assets/images/icon/add.svg" />
         신규점검
       </a>
@@ -70,14 +77,14 @@
     </div>
     <ul class="prMenuList">
       {#if projectArray && projectArray?.length !== 0}
-        {#each projectArray as asset, index}
-          <li class={activeMenu === asset ? "active" : ""}>
+        {#each projectArray as project, index}
+          <li class={activeMenu === project.ccp_index ? "active" : ""}>
             <a
               href="javascript:void(0)"
-              on:click={() => selectPage(RightContainerMenu, asset)}
-              title={asset.ccp_title}
+              on:click={() => selectPage(RightContainerMenu, project)}
+              title={project.ccp_title}
             >
-              {asset.ccp_title} <span class="arrowIcon"></span></a
+              {project.ccp_title} <span class="arrowIcon"></span></a
             >
           </li>
         {/each}
@@ -86,7 +93,7 @@
   </article>
 
   {#if currentView === "default"}
-    <RightConainer />
+    <RightConainer selectPageMain={selectPage} />
   {:else if currentPage}
     <svelte:component
       this={currentPage}
@@ -96,3 +103,14 @@
     />
   {/if}
 </section>
+
+<style>
+  .buttonActive {
+    background-color: #0067ff;
+    color: #fff;
+    transition-duration: 0.2s;
+  }
+  .buttonActive img {
+    filter: brightness(0) invert(1);
+  }
+</style>

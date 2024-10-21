@@ -55,7 +55,7 @@
 <header class="headerWrap on">
   <h1 class="logoWrap">
     <Link to="/page1" on:click={() => (activeMenu = "점검관리")}>
-      <a href="./index.html"><img src="/assets/images/logo.png" /></a>
+      <a href="javascript:void(0);"><img src="/assets/images/logo.png" /></a>
     </Link>
   </h1>
   <button type="button" class="menuIsOpenBtn" on:click={toggleNav}

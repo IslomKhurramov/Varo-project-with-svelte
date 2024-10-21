@@ -80,7 +80,8 @@ export function toggleMenu(e) {
   }
 }
 
-function toggleTooltip(button) {
+export function toggleTooltip(event) {
+  const button = event.currentTarget;
   const tooltip = button.nextElementSibling;
   console.log(button);
   console.log(tooltip);

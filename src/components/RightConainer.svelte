@@ -8,7 +8,11 @@
   import ThirdMenu from "./점검관리1/HeaderMenu/ThirdMenu.svelte";
   import FourthMenu from "./점검관리1/HeaderMenu/FourthMenu.svelte";
   import ProjectDetail from "./점검관리1/ProjectDetail.svelte";
+  import { toggleTooltip } from "../../public/assets/js/common.js";
+  import { navigate } from "svelte-routing";
+  import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
 
+  export let selectPageMain;
   let projectData = {};
   let projectArray = [];
   let filteredProjects = [];
@@ -117,12 +121,39 @@
     // projectIndex = plan_index;
   };
 
+  function downloadCSV() {
+    const csvRows = [];
+    const headers = Object.keys(filteredProjects[0]);
+    csvRows.push(headers.join(",")); // Add headers
+
+    for (const row of filteredProjects) {
+      const values = headers.map((header) => {
+        const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
+        return `"${escaped}"`; // Wrap in quotes
+      });
+      csvRows.push(values.join(","));
+    }
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link to download the file
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "table_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
   $: {
-    console.log("+tabMenu:", tabMenu);
+    console.log("tabmenu:", tabMenu);
   }
 </script>
 
 <div
+  style="overflow: scroll; height: 100vh;"
   class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"} ${tabMenu == "보고서생성" && "reportCreate"} ${tabMenu == "이력관리" && "logWrap"}`}
 >
   <nav class="tabMenu">
@@ -171,6 +202,16 @@
           이력관리
         </a>
       </li>
+      {#if tabMenu}
+        <div
+          class="backImage"
+          on:click={() => {
+            navigate(window.location?.pathname == "/" ? "/page1" : "/");
+          }}
+        >
+          <img src="./assets/images/icon/back.svg" alt="" />
+        </div>
+      {/if}
     </ul>
   </nav>
 
@@ -205,40 +246,38 @@
             <option value="NETWORK">Network</option>
             <option value="DBMS">Dbms</option>
           </select>
-          <select bind:value={selectedAgentStatus} on:change={filterProjects}>
-            <option value="">결과등록상태</option>
-            <option value="1">Registered</option>
-            <option value="0">Pending</option>
-          </select>
-          <!-- <button type="button" class="btn btnPrimary">
-            <img src="./assets/images/icon/search.svg" /> 조회
-          </button> -->
-          <button type="button" class="btn btnPrimary">
+          <button type="button" class="btn btnPrimary" on:click={downloadCSV}>
             <img src="./assets/images/icon/download.svg" />
             엑셀 다운로드
           </button>
         </div>
       </section>
       <section>
-        <div class="tableListWrap">
+        <div
+          class="tableListWrap"
+          style="
+        overflow: auto;
+        height: 100vh;
+    "
+        >
           <table class="tableList">
             <colgroup>
-              <col style="width:100px;" />
-              <col />
-              <col style="width:200px;" />
-              <col style="width:100px;" />
-              <col />
-              <col />
-              <col style="width:190px;" />
-              <col style="width:30px;" />
+              <col style="width:6%;" />
+              <col style="width: 13%;" />
+              <col style="width:30%;" />
+              <col style="width:5%;" />
+              <col style="width:5%;" />
+              <col style="width:12%;" />
+              <col style="width:5%;" />
+              <col style="width:2%;" />
             </colgroup>
             <thead>
               <tr>
-                <th>보안점수</th>
+                <th class="text-center">보안점수</th>
                 <th>제목</th>
                 <th>점검대상</th>
                 <th>생성자</th>
-                <th>진행상태</th>
+                <th class="text-center">진행상태</th>
                 <th>점검일시</th>
                 <th>점검방법</th>
                 <th></th>
@@ -251,6 +290,7 @@
                     on:click={() => {
                       currentPage = ProjectDetail;
                       projectIndex = project.ccp_index;
+                      selectPageMain(RightContainerMenu, project);
                     }}
                   >
                     <td class="circleTd">
@@ -330,11 +370,11 @@
                       </div>
                     </td>
                     <td> {project.plan_planer_info__user_name} </td>
-                    <td>
+                    <td class="text-center">
                       <span class="badge badgePrimary">
                         {project?.ccp_b_finalized ? "완료" : "진행 중"}
                       </span>
-                      <div class="tableSummary">(18/28대, 78% 결과 수집)</div>
+                      <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
                     </td>
                     <td>
                       {moment(project?.plan_start_date).format("YYYY MM DD")} ~ {moment(
@@ -344,13 +384,24 @@
                     <td>
                       {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
                     </td>
-                    <td class="tableTootipWrap">
+                    <td
+                      class="tableTootipWrap"
+                      style="background: none;"
+                      on:click={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
                       <button
                         type="button"
                         class="tableTootip"
-                        onclick="toggleTooltip(this)"
-                        ><img src="./assets/images/icon/options.svg" /></button
+                        style="width: 100%;"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                          toggleTooltip(e);
+                        }}
                       >
+                        <img src="./assets/images/icon/options.svg" />
+                      </button>
                       <div class="tooltip-modal" style="display: none;">
                         <ul>
                           <li>
@@ -406,17 +457,24 @@
             </tbody>
           </table>
         </div>
-        <!-- <div class="paginationWrap">
-          <div class="totalCount">Total Projects: <span>146</span></div>
-          <div class="pagination">
-            <a href="" class="active">1</a>
-            <a href="">2</a>
-            <a href="">...</a>
-            <a href="">4</a>
-            <a href="">&gt;</a>
-          </div>
-        </div> -->
       </section>
     </article>
   {/if}
 </div>
+
+<style>
+  tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
+  }
+
+  .contentsWrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .backImage {
+    cursor: pointer;
+    width: 24px;
+  }
+</style>

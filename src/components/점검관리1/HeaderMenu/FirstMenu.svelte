@@ -318,6 +318,7 @@
     <button
       type="button"
       class={`btn ${resultStatus?.assets_info?.length > 0 ? "btnBlue" : ""}`}
+      disabled={!resultStatus?.assets_info?.length > 0}
       on:click={() => {
         showModal = true;
         modalData = resultStatus?.assets_info;
@@ -327,7 +328,8 @@
     </button>
     <button
       type="button"
-      class={`btn ${resultErrors?.length > 0 ? "btnGray" : ""}`}
+      class={`btn ${resultErrors?.length > 0 ? "btnBlue" : ""}`}
+      disabled={!resultErrors?.length > 0}
       on:click={() => {
         showErrorModal = true;
         modalErrorData = resultErrors;

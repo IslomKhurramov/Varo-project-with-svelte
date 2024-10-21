@@ -24,6 +24,7 @@
   let wholePage = false;
   let selectedSendData;
   let wholeOption = null;
+  let selectedItems = [];
 
   let search = {
     plan_index: "",
@@ -40,6 +41,7 @@
     activeMenu = menu;
     currentView = "default";
     wholePage = false;
+    selectedItems = [];
   };
 
   function toggleView() {
@@ -66,6 +68,69 @@
     plans = await getVulnsOfPlan(search);
     tableData = plans?.vulns;
   };
+
+  function downloadCSV(data) {
+    // ***************
+
+    const transformed = [];
+
+    for (const key in tableData) {
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      tableData[key].forEach((item) => {
+        if (item.result) {
+          currentResult = item?.result;
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
+          }
+        }
+      });
+
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    // ***************
+    const csvRows = [];
+    const headers = Object.keys(transformed[0]);
+
+    csvRows.push(headers.join(",")); // Add headers
+
+    for (const row of transformed) {
+      const values = headers.map((header) => {
+        const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
+        return `"${escaped}"`; // Wrap in quotes
+      });
+      csvRows.push(values.join(","));
+    }
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link to download the file
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "table_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  $: {
+    console.log("activePlan:", activePlan);
+  }
 </script>
 
 <!-- <main class="container">
@@ -310,7 +375,7 @@
       <div class="btnWrap">
         <a
           href="javascript:void(0);"
-          class="btn btnPrimary"
+          class={`btn ${showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
             toggleList("project");
             plans = await getVulnsOfPlan();
@@ -320,13 +385,18 @@
               asset_target_uuid: "",
             };
             setView = "plan";
+            selectedSendData = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            selectedItems = [];
           }}
         >
           프로젝트별
         </a>
         <button
           type="button"
-          class="btn btnPrimary"
+          class={`btn ${!showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
             toggleList("asset");
             assets = await getVulnsOfAsset(search);
@@ -336,6 +406,12 @@
               asset_target_uuid: "",
             };
             setView = "plan";
+            selectedSendData = {
+              plan_index: "",
+              asset_target_uuid: "",
+            };
+            selectedItems = [];
+            activePlan = null;
           }}
         >
           자산별
@@ -345,11 +421,16 @@
         {#if showProject}
           {#if plans && plans?.plans && plans?.plans?.length !== 0}
             {#each plans?.plans as plan, index}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <li
+                style="cursor: pointer;"
                 class={`menuItem ${
-                  activeMenu === plan.plan_index ? "active" : ""
+                  activePlan === plan.plan_index ? "active" : ""
                 } `}
-                on:click={(e) => toggleMenu(e)}
+                on:click={(e) => {
+                  // toggleMenu(e);
+                  selectedItems = [];
+                }}
               >
                 <div
                   class="menu"
@@ -358,6 +439,10 @@
                     getPlanDataSearch();
                     toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
+                    selectedSendData = {
+                      plan_index: "",
+                      asset_target_uuid: "",
+                    };
                   }}
                 >
                   {plan?.plan_title} <span class="arrowIcon"></span>
@@ -372,7 +457,10 @@
                             <ul class="submenu">
                               {#each hosts as host}
                                 <li
-                                  class="active"
+                                  class={selectedSendData?.asset_target_uuid ==
+                                  host?.ast_uuid
+                                    ? "active"
+                                    : ""}
                                   on:click={async () => {
                                     assets = await getVulnsOfPlan({
                                       plan_index: plan?.plan_index,
@@ -407,16 +495,27 @@
                 {#each asset?.plan_target as target}
                   {#each Object.entries(target) as [osType, hosts]}
                     {#each hosts as host}
+                      <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <li
+                        style="cursor: pointer;"
                         class={`menuItem ${
-                          activeMenu === asset ? "active" : ""
+                          activeMenu ===
+                          host?.ast_uuid__ass_uuid__ast_hostname +
+                            host?.ast_uuid +
+                            asset?.plan_index
+                            ? "active"
+                            : ""
                         } `}
-                        on:click={(e) => toggleMenu(e)}
                       >
                         <div
                           class="menu"
                           on:click={async () => {
-                            selectPage(MainPageProject, asset);
+                            selectPage(
+                              MainPageProject,
+                              host?.ast_uuid__ass_uuid__ast_hostname +
+                                host?.ast_uuid +
+                                asset?.plan_index,
+                            );
                             assets = await getVulnsOfAsset({
                               plan_index: asset?.plan_index,
                               asset_target_uuid: host?.ast_uuid,
@@ -444,6 +543,7 @@
 
     <div
       class={`contentsWrap assetview  ${currentView === "default" && !wholePage ? "vulnerability" : "vulnerability_create"}`}
+      style={wholePage ? "width: calc(100% - 280px);" : ""}
     >
       <article
         class="contentArea flex col"
@@ -508,14 +608,24 @@
                 <option value="6">조치결과승인</option>
                 <option value="7">조치결과반려</option>
               </select>
-              <!-- <select>
-                <option>담당자별</option>
-                <option>홍길동</option>
-                <option>가나다</option>
-              </select> -->
-              <button type="button" class="btn btnPrimary">
+              <button
+                type="button"
+                class="btn btnPrimary"
+                on:click={downloadCSV}
+              >
                 <img src="./assets/images/icon/download.svg" /> 엑셀 다운로드
               </button>
+              {#if wholePage}
+                <div
+                  class="backImage"
+                  on:click={() => {
+                    currentView === "default";
+                    wholePage = false;
+                  }}
+                >
+                  <img src="./assets/images/icon/back.svg" alt="" />
+                </div>
+              {/if}
             </div>
           </section>
         </section>
@@ -531,6 +641,8 @@
             bind:showProject
             bind:targetData
             bind:wholeOption
+            bind:search
+            bind:selectedItems
           />
         {/if}
 
@@ -547,3 +659,10 @@
     </div>
   </section>
 </div>
+
+<style>
+  .backImage {
+    cursor: pointer;
+    width: 24px;
+  }
+</style>

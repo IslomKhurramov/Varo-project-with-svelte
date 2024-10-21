@@ -82,6 +82,8 @@
   };
 
   const selectPlan = async (plan_index) => {
+    await refetchDataHandler();
+
     search.assessment_target = "";
     search.hostname = "";
     search.checklist_item_no = "";
@@ -485,12 +487,13 @@
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>
-          <col style="width:90px;" />
-          <col style="width:110px;" />
-          <col style="width:200px;" />
-          <col />
-          <col style="width:90px;" />
-          <col style="width:200px;" />
+          <col style="width:4%;" />
+          <col style="width:4%;" />
+          <col style="width:8%;" />
+          <col style="width:13%;" />
+          <col style="width:22%" />
+          <col style="width:4%;" />
+          <col style="width:5%;" />
         </colgroup>
         <thead>
           <tr>
@@ -500,7 +503,7 @@
             <th>점검항목</th>
             <th>시스템상태</th>
             <th class="text-center">점검결과</th>
-            <th>결과변경</th>
+            <th class="text-center">결과변경</th>
           </tr>
         </thead>
         <tbody>
@@ -523,14 +526,14 @@
                 <td onclick="modalOpen('detail')" class="cursor-pointer">
                   <div>{@html data?.ccr_item_no__ccc_item_criteria}</div>
                 </td>
-                <td> {@html data.ccr_item_status}</td>
+                <td style="overflow: hidden;"> {@html data.ccr_item_status}</td>
                 <td class="text-center">
                   <span class="badge badgePrimary">
                     {data.ccr_item_result}
                   </span>
                 </td>
-                <td>
-                  <div class="flex gap-4">
+                <td class="text-center">
+                  <div class="flex gap-4" style="justify-content: center;">
                     <select
                       class="xs"
                       on:change={(e) =>
@@ -592,16 +595,6 @@
         </tbody>
       </table>
     </div>
-    <div class="paginationWrap end">
-      <div class="pagination">
-        <!-- <a href="">&lt;</a> -->
-        <a href="" class="active">1</a>
-        <a href="">2</a>
-        <a href="">...</a>
-        <a href="">4</a>
-        <a href="">&gt;</a>
-      </div>
-    </div>
   </section>
 </article>
 
@@ -615,3 +608,11 @@
     />
   </Modal>
 {/if}
+
+<style>
+  tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
+  }
+</style>

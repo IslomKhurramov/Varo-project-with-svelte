@@ -543,6 +543,7 @@
 
     <div
       class={`contentsWrap assetview  ${currentView === "default" && !wholePage ? "vulnerability" : "vulnerability_create"}`}
+      style={wholePage ? "width: calc(100% - 280px);" : ""}
     >
       <article
         class="contentArea flex col"
@@ -614,6 +615,17 @@
               >
                 <img src="./assets/images/icon/download.svg" /> 엑셀 다운로드
               </button>
+              {#if wholePage}
+                <div
+                  class="backImage"
+                  on:click={() => {
+                    currentView === "default";
+                    wholePage = false;
+                  }}
+                >
+                  <img src="./assets/images/icon/back.svg" alt="" />
+                </div>
+              {/if}
             </div>
           </section>
         </section>
@@ -647,3 +659,10 @@
     </div>
   </section>
 </div>
+
+<style>
+  .backImage {
+    cursor: pointer;
+    width: 24px;
+  }
+</style>

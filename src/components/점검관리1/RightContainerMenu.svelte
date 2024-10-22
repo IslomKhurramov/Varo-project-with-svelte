@@ -54,14 +54,16 @@
           이력관리
         </a>
       </li>
-      <div
-        class="backImage"
-        on:click={() => {
-          navigate(window.location?.pathname == "/" ? "/page1" : "/");
-        }}
-      >
-        <img src="./assets/images/icon/back.svg" alt="" />
-      </div>
+      <li>
+        <a
+          href="javascript:void(0);"
+          on:click={() => {
+            navigate(window.location?.pathname == "/" ? "/page1" : "/");
+          }}
+        >
+          돌아가기
+        </a>
+      </li>
     </ul>
   </nav>
   {#if tabMenu !== "no"}
@@ -72,8 +74,7 @@
 </div>
 
 <style>
-  .backImage {
-    cursor: pointer;
-    width: 24px;
+  * {
+    font-size: 16px;
   }
 </style>

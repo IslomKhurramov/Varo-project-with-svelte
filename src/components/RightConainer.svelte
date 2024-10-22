@@ -13,6 +13,7 @@
   import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
 
   export let selectPageMain;
+  export let activeMenu;
   let projectData = {};
   let projectArray = [];
   let filteredProjects = [];
@@ -203,14 +204,16 @@
         </a>
       </li>
       {#if tabMenu}
-        <div
-          class="backImage"
-          on:click={() => {
-            navigate(window.location?.pathname == "/" ? "/page1" : "/");
-          }}
-        >
-          <img src="./assets/images/icon/back.svg" alt="" />
-        </div>
+        <li>
+          <a
+            href="javascript:void(0);"
+            on:click={() => {
+              navigate(window.location?.pathname == "/" ? "/page1" : "/");
+            }}
+          >
+            돌아가기
+          </a>
+        </li>
       {/if}
     </ul>
   </nav>
@@ -285,6 +288,7 @@
             </thead>
             <tbody>
               {#if filteredProjects && filteredProjects?.length !== 0}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
                 {#each filteredProjects as project, index}
                   <tr
                     on:click={() => {
@@ -410,6 +414,8 @@
                               on:click={() => {
                                 currentPage = FirstMenu;
                                 projectIndex = project.ccp_index;
+                                tabMenu = "결과등록";
+                                activeMenu = project.ccp_index;
                               }}
                             >
                               결과등록
@@ -421,6 +427,8 @@
                               on:click={() => {
                                 currentPage = SecondMenu;
                                 projectIndex = project.ccp_index;
+                                tabMenu = "결과조회/변경";
+                                activeMenu = project.ccp_index;
                               }}
                             >
                               결과조회
@@ -432,6 +440,8 @@
                               on:click={() => {
                                 currentPage = ThirdMenu;
                                 projectIndex = project.ccp_index;
+                                tabMenu = "보고서생성";
+                                activeMenu = project.ccp_index;
                               }}
                             >
                               보고서생성
@@ -443,6 +453,8 @@
                               on:click={() => {
                                 currentPage = FourthMenu;
                                 projectIndex = project.ccp_index;
+                                tabMenu = "이력관리";
+                                activeMenu = project.ccp_index;
                               }}
                             >
                               이력관리
@@ -463,6 +475,9 @@
 </div>
 
 <style>
+  * {
+    font-size: 16px;
+  }
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;

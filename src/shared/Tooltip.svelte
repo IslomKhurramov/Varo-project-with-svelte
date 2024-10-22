@@ -16,6 +16,7 @@
 
 <style>
   .tooltip {
+    width: 100%;
     position: relative;
     display: inline-block;
   }

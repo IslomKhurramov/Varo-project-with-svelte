@@ -6,6 +6,7 @@
   import { getAllPlanLists } from "../../services/page1/planInfoService";
   import { setDeletePlan } from "../../services/page1/newInspection";
   import { userData } from "../../stores/user.store";
+  import Tooltip from "../../shared/Tooltip.svelte";
 
   let currentView = "default";
   let currentPage = null;
@@ -79,13 +80,20 @@
       {#if projectArray && projectArray?.length !== 0}
         {#each projectArray as project, index}
           <li class={activeMenu === project.ccp_index ? "active" : ""}>
-            <a
-              href="javascript:void(0)"
-              on:click={() => selectPage(RightContainerMenu, project)}
-              title={project.ccp_title}
-            >
-              {project.ccp_title} <span class="arrowIcon"></span></a
-            >
+            <Tooltip text={project.ccp_title}>
+              <a
+                href="javascript:void(0)"
+                on:click={() => selectPage(RightContainerMenu, project)}
+                title={project.ccp_title}
+              >
+                <span
+                  style="white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;">{project.ccp_title}</span
+                >
+                <span class="arrowIcon"></span></a
+              >
+            </Tooltip>
           </li>
         {/each}
       {/if}

@@ -30,7 +30,7 @@
   let uuid_asset = "";
   let asset_group_index = "";
   let approve_status = "";
-  export let closeSwiper;
+
   export let selectedAsset;
   export let filteredAssets = [];
   let activeAsset = null;
@@ -122,6 +122,7 @@
 
   $: if (selectedAsset) {
     console.log("selectedAaset", selectedAsset);
+    focusOnAsset(selectedAsset.ass_uuid);
     handleAssetClick(selectedAsset.ass_uuid, selectedAsset);
   }
 
@@ -129,6 +130,8 @@
     uuid_asset = uid;
     approve_status = asset.ast_approve_status;
     activeAsset = asset;
+    // Scroll the selected asset into view
+    focusOnAsset(asset.ass_uuid);
 
     // Check if the asset belongs to any group
     if (asset.asset_group && asset.asset_group.length > 0) {
@@ -141,6 +144,57 @@
     // Log approve status for debugging purposes
     console.log("approve status", approve_status);
   }
+  onMount(() => {
+    // Initialize Swiper instance
+    swiperInstance = new Swiper(swiperContainer, {
+      modules: [Navigation, Pagination],
+      loop: false,
+      slidesPerView: 8,
+      spaceBetween: 15,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+
+    // When selectedAsset changes, attempt to focus on it
+    if (selectedAsset) {
+      setTimeout(() => {
+        focusOnAsset(selectedAsset.ass_uuid);
+      }, 0); // Ensure this runs after Swiper has fully rendered
+    }
+
+    return () => {
+      if (swiperInstance) {
+        swiperInstance.destroy(true, true);
+      }
+    };
+  });
+
+  // Function to scroll and focus on the asset
+  function focusOnAsset(assetId) {
+    const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
+    if (menuItem) {
+      console.log("Focusing on asset:", assetId); // Debug log
+      menuItem.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+
+      // Ensure the item can be focused
+      setTimeout(() => {
+        menuItem.focus(); // Focus on the selected item after scrolling
+      }, 300);
+    } else {
+      console.warn("Menu item not found:", assetId); // Warn if not found
+    }
+  }
+
   /****************************************************/
 
   onMount(() => {
@@ -300,6 +354,7 @@
   let menuWrapper;
 
   // This function will handle the horizontal scroll on next and prev clicks
+  // Function to handle horizontal scroll
   const handleScroll = (direction) => {
     if (direction === "prev") {
       scrollAmount -= itemWidth;
@@ -323,8 +378,6 @@
 </script>
 
 <main>
-  <button on:click={closeSwiper} class="close-button">X</button>
-
   <article class="contentArea flex col">
     <section bind:this={swiperContainer} class="topCon">
       <div class="menu-container">
@@ -337,9 +390,11 @@
           <div class="menu-wrapper" id="menuWrapper">
             {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
               <div
-                value={asset}
+                value={asset.ass_uuid}
                 name={asset}
+                tabindex="0"
                 class="menu-item {activeAsset &&
                 activeAsset.ass_uuid === asset.ass_uuid
                   ? 'active'
@@ -466,6 +521,9 @@
 </main>
 
 <style>
+  .contentArea {
+    min-height: 1200px;
+  }
   .subTabWrap a {
     cursor: pointer;
   }

@@ -26,7 +26,7 @@
     <h3 class="title">자산상세정보</h3>
     <div class="tableListWrap nohead">
       {#if Object.keys(assetDetails).length > 0}
-        <table class="tableList">
+        <table class="tableList table1">
           <colgroup>
             <col style="width:140px;" />
             <col />
@@ -98,7 +98,7 @@
       <div class="tableListWrap maxh">
         {#if allVulns.length > 0}
           <table
-            class="tableList hdBorder tableScroll"
+            class="tableList hdBorder tableScroll table2"
             style="margin-top: 20px; height:500px overflow-y:auto"
           >
             <colgroup>
@@ -169,6 +169,10 @@
 </main>
 
 <style>
+  .table1 td:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   .empty-state-message {
     display: flex;
     flex-direction: column;
@@ -184,7 +188,10 @@
     color: #555;
     padding: 20px; /* Add some padding */
   }
-
+  .table2 tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   .empty-state-message h3 {
     font-size: 22px; /* Increase the size */
     color: #007bff;

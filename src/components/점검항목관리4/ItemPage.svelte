@@ -355,7 +355,10 @@
     height: 450px;
     margin-bottom: 20px;
   }
-
+  tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   table {
     width: 100%;
   }

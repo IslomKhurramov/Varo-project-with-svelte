@@ -172,15 +172,11 @@
     </div>
 
     {#if currentData && currentData.length > 0}
-      <div class="tableListWrap">
-        <table class="tableList hdBorder">
+      <div class="tableListWrap scrollTable">
+        <table class="tableList hdBorder" style="margin-bottom: 40px;">
           <colgroup>
             <col style="width:60px;" />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
+            <col style="width: 300px;" />
           </colgroup>
           <thead>
             <tr>
@@ -210,6 +206,14 @@
   .subTabWrap a {
     cursor: pointer;
   }
+  .scrollTable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 500px;
+  }
+  .contenArea {
+    min-height: 1200px;
+  }
   .empty_state {
     display: flex;
     justify-content: center;
@@ -234,7 +238,10 @@
     margin-top: 20px;
     color: #555; /* Text color */
   }
-
+  td:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   .empty-state-message h3 {
     font-size: 18px;
     color: #007bff;

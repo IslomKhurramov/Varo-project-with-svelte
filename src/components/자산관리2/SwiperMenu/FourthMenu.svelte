@@ -358,4 +358,8 @@
     overflow-y: auto; /* Enable vertical scrolling */
     overflow-x: auto;
   }
+  td:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
 </style>

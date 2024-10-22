@@ -56,7 +56,7 @@
     assetGroupList();
   });
 
-  function toggleSwiper() {
+  function closeSwiper() {
     console.log("Toggling Swiper. Closing...");
     showSwiperComponent = false;
   }
@@ -67,24 +67,41 @@
 
   function filterAssets() {
     console.log("Selected Group:", selectedGroup);
+    console.log("Selected OSType:", asset_ostype); // Check selected OSType
 
     filteredAssets = $allAssetList.filter((asset) => {
       const conditions = [
+        // Filtering by selectedGroup (e.g., asset group)
         () =>
           selectedGroup === "전체" ||
           (Array.isArray(asset.asset_group) &&
             asset.asset_group.some(
               (group) => group.asg_index === selectedGroup,
             )),
-        () => isNotFiltered(asset.ast_ostype, asset_ostype),
+
+        // Filtering by asset_ostype (e.g., "UNIX", "WINDOWS", etc.)
+        () =>
+          asset_ostype === "전체" ||
+          (Array.isArray(asset.assessment_target_system) && // Ensure it's an array
+            asset.assessment_target_system.some((system) =>
+              Object.keys(system).some(
+                (key) => key === asset_ostype && system[key] === true,
+              ),
+            )),
+
+        // Filtering by assetTargetReg
         () =>
           assetTargetReg !== "전체"
             ? asset.asset_target_registered === assetTargetReg
             : true,
+
+        // Filtering by assetActive
         () =>
           assetAcitve !== "전체"
             ? asset.ast_activate === !!Number(assetAcitve)
             : true,
+
+        // Filtering by hostname
         () => isNotFiltered(asset.ast_hostname, assetHost),
       ];
 
@@ -101,8 +118,8 @@
     assetHost = "전체";
     selectedGroup = "전체";
     asset_ostype = "전체";
-    assetTargetReg = "";
-    assetAcitve = "";
+    assetTargetReg = "전체";
+    assetAcitve = "전체";
     filterAssets(); // Apply the reset immediately
   }
 
@@ -294,13 +311,8 @@
                   title={group.asg_title}
                   ><span class="truncate-text">
                     {group.asg_title}
-                  </span>
-                  <button
-                    class="asset_button"
-                    on:click|stopPropagation={() =>
-                      selectPage(AssetManagement, group)}>자산관리</button
-                  ></a
-                >
+                  </span><span class="arrowIcon"></span>
+                </a>
               </li>
             </div>
           {/each}
@@ -357,13 +369,16 @@
                 on:change={handleFilter}
               >
                 <option value="전체" selected>전체 </option>
-                {#each $allAssetList as asset}
-                  {#if asset.ast_ostype !== ""}
-                    <option value={asset.ast_ostype}>
-                      {asset.ast_ostype}
-                    </option>
-                  {/if}
-                {/each}
+
+                <option value="UNIX">UNIX</option>
+                <option value="WINDOWS">WINDOWS</option>
+                <option value="PC">PC</option>
+                <option value="NETWORK">NETWORK</option>
+                <option value="DBMS">DBMS</option>
+                <option value="WEB">WEB</option>
+                <option value="WAS">WAS</option>
+                <option value="CLOUD">CLOUD</option>
+                <option value="SECURITY">SECURITY</option>
               </select>
 
               <!-- Agent Installation Status Filter -->
@@ -374,8 +389,8 @@
                 on:change={handleFilter}
               >
                 <option value="전체" selected>전체</option>
-                <option value="YES">YES</option>
-                <option value="NO">NO</option>
+                <option value="YES">등록 미승인</option>
+                <option value="NO">등록 해제</option>
               </select>
 
               <!-- Activation Status Filter -->
@@ -423,6 +438,18 @@
               on:click={toggleGetLogHeader}
               class="btn btnPrimary padding_button">이력관리</button
             >
+
+            <button
+              class="btn btnPrimary padding_button"
+              on:click|stopPropagation={() => selectPage(AssetManagement)}
+              >자산관리</button
+            >
+            {#if showSwiperComponent}
+              <button
+                class="btn btnPrimary padding_button"
+                on:click={closeSwiper}>뒤로 가기</button
+              >
+            {/if}
           </div>
         </section>
       </article>
@@ -445,7 +472,7 @@
             {searchedResult}
             {showSearchResult}
             {filteredAssets}
-            {showSwiperComponent}
+            bind:showSwiperComponent
             bind:selectedUUID
             bind:selected
           />
@@ -476,15 +503,20 @@
     text-align: center;
   }
   .active {
-    background-color: rgba(0, 103, 255, 0.06);
-    color: #0067ff;
+    color: #ffffff;
+    background-color: #0067ff;
   }
   .active .truncate-text {
-    color: #0067ff;
+    color: #ffffff;
+    background-color: #0067ff;
   }
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
     animation: fadeInBackdrop 0.3s ease;
+  }
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
   }
   .editable_input {
     height: 40px;
@@ -570,7 +602,7 @@
   /* Truncate text with ellipsis */
   .truncate-text {
     display: inline-block;
-    max-width: 100px; /* Adjust as per your layout */
+    max-width: 100%; /* Adjust as per your layout */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

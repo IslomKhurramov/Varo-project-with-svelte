@@ -97,9 +97,9 @@
   /******************************************************************************/
 </script>
 
-<div style="margin-top: 20px;">
+<div style="margin-top: 20px; min-height:1200px">
   {#if showModal}
-    <article class="contentArea mt-0">
+    <article style="height: 1200px;">
       <ModalEditItem
         {selectedItem}
         {selected}
@@ -218,6 +218,9 @@
 </div>
 
 <style>
+  .contentArea {
+    height: 100%;
+  }
   .table2 {
     width: 100%;
     font-size: 12px;
@@ -226,8 +229,8 @@
   }
 
   .table2 {
-    height: 450px;
-    margin-bottom: 20px;
+    max-height: 1200px;
+    padding-bottom: 20px;
   }
 
   table {

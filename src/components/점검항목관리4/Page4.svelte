@@ -376,7 +376,7 @@
         {:else}
           <ul class="prMenuList">
             {#each allChecklistArray as checkList (checkList.ccg_index)}
-              <div class="project_button" bind:this={activeChecklistElement}>
+              <div bind:this={activeChecklistElement}>
                 <li>
                   <!-- svelte-ignore a11y-invalid-attribute -->
                   <a
@@ -391,14 +391,7 @@
                       {checkList.ccg_group
                         ? checkList.ccg_group
                         : "No group info"}</span
-                    >
-                    <button
-                      class="asset_button copy"
-                      on:click={() => {
-                        showModal = true;
-                        selectedChecklistForCopyId = checkList.ccg_index;
-                      }}>복사</button
-                    >
+                    ><span class="arrowIcon"></span>
                   </a>
                 </li>
               </div>
@@ -416,52 +409,6 @@
                         placeholder="Edit name"
                         class="editable_input"
                       />
-                    {:else}
-                      <!-- Normal mode: render the checklist name -->
-                      <!-- svelte-ignore a11y-invalid-attribute -->
-                      <a href="#" style="width: 120px;">
-                        {checklist.ccg_group}
-                      </a>
-                    {/if}
-                  </div>
-
-                  <div style="display: flex; flex-direction:column">
-                    {#if editingChecklistId === checklist.ccg_index}
-                      <!-- Show Save/Cancel buttons in edit mode -->
-                      <button
-                        class="menu_button1 save"
-                        on:click={() =>
-                          editChecklist(
-                            checklist.ccg_index,
-                            editedChecklistName,
-                          )}
-                      >
-                        Save
-                      </button>
-                      <button
-                        class="menu_button1 cancel"
-                        on:click={cancelEditing}
-                      >
-                        Cancel
-                      </button>
-                    {:else}
-                      <!-- Normal mode: show Edit, Copy, Delete buttons -->
-                      <button
-                        class="menu_button1 edit"
-                        on:click={() =>
-                          startEditing(
-                            checklist.ccg_index,
-                            checklist.ccg_group,
-                          )}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        class="menu_button1 delete"
-                        on:click={() => deleteChecklist(checklist.ccg_index)}
-                      >
-                        Delete
-                      </button>
                     {/if}
                   </div>
                 </div>
@@ -537,6 +484,50 @@
             >
               뒤로 가기
             </button>
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                showModal = true;
+              }}>복사</button
+            >
+            {#each createdChecklists as checklist (checklist.ccg_index)}
+              {#if editingChecklistId === checklist.ccg_index}
+                <!-- Show Save/Cancel buttons in edit mode -->
+                <button
+                  style="padding: 15px;"
+                  class="btn btnPrimary save"
+                  on:click={() =>
+                    editChecklist(checklist.ccg_index, editedChecklistName)}
+                >
+                  Save
+                </button>
+                <button
+                  style="padding: 15px;"
+                  class="btn btnPrimary cancel"
+                  on:click={cancelEditing}
+                >
+                  Cancel
+                </button>
+              {:else}
+                <!-- Normal mode: show Edit, Copy, Delete buttons -->
+                <button
+                  style="padding: 15px;"
+                  class="btn btnPrimary edit"
+                  on:click={() =>
+                    startEditing(checklist.ccg_index, checklist.ccg_group)}
+                >
+                  Edit
+                </button>
+                <button
+                  style="padding: 15px;"
+                  class="btn btnPrimary delete btnRed"
+                  on:click={() => deleteChecklist(checklist.ccg_index)}
+                >
+                  Delete
+                </button>
+              {/if}
+            {/each}
           </div>
         </section>
       </article>
@@ -622,25 +613,24 @@
     box-sizing: border-box;
     font-family: "Arial", sans-serif;
   }
+
+  .edit {
+    background-color: rgba(0, 255, 140, 0.06);
+    color: #27ae60;
+  }
   .active {
-    background-color: rgba(0, 103, 255, 0.06);
-    color: #0067ff;
+    color: #ffffff;
+    background-color: #0067ff;
   }
   .active .truncate-text {
-    color: #0067ff;
+    color: #ffffff;
+    background-color: #0067ff;
+  }
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
   }
 
-  .menu_button1 {
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 10px;
-    padding: 2px;
-    transition: all 0.3s ease;
-    font-weight: bold;
-    color: #495057;
-    text-align: center;
-    width: 60px;
-  }
   .first_line {
     width: 100%;
     display: flex;
@@ -653,51 +643,6 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 10px;
-  }
-
-  /***edit delete copy buttons*/
-  /* Edit Button - Light Blue */
-  .menu_button1.edit {
-    background-color: #3498db;
-    color: #ffffff;
-  }
-
-  .menu_button1.edit:hover {
-    background-color: #2980b9;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-  }
-
-  /* Delete Button - Red */
-  .menu_button1.delete {
-    background-color: #e74c3c;
-    color: #ffffff;
-  }
-
-  .menu_button1.delete:hover {
-    background-color: #c0392b;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-  }
-
-  /* Save Button - Green */
-  .menu_button1.save {
-    background-color: #2ecc71;
-    color: white;
-  }
-
-  .menu_button1.save:hover {
-    background-color: #27ae60;
-  }
-
-  /* Cancel Button - Red */
-  .menu_button1.cancel {
-    background-color: #e74c3c;
-    color: white;
-  }
-
-  .menu_button1.cancel:hover {
-    background-color: #c0392b;
   }
 
   dialog {
@@ -804,7 +749,7 @@
   /* Truncate text with ellipsis */
   .truncate-text {
     display: inline-block;
-    max-width: 100px; /* Adjust as per your layout */
+    max-width: 100%; /* Adjust as per your layout */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -843,7 +788,7 @@
   .editable_input {
     border: 1px solid #555;
     height: 40px;
-    width: 120px;
+    width: 100%;
   }
   .filterWrap select,
   input {
@@ -857,5 +802,8 @@
     background-size: 10px;
     font-weight: 400;
     font-size: 16px;
+  }
+  .active:hover {
+    color: #fff; /* Change text color to white on hover */
   }
 </style>

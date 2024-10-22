@@ -235,10 +235,7 @@
   function cancel() {
     showModal = false;
   }
-  function closeSwiper() {
-    console.log("close swiper ");
-    showSwiperComponent = false;
-  }
+
   /**************************************************************/
 
   // Function to compute stroke color based on the score
@@ -301,6 +298,7 @@
                 on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
               >
                 <img src="./assets/images/icon/edit.svg" alt="Edit" />
+                <span class="tooltip">활성화하다</span>
               </button>
               <button
                 type="button"
@@ -308,6 +306,7 @@
                 on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
               >
                 <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
+                <span class="tooltip">비활성화하다</span>
               </button>
               <button type="button" class="btnImg">
                 <img src="./assets/images/icon/reset.svg" alt="Reset" />
@@ -437,7 +436,7 @@
       </div>
     {/if}
   {:else}
-    <Swiper {closeSwiper} {selectedAsset} {filteredAssets} />
+    <Swiper {selectedAsset} {filteredAssets} />
   {/if}
 </main>
 
@@ -445,6 +444,8 @@
   .car_container {
     max-height: 1200px;
     overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
     overflow-x: hidden;
   }
   .contentArea {
@@ -468,7 +469,7 @@
       box-shadow 0.3s ease;
   }
   .hoverCard:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* light blue tint */
+    background-color: rgba(242, 242, 242, 1); /* light blue tint */
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* subtle blue shadow */
     cursor: pointer;
   }
@@ -555,5 +556,49 @@
     border-color: #e8e8e8;
     position: relative;
     top: 2px;
+  }
+  .btnWrap {
+    display: flex; /* Align buttons in a row */
+    gap: 8px; /* Space between buttons */
+  }
+
+  .btnImg {
+    display: flex; /* Use flex to align items */
+    align-items: center; /* Center items vertically */
+    position: relative; /* Required for the tooltip positioning */
+    border: none; /* Remove default button border */
+    background-color: transparent; /* Transparent background */
+    cursor: pointer; /* Change cursor on hover */
+  }
+
+  /* Tooltip styling */
+  .tooltip {
+    visibility: hidden; /* Hidden by default */
+    width: 120px; /* Width of the tooltip */
+    background-color: rgba(0, 0, 0, 0.7); /* Background color of the tooltip */
+    color: #fff; /* Text color */
+    text-align: center; /* Center text */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px; /* Padding inside tooltip */
+    position: absolute; /* Absolute positioning */
+    z-index: 1; /* On top of other elements */
+    bottom: 125%; /* Position above the button */
+    left: 50%; /* Center the tooltip */
+    margin-left: -60px; /* Adjust left position to center */
+    opacity: 0; /* Initial opacity */
+    transition: opacity 0.2s ease; /* Transition effect */
+    z-index: 9999 !important;
+  }
+
+  /* Show the tooltip on hover */
+  .btnImg:hover .tooltip {
+    visibility: visible; /* Show tooltip */
+    opacity: 1; /* Fade in the tooltip */
+  }
+
+  /* Adjust icon size */
+  .btnImg img {
+    width: 24px; /* Set a consistent width for icons */
+    height: 24px; /* Set a consistent height for icons */
   }
 </style>

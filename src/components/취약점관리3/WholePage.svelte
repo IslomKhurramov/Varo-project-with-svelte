@@ -1176,23 +1176,23 @@
                 <div class="formControl align-start">
                   <label class="mt-12">취약점정보</label>
                   <textarea rows="8" readonly
-                    >${targetData?.ccr_item_no__ccc_item_criteria}</textarea
+                    >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
                   >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
                   <label class="mt-12">평가기준</label>
-                  <textarea rows="8" readonly>
-                    {targetData?.ccr_item_no__ccc_item_title}</textarea
+                  <textarea rows="8" readonly
+                    >{targetData?.ccr_item_no__ccc_item_title}</textarea
                   >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
                   <label class="mt-12">조치방법</label>
-                  <textarea rows="8" readonly>
-                    {targetData?.ccr_item_no__ccc_mitigation_example}</textarea
+                  <textarea rows="8" readonly
+                    >{targetData?.ccr_item_no__ccc_mitigation_example}</textarea
                   >
                 </div>
               </div>
@@ -1270,5 +1270,8 @@
     background: blue;
     color: white;
     transition: 0.2s;
+  }
+  * {
+    font-size: 16px;
   }
 </style>

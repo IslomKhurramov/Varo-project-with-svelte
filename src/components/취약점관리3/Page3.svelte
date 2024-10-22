@@ -543,7 +543,7 @@
 
     <div
       class={`contentsWrap assetview  ${currentView === "default" && !wholePage ? "vulnerability" : "vulnerability_create"}`}
-      style={wholePage ? "width: calc(100% - 280px);" : ""}
+      style={wholePage ? "width: calc(100% - 280px);" : "padding-bottom: 40px;"}
     >
       <article
         class="contentArea flex col"
@@ -615,16 +615,18 @@
               >
                 <img src="./assets/images/icon/download.svg" /> 엑셀 다운로드
               </button>
+
               {#if wholePage}
-                <div
-                  class="backImage"
+                <button
+                  type="button"
+                  class="btn btnBlue"
                   on:click={() => {
                     currentView === "default";
                     wholePage = false;
                   }}
                 >
-                  <img src="./assets/images/icon/back.svg" alt="" />
-                </div>
+                  돌아가기
+                </button>
               {/if}
             </div>
           </section>
@@ -661,6 +663,9 @@
 </div>
 
 <style>
+  * {
+    font-size: 16px;
+  }
   .backImage {
     cursor: pointer;
     width: 24px;

@@ -16,13 +16,15 @@
 
 <style>
   .tooltip {
+    width: 100%;
     position: relative;
     display: inline-block;
   }
   .tooltip .tooltiptext {
     visibility: hidden;
-    width: 120px;
-    background-color: black;
+    width: 100%;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.723);
     color: #fff;
     text-align: center;
     border-radius: 6px;
@@ -30,8 +32,7 @@
     position: absolute;
     z-index: 1;
     bottom: 100%;
-    left: 50%;
-    margin-left: -60px;
+    left: 0%;
     opacity: 0;
     transition: opacity 0.3s;
   }

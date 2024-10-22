@@ -1234,3 +1234,9 @@
     {/if}
   </div>
 </div>
+
+<style>
+  * {
+    font-size: 16px;
+  }
+</style>

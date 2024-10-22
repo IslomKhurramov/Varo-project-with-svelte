@@ -516,3 +516,9 @@
     <ResultUploadStatusPopup bind:uploadStatusModalData />
   </ModalDynamic>
 {/if}
+
+<style>
+  * {
+    font-size: 16px;
+  }
+</style>

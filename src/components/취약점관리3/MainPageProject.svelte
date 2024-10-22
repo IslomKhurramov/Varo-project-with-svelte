@@ -673,22 +673,21 @@
         <div class="tableListWrap nofirstth">
           <table class="tableList hdBorder">
             <colgroup>
-              <col style="width:40px;" />
-              <col style="width:80px;" />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              {#if isAgenUser}
-                <col />
-              {/if}
-
               {#if isAgenUser && selectedSendData?.plan_index}
-                <col />
+                <col style="width:3%;" />
+              {/if}
+              <col style="width:4%;" />
+              <col style="width:8%;" />
+              <col style="width:8%;" />
+              <col style="width:7%;" />
+              <col style="width:10%;" />
+              <col style="width:5%;" />
+              <col style="width:10%;" />
+              <col style="width:10%;" />
+              <col style="width:6%;" />
+              <col style="width:7%;" />
+              {#if isAgenUser}
+                <col style="width:7%;" />
               {/if}
             </colgroup>
             <thead>
@@ -870,3 +869,19 @@
     </div>
   </div>
 </section>
+
+<style>
+  * {
+    font-size: 16px;
+  }
+  tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
+  }
+
+  table td,
+  th {
+    font-size: 16px;
+  }
+</style>

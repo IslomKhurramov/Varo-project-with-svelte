@@ -1174,25 +1174,27 @@
             <article class="formWrap font13">
               <div class="formControlWrap">
                 <div class="formControl align-start">
-                  <label class="mt-12">취약점정보</label>
-                  <textarea rows="8" readonly
-                    >${targetData?.ccr_item_no__ccc_item_criteria}</textarea
+                  <label class="mt-12" style="font-size: 16px;"
+                    >취약점정보</label
+                  >
+                  <textarea rows="8" readonly style="font-size: 16px;"
+                    >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
                   >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
-                  <label class="mt-12">평가기준</label>
-                  <textarea rows="8" readonly>
-                    {targetData?.ccr_item_no__ccc_item_title}</textarea
+                  <label class="mt-12" style="font-size: 16px;">평가기준</label>
+                  <textarea rows="8" readonly style="font-size: 16px;"
+                    >{targetData?.ccr_item_no__ccc_item_title}</textarea
                   >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
-                  <label class="mt-12">조치방법</label>
-                  <textarea rows="8" readonly>
-                    {targetData?.ccr_item_no__ccc_mitigation_example}</textarea
+                  <label class="mt-12" style="font-size: 16px;">조치방법</label>
+                  <textarea rows="8" readonly style="font-size: 16px;"
+                    >{targetData?.ccr_item_no__ccc_mitigation_example}</textarea
                   >
                 </div>
               </div>
@@ -1218,7 +1220,7 @@
             <article>
               <h3 class="title border">관련자산</h3>
               <div class="tableListWrap nofirstth">
-                <table class="tableList hdBorder">
+                <table class="tableList hdBorder chasan">
                   <colgroup>
                     <col />
                     <col />
@@ -1270,5 +1272,23 @@
     background: blue;
     color: white;
     transition: 0.2s;
+  }
+  *,
+  th,
+  td,
+  tr,
+  textarea,
+  label {
+    font-size: 16px;
+  }
+
+  th {
+    width: 110px;
+  }
+
+  .chasan tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
   }
 </style>

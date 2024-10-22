@@ -241,6 +241,9 @@
 </article>
 
 <style>
+  * {
+    font-size: 16px;
+  }
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;

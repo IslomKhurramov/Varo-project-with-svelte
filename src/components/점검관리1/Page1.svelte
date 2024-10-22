@@ -6,6 +6,7 @@
   import { getAllPlanLists } from "../../services/page1/planInfoService";
   import { setDeletePlan } from "../../services/page1/newInspection";
   import { userData } from "../../stores/user.store";
+  import Tooltip from "../../shared/Tooltip.svelte";
 
   let currentView = "default";
   let currentPage = null;
@@ -63,10 +64,13 @@
 <section>
   <article class="sideMenu">
     <div class="btnWrap">
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <a
         class={`btn btnPrimary ${activeMenu == "add" ? "buttonActive" : ""}`}
         on:click={() => selectPage(AddPorject, "add")}
       >
+        <!-- svelte-ignore a11y-missing-attribute -->
         <img src="./assets/images/icon/add.svg" />
         신규점검
       </a>
@@ -79,13 +83,20 @@
       {#if projectArray && projectArray?.length !== 0}
         {#each projectArray as project, index}
           <li class={activeMenu === project.ccp_index ? "active" : ""}>
+            <!-- <Tooltip text={project.ccp_title}> -->
             <a
               href="javascript:void(0)"
               on:click={() => selectPage(RightContainerMenu, project)}
               title={project.ccp_title}
             >
-              {project.ccp_title} <span class="arrowIcon"></span></a
+              <span
+                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+              >
+                {project.ccp_title}
+              </span>
+              <span class="arrowIcon"></span></a
             >
+            <!-- </Tooltip> -->
           </li>
         {/each}
       {/if}
@@ -93,7 +104,7 @@
   </article>
 
   {#if currentView === "default"}
-    <RightConainer selectPageMain={selectPage} />
+    <RightConainer selectPageMain={selectPage} bind:activeMenu />
   {:else if currentPage}
     <svelte:component
       this={currentPage}
@@ -112,5 +123,45 @@
   }
   .buttonActive img {
     filter: brightness(0) invert(1);
+  }
+
+  /* Tooltip styling */
+  .prMenuList a[title] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .prMenuList a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .prMenuList a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+  }
+
+  * {
+    font-size: 16px;
   }
 </style>

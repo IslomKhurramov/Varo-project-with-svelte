@@ -434,6 +434,7 @@
               >
                 <div
                   class="menu"
+                  style="position: relative;"
                   on:click={() => {
                     search.plan_index = plan.plan_index;
                     getPlanDataSearch();
@@ -446,6 +447,7 @@
                   }}
                 >
                   {plan?.plan_title} <span class="arrowIcon"></span>
+                  <span class="tooltip">{plan?.plan_title}</span>
                 </div>
                 {#if activePlan === plan.plan_index}
                   {#each plan?.plan_target as target}
@@ -547,7 +549,7 @@
     >
       <article
         class="contentArea flex col"
-        style="overflow: auto; height: calc(100vh - 134px);"
+        style="height: calc(100vh - 160px);"
       >
         <section class="topCon">
           <section class="filterWrap">
@@ -669,5 +671,27 @@
   .backImage {
     cursor: pointer;
     width: 24px;
+  }
+
+  /* Tooltip styling */
+  .tooltip {
+    visibility: hidden; /* Hidden by default */
+    width: 87%; /* Width of the tooltip */
+    background-color: rgba(0, 0, 0, 0.7); /* Background color of the tooltip */
+    color: #fff; /* Text color */
+    text-align: center; /* Center text */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px; /* Padding inside tooltip */
+    position: absolute; /* Absolute positioning */
+    z-index: 1; /* On top of other elements */
+    bottom: 125%; /* Position above the button */
+    opacity: 0; /* Initial opacity */
+    transition: opacity 0.2s ease; /* Transition effect */
+    z-index: 9999 !important;
+  }
+
+  .menu:hover .tooltip {
+    visibility: visible; /* Show tooltip */
+    opacity: 1; /* Fade in the tooltip */
   }
 </style>

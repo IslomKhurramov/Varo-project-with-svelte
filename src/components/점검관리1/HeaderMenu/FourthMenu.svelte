@@ -180,7 +180,7 @@
       > -->
     </div>
   </section>
-  <section class="tableWrap">
+  <section class="tableWrap" style="height: 66vh;">
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>

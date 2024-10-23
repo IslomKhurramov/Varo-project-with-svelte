@@ -228,249 +228,268 @@
     bind:tabMenu
   /> -->
   {:else}
-    <article class="contentArea">
-      <section class="filterWrap">
-        <div>
-          <select bind:value={selectedStatus} on:change={filterProjects}>
-            <option value="">프로젝트명</option>
-            <option value="true">완료된 프로젝트</option>
-            <option value="false">진행 중인 프로젝트</option>
-          </select>
-          <select bind:value={selectedScheduleRange} on:change={filterProjects}>
-            <option value="">일정범위</option>
-            <option value="last7days">Past 7 Days</option>
-            <option value="past90days">Past 90 Days</option>
-          </select>
-          <select bind:value={selectedOS} on:change={filterProjects}>
-            <option value="">운영체제</option>
-            <option value="WINDOWS">Windows</option>
-            <option value="UNIX">Unix</option>
-            <option value="SECURITY">Security</option>
-            <option value="NETWORK">Network</option>
-            <option value="DBMS">Dbms</option>
-          </select>
-          <button type="button" class="btn btnPrimary" on:click={downloadCSV}>
-            <img src="./assets/images/icon/download.svg" />
-            엑셀 다운로드
-          </button>
-        </div>
-      </section>
-      <section>
-        <div
-          class="tableListWrap"
-          style="
-        overflow: auto;
-        height: 100vh;
-    "
-        >
-          <table class="tableList">
-            <colgroup>
-              <col style="width:6%;" />
-              <col style="width: 13%;" />
-              <col style="width:30%;" />
-              <col style="width:5%;" />
-              <col style="width:5%;" />
-              <col style="width:12%;" />
-              <col style="width:5%;" />
-              <col style="width:2%;" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="text-center">보안점수</th>
-                <th>제목</th>
-                <th>점검대상</th>
-                <th>생성자</th>
-                <th class="text-center">진행상태</th>
-                <th>점검일시</th>
-                <th>점검방법</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {#if filteredProjects && filteredProjects?.length !== 0}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                {#each filteredProjects as project, index}
-                  <tr
-                    on:click={() => {
-                      currentPage = ProjectDetail;
-                      projectIndex = project.ccp_index;
-                      selectPageMain(RightContainerMenu, project);
-                    }}
-                  >
-                    <td class="circleTd">
-                      <div class="circle" data-percent="100" data-offset="440">
-                        <svg width="" height="" viewBox="0 0 150 150">
-                          <circle
-                            cx="75"
-                            cy="75"
-                            r="70"
-                            stroke={"#F2F2F2"}
-                            stroke-width="10"
-                            fill="none"
-                          />
-                          <circle
-                            class="progress"
-                            cx="75"
-                            cy="75"
-                            r="70"
-                            stroke={project?.ccp_security_point > 0
-                              ? project?.ccp_security_point <= 33
-                                ? "#FF1500"
-                                : project?.ccp_security_point <= 66
-                                  ? "#4AC93F"
-                                  : "#0067FF"
-                              : "#0067FF"}
-                            stroke-width="10"
-                            fill="none"
-                            stroke-dasharray="440"
-                            stroke-dashoffset="440"
-                            stroke-linecap="round"
-                            transform="rotate(-90 75 75)"
-                            style={`stroke: ${
-                              project?.ccp_security_point > 0
+    <div class="scroll-div">
+      <article class="contentArea">
+        <section class="filterWrap">
+          <div>
+            <select bind:value={selectedStatus} on:change={filterProjects}>
+              <option value="">프로젝트명</option>
+              <option value="true">완료된 프로젝트</option>
+              <option value="false">진행 중인 프로젝트</option>
+            </select>
+            <select
+              bind:value={selectedScheduleRange}
+              on:change={filterProjects}
+            >
+              <option value="">일정범위</option>
+              <option value="last7days">Past 7 Days</option>
+              <option value="past90days">Past 90 Days</option>
+            </select>
+            <select bind:value={selectedOS} on:change={filterProjects}>
+              <option value="">운영체제</option>
+              <option value="WINDOWS">Windows</option>
+              <option value="UNIX">Unix</option>
+              <option value="SECURITY">Security</option>
+              <option value="NETWORK">Network</option>
+              <option value="DBMS">Dbms</option>
+            </select>
+            <button type="button" class="btn btnPrimary" on:click={downloadCSV}>
+              <img src="./assets/images/icon/download.svg" />
+              엑셀 다운로드
+            </button>
+          </div>
+        </section>
+        <section>
+          <div
+            class="tableListWrap"
+            style="
+          overflow: auto;
+          height: 100vh;
+      "
+          >
+            <table class="tableList">
+              <colgroup>
+                <col style="width:6%;" />
+                <col style="width: 13%;" />
+                <col style="width:30%;" />
+                <col style="width:5%;" />
+                <col style="width:5%;" />
+                <col style="width:12%;" />
+                <col style="width:5%;" />
+                <col style="width:2%;" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">보안점수</th>
+                  <th>제목</th>
+                  <th>점검대상</th>
+                  <th>생성자</th>
+                  <th class="text-center">진행상태</th>
+                  <th>점검일시</th>
+                  <th>점검방법</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {#if filteredProjects && filteredProjects?.length !== 0}
+                  <!-- svelte-ignore a11y-click-events-have-key-events -->
+                  {#each filteredProjects as project, index}
+                    <tr
+                      on:click={() => {
+                        currentPage = ProjectDetail;
+                        projectIndex = project.ccp_index;
+                        selectPageMain(RightContainerMenu, project);
+                      }}
+                    >
+                      <td class="circleTd">
+                        <div
+                          class="circle"
+                          data-percent="100"
+                          data-offset="440"
+                        >
+                          <svg width="" height="" viewBox="0 0 150 150">
+                            <circle
+                              cx="75"
+                              cy="75"
+                              r="70"
+                              stroke={"#F2F2F2"}
+                              stroke-width="10"
+                              fill="none"
+                            />
+                            <circle
+                              class="progress"
+                              cx="75"
+                              cy="75"
+                              r="70"
+                              stroke={project?.ccp_security_point > 0
                                 ? project?.ccp_security_point <= 33
                                   ? "#FF1500"
                                   : project?.ccp_security_point <= 66
                                     ? "#4AC93F"
                                     : "#0067FF"
-                                : "#0067FF"
-                            }; stroke-dashoffset: ${
-                              440 -
-                              (440 *
-                                parseInt(
-                                  project?.ccp_security_point > 0
-                                    ? project?.ccp_security_point
-                                    : 0,
-                                )) /
-                                100
-                            };`}
-                          />
-                        </svg>
-                        <div class="percent">
-                          <span
-                            >{project?.ccp_security_point > 0
-                              ? project?.ccp_security_point
-                              : 0}%</span
-                          >
+                                : "#0067FF"}
+                              stroke-width="10"
+                              fill="none"
+                              stroke-dasharray="440"
+                              stroke-dashoffset="440"
+                              stroke-linecap="round"
+                              transform="rotate(-90 75 75)"
+                              style={`stroke: ${
+                                project?.ccp_security_point > 0
+                                  ? project?.ccp_security_point <= 33
+                                    ? "#FF1500"
+                                    : project?.ccp_security_point <= 66
+                                      ? "#4AC93F"
+                                      : "#0067FF"
+                                  : "#0067FF"
+                              }; stroke-dashoffset: ${
+                                440 -
+                                (440 *
+                                  parseInt(
+                                    project?.ccp_security_point > 0
+                                      ? project?.ccp_security_point
+                                      : 0,
+                                  )) /
+                                  100
+                              };`}
+                            />
+                          </svg>
+                          <div class="percent">
+                            <span
+                              >{project?.ccp_security_point > 0
+                                ? project?.ccp_security_point
+                                : 0}%</span
+                            >
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td class="textoverflowLine1">
-                      {project.ccp_title}
-                    </td>
-                    <td>
-                      {project?.asg_index__asg_title} (총
-                      {parseInt(project?.asset["UNIX"] ?? 0) +
-                        parseInt(project?.asset["WINDOWS"] ?? 0) +
-                        parseInt(project?.asset["NETWORK"] ?? 0) +
-                        parseInt(project?.asset["WEB"] ?? 0) +
-                        parseInt(project?.asset["DBMS"] ?? 0)}대)
-                      <div class="tableSummary">
-                        (유닉스:{project?.asset["UNIX"]}대, 윈도우: {project
-                          ?.asset["WINDOWS"]}대, NETWORK: {project?.asset[
-                          "NETWORK"
-                        ]}대, WEB: {project?.asset["WEB"]}대, DBMS: {project
-                          ?.asset["DBMS"]}대)
-                      </div>
-                    </td>
-                    <td> {project.plan_planer_info__user_name} </td>
-                    <td class="text-center">
-                      <span class="badge badgePrimary">
-                        {project?.ccp_b_finalized ? "완료" : "진행 중"}
-                      </span>
-                      <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
-                    </td>
-                    <td>
-                      {moment(project?.plan_start_date).format("YYYY MM DD")} ~ {moment(
-                        project?.plan_end_date,
-                      ).format("YYYY MM DD")}
-                    </td>
-                    <td>
-                      {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
-                    </td>
-                    <td
-                      class="tableTootipWrap"
-                      style="background: none;"
-                      on:click={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      <button
-                        type="button"
-                        class="tableTootip"
-                        style="width: 100%;"
+                      </td>
+                      <td class="textoverflowLine1">
+                        {project.ccp_title}
+                      </td>
+                      <td>
+                        {project?.asg_index__asg_title} (총
+                        {parseInt(project?.asset["UNIX"] ?? 0) +
+                          parseInt(project?.asset["WINDOWS"] ?? 0) +
+                          parseInt(project?.asset["NETWORK"] ?? 0) +
+                          parseInt(project?.asset["WEB"] ?? 0) +
+                          parseInt(project?.asset["DBMS"] ?? 0)}대)
+                        <div class="tableSummary">
+                          ({project?.asset["UNIX"]
+                            ? `유닉스: ${project?.asset["UNIX"]}대, `
+                            : ""}
+                          {project?.asset["WINDOWS"]
+                            ? `윈도우: ${project?.asset["WINDOWS"]}대, `
+                            : ""}
+                          {project?.asset["NETWORK"]
+                            ? `NETWORK: ${project?.asset["NETWORK"]}대, `
+                            : ""}
+                          {project?.asset["WEB"]
+                            ? `WEB: ${project?.asset["WEB"]}대, `
+                            : ""}
+                          {project?.asset["DBMS"]
+                            ? `DBMS: ${project?.asset["DBMS"]}대`
+                            : ""}
+                          )
+                        </div>
+                      </td>
+                      <td> {project.plan_planer_info__user_name} </td>
+                      <td class="text-center">
+                        <span class="badge badgePrimary">
+                          {project?.ccp_b_finalized ? "완료" : "진행 중"}
+                        </span>
+                        <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
+                      </td>
+                      <td>
+                        {moment(project?.plan_start_date).format("YYYY MM DD")} ~
+                        {moment(project?.plan_end_date).format("YYYY MM DD")}
+                      </td>
+                      <td>
+                        {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
+                      </td>
+                      <td
+                        class="tableTootipWrap"
+                        style="background: none;"
                         on:click={(e) => {
                           e.stopPropagation();
-                          toggleTooltip(e);
                         }}
                       >
-                        <img src="./assets/images/icon/options.svg" />
-                      </button>
-                      <div class="tooltip-modal" style="display: none;">
-                        <ul>
-                          <li>
-                            <a
-                              href="javascript:void(0)"
-                              on:click={() => {
-                                currentPage = FirstMenu;
-                                projectIndex = project.ccp_index;
-                                tabMenu = "결과등록";
-                                activeMenu = project.ccp_index;
-                              }}
-                            >
-                              결과등록
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="javascript:void(0)"
-                              on:click={() => {
-                                currentPage = SecondMenu;
-                                projectIndex = project.ccp_index;
-                                tabMenu = "결과조회/변경";
-                                activeMenu = project.ccp_index;
-                              }}
-                            >
-                              결과조회
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="javascript:void(0)"
-                              on:click={() => {
-                                currentPage = ThirdMenu;
-                                projectIndex = project.ccp_index;
-                                tabMenu = "보고서생성";
-                                activeMenu = project.ccp_index;
-                              }}
-                            >
-                              보고서생성
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="javascript:void(0)"
-                              on:click={() => {
-                                currentPage = FourthMenu;
-                                projectIndex = project.ccp_index;
-                                tabMenu = "이력관리";
-                                activeMenu = project.ccp_index;
-                              }}
-                            >
-                              이력관리
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                {/each}
-              {/if}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </article>
+                        <button
+                          type="button"
+                          class="tableTootip"
+                          style="width: 100%;"
+                          on:click={(e) => {
+                            e.stopPropagation();
+                            toggleTooltip(e);
+                          }}
+                        >
+                          <img src="./assets/images/icon/options.svg" />
+                        </button>
+                        <div class="tooltip-modal" style="display: none;">
+                          <ul>
+                            <li>
+                              <a
+                                href="javascript:void(0)"
+                                on:click={() => {
+                                  currentPage = FirstMenu;
+                                  projectIndex = project.ccp_index;
+                                  tabMenu = "결과등록";
+                                  activeMenu = project.ccp_index;
+                                }}
+                              >
+                                결과등록
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href="javascript:void(0)"
+                                on:click={() => {
+                                  currentPage = SecondMenu;
+                                  projectIndex = project.ccp_index;
+                                  tabMenu = "결과조회/변경";
+                                  activeMenu = project.ccp_index;
+                                }}
+                              >
+                                결과조회
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href="javascript:void(0)"
+                                on:click={() => {
+                                  currentPage = ThirdMenu;
+                                  projectIndex = project.ccp_index;
+                                  tabMenu = "보고서생성";
+                                  activeMenu = project.ccp_index;
+                                }}
+                              >
+                                보고서생성
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href="javascript:void(0)"
+                                on:click={() => {
+                                  currentPage = FourthMenu;
+                                  projectIndex = project.ccp_index;
+                                  tabMenu = "이력관리";
+                                  activeMenu = project.ccp_index;
+                                }}
+                              >
+                                이력관리
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  {/each}
+                {/if}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </article>
+    </div>
   {/if}
 </div>
 
@@ -491,5 +510,11 @@
   .backImage {
     cursor: pointer;
     width: 24px;
+  }
+
+  .scroll-div {
+    overflow: auto;
+    height: 77vh;
+    padding-bottom: 60px;
   }
 </style>

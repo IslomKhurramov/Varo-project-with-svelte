@@ -468,7 +468,7 @@
 </main> -->
 
 <section class="content">
-  <div>
+  <div style="height: 60%; overflow: auto;">
     <!-- 자산상세 -->
     <div class="section">
       <!-- 탭메뉴 -->

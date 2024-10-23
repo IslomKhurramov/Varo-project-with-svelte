@@ -631,12 +631,7 @@
       opacity: 1;
     }
   }
-  .swiper-container {
-    width: 100%; /* Full width relative to parent container */
-    margin: auto; /* Center container */
 
-    overflow: hidden; /* Ensure no overflow */
-  }
   .menu-wrapper-container {
     overflow: hidden; /* Prevents Swiper from breaking out of bounds */
   }

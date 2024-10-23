@@ -15,8 +15,8 @@
 
   let activeAsset = null;
   let scrollAmount = 0;
-  const itemWidth = 146; // Each menu item width including gap
-  const menuWidth = 1260; // Total width of the menu
+  let itemWidth = 146; // Each menu item width including gap
+  let menuWidth = 100; // Total width of the menu
   let menuWrapper;
   let swiperInstance;
 
@@ -81,14 +81,18 @@
   }
 
   const handleScroll = (direction) => {
+    menuWrapper = document.getElementById("menuWrapper");
+    if (!menuWrapper) return;
+    const maxScroll = menuWrapper.scrollWidth - menuWidth;
+
     if (direction === "prev") {
       scrollAmount -= itemWidth;
       if (scrollAmount < 0) scrollAmount = 0;
     } else if (direction === "next") {
       scrollAmount += itemWidth;
-      const maxScroll = menuWrapper.scrollWidth - menuWidth;
       if (scrollAmount > maxScroll) scrollAmount = maxScroll;
     }
+
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
 
@@ -527,14 +531,7 @@
       padding: 8px;
     }
   }
-  .swiper-container {
-    width: 100%; /* Full-width container */
-    margin: auto; /* Center swiper container */
-    max-width: 1327px;
-  }
-  .menu-container {
-    width: 100%;
-  }
+
   .menu-wrapper-container {
     overflow: hidden; /* Prevents Swiper from breaking out of bounds */
   }
@@ -550,9 +547,6 @@
   .swiper-slide {
     flex-shrink: 0; /* Prevents shrinking of slides */
     width: auto; /* or specific widths depending on how many slides you want to show */
-  }
-  .swiper-container {
-    z-index: 1; /* Ensure Swiper is layered correctly */
   }
 
   .modal-content {

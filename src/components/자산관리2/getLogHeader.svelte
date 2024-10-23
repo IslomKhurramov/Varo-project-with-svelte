@@ -1,62 +1,73 @@
 <script>
   export let searchFilters;
   export let search;
+  export let searchDataHandler;
 </script>
 
-<div class="header_option">
-  <form class="form_select">
-    <div class="select_container">
-      <select
-        name="approval_status"
-        id="approval_status"
-        class="select_input"
-        bind:value={search.plan_index}
-      >
-        <option value="" disabled selected hidden>자산명</option>
-        {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
-          {#each searchFilters?.plans as plan}
-            <option class="group_option" value={plan.ccp_index}
-              >{plan.ccp_title}</option
-            >
-          {/each}
-        {/if}
-      </select>
-    </div>
-    <div class="select_container">
-      <select
-        name="asset_group"
-        id="asset_group"
-        bind:value={search.order_user}
-        class="select_input"
-      >
-        <option value="" disabled selected hidden>수행자</option>
-        {#if searchFilters?.users && searchFilters?.users?.length !== 0}
-          {#each searchFilters?.users as user}
-            <option value={user.user_name}>{user.user_name}</option>
-          {/each}
-        {/if}
-      </select>
-    </div>
-    <div class="select_container">
-      <div class="select_input">
-        <div class="date_container">
-          <div>날짜:</div>
-          <input type="date" bind:value={search.search_start_date} />~
-          <input type="date" bind:value={search.search_end_date} />
-        </div>
+<section class="filterWrap" style="margin-bottom: 0px;">
+  <div>
+    <select
+      id="project"
+      bind:value={search.plan_index}
+      on:change={searchDataHandler}
+    >
+      <option value="" selected disabled>프로젝트명</option>
+      {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+        {#each searchFilters?.plans as plan}
+          <option value={plan.ccp_index}>{plan.ccp_title}</option>
+        {/each}
+      {/if}
+    </select>
+    <select
+      id="project"
+      bind:value={search.asset_name}
+      on:change={searchDataHandler}
+    >
+      <option value="" selected disabled>자산명</option>
+
+      <option>자산명</option>
+      <option>Plan</option>
+    </select>
+    <select
+      id="target"
+      bind:value={search.order_user}
+      on:change={searchDataHandler}
+    >
+      <option value="" selected>수행자</option>
+      {#if searchFilters?.users && searchFilters?.users?.length !== 0}
+        {#each searchFilters?.users as user}
+          <option value={user.user_name}>{user.user_name}</option>
+        {/each}
+      {/if}
+    </select>
+    <div class="dateWrap">
+      <div class="date">
+        <input
+          type="date"
+          class="datepicker"
+          placeholder="시작일시"
+          bind:value={search.search_start_date}
+          on:change={searchDataHandler}
+        />
+      </div>
+      <img src="./assets/images/icon/dash.svg" />
+      <div class="date">
+        <input
+          type="date"
+          class="datepicker"
+          placeholder="종료일시"
+          bind:value={search.search_end_date}
+          on:change={searchDataHandler}
+        />
       </div>
     </div>
-  </form>
-</div>
+    <!-- <button type="button" class="btn btnPrimary"
+      ><img src="./assets/images/icon/search.svg" />조회</button
+    > -->
+  </div>
+</section>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Arial", sans-serif;
-  }
-
   .header_option {
     display: flex;
     align-items: center;

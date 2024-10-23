@@ -152,9 +152,9 @@
     // Initialize Swiper instance only once
     swiperInstance = new Swiper(swiperContainer, {
       modules: [Navigation, Pagination],
-      loop: false,
-      slidesPerView: 8,
-      spaceBetween: 15,
+      loop: false, // Avoid layout issues caused by looping
+      slidesPerView: 4, // Adjust this value to suit your design
+      spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
       pagination: {
         el: ".swiper-pagination",
         clickable: true,
@@ -393,7 +393,6 @@
         >
       </div>
     </section>
-
     <section class="content">
       <div>
         <div class="section" style="margin-top: 20px;">
@@ -501,6 +500,14 @@
 </main>
 
 <style>
+  .menu-container .menu-item.active {
+    background-color: #0067ff;
+    color: #fff;
+    border-color: #0067ff;
+  }
+  .menu-container {
+    width: 100%;
+  }
   .contentArea {
     min-height: 1200px;
   }
@@ -623,5 +630,34 @@
     to {
       opacity: 1;
     }
+  }
+  .swiper-container {
+    width: 100%; /* Full width relative to parent container */
+    margin: auto; /* Center container */
+
+    overflow: hidden; /* Ensure no overflow */
+  }
+  .menu-wrapper-container {
+    overflow: hidden; /* Prevents Swiper from breaking out of bounds */
+  }
+  .menu-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Ensure no wrapping of slides */
+  }
+  .swiper-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .swiper-slide {
+    flex-shrink: 0; /* Prevents shrinking of slides */
+    width: auto; /* or specific widths depending on how many slides you want to show */
+  }
+  .swiper-container {
+    z-index: 1; /* Ensure Swiper is layered correctly */
+  }
+
+  .modal-content {
+    z-index: 100; /* Set higher z-index for modal */
   }
 </style>

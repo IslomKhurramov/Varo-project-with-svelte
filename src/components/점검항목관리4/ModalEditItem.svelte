@@ -39,9 +39,9 @@
     if (swiperContainer) {
       swiperInstance = new Swiper(swiperContainer, {
         modules: [Navigation, Pagination],
-        loop: false,
-        slidesPerView: 8,
-        spaceBetween: 15,
+        loop: false, // Avoid layout issues caused by looping
+        slidesPerView: 4, // Adjust this value to suit your design
+        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
         pagination: {
           el: ".swiper-pagination",
           clickable: true,
@@ -102,7 +102,7 @@
 <article class="contentArea mt-0">
   <!-- Menu for selecting the active slide -->
   {#if showSlide}
-    <section bind:this={swiperContainer} class="topCon">
+    <section bind:this={swiperContainer} class="topCon swiper-container">
       <div class="menu-container" style="margin-top:20px">
         <button
           class="arrow-btn"
@@ -258,6 +258,11 @@
 </article>
 
 <style>
+  .menu-container .menu-item.active {
+    background-color: #0067ff;
+    color: #fff;
+    border-color: #0067ff;
+  }
   .buttons {
     width: 100%;
     display: flex;
@@ -521,5 +526,36 @@
     .tableForm td {
       padding: 8px;
     }
+  }
+  .swiper-container {
+    width: 100%; /* Full-width container */
+    margin: auto; /* Center swiper container */
+    max-width: 1327px;
+  }
+  .menu-container {
+    width: 100%;
+  }
+  .menu-wrapper-container {
+    overflow: hidden; /* Prevents Swiper from breaking out of bounds */
+  }
+  .menu-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Ensure no wrapping of slides */
+  }
+  .swiper-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .swiper-slide {
+    flex-shrink: 0; /* Prevents shrinking of slides */
+    width: auto; /* or specific widths depending on how many slides you want to show */
+  }
+  .swiper-container {
+    z-index: 1; /* Ensure Swiper is layered correctly */
+  }
+
+  .modal-content {
+    z-index: 100; /* Set higher z-index for modal */
   }
 </style>

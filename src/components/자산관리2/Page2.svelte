@@ -412,10 +412,10 @@
               >
                 <span
                   style="white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                max-width: 100%;"
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                    max-width: 100%;"
                 >
                   {group.asg_title}
                   ({group.asg_count})
@@ -524,7 +524,12 @@
                 <option value="0">Unactive</option>
               </select>
             {:else}
-              <GetLogHeader {searchFilters} {toggleView} {search} />
+              <GetLogHeader
+                {searchFilters}
+                {toggleView}
+                {search}
+                {searchDataHandler}
+              />
             {/if}
 
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -534,10 +539,6 @@
                 class="btn btnPrimary padding_button"
                 ><img src="./assets/images/reset.png" alt="search" />초기화
               </button>
-            {:else}
-              <button on:click={searchDataHandler} class="btn btnPrimary"
-                >검색</button
-              >
             {/if}
             <button
               on:click={saveAssetToExcel}
@@ -575,31 +576,29 @@
           </div>
         </section>
       </article>
-      <div>
-        {#if currentPage}
-          <svelte:component
-            this={currentPage}
-            bind:selectedGroup
-            {filterAssets}
-            {filteredAssets}
-            {logData}
-            bind:assetHost
-            bind:asset_ostype
-            {handleFilter}
-            {resetFilters}
-            bind:showSwiperComponent
-          />
-        {:else}
-          <AssetCardsPage
-            {searchedResult}
-            {showSearchResult}
-            {filteredAssets}
-            bind:showSwiperComponent
-            bind:selectedUUID
-            bind:selected
-          />
-        {/if}
-      </div>
+      {#if currentPage}
+        <svelte:component
+          this={currentPage}
+          bind:selectedGroup
+          {filterAssets}
+          {filteredAssets}
+          {logData}
+          bind:assetHost
+          bind:asset_ostype
+          {handleFilter}
+          {resetFilters}
+          bind:showSwiperComponent
+        />
+      {:else}
+        <AssetCardsPage
+          {searchedResult}
+          {showSearchResult}
+          {filteredAssets}
+          bind:showSwiperComponent
+          bind:selectedUUID
+          bind:selected
+        />
+      {/if}
     </div>
   </section>
   {#if showModal}

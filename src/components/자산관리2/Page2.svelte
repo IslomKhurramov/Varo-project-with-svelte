@@ -57,7 +57,7 @@
   });
 
   function closeSwiper() {
-    console.log("Toggling Swiper. Closing...");
+    console.log("Toggling Swiper. Closing...", showSwiperComponent);
     showSwiperComponent = false;
   }
   /*************************************************************/
@@ -69,58 +69,71 @@
     console.log("Selected Group:", selectedGroup);
     console.log("Selected OSType:", asset_ostype); // Check selected OSType
 
+    // Filter the assets based on the selected criteria
     filteredAssets = $allAssetList.filter((asset) => {
-      const conditions = [
-        // Filtering by selectedGroup (e.g., asset group)
-        () =>
-          selectedGroup === "전체" ||
-          (Array.isArray(asset.asset_group) &&
-            asset.asset_group.some(
-              (group) => group.asg_index === selectedGroup,
-            )),
+      // Check if asset belongs to the selected group
+      const groupCondition =
+        selectedGroup === "전체" ||
+        (Array.isArray(asset.asset_group) &&
+          asset.asset_group.some((group) => group.asg_index === selectedGroup));
 
-        // Filtering by asset_ostype (e.g., "UNIX", "WINDOWS", etc.)
-        () =>
-          asset_ostype === "전체" ||
-          (Array.isArray(asset.assessment_target_system) && // Ensure it's an array
-            asset.assessment_target_system.some((system) =>
-              Object.keys(system).some(
-                (key) => key === asset_ostype && system[key] === true,
-              ),
-            )),
+      // Check if asset matches the selected OSType
+      const ostypeCondition =
+        asset_ostype === "전체" ||
+        (Array.isArray(asset.assessment_target_system) &&
+          asset.assessment_target_system.some((system) =>
+            Object.keys(system).some(
+              (key) => key === asset_ostype && system[key] === true,
+            ),
+          ));
 
-        // Filtering by assetTargetReg
-        () =>
-          assetTargetReg !== "전체"
-            ? asset.asset_target_registered === assetTargetReg
-            : true,
+      // Check if asset matches the assetTargetReg
+      const targetRegCondition =
+        assetTargetReg === "전체" ||
+        asset.asset_target_registered === assetTargetReg;
 
-        // Filtering by assetActive
-        () =>
-          assetAcitve !== "전체"
-            ? asset.ast_activate === !!Number(assetAcitve)
-            : true,
+      // Check if asset is active based on assetActive
+      const activeCondition =
+        assetAcitve === "전체" || asset.ast_activate === !!Number(assetAcitve);
 
-        // Filtering by hostname
-        () => isNotFiltered(asset.ast_hostname, assetHost),
-      ];
+      // Check if hostname is filtered
+      const hostCondition = isNotFiltered(asset.ast_hostname, assetHost);
 
-      return conditions.every((condition) => condition());
+      // Return true only if all conditions are met
+      return (
+        groupCondition &&
+        ostypeCondition &&
+        targetRegCondition &&
+        activeCondition &&
+        hostCondition
+      );
     });
+
+    return filteredAssets; // Will be empty if no matches found
   }
 
   function handleFilter() {
-    filterAssets();
-    console.table(filteredAssets); // Use table for better visibility in console
+    const results = filterAssets();
+    console.table(results); // Use table for better visibility in console
+
+    // Update the UI accordingly (e.g., show a message if no assets match)
+    if (results.length === 0) {
+      console.log("No matching assets found.");
+      // Here you can also clear or update the UI to show a 'no assets found' message
+    }
   }
 
   function resetFilters() {
+    // Reset filters to their default values
     assetHost = "전체";
     selectedGroup = "전체";
     asset_ostype = "전체";
     assetTargetReg = "전체";
     assetAcitve = "전체";
-    filterAssets(); // Apply the reset immediately
+
+    // Reapply filters to get the initial asset list
+    const results = filterAssets();
+    console.table(results); // Optionally log the initial results after reset
   }
 
   /***********************************************************/
@@ -178,7 +191,6 @@
       selectedGroup = group.asg_index; // Use group index for filtering
     }
     filterAssets(); // Apply filtering
-    toggleSwiper();
   }
   /**********************************************************************/
   function toggleGetLogHeader() {
@@ -260,6 +272,94 @@
   const closeModal = () => {
     showModal = false;
   };
+  /******************************************************************************/
+  async function downloadReport() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      // Send a POST request to the API with the response type set to 'blob'
+      const response = await axios.post(
+        `${serverApi}/api/getSummaryReportOfAsset/`,
+        {
+          ass_uuid: selectedUUID,
+        },
+        {
+          responseType: "blob", // Important to set the response type
+        },
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element for downloading
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
+
+      a.download = fileName; // Change this to your desired file name
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      alert("An error occurred while downloading the report.");
+    }
+  }
+  /*************************************************************************/
+  async function downloadTotalReport() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      // Send a POST request to the API with the response type set to 'blob'
+      const response = await axios.post(
+        `${serverApi}/api/getToalReportOfAsset/`,
+        {
+          ass_uuid: selectedUUID,
+        },
+        {
+          responseType: "blob", // Important to set the response type
+        },
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element for downloading
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
+
+      a.download = fileName; // Change this to your desired file name
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      alert("An error occurred while downloading the report.");
+    }
+  }
 </script>
 
 <div class="container">
@@ -311,10 +411,27 @@
                 title={group.asg_title}
               >
                 <span
-                  style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                  style="white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+                max-width: 100%;"
                 >
                   {group.asg_title}
-                </span><span class="arrowIcon"></span>
+                  ({group.asg_count})
+                </span>
+                <div
+                  style="display: flex; flex-direction:row; align-items:center;"
+                >
+                  {#if group.asg_count === 0}
+                    <button
+                      class="asset_button"
+                      on:click|stopPropagation={() =>
+                        selectPage(AssetManagement, group)}>자산관리</button
+                    >
+                  {/if}
+                  <span class="arrowIcon"></span>
+                </div>
               </a>
             </li>
           {/each}
@@ -440,12 +557,15 @@
               on:click={toggleGetLogHeader}
               class="btn btnPrimary padding_button">이력관리</button
             >
-
             <button
               class="btn btnPrimary padding_button"
-              on:click|stopPropagation={() => selectPage(AssetManagement)}
-              >자산관리</button
+              on:click={downloadReport}>요약보고서</button
             >
+            <button
+              class="btn btnPrimary padding_button"
+              on:click={downloadTotalReport}
+              >상세보고서
+            </button>
             {#if showSwiperComponent}
               <button
                 class="btn btnPrimary padding_button"
@@ -467,6 +587,7 @@
             bind:asset_ostype
             {handleFilter}
             {resetFilters}
+            bind:showSwiperComponent
           />
         {:else}
           <AssetCardsPage
@@ -629,5 +750,30 @@
   option {
     padding: 0 32px 0 15px;
     background-size: 8px;
+  }
+  .asset_button {
+    background-color: rgba(0, 103, 255, 0.05);
+    color: #0067ff;
+    border-color: rgba(0, 103, 255, 0.1);
+
+    width: 60px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .asset_button:hover {
+    background-color: #fff;
+    color: #0067ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .assetandbutton {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 </style>

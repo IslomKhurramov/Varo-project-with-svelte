@@ -17,11 +17,11 @@
   import Swiper from "./Swiper.svelte";
 
   let showModal = false;
+  export let showSwiperComponent;
   export let selected = [];
   export let selectedUUID = [];
   let selectedAsset = null;
   export let filteredAssets = [];
-  export let showSwiperComponent;
   let allSelected;
   $: allAssetList.subscribe((data) => {
     allSelected = data.length === selected.length;
@@ -140,95 +140,6 @@
     return `${year}/${month}/${day} ${hours}:${minutes}`;
   }
 
-  /**********************************************************************/
-  async function downloadReport() {
-    if (selectedUUID.length === 0) {
-      alert("No assets selected.");
-      return;
-    }
-
-    try {
-      // Send a POST request to the API with the response type set to 'blob'
-      const response = await axios.post(
-        `${serverApi}/api/getSummaryReportOfAsset/`,
-        {
-          ass_uuid: selectedUUID,
-        },
-        {
-          responseType: "blob", // Important to set the response type
-        },
-      );
-
-      // Create a blob from the response data
-      const blob = new Blob([response.data], {
-        type: response.headers["content-type"],
-      });
-
-      // Create a link element for downloading
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-
-      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
-      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
-
-      a.download = fileName; // Change this to your desired file name
-      document.body.appendChild(a);
-      a.click();
-
-      // Clean up
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to download report:", error);
-      alert("An error occurred while downloading the report.");
-    }
-  }
-  /*************************************************************************/
-  async function downloadTotalReport() {
-    if (selectedUUID.length === 0) {
-      alert("No assets selected.");
-      return;
-    }
-
-    try {
-      // Send a POST request to the API with the response type set to 'blob'
-      const response = await axios.post(
-        `${serverApi}/api/getToalReportOfAsset/`,
-        {
-          ass_uuid: selectedUUID,
-        },
-        {
-          responseType: "blob", // Important to set the response type
-        },
-      );
-
-      // Create a blob from the response data
-      const blob = new Blob([response.data], {
-        type: response.headers["content-type"],
-      });
-
-      // Create a link element for downloading
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-
-      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
-      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
-
-      a.download = fileName; // Change this to your desired file name
-      document.body.appendChild(a);
-      a.click();
-
-      // Clean up
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to download report:", error);
-      alert("An error occurred while downloading the report.");
-    }
-  }
-
   /********************************************************************************/
 
   /***********************************************************************/
@@ -246,13 +157,15 @@
       return "#00ff00"; // Green
     else return "#ff0000"; // Red
   }
+  function handleAssetClick(asset) {
+    console.log("Asset clicked:", asset);
+    selectedAsset = asset;
+    showSwiperComponent = true; // This should set the showSwiperComponent to true
+  }
+  $: console.log("showSwiperComponent in child:", showSwiperComponent);
 </script>
 
 {#if !showSwiperComponent}
-  <div class="header_buttons">
-    <button on:click={downloadReport}>요약보고서</button>
-    <button on:click={downloadTotalReport}>상세보고서 </button>
-  </div>
   <div class="allselect">
     <div class="allSelectDiv">
       <input type="checkbox" on:click={toggleAll} checked={allSelected} />
@@ -261,15 +174,12 @@
   </div>
 
   <div class="graphCardWrap col3 car_container">
-    {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+    {#each filteredAssets as asset}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <article
         class="graphCard hoverCard"
         style="height: 250px;"
-        on:click={() => {
-          selectedAsset = asset;
-          showSwiperComponent = true;
-        }}
+        on:click={() => handleAssetClick(asset)}
       >
         <div class="head justify-between">
           <div class="flex align-center" on:click|stopPropagation>

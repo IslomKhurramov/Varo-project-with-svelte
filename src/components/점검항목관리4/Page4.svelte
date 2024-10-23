@@ -388,7 +388,7 @@
               >
                 {checkList.ccg_group
                   ? checkList.ccg_group
-                  : "No group info"}</span
+                  : "No group info"}({checkList.ccg_checklist_year})</span
               ><span class="arrowIcon"></span>
             </a>
           </li>

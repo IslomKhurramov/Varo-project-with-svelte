@@ -95,8 +95,12 @@
     ></textarea>
     <div class="flex align-center btnWrap gap-6" style="margin-top: 10px;">
       <button class="btn w140 btnBlue">수정하기</button>
-      <button class="btn w140 btnPrimaryFontGray">비활성하기</button>
-      <button class="btn w140 btnPrimaryFontGray">활성하기</button>
+      <button class="btn w140" style="background-color: red; color:white"
+        >비활성하기</button
+      >
+      <button class="btn w140" style="background-color: green; color:white"
+        >활성하기</button
+      >
     </div>
   </div>
 

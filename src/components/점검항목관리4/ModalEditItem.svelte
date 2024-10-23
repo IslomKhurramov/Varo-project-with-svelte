@@ -99,7 +99,7 @@
   }
 </script>
 
-<div class="contentArea">
+<article class="contentArea mt-0">
   <!-- Menu for selecting the active slide -->
   {#if showSlide}
     <section bind:this={swiperContainer} class="topCon">
@@ -110,7 +110,7 @@
           on:click={() => handleScroll("prev")}>◀</button
         >
 
-        <div class="menu-wrapper-container" style="width:100%;">
+        <div class="menu-wrapper-container">
           <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
             {#each slides as slide}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -141,48 +141,42 @@
   <div class="scrollModal" style="margin-top: 20px;">
     <table class="tableForm">
       <colgroup>
-        <col style="width:70px;" />
-        <col style="width:280px;" />
+        <col style="width: 8%;" />
+        <col style="width: 70%;" />
       </colgroup>
       <tbody>
         {#if selectedItem}
           <tr>
             <th>점검대상</th>
-            <td>
-              {selectedCategory}
-            </td>
+            <td>{selectedCategory}</td>
           </tr>
           <tr>
             <th>항목그룹</th>
-            <td>
-              <pre class="mitigation-example">
-                  {selectedItem.ccc_item_group}
-                </pre>
-            </td>
+            <td
+              ><pre
+                class="preformatted-content">{selectedItem.ccc_item_group}</pre></td
+            >
           </tr>
           <tr>
             <th>정검목적</th>
-            <td>
-              <pre class="mitigation-example">
-               {selectedItem.ccc_check_purpose}
-              </pre></td
+            <td
+              ><pre
+                class="preformatted-content">{selectedItem.ccc_check_purpose}</pre></td
             >
           </tr>
           <tr>
             <th>보안위협</th>
-            <td>
-              <pre class="mitigation-example">
-                  {selectedItem.ccc_security_threat}
-                </pre>
-            </td>
+            <td
+              ><pre
+                class="preformatted-content">{selectedItem.ccc_security_threat}</pre></td
+            >
           </tr>
           <tr>
             <th>점검내용</th>
-            <td>
-              <pre class="mitigation-example">
-                  {selectedItem.ccc_check_content}
-                </pre>
-            </td>
+            <td
+              ><pre
+                class="preformatted-content">{selectedItem.ccc_check_content}</pre></td
+            >
           </tr>
           <tr>
             <th>대상시스템</th>
@@ -203,7 +197,7 @@
           <tr>
             <th>평가기준</th>
             <td>
-              <pre class="mitigation-example">
+              <pre class="preformatted-content">
                   {selectedItem.ccc_item_criteria}
                 </pre>
               {#if isNewlyCreatedChecklist}
@@ -222,27 +216,24 @@
           </tr>
           <tr>
             <th>조치방안</th>
-            <td>
-              <pre class="mitigation-example">
-                  {selectedItem.ccc_mitigation_method}
-                </pre>
-            </td>
+            <td
+              ><pre
+                class="preformatted-content">{selectedItem.ccc_mitigation_method}</pre></td
+            >
           </tr>
           <tr>
             <th>조치예시</th>
             <td class="longData">
-              <!-- Formatting the detailed mitigation steps here -->
               <pre
-                class="mitigation-example longData">{selectedItem.ccc_mitigation_example}</pre>
+                class="preformatted-content longData">{selectedItem.ccc_mitigation_example}</pre>
             </td>
           </tr>
           <tr>
             <th>조치시영향도</th>
-            <td>
-              <pre class="mitigation-example">
-                  {selectedItem.ccc_impact || "N/A"}
-                </pre>
-            </td>
+            <td
+              ><pre class="preformatted-content">{selectedItem.ccc_impact ||
+                  "N/A"}</pre></td
+            >
           </tr>
         {:else}
           <tr>
@@ -251,6 +242,7 @@
         {/if}
       </tbody>
     </table>
+
     {#if isNewlyCreatedChecklist}
       <div class="buttons">
         <div class="buttonGroup">
@@ -263,15 +255,9 @@
       </div>
     {/if}
   </div>
-</div>
+</article>
 
 <style>
-  .contentArea {
-    min-height: 1200px;
-  }
-  .rowContents {
-    height: 100%;
-  }
   .buttons {
     width: 100%;
     display: flex;
@@ -304,27 +290,8 @@
     gap: 20px;
     align-items: center;
   }
-  .mitigation-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    text-align: left;
-    max-height: 1200px;
-  }
 
-  .mitigation-table th,
-  .mitigation-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    vertical-align: top;
-  }
-
-  .mitigation-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-
-  .mitigation-table pre.mitigation-example {
+  .tableForm pre.mitigation-example {
     white-space: pre-wrap; /* Ensures long content wraps */
     background-color: #f8f9fa;
     padding: 10px;
@@ -341,18 +308,18 @@
 
   /* Responsive styling */
   @media (max-width: 768px) {
-    .mitigation-table {
+    .tableForm {
       font-size: 14px;
     }
   }
 
   @media (max-width: 576px) {
-    .mitigation-table {
+    .tableForm {
       font-size: 12px;
     }
 
-    .mitigation-table th,
-    .mitigation-table td {
+    .tableForm th,
+    .tableForm td {
       padding: 8px;
     }
   }
@@ -392,6 +359,9 @@
     background-color: #2196f3; /* Blue background for close button */
     color: white; /* White text */
   }
+  td {
+    width: 230px;
+  }
 
   .close-btn:hover {
     background-color: #1976d2; /* Darker blue on hover */
@@ -403,33 +373,11 @@
     height: 100%; /* Ensure the modal takes up the full height */
   }
 
-  .tableForm {
-    flex-grow: 1; /* Let the table grow to fill available height */
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .tableForm th,
-  .tableForm td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    vertical-align: top;
-    text-align: left;
-  }
-
-  .tableForm th {
-    background-color: #f9f9f9;
-    font-weight: bold;
-  }
-
-  .tableForm td {
-    word-wrap: break-word;
-  }
-
   .mitigation-example {
     margin: 0;
     padding: 5px;
     white-space: pre-wrap;
+    font-size: 16px;
     background-color: #f4f4f4;
   }
 
@@ -459,5 +407,119 @@
 
   .btn:hover {
     background-color: #0056b3; /* Darker background on hover */
+  }
+  /* Set fixed layout for the table */
+  /* Set fixed layout for the table */
+  .tableForm {
+    table-layout: fixed; /* Ensures fixed layout */
+    width: 100%; /* Full width */
+    border-collapse: collapse; /* Collapse borders */
+  }
+
+  .tableForm th,
+  .tableForm td {
+    padding: 10px; /* Padding for cells */
+    border: 10px solid #fff; /* Cell borders */
+    word-wrap: break-word; /* Wrap content */
+    font-size: 16px; /* Increase font size */
+    border-radius: 20px;
+  }
+
+  .tableForm colgroup col {
+    width: 30%; /* Fixed width for the first column */
+  }
+
+  .tableForm colgroup col:nth-child(2) {
+    width: 70%; /* Fixed width for the second column */
+  }
+
+  /* Style the buttons */
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .buttonGroup {
+    display: flex;
+    gap: 10px;
+  }
+  .tableForm th {
+    background-color: #f7fafc;
+    border-radius: 20px;
+  }
+  /* Button styles */
+  .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
+  }
+
+  .modify-btn {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .modify-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+  }
+
+  .delete-btn {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .delete-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-2px);
+  }
+
+  .close-btn {
+    background-color: #2196f3;
+    color: white;
+  }
+
+  .close-btn:hover {
+    background-color: #1976d2;
+    transform: translateY(-2px);
+  }
+
+  /* Fixed height for large data sections */
+  .longData pre {
+    height: 150px;
+    overflow-y: auto;
+  }
+
+  /* Preformatted text */
+  .preformatted-content {
+    white-space: pre-wrap;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 0;
+    font-size: 18px; /* Increase font size in preformatted content */
+  }
+
+  /* Responsive styling */
+  @media (max-width: 768px) {
+    .tableForm {
+      font-size: 16px; /* Adjust for smaller screens */
+    }
+  }
+
+  @media (max-width: 576px) {
+    .tableForm {
+      font-size: 14px; /* Further reduce font size on small screens */
+    }
+
+    .tableForm th,
+    .tableForm td {
+      padding: 8px;
+    }
   }
 </style>

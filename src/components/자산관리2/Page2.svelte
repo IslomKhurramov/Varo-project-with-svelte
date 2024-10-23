@@ -281,40 +281,42 @@
       </div>
       <ul class="prMenuList">
         {#if $allAssetGroupList.length > 0}
-          <div class="project_button">
-            <li>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-missing-attribute -->
-              <a
-                on:click={() => {
-                  activeMenu = "전체"; // Highlight the active menu
-                  selectedGroup = "전체"; // Set the selected group explicitly
-                  selectPage(AssetCardsPage, "전체"); // Load all assets
-                }}
-                class={activeMenu === "전체" ? "active" : ""}
-                title="전체"
-              >
-                <span class="truncate-text">전체</span>
-              </a>
-            </li>
-          </div>
+          <li class={activeMenu === "전체" ? "active" : ""}>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <a
+              on:click={() => {
+                activeMenu = "전체"; // Highlight the active menu
+                selectedGroup = "전체"; // Set the selected group explicitly
+                selectPage(AssetCardsPage, "전체"); // Load all assets
+              }}
+              title="전체"
+            >
+              <span
+                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                >전체</span
+              ><span class="arrowIcon"></span>
+            </a>
+          </li>
+
           {#each $allAssetGroupList as group, index}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-missing-attribute -->
-            <div class="project_button">
-              <li>
-                <a
-                  on:click={() => {
-                    selectPage(AssetCardsPage, group);
-                  }}
-                  class={activeMenu === group ? "active" : ""}
-                  title={group.asg_title}
-                  ><span class="truncate-text">
-                    {group.asg_title}
-                  </span><span class="arrowIcon"></span>
-                </a>
-              </li>
-            </div>
+
+            <li class={activeMenu === group ? "active" : ""}>
+              <a
+                on:click={() => {
+                  selectPage(AssetCardsPage, group);
+                }}
+                title={group.asg_title}
+              >
+                <span
+                  style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                >
+                  {group.asg_title}
+                </span><span class="arrowIcon"></span>
+              </a>
+            </li>
           {/each}
         {/if}
         {#if isAddingNewGroup}
@@ -453,8 +455,7 @@
           </div>
         </section>
       </article>
-
-      <div class="swiper_container">
+      <div>
         {#if currentPage}
           <svelte:component
             this={currentPage}
@@ -493,12 +494,6 @@
 </div>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Arial", sans-serif;
-  }
   .modal-content {
     text-align: center;
   }
@@ -506,10 +501,7 @@
     color: #ffffff;
     background-color: #0067ff;
   }
-  .active .truncate-text {
-    color: #ffffff;
-    background-color: #0067ff;
-  }
+
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
     animation: fadeInBackdrop 0.3s ease;
@@ -541,7 +533,45 @@
   .primary-button:hover {
     background-color: #48a2bf;
   }
+  /* Tooltip styling */
+  .prMenuList a[title] {
+    position: relative;
+    cursor: pointer;
+  }
 
+  /* Tooltip on hover */
+  .prMenuList a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .prMenuList a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+  }
+
+  * {
+    font-size: 16px;
+  }
   .secondary-button {
     background-color: #f0f0f0;
     color: #666;
@@ -579,43 +609,6 @@
     z-index: 100;
   }
 
-  .asset_button {
-    background-color: rgba(0, 103, 255, 0.05);
-    color: #0067ff;
-    border-color: rgba(0, 103, 255, 0.1);
-
-    width: 60px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 10px;
-    padding: 2px;
-    transition: all 0.3s ease;
-    text-align: center;
-  }
-
-  .asset_button:hover {
-    background-color: #fff;
-    color: #0067ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  /* Truncate text with ellipsis */
-  .truncate-text {
-    display: inline-block;
-    max-width: 100%; /* Adjust as per your layout */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-  }
-
-  /* Tooltip styling */
-  .project_button a[title] {
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-  }
   select {
     padding: 0 32px 0 15px;
     height: 40px;

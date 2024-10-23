@@ -30,7 +30,11 @@
   let uuid_asset = "";
   let asset_group_index = "";
   let approve_status = "";
+  let scrollAmount = 0;
+  let itemWidth = 146;
+  let menuWidth = 100; // Total width of the menu
 
+  let menuWrapper;
   export let selectedAsset;
   export let filteredAssets = [];
   let activeAsset = null;
@@ -145,7 +149,7 @@
     console.log("approve status", approve_status);
   }
   onMount(() => {
-    // Initialize Swiper instance
+    // Initialize Swiper instance only once
     swiperInstance = new Swiper(swiperContainer, {
       modules: [Navigation, Pagination],
       loop: false,
@@ -161,11 +165,11 @@
       },
     });
 
-    // When selectedAsset changes, attempt to focus on it
+    // Scroll to selected asset if it exists
     if (selectedAsset) {
       setTimeout(() => {
         focusOnAsset(selectedAsset.ass_uuid);
-      }, 0); // Ensure this runs after Swiper has fully rendered
+      }, 0);
     }
 
     return () => {
@@ -175,16 +179,20 @@
     };
   });
 
-  // Function to scroll and focus on the asset
   function focusOnAsset(assetId) {
     const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
     if (menuItem) {
+      const itemCount = document.querySelectorAll(".menu-item").length;
       console.log("Focusing on asset:", assetId); // Debug log
-      menuItem.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
+
+      // Only use scrollIntoView if there are more than 4 items
+      if (itemCount > 8) {
+        menuItem.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
 
       // Ensure the item can be focused
       setTimeout(() => {
@@ -196,29 +204,6 @@
   }
 
   /****************************************************/
-
-  onMount(() => {
-    swiperInstance = new Swiper(swiperContainer, {
-      modules: [Navigation, Pagination],
-      loop: false,
-      slidesPerView: 8,
-      spaceBetween: 15,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-
-    return () => {
-      if (swiperInstance) {
-        swiperInstance.destroy(true, true);
-      }
-    };
-  });
 
   /**************UnActivate**************************************/
 
@@ -347,11 +332,6 @@
       alert(`Error: ${err.message || "An unknown error occurred."}`);
     }
   }
-  let scrollAmount = 0;
-  const itemWidth = 146; // Each menu item width including gap
-  const menuWidth = 1260; // Total width of the menu
-
-  let menuWrapper;
 
   // This function will handle the horizontal scroll on next and prev clicks
   // Function to handle horizontal scroll
@@ -378,8 +358,8 @@
 </script>
 
 <main>
-  <article class="contentArea flex col">
-    <section bind:this={swiperContainer} class="topCon">
+  <article class="contentArea mt-0">
+    <section bind:this={swiperContainer} class="swiper-container">
       <div class="menu-container">
         <button
           class="arrow-btn"
@@ -643,21 +623,5 @@
     to {
       opacity: 1;
     }
-  }
-  .close-button {
-    background-color: transparent;
-    border: none;
-    color: #0056b3;
-    font-size: 16px;
-    cursor: pointer;
-    top: 10px;
-    right: 10px;
-    transition: color 0.3s ease;
-    padding: 10px;
-    border-radius: 5px;
-  }
-
-  .close-button:hover {
-    color: #ff5e5e;
   }
 </style>

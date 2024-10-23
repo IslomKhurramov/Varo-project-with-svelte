@@ -97,9 +97,9 @@
   /******************************************************************************/
 </script>
 
-<div style="margin-top: 20px; min-height:1200px">
-  {#if showModal}
-    <article style="height: 1200px;">
+<div style="margin-top: 20px;">
+  <article class="contentArea mt-0">
+    {#if showModal}
       <ModalEditItem
         {selectedItem}
         {selected}
@@ -113,9 +113,7 @@
         {isNewlyCreatedChecklist}
         {deleteSelectedItem}
       />
-    </article>
-  {:else}
-    <article class="contentArea mt-0">
+    {:else}
       <p style="padding:15px ; margin-top:15px; font-size:12px">
         점검그룹 세부내용
       </p>
@@ -213,8 +211,8 @@
           </tbody>
         </table>
       </div>
-    </article>
-  {/if}
+    {/if}
+  </article>
 </div>
 
 <style>
@@ -227,7 +225,10 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-
+  tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   .table2 {
     max-height: 1200px;
     padding-bottom: 20px;

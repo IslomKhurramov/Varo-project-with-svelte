@@ -134,7 +134,7 @@
 
 <div style="margin-top: 20px;">
   <article class="contentArea mt-0">
-    <p style="padding:15px; font-size:12px">점검그룹</p>
+    <p style="padding:15px; ">점검그룹</p>
     {#if isSearchActive}
       <div class="tableListWrap table1">
         <table class="tableList hdBorder">

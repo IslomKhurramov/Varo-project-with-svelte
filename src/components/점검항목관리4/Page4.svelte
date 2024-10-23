@@ -16,6 +16,7 @@
     fetchChecklistData,
   } from "../../services/page4/checklistStore";
   import CheckListDetail from "./checkListDetail.svelte";
+  import ModalEditItem from "./ModalEditItem.svelte";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -346,273 +347,257 @@
   }
 </script>
 
-<main class="container">
-  <section>
-    <article class="sideMenu">
-      <div class="btnWrap">
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <a
-          class="btn btnPrimary"
-          on:click={() => {
-            showModal = true;
-          }}><img src="./assets/images/icon/add.svg" />그룹추가</a
-        >
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <a class="btn btnRed" on:click={deleteProject}
-          ><img
-            src="./assets/images/icon/delete.svg"
-            alt="createGroup"
-          />그룹삭제</a
-        >
-      </div>
-
-      <div class="project_button">
-        {#if loading}
-          <p>Loading...</p>
-        {:else if error}
-          <p>Error: {error}</p>
-        {:else}
-          <ul class="prMenuList">
-            {#each allChecklistArray as checkList (checkList.ccg_index)}
-              <div bind:this={activeChecklistElement}>
-                <li>
-                  <!-- svelte-ignore a11y-invalid-attribute -->
-                  <a
-                    href="#"
-                    style="width:200px"
-                    on:click|preventDefault={() =>
-                      selectPage(CheckListDetail, checkList)}
-                    class={activeMenu === checkList ? "active" : ""}
-                    title={checkList.ccg_group}
-                  >
-                    <span class="truncate-text">
-                      {checkList.ccg_group
-                        ? checkList.ccg_group
-                        : "No group info"}</span
-                    ><span class="arrowIcon"></span>
-                  </a>
-                </li>
-              </div>
-            {/each}
-            <!-- Render newly created checklists with Edit/Delete buttons -->
-            {#each createdChecklists as checklist (checklist.ccg_index)}
-              <li>
-                <div class="project_button">
-                  <div class="new_input">
-                    {#if editingChecklistId === checklist.ccg_index}
-                      <!-- Edit mode: render input field -->
-                      <input
-                        type="text"
-                        bind:value={editedChecklistName}
-                        placeholder="Edit name"
-                        class="editable_input"
-                      />
-                    {/if}
-                  </div>
-                </div>
-              </li>
-            {/each}
-          </ul>
-        {/if}
-      </div>
-    </article>
-
-    <div class="contentsWrap logWrap inspectionitems">
-      <article class="contentArea mt-0">
-        <section class="filterWrap">
-          <div>
-            <select
-              name="asset_group"
-              id="asset_group"
-              bind:value={selectedCategory}
-              on:change={filterData}
-              style="width: 150px;"
-            >
-              <option value="UNIX">점검대상</option>
-              <option value="UNIX">UNIX</option>
-              <option value="WINDOWS">WINDOWS</option>
-              <option value="PC">PC</option>
-              <option value="NETWORK">NETWORK</option>
-              <option value="DBMS">DBMS</option>
-              <option value="WEB">WEB</option>
-              <option value="WAS">WAS</option>
-              <option value="CLOUD">CLOUD</option>
-              <option value="SECURITY">SECURITY</option>
-            </select>
-
-            <input
-              placeholder="입력 점검항목"
-              type="text"
-              bind:value={item_no}
-            />
-
-            <select
-              bind:value={selectedRisk}
-              name="agent_status"
-              id="agent_status"
-              style="width: 120px;"
-            >
-              <option value="위험도">위험도</option>
-              <option value="상">상</option>
-              <option value="중">중</option>
-              <option value="하">하</option>
-            </select>
-
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-
-            <button
-              style="padding: 15px;"
-              class="btn btnPrimary"
-              on:click={() =>
-                searchItem(
-                  selectedChecklist,
-                  selectedCategory,
-                  item_no,
-                  selectedRisk,
-                )}
-            >
-              조회
-            </button>
-            <button
-              style="padding: 15px;"
-              class="btn btnPrimary"
-              on:click={() => {
-                selectPage(ItemPage);
-              }}
-            >
-              뒤로 가기
-            </button>
-            <button
-              style="padding: 15px;"
-              class="btn btnPrimary"
-              on:click={() => {
-                showModal = true;
-              }}>복사</button
-            >
-            {#each createdChecklists as checklist (checklist.ccg_index)}
-              {#if editingChecklistId === checklist.ccg_index}
-                <!-- Show Save/Cancel buttons in edit mode -->
-                <button
-                  style="padding: 15px;"
-                  class="btn btnPrimary save"
-                  on:click={() =>
-                    editChecklist(checklist.ccg_index, editedChecklistName)}
-                >
-                  Save
-                </button>
-                <button
-                  style="padding: 15px;"
-                  class="btn btnPrimary cancel"
-                  on:click={cancelEditing}
-                >
-                  Cancel
-                </button>
-              {:else}
-                <!-- Normal mode: show Edit, Copy, Delete buttons -->
-                <button
-                  style="padding: 15px;"
-                  class="btn btnPrimary edit"
-                  on:click={() =>
-                    startEditing(checklist.ccg_index, checklist.ccg_group)}
-                >
-                  Edit
-                </button>
-                <button
-                  style="padding: 15px;"
-                  class="btn btnPrimary delete btnRed"
-                  on:click={() => deleteChecklist(checklist.ccg_index)}
-                >
-                  Delete
-                </button>
-              {/if}
-            {/each}
-          </div>
-        </section>
-      </article>
-
-      <div class="flex col detail">
-        <svelte:component
-          this={currentPage}
-          {allChecklistArray}
-          {filteredData}
-          {selectedCategory}
-          {selectedChecklist}
-          {searchResult}
-          {isSearchActive}
-          {activeMenu}
-          {lastCreatedChecklistId}
-          {showSlide}
-          {swiperContainer}
-          {showModalSecond}
-          {selectedSlide}
-          {cleanSearch}
-          {slides}
-          {isNewlyCreatedChecklist}
-          on:projectDeleted={(event) => {
-            const id = event.detail;
-            allChecklistArray = allChecklistArray.filter(
-              (checklist) => checklist.ccg_index !== id,
-            );
-          }}
-        />
-      </div>
+<section>
+  <article class="sideMenu">
+    <div class="btnWrap">
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <a
+        class="btn btnPrimary"
+        on:click={() => {
+          showModal = true;
+        }}><img src="./assets/images/icon/add.svg" />그룹추가</a
+      >
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <a class="btn btnRed" on:click={deleteProject}
+        ><img
+          src="./assets/images/icon/delete.svg"
+          alt="createGroup"
+        />그룹삭제</a
+      >
     </div>
 
-    {#if showModal}
-      <dialog open on:close={() => (showModal = false)}>
-        <div class="modal-content">
-          <div class="modal">
-            <h3>새로운 진단 그룹 생성</h3>
-            <div class="first_line">
-              <label for="source-group">복사 대상:</label>
-              <select
-                class="first_line_input"
-                bind:value={selectedChecklistForCopyId}
-                id="source-group"
+    {#if loading}
+      <p>Loading...</p>
+    {:else if error}
+      <p>Error: {error}</p>
+    {:else}
+      <ul class="prMenuList">
+        {#each allChecklistArray as checkList (checkList.ccg_index)}
+          <li class={activeMenu === checkList ? "active" : ""}>
+            <!-- svelte-ignore a11y-invalid-attribute -->
+            <a
+              href="#"
+              on:click|preventDefault={() =>
+                selectPage(CheckListDetail, checkList)}
+              title={checkList.ccg_group}
+            >
+              <span
+                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
               >
-                {#each allChecklistArray as checklist}
-                  <option value={checklist.ccg_index}
-                    >{checklist.ccg_group}</option
-                  >
-                {/each}
-              </select>
+                {checkList.ccg_group
+                  ? checkList.ccg_group
+                  : "No group info"}</span
+              ><span class="arrowIcon"></span>
+            </a>
+          </li>
+        {/each}
+        <!-- Render newly created checklists with Edit/Delete buttons -->
+        {#each createdChecklists as checklist (checklist.ccg_index)}
+          <li>
+            <div class="project_button">
+              <div class="new_input">
+                {#if editingChecklistId === checklist.ccg_index}
+                  <!-- Edit mode: render input field -->
+                  <input
+                    type="text"
+                    bind:value={editedChecklistName}
+                    placeholder="Edit name"
+                    class="editable_input"
+                  />
+                {/if}
+              </div>
             </div>
-            <div class="second_line">
-              <label for="new-group">신규 그룹명:</label>
-              <input
-                class="second_line_input"
-                type="text"
-                bind:value={newChecklistName}
-                id="new-group"
-                placeholder="새로운 진단 그룹명을 입력하세요"
-              />
-            </div>
-            <div class="modal-buttons">
-              <button class="primary-button" on:click={createNewChecklistGroup}
-                >저장하기</button
-              >
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </article>
+
+  <div class="contentsWrap logWrap inspectionitems">
+    <article class="contentArea mt-0">
+      <section class="filterWrap">
+        <div>
+          <select
+            name="asset_group"
+            id="asset_group"
+            bind:value={selectedCategory}
+            on:change={filterData}
+            style="width: 150px;"
+          >
+            <option value="UNIX">점검대상</option>
+            <option value="UNIX">UNIX</option>
+            <option value="WINDOWS">WINDOWS</option>
+            <option value="PC">PC</option>
+            <option value="NETWORK">NETWORK</option>
+            <option value="DBMS">DBMS</option>
+            <option value="WEB">WEB</option>
+            <option value="WAS">WAS</option>
+            <option value="CLOUD">CLOUD</option>
+            <option value="SECURITY">SECURITY</option>
+          </select>
+
+          <input placeholder="입력 점검항목" type="text" bind:value={item_no} />
+
+          <select
+            bind:value={selectedRisk}
+            name="agent_status"
+            id="agent_status"
+            style="width: 120px;"
+          >
+            <option value="위험도">위험도</option>
+            <option value="상">상</option>
+            <option value="중">중</option>
+            <option value="하">하</option>
+          </select>
+
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+
+          <button
+            style="padding: 15px;"
+            class="btn btnPrimary"
+            on:click={() =>
+              searchItem(
+                selectedChecklist,
+                selectedCategory,
+                item_no,
+                selectedRisk,
+              )}
+          >
+            조회
+          </button>
+          <button
+            style="padding: 15px;"
+            class="btn btnPrimary"
+            on:click={() => {
+              selectPage(ItemPage);
+            }}
+          >
+            뒤로 가기
+          </button>
+          <button
+            style="padding: 15px;"
+            class="btn btnPrimary"
+            on:click={() => {
+              showModal = true;
+            }}>복사</button
+          >
+          {#each createdChecklists as checklist (checklist.ccg_index)}
+            {#if editingChecklistId === checklist.ccg_index}
+              <!-- Show Save/Cancel buttons in edit mode -->
               <button
-                class="secondary-button"
-                on:click={() => (showModal = false)}>Cancel</button
+                style="padding: 15px;"
+                class="btn btnPrimary save"
+                on:click={() =>
+                  editChecklist(checklist.ccg_index, editedChecklistName)}
               >
-            </div>
+                Save
+              </button>
+              <button
+                style="padding: 15px;"
+                class="btn btnPrimary cancel"
+                on:click={cancelEditing}
+              >
+                Cancel
+              </button>
+            {:else}
+              <!-- Normal mode: show Edit, Copy, Delete buttons -->
+              <button
+                style="padding: 15px;"
+                class="btn btnPrimary edit"
+                on:click={() =>
+                  startEditing(checklist.ccg_index, checklist.ccg_group)}
+              >
+                Edit
+              </button>
+              <button
+                style="padding: 15px;"
+                class="btn btnPrimary delete btnRed"
+                on:click={() => deleteChecklist(checklist.ccg_index)}
+              >
+                Delete
+              </button>
+            {/if}
+          {/each}
+        </div>
+      </section>
+    </article>
+
+    <div class="flex col detail">
+      <svelte:component
+        this={currentPage}
+        {allChecklistArray}
+        {filteredData}
+        {selectedCategory}
+        {selectedChecklist}
+        {searchResult}
+        {isSearchActive}
+        {activeMenu}
+        {lastCreatedChecklistId}
+        {showSlide}
+        {swiperContainer}
+        {showModalSecond}
+        {selectedSlide}
+        {cleanSearch}
+        {slides}
+        {isNewlyCreatedChecklist}
+        on:projectDeleted={(event) => {
+          const id = event.detail;
+          allChecklistArray = allChecklistArray.filter(
+            (checklist) => checklist.ccg_index !== id,
+          );
+        }}
+      />
+    </div>
+  </div>
+
+  {#if showModal}
+    <dialog open on:close={() => (showModal = false)}>
+      <div class="modal-content">
+        <div class="modal">
+          <h3>새로운 진단 그룹 생성</h3>
+          <div class="first_line">
+            <label for="source-group">복사 대상:</label>
+            <select
+              class="first_line_input"
+              bind:value={selectedChecklistForCopyId}
+              id="source-group"
+            >
+              {#each allChecklistArray as checklist}
+                <option value={checklist.ccg_index}
+                  >{checklist.ccg_group}</option
+                >
+              {/each}
+            </select>
+          </div>
+          <div class="second_line">
+            <label for="new-group">신규 그룹명:</label>
+            <input
+              class="second_line_input"
+              type="text"
+              bind:value={newChecklistName}
+              id="new-group"
+              placeholder="새로운 진단 그룹명을 입력하세요"
+            />
+          </div>
+          <div class="modal-buttons">
+            <button class="primary-button" on:click={createNewChecklistGroup}
+              >저장하기</button
+            >
+            <button
+              class="secondary-button"
+              on:click={() => (showModal = false)}>Cancel</button
+            >
           </div>
         </div>
-      </dialog>
-    {/if}
-  </section>
-</main>
+      </div>
+    </dialog>
+  {/if}
+</section>
 
 <style>
   /* General Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Arial", sans-serif;
-  }
 
   .edit {
     background-color: rgba(0, 255, 140, 0.06);
@@ -622,10 +607,7 @@
     color: #ffffff;
     background-color: #0067ff;
   }
-  .active .truncate-text {
-    color: #ffffff;
-    background-color: #0067ff;
-  }
+
   .btn:hover {
     color: #fff;
     background-color: #0067ff;
@@ -746,45 +728,50 @@
     }
   }
   /***************************************/
-  /* Truncate text with ellipsis */
-  .truncate-text {
-    display: inline-block;
-    max-width: 100%; /* Adjust as per your layout */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-  }
-
   /* Tooltip styling */
-  .project_button a[title] {
+  .prMenuList a[title] {
     position: relative;
     cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .prMenuList a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .prMenuList a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+  }
+
+  * {
+    font-size: 16px;
   }
   .project_button {
     display: flex;
     flex-direction: row;
   }
 
-  .asset_button {
-    background-color: rgba(0, 103, 255, 0.05);
-    color: #0067ff;
-    border-color: rgba(0, 103, 255, 0.1);
-    width: 60px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 10px;
-    padding: 2px;
-    transition: all 0.3s ease;
-    text-align: center;
-  }
-
-  .asset_button:hover {
-    background-color: #fff;
-    color: #0067ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
   .editable_input {
     border: 1px solid #555;
     height: 40px;

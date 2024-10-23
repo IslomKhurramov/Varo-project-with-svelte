@@ -163,159 +163,170 @@
         </div>
       </div>
     </div>
-  </article>
-  {#if showAssetReg}
-    <article class="contentArea registCon">
-      <div class="formControlWrap">
-        <div class="formControl">
-          <div class="upload-section">
-            <label for="file-upload" class="file-label">파일첨부</label>
-            <input
-              type="file"
-              id="file-upload"
-              accept=".xls,.xlsx"
-              class="file-input"
-              on:change={handleFileUpload}
-            />
 
-            <p class="btn btnPrimary w190 h50">대용량업로드(엑셀파일)</p>
-            <a
-              href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
-              style="color: black;">샘플다운로드</a
-            >
+    {#if showAssetReg}
+      <article class="contentArea registCon">
+        <div class="formControlWrap">
+          <div class="formControl">
+            <div class="upload-section">
+              <label for="file-upload" class="file-label">파일첨부</label>
+              <input
+                type="file"
+                id="file-upload"
+                accept=".xls,.xlsx"
+                class="file-input"
+                on:change={handleFileUpload}
+              />
+
+              <p class="btn btnPrimary w190 h50">대용량업로드(엑셀파일)</p>
+              <a
+                href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
+                style="color: black;">샘플다운로드</a
+              >
+            </div>
+          </div>
+        </div>
+      </article>
+    {/if}
+
+    <article class="contentArea flex col gap-20">
+      <div class="second_line_container">
+        <div class="right_container" style="overflow-y: hidden;">
+          <div class="top registCon">
+            <section class="filterWrap">
+              <div>
+                <p>선택된 자산 그룹:</p>
+                <select bind:value={selectedGroup} on:change={handleFilter}>
+                  <option value="전체" selected>전체</option>
+                  {#if $allAssetGroupList.length > 0}
+                    {#each $allAssetGroupList as group}
+                      <option value={group.asg_index}>{group.asg_title}</option>
+                    {/each}
+                  {/if}
+                </select>
+              </div>
+              <div>
+                <p>자산에 대한 새 그룹을 선택하세요:</p>
+                <select bind:value={newRegGroupIndex}>
+                  <option value="전체" selected>전체</option>
+                  {#if $allAssetGroupList.length > 0}
+                    {#each $allAssetGroupList as group}
+                      <option value={group.asg_index}>{group.asg_title}</option>
+                    {/each}
+                  {/if}
+                </select>
+              </div>
+            </section>
+          </div>
+
+          <div class="top registCon">
+            <section class="filterWrap">
+              <div>
+                <select bind:value={assetHost} on:change={handleFilter}>
+                  <option value="전체" selected>전체</option>
+                  {#each $allAssetList as asset}
+                    <option value={asset.ast_hostname}>
+                      {asset.ast_hostname}
+                    </option>
+                  {/each}
+                </select>
+
+                <!-- Select for ast_ostype -->
+                <select bind:value={asset_ostype} on:change={handleFilter}>
+                  <option value="전체" selected>전체</option>
+                  {#each $allAssetList as asset}
+                    {#if asset.ast_ostype !== ""}
+                      <option value={asset.ast_ostype}>
+                        {asset.ast_ostype}
+                      </option>
+                    {/if}
+                  {/each}
+                </select>
+
+                <button
+                  class="btn btnPrimary"
+                  on:click|preventDefault={resetFilters}
+                >
+                  <img src="./assets/images/reset.png" alt="search" />초기화
+                </button>
+              </div>
+            </section>
+          </div>
+
+          <div class="first_check_cont">
+            <input
+              type="checkbox"
+              class="first_checkbox"
+              on:click={toggleAll}
+              checked={allSelected}
+            />
+            <p>전체선택</p>
+          </div>
+          <section class="maxheight" style="overflow-y: auto;">
+            <div class="cardWrap col5">
+              {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+                <article class="card">
+                  <div class="checkboxWrap default">
+                    <input
+                      class="checkboxWrap default"
+                      type="checkbox"
+                      checked={selectedAssets.includes(asset.ass_uuid)}
+                      on:change={(event) => handleAssetSelection(asset, event)}
+                    /> <span></span>
+                  </div>
+                  <div class="imageWrap flex align-center gap-20">
+                    <!-- svelte-ignore a11y-img-redundant-alt -->
+                    <img src="./assets/images/asset_window.png" alt="img" />
+                    <div class="head">
+                      {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
+                        {#each asset.assessment_target_system as target}
+                          {#if target && typeof target === "object"}
+                            {#each Object.entries(target) as [key, value]}
+                              {#if value}
+                                <p>{key}</p>
+                              {/if}
+                            {/each}
+                          {/if}
+                        {/each}
+                      {/if}
+                    </div>
+                  </div>
+                  <div class="content">
+                    <ul>
+                      <li><span>이름:</span> {asset.ast_hostname}</li>
+                      <li><span>아피:</span> {asset.ast_ipaddr}</li>
+                    </ul>
+                  </div>
+                </article>
+              {/each}
+            </div>
+          </section>
+          <div class="div2">
+            <button type="submit" class="btn w140 btnBlue">저장하기 </button>
           </div>
         </div>
       </div>
     </article>
-  {/if}
-
-  <article class="contentArea flex col gap-20">
-    <div class="second_line_container">
-      <div class="right_container" style="overflow-y: hidden;">
-        <div class="top registCon">
-          <section class="filterWrap">
-            <div>
-              <p>선택된 자산 그룹:</p>
-              <select bind:value={selectedGroup} on:change={handleFilter}>
-                <option value="전체" selected>전체</option>
-                {#if $allAssetGroupList.length > 0}
-                  {#each $allAssetGroupList as group}
-                    <option value={group.asg_index}>{group.asg_title}</option>
-                  {/each}
-                {/if}
-              </select>
-            </div>
-            <div>
-              <p>자산에 대한 새 그룹을 선택하세요:</p>
-              <select bind:value={newRegGroupIndex}>
-                <option value="전체" selected>전체</option>
-                {#if $allAssetGroupList.length > 0}
-                  {#each $allAssetGroupList as group}
-                    <option value={group.asg_index}>{group.asg_title}</option>
-                  {/each}
-                {/if}
-              </select>
-            </div>
-          </section>
-        </div>
-
-        <div class="top registCon">
-          <section class="filterWrap">
-            <div>
-              <select bind:value={assetHost} on:change={handleFilter}>
-                <option value="전체" selected>전체</option>
-                {#each $allAssetList as asset}
-                  <option value={asset.ast_hostname}>
-                    {asset.ast_hostname}
-                  </option>
-                {/each}
-              </select>
-
-              <!-- Select for ast_ostype -->
-              <select bind:value={asset_ostype} on:change={handleFilter}>
-                <option value="전체" selected>전체</option>
-                {#each $allAssetList as asset}
-                  {#if asset.ast_ostype !== ""}
-                    <option value={asset.ast_ostype}>
-                      {asset.ast_ostype}
-                    </option>
-                  {/if}
-                {/each}
-              </select>
-
-              <button
-                class="btn btnPrimary"
-                on:click|preventDefault={resetFilters}
-              >
-                <img src="./assets/images/reset.png" alt="search" />초기화
-              </button>
-            </div>
-          </section>
-        </div>
-
-        <div class="first_check_cont">
-          <input
-            type="checkbox"
-            class="first_checkbox"
-            on:click={toggleAll}
-            checked={allSelected}
-          />
-          <p>전체선택</p>
-        </div>
-        <section class="maxheight registCon" style="overflow-y: auto;">
-          <div class="cardWrap col5">
-            {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
-              <article class="card">
-                <div class="checkboxWrap default">
-                  <input
-                    class="checkboxWrap default"
-                    type="checkbox"
-                    checked={selectedAssets.includes(asset.ass_uuid)}
-                    on:change={(event) => handleAssetSelection(asset, event)}
-                  /> <span></span>
-                </div>
-                <div class="imageWrap flex align-center gap-20">
-                  <!-- svelte-ignore a11y-img-redundant-alt -->
-                  <img src="./assets/images/asset_window.png" alt="img" />
-                  <div class="head">
-                    {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
-                      {#each asset.assessment_target_system as target}
-                        {#if target && typeof target === "object"}
-                          {#each Object.entries(target) as [key, value]}
-                            {#if value}
-                              <p>{key}</p>
-                            {/if}
-                          {/each}
-                        {/if}
-                      {/each}
-                    {/if}
-                  </div>
-                </div>
-                <div class="content">
-                  <ul>
-                    <li><span>이름:</span> {asset.ast_hostname}</li>
-                    <li><span>아피:</span> {asset.ast_ipaddr}</li>
-                  </ul>
-                </div>
-              </article>
-            {/each}
-          </div>
-        </section>
-        <div class="div2">
-          <button type="submit">저장하기 </button>
-        </div>
-      </div>
-    </div>
   </article>
 </form>
 
 <style>
+  .cardWrap {
+    height: 100%;
+  }
+  .maxheight {
+    padding-bottom: 20px;
+    max-height: 775px;
+  }
   .second_line_container {
+    height: 100%;
     display: flex;
     flex-direction: row;
     gap: 35px;
-    max-height: 500px;
+    height: 100%;
+    padding-bottom: 20px;
     overflow-x: hidden; /* Prevent horizontal overflow */
+    overflow-y: auto;
   }
 
   .right_container {

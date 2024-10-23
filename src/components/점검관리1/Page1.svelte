@@ -87,13 +87,13 @@
             <a
               href="javascript:void(0)"
               on:click={() => selectPage(RightContainerMenu, project)}
-              title={project.ccp_title}
             >
               <span
                 style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
               >
                 {project.ccp_title}
               </span>
+              <span class="tooltip">{project.ccp_title}</span>
               <span class="arrowIcon"></span></a
             >
             <!-- </Tooltip> -->
@@ -125,40 +125,31 @@
     filter: brightness(0) invert(1);
   }
 
-  /* Tooltip styling */
-  .prMenuList a[title] {
+  a {
     position: relative;
-    cursor: pointer;
   }
 
-  /* Tooltip on hover */
-  .prMenuList a[title]:hover::after {
-    content: attr(title); /* The full text from the title attribute */
-    position: absolute;
-    bottom: 100%; /* Position the tooltip above the text */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 5px;
-    font-size: 12px;
-    white-space: nowrap;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+  /* Tooltip styling */
+  .tooltip {
+    visibility: hidden; /* Hidden by default */
+    width: 87%; /* Width of the tooltip */
+    background-color: rgba(0, 0, 0, 0.7); /* Background color of the tooltip */
+    color: #fff; /* Text color */
+    text-align: center; /* Center text */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px; /* Padding inside tooltip */
+    position: absolute; /* Absolute positioning */
+    z-index: 1; /* On top of other elements */
+    bottom: 125%; /* Position above the button */
+    opacity: 0; /* Initial opacity */
+    transition: opacity 0.2s ease; /* Transition effect */
+    z-index: 9999 !important;
   }
 
-  /* Tooltip arrow */
-  .prMenuList a[title]:hover::before {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    z-index: 1000;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent #333 transparent;
+  /* Show the tooltip on hover */
+  a:hover .tooltip {
+    visibility: visible; /* Show tooltip */
+    opacity: 1; /* Fade in the tooltip */
   }
 
   * {

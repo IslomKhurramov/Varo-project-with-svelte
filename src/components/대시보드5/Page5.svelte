@@ -344,7 +344,11 @@
   </div>
 </main> -->
 
-<section class="dashboard">
+<section
+  class="dashboard"
+  style="overflow: scroll;
+    height: calc(100vh - 120px);"
+>
   <div class="contentsWrap w100">
     <ul class="countWrap flex">
       <li>

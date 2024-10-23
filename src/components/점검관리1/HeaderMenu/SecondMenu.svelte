@@ -465,7 +465,7 @@
       </button>
     </div>
   </section>
-  <section class="flex totalSecurityLevel">
+  <!-- <section class="flex totalSecurityLevel">
     <h4>프로젝트 전체 보안수준</h4>
     <ul class="flex">
       <li class="flex">
@@ -482,8 +482,8 @@
         <b>2024년 7월 10일 6:38 오전</b>
       </li>
     </ul>
-  </section>
-  <section class="tableWrap">
+  </section> -->
+  <section class="tableWrap" style="height: 66vh;">
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>

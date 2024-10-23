@@ -721,7 +721,7 @@
   </div>
 </section>
 
-<section class="content">
+<section class="content" style="height: 100vh; overflow: scroll;">
   <div>
     <!-- 자산상세 -->
     <div class="section">

@@ -1568,8 +1568,8 @@
 
   .scroll-div {
     overflow: auto;
-    height: 100vh;
-    padding-bottom: 30px;
+    height: 77vh;
+    padding-bottom: 60px;
   }
 
   .btnSave {

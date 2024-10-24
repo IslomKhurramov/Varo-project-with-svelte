@@ -55,12 +55,12 @@
   let assetInsertData = {
     target_group: "",
     command_type: "1",
-    target: "",
+    target: "basic,process,network,dll,program,patch",
     command_str: "",
     search_path: "",
     search_extension: "",
     search_target: "",
-    reserved: "",
+    reserved: "0",
     start_date: "",
     end_date: "",
     repeat_interval: "",
@@ -222,7 +222,7 @@
 </script>
 
 <div class="contentsWrap">
-  <div class="contentArea">
+  <div class="contentArea" style="margin: 0;">
     <section class="subTabWrap">
       <a
         href="javascript:void(0);"
@@ -489,6 +489,8 @@
               {/if}
             </select>
           </div>
+        </div>
+        <div class="formControlWrap">
           <div class="formControl">
             <label>조치담당자 지정</label>
             <select bind:value={conductorInfo}>
@@ -526,7 +528,7 @@
           </div>
           <div class="detailForm">
             <div class="formControl">
-              <label>점검 실행</label>
+              <label style="width: 112px;">점검 실행</label>
               <div class="radioWrap">
                 <label class="radio-label">
                   <input
@@ -558,7 +560,7 @@
             </div>
             {#if schedule == "1"}
               <div class="formControl">
-                <label>주기</label>
+                <label style="width: 112px;">주기</label>
                 <div class="controlWrap">
                   <input
                     type="text"
@@ -579,7 +581,7 @@
             {/if}
 
             <div class="formControl">
-              <label>점검 플랜 생성 규칙</label>
+              <label style="width: 115px;">점검 플랜 생성 규칙</label>
               <div class="controlWrap">
                 <select bind:value={ruleType}>
                   <option value="" selected disabled>
@@ -990,6 +992,9 @@
                   <input
                     type="checkbox"
                     name="target"
+                    checked={assetInsertData?.target
+                      ?.split(",")
+                      .includes("basic")}
                     on:change={(e) => {
                       changeTarget("basic", e.target.checked, "checkbox");
                     }}
@@ -1000,6 +1005,9 @@
                   <input
                     type="checkbox"
                     name="target"
+                    checked={assetInsertData?.target
+                      ?.split(",")
+                      .includes("process")}
                     on:change={(e) => {
                       changeTarget("process", e.target.checked, "checkbox");
                     }}
@@ -1010,6 +1018,9 @@
                   <input
                     type="checkbox"
                     name="target"
+                    checked={assetInsertData?.target
+                      ?.split(",")
+                      .includes("network")}
                     on:change={(e) => {
                       changeTarget("network", e.target.checked, "checkbox");
                     }}
@@ -1020,6 +1031,9 @@
                   <input
                     type="checkbox"
                     name="target"
+                    checked={assetInsertData?.target
+                      ?.split(",")
+                      .includes("dll")}
                     on:change={(e) => {
                       changeTarget("dll", e.target.checked, "checkbox");
                     }}
@@ -1030,6 +1044,9 @@
                   <input
                     type="checkbox"
                     name="target"
+                    checked={assetInsertData?.target
+                      ?.split(",")
+                      .includes("program")}
                     on:change={(e) => {
                       changeTarget("program", e.target.checked, "checkbox");
                     }}
@@ -1040,6 +1057,9 @@
                   <input
                     type="checkbox"
                     name="target"
+                    checked={assetInsertData?.target
+                      ?.split(",")
+                      .includes("patch")}
                     on:change={(e) => {
                       changeTarget("patch", e.target.checked, "checkbox");
                     }}
@@ -1181,48 +1201,51 @@
             </div>
           </div>
         </div>
-        <div class="formControlWrap col">
-          <div class="formControl">
-            <label>반복</label>
-            <div class="dateWrap">
-              <div class="date">
-                <input
-                  type="datetime-local"
-                  class="datepicker"
-                  placeholder="시작일시"
-                  bind:value={assetInsertData.start_date}
-                />
+
+        {#if assetInsertData.reserved == "1"}
+          <div class="formControlWrap col">
+            <div class="formControl">
+              <label>일정(반복)</label>
+              <div class="dateWrap">
+                <div class="date">
+                  <input
+                    type="datetime-local"
+                    class="datepicker"
+                    placeholder="시작일시"
+                    bind:value={assetInsertData.start_date}
+                  />
+                </div>
+                <img src="./assets/images/icon/dash.svg" />
+                <div class="date">
+                  <input
+                    type="datetime-local"
+                    class="datepicker"
+                    placeholder="종료일시"
+                    bind:value={assetInsertData.end_date}
+                  />
+                </div>
               </div>
-              <img src="./assets/images/icon/dash.svg" />
-              <div class="date">
+            </div>
+            <div class="formControl noLabel">
+              <div class="controlWrap">
                 <input
-                  type="datetime-local"
-                  class="datepicker"
-                  placeholder="종료일시"
-                  bind:value={assetInsertData.end_date}
+                  type="text"
+                  placeholder="0"
+                  class="w90"
+                  bind:value={assetInsertData.repeat_interval}
                 />
+                <select class="w120" bind:value={assetInsertData.repeat_term}>
+                  <option value="" selected disabled>시/일/주/월/년</option>
+                  <option value="hours">시</option>
+                  <option value="days">일</option>
+                  <option value="weeks">주</option>
+                  <option value="months">월</option>
+                  <option value="years">년</option>
+                </select>
               </div>
             </div>
           </div>
-          <div class="formControl noLabel">
-            <div class="controlWrap">
-              <input
-                type="text"
-                placeholder="0"
-                class="w90"
-                bind:value={assetInsertData.repeat_interval}
-              />
-              <select class="w120" bind:value={assetInsertData.repeat_term}>
-                <option value="" selected disabled>시/일/주/월/년</option>
-                <option value="hours">시</option>
-                <option value="days">일</option>
-                <option value="weeks">주</option>
-                <option value="months">월</option>
-                <option value="years">년</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        {/if}
       </article>
       <button
         type="button"

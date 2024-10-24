@@ -1,6 +1,9 @@
 <script>
   import { getPlanDetailInformation } from "../../services/page1/projectDetail";
-  import { getCCEResultUploadStatus } from "../../services/result/resultService";
+  import {
+    getCCEResultUploadStatus,
+    setSpecificItemResultsChange,
+  } from "../../services/result/resultService";
   import { errorAlert } from "../../shared/sweetAlert";
   import { navigate } from "svelte-routing";
   import moment from "moment";
@@ -13,6 +16,8 @@
   } from "../../services/page1/newInspection";
   import { getAssetGroup } from "../../services/page2/assetService";
   import { onMount } from "svelte";
+  import Modal from "../../shared/Modal.svelte";
+  import ModalPage from "./ModalPage.svelte";
 
   export let projectIndex;
 
@@ -28,6 +33,8 @@
 
   let totalPercentage = 0;
   let showModal = false;
+  let lastModal = false;
+  let insertData = {};
   let inputFile;
   let alertConfirm = false;
 
@@ -157,6 +164,32 @@
     );
     const data = (totalY / target_group_securitypoint?.length).toFixed(2);
     return isNaN(data) ? 0 : parseInt(data);
+  };
+
+  export const changeDataHandler = async (data) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("plan_index", data?.plan_index);
+      formData.append("result_index", data?.result_index);
+      formData.append("checklist_index", data?.checklist_index);
+      if (data?.change_result)
+        formData.append("change_result", data?.change_result);
+      formData.append("change_option", data?.change_option);
+      if (data?.change_status_text)
+        formData.append("change_status_text", data?.change_status_text);
+      if (data?.change_evidence_file)
+        formData.append("change_evidence_file", data?.change_evidence_file);
+
+      const result = await setSpecificItemResultsChange(formData);
+      await updateProjectDetails();
+      successAlert(result);
+      showModal = false;
+      modalData = null;
+    } catch (err) {
+      console.error("Error changeItemResult:", err);
+      alert(err?.message);
+    }
   };
 
   $: {
@@ -1199,24 +1232,45 @@
                   on:click={() => {
                     inputFile.click();
                   }}
+                  style="width: 155px;"
                 >
                   Upload
                 </button>
               </div>
             </td>
           </tr>
+          <tr>
+            <th style="visibility: hidden;">점검정보파일</th>
+            <td colspan="2">
+              <div class="upload-section">
+                <label
+                  for="file-upload"
+                  class="file-label"
+                  style="width: 509px; visibility: hidden;"
+                  >{updateInfo?.assessment_command
+                    ? "파일 업로드됨"
+                    : "엑셀파일업로드"}</label
+                >
+                <input
+                  style="visibility: hidden;"
+                  type="file"
+                  id="file-upload"
+                  accept=".xls,.xlsx"
+                  class="file-input"
+                />
+                <button
+                  type="button"
+                  class="btn btnBlue btnSave"
+                  onclick="modalOpen('alert')"
+                  on:click={() => (alertConfirm = true)}
+                >
+                  변경저장
+                </button>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
-      <div class="flex btnWrap">
-        <button
-          type="button"
-          class="btn btnBlue btnSave"
-          onclick="modalOpen('alert')"
-          on:click={() => (alertConfirm = true)}
-        >
-          변경저장
-        </button>
-      </div>
     </article>
   </section>
 
@@ -1400,33 +1454,42 @@
         <div class="tableListWrap" style="max-height: 256px;">
           <table class="tableList hdBorder">
             <colgroup>
-              <col style="width:60px;" />
-              <col style="width:122px;" />
-              <col style="width:220px;" />
+              <col style="width:90px;" />
+              <col />
+              <col />
               <col />
               <col />
               <!-- <col style="width:100px;" /> -->
             </colgroup>
             <thead>
               <tr>
-                <th>번호</th>
-                <th>대상</th>
-                <th>점검그룹</th>
+                <th class="text-center">번호</th>
+                <th class="text-center">대상</th>
+                <th class="text-center">점검그룹</th>
                 <th>점검항목</th>
-                <th>위험도</th>
+                <th class="text-center">위험도</th>
                 <!-- <th class="text-center">점검결과</th> -->
               </tr>
             </thead>
             <tbody>
               {#each projectDetails?.vuln_list as vuln, index}
-                <tr>
+                <tr
+                  on:click={() => {
+                    modalData = { ...vuln };
+                    lastModal = true;
+                  }}
+                >
                   <td class="text-center">{index + 1}</td>
-                  <td>{vuln?.cct_index__cct_target}</td>
-                  <td>{vuln?.ccr_item_no__ccc_item_group}</td>
+                  <td class="text-center">{vuln?.cct_index__cct_target}</td>
+                  <td class="text-center"
+                    >{vuln?.ccr_item_no__ccc_item_group}</td
+                  >
                   <td>
                     {vuln?.ccr_item_no__ccc_item_title}
                   </td>
-                  <td>{vuln?.ccr_item_no__ccc_item_level}</td>
+                  <td class="text-center"
+                    >{vuln?.ccr_item_no__ccc_item_level}</td
+                  >
                 </tr>
               {/each}
             </tbody>
@@ -1561,9 +1624,25 @@
 
 <!--//Modal:자산 상세-->
 
+{#if lastModal}
+  <Modal bind:showModal={lastModal} bind:insertData>
+    <ModalPage
+      bind:modalData
+      bind:insertData
+      planIndex={projectIndex}
+      {changeDataHandler}
+    />
+  </Modal>
+{/if}
+
 <style>
   * {
     font-size: 16px;
+  }
+
+  .tableForm input,
+  .tableForm select {
+    width: 348px;
   }
 
   .scroll-div {
@@ -1580,7 +1659,7 @@
 
   .btnWrap {
     margin-top: 20px;
-    width: 56%;
+    width: 947px;
     justify-content: flex-end;
   }
 

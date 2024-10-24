@@ -19,7 +19,6 @@
   let tableData;
   let vulnerabilityStatusValue;
   let actionStatusValue;
-  let actionStatus;
   let activePlan = null;
   let wholePage = false;
   let selectedSendData;

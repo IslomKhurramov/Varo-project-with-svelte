@@ -23,7 +23,7 @@
   export let selectedItems = [];
 
   // let isAgenUser = $userData?.userInfo?.user_roletype__role_index == 1;
-  let isAgenUser = false;
+  let isAgenUser = true;
 
   let data = [];
 
@@ -369,20 +369,20 @@
           <table class="tableList hdBorder">
             <colgroup>
               {#if isAgenUser && selectedSendData?.plan_index}
-                <col style="width:3%;" />
+                <col style="width:33px;" />
               {/if}
-              <col style="width:4%;" />
-              <col style="width:8%;" />
-              <col style="width:8%;" />
-              <col style="width:7%;" />
-              <col style="width:10%;" />
-              <col style="width:5%;" />
-              <col style="width:10%;" />
-              <col style="width:10%;" />
-              <col style="width:6%;" />
-              <col style="width:7%;" />
+              <col style="width:90px;" />
+              <col style="width:100px;" />
+              <col style="width:91px;" />
+              <col style="width:100px;" />
+              <col style="width:160px;" />
+              <col style="width:50px;" />
+              <col style="width:80px;" />
+              <col style="width:80px;" />
+              <col style="width:70px;" />
+              <col style="width:100px;" />
               {#if isAgenUser}
-                <col style="width:7%;" />
+                <col style="width:50px;" />
               {/if}
             </colgroup>
             <thead>

@@ -44,11 +44,6 @@
     selectedItems = [];
   };
 
-  function toggleView() {
-    currentView = currentView === "default" ? "newView" : "default";
-    currentPage = null;
-  }
-
   async function toggleList(view) {
     showProject = view === "project";
   }
@@ -394,7 +389,7 @@
               {#if wholePage}
                 <button
                   type="button"
-                  class="btn btnBlue"
+                  class="btn btnPrimary"
                   on:click={() => {
                     currentView === "default";
                     wholePage = false;

@@ -205,14 +205,22 @@
       </li>
       {#if tabMenu}
         <li>
-          <a
+          <!-- <a
             href="javascript:void(0);"
             on:click={() => {
               navigate(window.location?.pathname == "/" ? "/page1" : "/");
             }}
           >
             돌아가기
-          </a>
+          </a> -->
+          <button
+            class="btn btnPrimary"
+            on:click={() => {
+              navigate(window.location?.pathname == "/" ? "/page1" : "/");
+            }}
+          >
+            돌아가기
+          </button>
         </li>
       {/if}
     </ul>

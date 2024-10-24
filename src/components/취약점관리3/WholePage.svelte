@@ -162,10 +162,10 @@
 
     console.log("targetIndex:", targetIndex);
 
-    if (targetIndex !== -1) {
-      const [targetElement] = data.splice(targetIndex, 1);
-      data.unshift(targetElement);
-    }
+    // if (targetIndex !== -1) {
+    //   const [targetElement] = data.splice(targetIndex, 1);
+    //   data.unshift(targetElement);
+    // }
   };
 
   $: {
@@ -234,10 +234,71 @@
   };
 
   let swiperContainer;
+  let swiperInstance;
   let menuWrapper;
   let scrollAmount = 0;
   let itemWidth = 146;
   let menuWidth = 100;
+  let activeAsset = null;
+
+  $: if (targetData && data && Array.isArray(data) && data.length > 0) {
+    activeAsset = data?.find(
+      (slide) =>
+        slide.ccr_item_no__ccc_item_no === targetData.ccr_item_no__ccc_item_no,
+    );
+
+    // Focus on the asset if it exists
+    if (activeAsset) {
+      setTimeout(() => {
+        focusOnAsset(targetData.ccr_item_no__ccc_item_no);
+      }, 0);
+    }
+  }
+
+  function focusOnAsset(assetId) {
+    const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
+    if (menuItem) {
+      menuItem.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+      setTimeout(() => {
+        menuItem.focus();
+      }, 300);
+    } else {
+      console.warn("Menu item not found:", assetId);
+    }
+  }
+
+  onMount(() => {
+    // Ensure swiperContainer is bound
+    if (swiperContainer) {
+      swiperInstance = new Swiper(swiperContainer, {
+        modules: [Navigation, Pagination],
+        loop: false, // Avoid layout issues caused by looping
+        slidesPerView: 4, // Adjust this value to suit your design
+        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    }
+
+    // Initialize menu wrapper for scrolling
+    menuWrapper = document.getElementById("menuWrapper");
+
+    return () => {
+      if (swiperInstance) {
+        swiperInstance.destroy(true, true);
+      }
+    };
+  });
 
   const handleScroll = (direction) => {
     menuWrapper = document.getElementById("menuWrapper");
@@ -272,9 +333,11 @@
     </button>
     <div class="menu-wrapper-container">
       {#if data?.length !== 0}
-        <div class="menu-wrapper" id="menuWrapper">
+        <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
           {#each data as item, index}
             <div
+              value={item.ccr_item_no__ccc_item_no}
+              name={item}
               class={`menu-item ${item?.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
               on:click={() => {
                 targetData = item;
@@ -901,5 +964,22 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
+  }
+
+  .menu-wrapper-container {
+    overflow: hidden; /* Prevents Swiper from breaking out of bounds */
+  }
+  .menu-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Ensure no wrapping of slides */
+  }
+  .swiper-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .swiper-slide {
+    flex-shrink: 0; /* Prevents shrinking of slides */
+    width: auto; /* or specific widths depending on how many slides you want to show */
   }
 </style>

@@ -23,6 +23,7 @@
 
   onMount(async () => {
     searchFilters = await getPlanFilter();
+    await searchDataHandler();
   });
 
   const searchDataHandler = async () => {
@@ -136,6 +137,8 @@
         on:change={searchDataHandler}
       >
         <option value="" selected disabled>프로젝트명</option>
+        <option value="" selected>전체</option>
+
         {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
           {#each searchFilters?.plans as plan}
             <option value={plan.ccp_index}>{plan.ccp_title}</option>

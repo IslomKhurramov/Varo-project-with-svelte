@@ -12,97 +12,112 @@
 <div class="modal">
   <table>
     <tr>
-      <th>점검항목</th>
-      <td
+      <th class="center-align">점검항목</th>
+      <td class="line-height"
         >[{modalData?.ccr_item_no__ccc_item_no}] {modalData?.ccr_item_no__ccc_item_title}</td
       >
     </tr>
     <tr>
-      <th>점검대상</th>
-      <td>
+      <th class="center-align">점검대상</th>
+      <td class="line-height">
         {modalData?.ccr_item_no__ccc_target_system}
       </td>
     </tr>
     <tr>
-      <th>항목그룹</th>
-      <td
+      <th class="center-align">항목그룹</th>
+      <td class="line-height"
         >[{modalData?.ast_uuid__ast_target__cct_target}] {modalData?.ccr_item_no__ccc_item_group}</td
       >
     </tr>
     <tr>
-      <th>위험도</th>
-      <td>{modalData?.ccr_item_no__ccc_item_level}</td>
+      <th class="center-align">위험도</th>
+      <td class="line-height">{modalData?.ccr_item_no__ccc_item_level}</td>
     </tr>
     <tr>
-      <th>점검기준</th>
+      <th class="center-align">점검기준</th>
       <td class="lineCol">
-        <div>
-          양호: <span> {@html modalData?.ccr_item_no__ccc_item_criteria} </span>
+        <div class="line-height">
+          양호: <span class="line-height">
+            {@html modalData?.ccr_item_no__ccc_item_criteria}
+          </span>
         </div>
       </td>
     </tr>
     <tr>
-      <th>점검내용</th>
+      <th class="center-align">점검내용</th>
       <td class="lineCol">
         <div>
-          <span> {modalData?.ccr_item_no__ccc_check_content} </span>
+          <span class="line-height">
+            {modalData?.ccr_item_no__ccc_check_content}
+          </span>
         </div>
       </td>
     </tr>
     <tr>
-      <th>점검목적</th>
+      <th class="center-align">점검목적</th>
       <td class="lineCol">
         <div>
-          <span> {modalData?.ccr_item_no__ccc_check_purpose} </span>
+          <span class="line-height">
+            {modalData?.ccr_item_no__ccc_check_purpose}
+          </span>
         </div>
       </td>
     </tr>
     <tr>
-      <th>보안위협</th>
+      <th class="center-align">보안위협</th>
       <td class="lineCol">
         <div>
-          <span> {modalData?.ccr_item_no__ccc_security_threat} </span>
+          <span class="line-height">
+            {modalData?.ccr_item_no__ccc_security_threat}
+          </span>
         </div>
       </td>
     </tr>
     <tr>
-      <th>영향도</th>
+      <th class="center-align">영향도</th>
       <td class="lineCol">
         <div>
-          <span> {modalData?.ccr_item_no__ccc_impact} </span>
+          <span class="line-height">
+            {modalData?.ccr_item_no__ccc_impact}
+          </span>
         </div>
       </td>
     </tr>
 
     <tr>
-      <th>점검결과수정</th>
+      <th class="center-align">점검결과수정</th>
       <td class="line5">
         <div class="line5">
           <p>점검결과:</p>
           <select
+            style="font-size: 16px;"
             value={modalData?.ccr_item_result}
             on:change={(e) => (insertData.change_result = e.target.value)}
           >
-            <option value="" disabled> 없음 </option>
+            <option value="" disabled style="font-size: 16px;"> 없음 </option>
             <option
+              style="font-size: 16px;"
               value="양호"
               selected={modalData?.ccr_item_result === "양호"}
             >
               양호
             </option>
             <option
+              style="font-size: 16px;"
               value="취약"
               selected={modalData?.ccr_item_result === "취약"}
             >
               취약
             </option>
             <option
+              style="font-size: 16px;"
               value="예외처리"
               selected={modalData?.ccr_item_result === "예외처리"}
             >
               예외처리
             </option>
             <option
+              style="font-size: 16px;"
               value="해당없음"
               selected={modalData?.ccr_item_result === "해당없음"}
             >
@@ -113,21 +128,23 @@
         <div class="line5">
           <p>수정범위:</p>
           <select
+            style="font-size: 16px;"
             on:change={(e) => {
               change_option = e.target.value;
             }}
           >
-            <option value="ONE">해당항목만</option>
-            <option value="ALL">전체항목</option>
+            <option value="ONE" style="font-size: 16px;">해당항목만</option>
+            <option value="ALL" style="font-size: 16px;">전체항목</option>
           </select>
         </div>
         <p>(점검현황/점검결과 적용됨)</p>
       </td>
     </tr>
     <tr>
-      <th>점검현황</th>
+      <th class="center-align">점검현황</th>
       <td>
         <textarea
+          class="line-height"
           name=""
           id=""
           rows="5"
@@ -140,9 +157,14 @@
     </tr>
     {#if modalData?.evidence_file?.length !== 0 && modalData?.evidence_file[0]?.ccs_image}
       <tr>
-        <th>증적이미지</th>
+        <th class="center-align">증적이미지</th>
         <td class="line7">
-          <div>
+          <div
+            style="    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 223px;"
+          >
             [{modalData?.evidence_file?.length !== 0 &&
               modalData?.evidence_file[0]?.ccs_image}]:
           </div>
@@ -156,15 +178,19 @@
     {/if}
 
     <tr>
-      <th>개선방법</th>
-      <td>{modalData?.ccr_item_no__ccc_mitigation_method}</td>
+      <th class="center-align">개선방법</th>
+      <td class="line-height"
+        >{modalData?.ccr_item_no__ccc_mitigation_method}</td
+      >
     </tr>
     <tr>
-      <th>개선예시</th>
-      <td style="display: flex; height: 70px; overflow-y: auto;"
+      <th class="center-align">개선예시</th>
+      <td
+        style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
+        class="line-height"
         >{@html modalData?.ccr_item_no__ccc_mitigation_example.replace(
           /\n/g,
-          "<br>",
+          "<br/>",
         )}</td
       >
     </tr>
@@ -191,12 +217,15 @@
 </div>
 
 <style>
+  * {
+    font-size: 16px;
+  }
   .modal {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-    max-width: 700px;
+    max-width: 800px;
     margin: 20px auto;
     font-family: Arial, sans-serif;
   }
@@ -263,7 +292,7 @@
 
   .line5 select {
     height: 30px;
-    padding: 0 5px;
+    /* padding:0 5px; */
     border-radius: 4px;
     border: 1px solid #ccc;
     font-size: 14px;
@@ -277,5 +306,13 @@
 
   button:disabled {
     background-color: #838383;
+  }
+
+  .center-align {
+    text-align: center;
+  }
+
+  .line-height {
+    line-height: 30px;
   }
 </style>

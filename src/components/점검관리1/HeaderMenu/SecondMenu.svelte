@@ -161,237 +161,6 @@
   }
 </script>
 
-<!-- <body>
-  <div class="container">
-    <div class="firstLine">
-      <div class="dropdown-group">
-        <div class="dropdown-container">
-          <label for="project">프로젝트:</label>
-          <select
-            id="project"
-            bind:value={search["plan_index"]}
-            on:change={(e) => selectPlan(e.target.value)}
-          >
-            <option value="" selected disabled>선택</option>
-            {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
-              {#each searchFilters?.plans as plan}
-                <option value={plan.ccp_index}>{plan.ccp_title}</option>
-              {/each}
-            {/if}
-          </select>
-        </div>
-        <div class="dropdown-container">
-          <label for="target">점검대상:</label>
-          <select
-            id="target"
-            bind:value={search["assessment_target"]}
-            on:change={(e) => selectTarget(e.target.value)}
-          >
-            <option value="" selected>선택</option>
-            {#if targets && targets.length !== 0}
-              {#each targets as target}
-                <option value={target}>{target}</option>
-              {/each}
-            {/if}
-          </select>
-        </div>
-        <div class="dropdown-container">
-          <label for="host">호스트:</label>
-          <select
-            id="host"
-            bind:value={search["hostname"]}
-            on:change={refetchDataHandler}
-          >
-            <option value="" selected>선택</option>
-            {#if assets && assets.length !== 0}
-              {#each assets as asset}
-                <option value={asset}>{asset}</option>
-              {/each}
-            {/if}
-          </select>
-        </div>
-        <div class="dropdown-container">
-          <label for="result">점검항목:</label>
-          <select
-            id="result"
-            bind:value={search["checklist_item_no"]}
-            on:change={refetchDataHandler}
-          >
-            <option value="" selected>선택</option>
-            {#if checklist && checklist.length !== 0}
-              {#each checklist as check}
-                <option value={check}>{check}</option>
-              {/each}
-            {/if}
-          </select>
-        </div>
-        <div class="dropdown-container">
-          <label for="result">점검결과:</label>
-          <select
-            id="result"
-            bind:value={search["check_result"]}
-            on:change={refetchDataHandler}
-          >
-            <option value="" selected>선택</option>
-            {#if results && results.length !== 0}
-              {#each results as result}
-                <option value={result?.ccr_item_result}
-                  >{result?.ccr_item_result}</option
-                >
-              {/each}
-            {/if}
-          </select>
-        </div>
-      </div>
-      <div class="button-group">
-        <button
-          class="firstlineButton"
-          disabled={!search?.plan_index || !resultData}
-          on:click={() => clickSecyurityPoint(search?.plan_index)}
-        >
-          보안점수확점
-        </button>
-      </div>
-    </div>
-
-    <div class="thirdLine">
-      <p class="bold-text">
-        Show <select on:change={(e) => changeDataCount(e.target.value)}>
-          <option value="100"> 100 </option>
-          <option value="200"> 200 </option>
-          <option value="300"> 300 </option>
-          <option value="400"> 400 </option>
-          <option value="500"> 500 </option>
-          <option value="0"> 전체 </option>
-        </select> entries
-      </p>
-    </div>
-
-    <div class="table_container">
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 1%;">번호</th>
-            <th style="width: 5%;">호스트명</th>
-            <th style="width: 10%;">항목</th>
-            <th style="width: 30%;">점검항목</th>
-            <th style="width: 15%;">점검대상</th>
-            <th style="width: 15%;">시스템상태</th>
-            <th style="width: 5%;">점검결과</th>
-            <th style="width: 10%;">결과변경</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#if resultData && resultData?.length !== 0}
-            {#each resultData as data, index}
-              <tr>
-                <td>{index + 1}</td>
-                <td
-                  style="cursor: pointer;"
-                  on:click={() => {
-                    modalData = { ...data };
-                    showModal = true;
-                  }}
-                >
-                  {data?.ast_uuid__ass_uuid__ast_hostname}
-                </td>
-                <td>
-                  [{data?.ccr_item_no__ccc_item_no}] {data?.ccr_item_no__ccc_item_title}
-                </td>
-                <td>
-                  <div class="checklist">
-                    <p>{@html data?.ccr_item_no__ccc_item_criteria}</p>
-                  </div>
-                </td>
-                <td>
-                  <p>
-                    {data.ccr_item_no__ccc_target_system}
-                  </p>
-                </td>
-                <td>
-                  <p>
-                    {@html data.ccr_item_status}
-                  </p>
-                </td>
-                <td style="text-align: center;">
-                  <span class={data.ccr_item_result}
-                    >{data.ccr_item_result}</span
-                  >
-                </td>
-                <td>
-                  <select
-                    on:change={(e) =>
-                      changeItemResult({
-                        plan_index: search.plan_index,
-                        result_index: data?.ccr_index,
-                        checklist_index: data?.ccr_item_no__ccc_index,
-                        change_result: e.target.value,
-                        change_option: change_option,
-                      })}
-                  >
-                    <option
-                      value=""
-                      disabled
-                      selected={data?.ccr_item_result === ""}
-                    >
-                      없음
-                    </option>
-                    <option
-                      value="양호"
-                      selected={data?.ccr_item_result === "양호"}
-                    >
-                      양호
-                    </option>
-                    <option
-                      value="취약"
-                      selected={data?.ccr_item_result === "취약"}
-                    >
-                      취약
-                    </option>
-                    <option
-                      value="예외처리"
-                      selected={data?.ccr_item_result === "예외처리"}
-                    >
-                      예외처리
-                    </option>
-                    <option
-                      value="해당없음"
-                      selected={data?.ccr_item_result === "해당없음"}
-                    >
-                      해당없음
-                    </option>
-                  </select>
-                  <select
-                    on:change={(e) => {
-                      change_option = e.target.value;
-                    }}
-                  >
-                    <option value="ONE"> 해당 </option>
-                    <option value="ALL"> 전체 </option>
-                  </select>
-                </td>
-              </tr>
-            {/each}
-          {/if}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div>
-    {#if showModal}
-      <Modal bind:showModal bind:insertData>
-        <ModalPage
-          bind:modalData
-          bind:insertData
-          planIndex={search?.plan_index}
-          {changeDataHandler}
-        />
-      </Modal>
-    {/if}
-  </div>
-</body> -->
-
 <article class="contentArea">
   <section class="filterWrap">
     <div>
@@ -487,54 +256,68 @@
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>
-          <col style="width:4%;" />
-          <col style="width:4%;" />
+          <col style="width:90px;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col />
+          <col />
           <col style="width:8%;" />
-          <col style="width:13%;" />
-          <col style="width:22%" />
-          <col style="width:4%;" />
-          <col style="width:5%;" />
+          <col style="width:8%;" />
         </colgroup>
         <thead>
           <tr>
-            <th class="text-center">번호</th>
-            <th class="text-center">호스트명</th>
-            <th>항목</th>
-            <th>점검항목</th>
-            <th>시스템상태</th>
-            <th class="text-center">점검결과</th>
-            <th class="text-center">결과변경</th>
+            <th class="text-center" style="font-size: 16px;">번호</th>
+            <th class="text-center" style="font-size: 16px;">호스트명</th>
+            <th style="font-size: 16px;">항목</th>
+            <th style="font-size: 16px;">점검항목</th>
+            <th style="font-size: 16px;">시스템상태</th>
+            <th class="text-center" style="font-size: 16px;">점검결과</th>
+            <th class="text-center" style="font-size: 16px;">결과변경</th>
           </tr>
         </thead>
         <tbody>
           {#if resultData && resultData?.length !== 0}
             {#each resultData as data, index}
               <tr>
-                <td class="text-center">{index + 1}</td>
+                <td class="text-center" style="font-size: 16px;">{index + 1}</td
+                >
                 <td
+                  style="font-size: 16px;"
                   on:click={() => {
                     modalData = { ...data };
                     showModal = true;
                   }}
-                  class="cursor-pointer"
+                  class="cursor-pointer text-center"
                 >
                   {data?.ast_uuid__ass_uuid__ast_hostname}
                 </td>
-                <td>
+                <td style="font-size: 16px;">
                   [{data?.ccr_item_no__ccc_item_no}] {data?.ccr_item_no__ccc_item_title}
                 </td>
-                <td onclick="modalOpen('detail')" class="cursor-pointer">
-                  <div>{@html data?.ccr_item_no__ccc_item_criteria}</div>
+                <td
+                  onclick="modalOpen('detail')"
+                  class="cursor-pointer line-height"
+                  style="font-size: 16px;"
+                >
+                  <div class="line-height">
+                    {@html data?.ccr_item_no__ccc_item_criteria}
+                  </div>
                 </td>
-                <td style="overflow: hidden;"> {@html data.ccr_item_status}</td>
-                <td class="text-center">
+                <td
+                  style="overflow: hidden; font-size: 16px;"
+                  class="line-height"
+                >
+                  {@html data.ccr_item_status}</td
+                >
+                <td class="text-center" style="font-size: 16px;">
                   <span class="badge badgePrimary">
                     {data.ccr_item_result}
                   </span>
                 </td>
-                <td class="text-center">
+                <td class="text-center" style="font-size: 16px;">
                   <div class="flex gap-4" style="justify-content: center;">
                     <select
+                      style="font-size: 16px;"
                       class="xs"
                       on:change={(e) =>
                         changeItemResult({
@@ -546,6 +329,7 @@
                         })}
                     >
                       <option
+                        style="font-size: 16px;"
                         value=""
                         disabled
                         selected={data?.ccr_item_result === ""}
@@ -553,24 +337,28 @@
                         없음
                       </option>
                       <option
+                        style="font-size: 16px;"
                         value="양호"
                         selected={data?.ccr_item_result === "양호"}
                       >
                         양호
                       </option>
                       <option
+                        style="font-size: 16px;"
                         value="취약"
                         selected={data?.ccr_item_result === "취약"}
                       >
                         취약
                       </option>
                       <option
+                        style="font-size: 16px;"
                         value="예외처리"
                         selected={data?.ccr_item_result === "예외처리"}
                       >
                         예외처리
                       </option>
                       <option
+                        style="font-size: 16px;"
                         value="해당없음"
                         selected={data?.ccr_item_result === "해당없음"}
                       >
@@ -578,13 +366,18 @@
                       </option>
                     </select>
                     <select
+                      style="font-size: 16px;"
                       class="xs"
                       on:change={(e) => {
                         change_option = e.target.value;
                       }}
                     >
-                      <option value="ONE"> 해당 </option>
-                      <option value="ALL"> 전체 </option>
+                      <option value="ONE" style="font-size: 16px;">
+                        해당
+                      </option>
+                      <option value="ALL" style="font-size: 16px;">
+                        전체
+                      </option>
                     </select>
                     <!-- <button type="button" class="btn btnBlue xs">변경</button> -->
                   </div>
@@ -618,5 +411,8 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
+  }
+  .line-height {
+    line-height: 30px;
   }
 </style>

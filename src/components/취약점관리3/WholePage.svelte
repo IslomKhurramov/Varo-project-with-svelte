@@ -162,10 +162,10 @@
 
     console.log("targetIndex:", targetIndex);
 
-    if (targetIndex !== -1) {
-      const [targetElement] = data.splice(targetIndex, 1);
-      data.unshift(targetElement);
-    }
+    // if (targetIndex !== -1) {
+    //   const [targetElement] = data.splice(targetIndex, 1);
+    //   data.unshift(targetElement);
+    // }
   };
 
   $: {
@@ -234,10 +234,71 @@
   };
 
   let swiperContainer;
+  let swiperInstance;
   let menuWrapper;
   let scrollAmount = 0;
   let itemWidth = 146;
   let menuWidth = 100;
+  let activeAsset = null;
+
+  $: if (targetData && data && Array.isArray(data) && data.length > 0) {
+    activeAsset = data?.find(
+      (slide) =>
+        slide.ccr_item_no__ccc_item_no === targetData.ccr_item_no__ccc_item_no,
+    );
+
+    // Focus on the asset if it exists
+    if (activeAsset) {
+      setTimeout(() => {
+        focusOnAsset(targetData.ccr_item_no__ccc_item_no);
+      }, 0);
+    }
+  }
+
+  function focusOnAsset(assetId) {
+    const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
+    if (menuItem) {
+      menuItem.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+      setTimeout(() => {
+        menuItem.focus();
+      }, 300);
+    } else {
+      console.warn("Menu item not found:", assetId);
+    }
+  }
+
+  onMount(() => {
+    // Ensure swiperContainer is bound
+    if (swiperContainer) {
+      swiperInstance = new Swiper(swiperContainer, {
+        modules: [Navigation, Pagination],
+        loop: false, // Avoid layout issues caused by looping
+        slidesPerView: 4, // Adjust this value to suit your design
+        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    }
+
+    // Initialize menu wrapper for scrolling
+    menuWrapper = document.getElementById("menuWrapper");
+
+    return () => {
+      if (swiperInstance) {
+        swiperInstance.destroy(true, true);
+      }
+    };
+  });
 
   const handleScroll = (direction) => {
     menuWrapper = document.getElementById("menuWrapper");
@@ -261,431 +322,6 @@
   }
 </script>
 
-<!-- <main>
-  <div class="swiper_container1">
-    <img src="./images/left.png" alt="left" />
-    <div class="scroll">
-      {#if data?.length !== 0}
-        <div class="scroll-container">
-          {#each data as item, index}
-            <div
-              class={`slide ${item?.fi_fix_status__cvs_index == 2 && "color1"} ${item?.fi_fix_status__cvs_index == 3 && "color2"}  ${item?.fi_fix_status__cvs_index == 4 && "color4"} ${item?.cfr_fix_status__cvs_index == 6 && "color6"}  ${item?.cfr_fix_status__cvs_index == 7 && "color7"}`}
-              on:click={() => {
-                targetData = item;
-              }}
-            >
-              {item?.ccr_item_no__ccc_item_no}
-            </div>
-          {/each}
-        </div>
-      {/if}
-    </div>
-    <img
-      src="./images/left.png"
-      style="transform: rotate(180deg);"
-      alt="right"
-    />
-  </div>
-  <div class="main-container">
-    <div class="container">
-      <div class="header">
-        <p>취약점 조치 현황 : 1 / 20</p>
-      </div>
-
-      <div class="content">
-        <div class="actions">
-          <div class="action-header">
-            <label>조치계획등록</label>
-          </div>
-
-          <div class="action-content">
-            {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
-              <div class="row">
-                <label>조치방법</label>
-                <select
-                  bind:value={sendFixDone["fixed_method"]}
-                  class="select_input"
-                >
-                  <option value={""}>
-                    조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                  </option>
-                  {#if options?.length !== 0}
-                    {#each options as option}
-                      <option value={option?.cvf_index}
-                        >{option?.cvf_desc}</option
-                      >
-                    {/each}
-                  {/if}
-                </select>
-              </div>
-
-              <div class="row">
-                <label>조치일정</label>
-                <input
-                  class="input"
-                  type="date"
-                  bind:value={sendFixDone["fixed_start_date"]}
-                  placeholder="조치일정을 입력하세요"
-                />
-                <input
-                  class="input"
-                  type="date"
-                  bind:value={sendFixDone["fixed_end_date"]}
-                  placeholder="조치일정을 입력하세요"
-                />
-              </div>
-
-              <div class="row">
-                <label>조치내역</label>
-
-                <textarea bind:value={sendFixDone["fixed_comment"]}></textarea>
-              </div>
-
-              <div class="row">
-                <label>증적자료</label>
-                <input
-                  type="file"
-                  on:change={(e) => {
-                    handleFileUpload(e);
-                  }}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치수행자</label>
-                <select bind:value={sendFixDone["fixed_user_index"]}>
-                  <option value={""}> 조치담당자</option>
-                  {#if usernames?.length !== 0}
-                    {#each usernames as username}
-                      <option value={username?.user_index}
-                        >{username?.user_name}</option
-                      >
-                    {/each}
-                  {/if}
-                </select>
-              </div>
-            {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
-              <div class="row">
-                <label>조치방법</label>
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_result?.[0]?.cfr_fix_method__cvf_desc}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치일정</label>
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
-                />
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치내역</label>
-
-                <textarea readonly>
-                  {targetData?.fix_result?.[0]?.cfr_fix_etc}
-                </textarea>
-              </div>
-
-              <div class="row">
-                <label>증적자료</label>
-                <input
-                  type="text"
-                  value={targetData?.fix_result?.[0]?.cfr_evidence_file
-                    .split("/")
-                    .pop() + " ( 다운로드 )"}
-                  readonly
-                  on:click={() => {
-                    sampleClick(
-                      targetData?.fix_result?.[0]?.cfr_index,
-                      targetData?.fix_result?.[0]?.cfr_evidence_file,
-                    );
-                  }}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치수행자</label>
-                <input
-                  type="text"
-                  value={targetData?.fix_result?.[0]?.user_index__user_name}
-                  readonly
-                />
-              </div>
-
-              <div class="row">
-                <label>조치계획승인</label>
-                <select bind:value={sendSetFixDoneApprove["approved"]}>
-                  <option value={""}> 조치계획승인 / 조치계획반려 </option>
-                  <option value={"1"}> 조치계획승인</option>
-                  <option value={"0"}> 조치계획반려</option>
-                </select>
-              </div>
-
-              <div class="row">
-                <label>조치승인자의견 </label>
-                <input
-                  type="text"
-                  bind:value={sendSetFixDoneApprove["approved_comment"]}
-                />
-              </div>
-            {:else if isAgentUser && setView == "plan"}
-              <div class="row">
-                <label>조치방법</label>
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_method__cvf_desc ??
-                    ""}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치수준</label>
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_term ?? ""}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치일정</label>
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_startdate ?? ""}
-                />
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_enddate ?? ""}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치방법</label>
-
-                <textarea
-                  value={targetData?.fix_plan?.[0]?.cfi_fix_etc ?? ""}
-                  readonly
-                ></textarea>
-              </div>
-
-              <div class="row">
-                <label>조치담당자</label>
-                <input
-                  type="text"
-                  readonly
-                  value={targetData?.fix_plan?.[0]?.user_index__user_name ?? ""}
-                />
-              </div>
-
-              <div class="row">
-                <label>조치계획승인</label>
-                <select bind:value={sendApproveData["approved"]}>
-                  <option value={""}> 조치계획승인 / 조치계획반려 </option>
-                  <option value={"1"}> 조치계획승인</option>
-                  <option value={"0"}> 조치계획반려</option>
-                </select>
-              </div>
-
-              <div class="row">
-                <label>조치승인자의견 </label>
-                <input
-                  type="text"
-                  bind:value={sendApproveData["approved_comment"]}
-                />
-              </div>
-            {:else}
-              <div class="row">
-                <label>조치방법</label>
-                <select
-                  bind:value={sendPlanRegisterData["fix_method"]}
-                  class="select_input"
-                >
-                  <option value={""}>
-                    조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                  </option>
-                  {#if options?.length !== 0}
-                    {#each options as option}
-                      <option value={option?.cvf_index}
-                        >{option?.cvf_desc}</option
-                      >
-                    {/each}
-                  {/if}
-                </select>
-              </div>
-
-              <div class="row">
-                <label>조치수준</label>
-                <select bind:value={sendPlanRegisterData["fix_level"]}>
-                  <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
-                  <option value="긴급">긴급</option>
-                  <option value="단기">단기</option>
-                  <option value="중기">중기</option>
-                  <option value="장기">장기</option>
-                </select>
-              </div>
-
-              <div class="row">
-                <label>조치일정</label>
-                <input
-                  class="input"
-                  type="date"
-                  bind:value={sendPlanRegisterData["fix_start_date"]}
-                  placeholder="조치일정을 입력하세요"
-                />
-                <input
-                  class="input"
-                  type="date"
-                  bind:value={sendPlanRegisterData["fix_end_date"]}
-                  placeholder="조치일정을 입력하세요"
-                />
-              </div>
-
-              <div class="row">
-                <label>조치방법</label>
-
-                <textarea bind:value={sendPlanRegisterData["fix_comment"]}
-                ></textarea>
-              </div>
-
-              <div class="row">
-                <label>조치담당자</label>
-                <select bind:value={sendPlanRegisterData["fix_user_index"]}>
-                  <option value={""}> 조치담당자</option>
-                  {#if usernames?.length !== 0}
-                    {#each usernames as username}
-                      <option value={username?.user_index}
-                        >{username?.user_name}</option
-                      >
-                    {/each}
-                  {/if}
-                </select>
-              </div>
-            {/if}
-          </div>
-
-          {#if isAgentUser && setView == "plan"}
-            <div class="action-footer">
-              <button
-                class="list-button"
-                on:click={async () => {
-                  sendApproveData.asset_target_uuid = targetData?.ast_uuid;
-                  sendApproveData.plan_index = targetData?.ccp_index;
-                  sendApproveData.approved_targets = [targetData?.ccr_index];
-                  await fixApproveHandler(sendApproveData);
-                  sendApproveData = {
-                    asset_target_uuid: "",
-                    plan_index: "",
-                    approved: "",
-                    approved_targets: "",
-                    approved_comment: "",
-                  };
-                }}
-              >
-                의견등록
-              </button>
-            </div>
-          {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
-            <button class="list-button" on:click={setFixDoneRegisterHandler}
-              >조치결과등록</button
-            >
-          {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
-            <button class="list-button" on:click={setFixDoneApproveHandler}
-              >의견등록</button
-            >
-          {:else}
-            <div class="action-footer">
-              <button class="list-button" on:click={fixPlanRegister}>
-                조치계획등록
-              </button>
-            </div>
-          {/if}
-
-          {#if historyItemData?.length !== 0}
-            <div class="row">
-              <label>이전조치이력</label>
-              <div class="table_container">
-                <table>
-                  <tr class="first_line">
-                    <th>조치방법</th>
-                    <th>플랜</th>
-                    <th>일정</th>
-                    <th>조치담당자</th>
-                  </tr>
-
-                  {#each historyItemData as data}
-                    <tr>
-                      <td>{data.cfi_fix_status__cvs_desc}</td>
-                      <td>{data.ccr_index__ccp_index__ccp_title}</td>
-                      <td>{data.cfi_fix_startdate} {data.cfi_fix_enddate}</td>
-                      <td>{data.user_index__user_name}</td>
-                    </tr>
-                  {/each}
-                </table>
-              </div>
-            </div>
-          {/if}
-        </div>
-
-        <div class="info">
-          <div class="row">
-            <label>취약점정보</label>
-            <textarea rows="3" readonly>
-              ${targetData?.ccr_item_no__ccc_item_criteria}
-            </textarea>
-          </div>
-
-          <div class="row">
-            <label>평가기준</label>
-            <textarea rows="3" readonly>
-              {targetData?.ccr_item_no__ccc_item_title}
-            </textarea>
-          </div>
-          <div class="row">
-            <label>조치방법</label>
-            <textarea rows="3" readonly>
-              {targetData?.ccr_item_no__ccc_mitigation_example}
-            </textarea>
-          </div>
-
-          <div class="row">
-            <label>관련자산</label>
-            <div class="table_container">
-              <table>
-                <tr class="first_line">
-                  <th>자산명</th>
-                  <th>아이피주소</th>
-                  <th>자산그룹</th>
-                  <th>OS</th>
-                </tr>
-
-                <tr>
-                  <td>{targetData?.ast_uuid__ass_uuid__ast_hostname}</td>
-                  <td>{targetData?.ast_uuid__ass_uuid__ast_ipaddr}</td>
-                  <td>{targetData?.cct_index__cct_target}</td>
-                  <td>{targetData?.ast_uuid__ass_uuid__ast_os}</td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</main> -->
-
 <section class="topCon" bind:this={swiperContainer}>
   <div class="menu-container">
     <button
@@ -697,9 +333,11 @@
     </button>
     <div class="menu-wrapper-container">
       {#if data?.length !== 0}
-        <div class="menu-wrapper" id="menuWrapper">
+        <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
           {#each data as item, index}
             <div
+              value={item.ccr_item_no__ccc_item_no}
+              name={item}
               class={`menu-item ${item?.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
               on:click={() => {
                 targetData = item;
@@ -740,7 +378,10 @@
                   <tr>
                     <th>조치방법</th>
                     <td>
-                      <select bind:value={sendFixDone["fixed_method"]}>
+                      <select
+                        bind:value={sendFixDone["fixed_method"]}
+                        style="font-size: 16px;"
+                      >
                         <option value={""}>
                           조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
                         </option>
@@ -760,6 +401,7 @@
                       <div class="dateWrap">
                         <div class="date">
                           <input
+                            style="font-size: 16px;"
                             type="date"
                             class="datepicker"
                             placeholder="시작일시"
@@ -769,6 +411,7 @@
                         <img src="./assets/images/icon/dash.svg" />
                         <div class="date">
                           <input
+                            style="font-size: 16px;"
                             type="date"
                             class="datepicker"
                             placeholder="종료일시"
@@ -791,6 +434,7 @@
                     <th>조치내역</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="file"
                         on:change={(e) => {
                           handleFileUpload(e);
@@ -801,7 +445,10 @@
                   <tr>
                     <th>조치수행자</th>
                     <td>
-                      <select bind:value={sendFixDone["fixed_user_index"]}>
+                      <select
+                        bind:value={sendFixDone["fixed_user_index"]}
+                        style="font-size: 16px;"
+                      >
                         <option value={""}> 조치담당자</option>
                         {#if usernames?.length !== 0}
                           {#each usernames as username}
@@ -818,6 +465,7 @@
                     <th>조치방법</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         readonly
                         value={targetData?.fix_result?.[0]
@@ -829,11 +477,13 @@
                     <th>조치일정</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         readonly
                         value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
                       />
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         readonly
                         value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
@@ -852,6 +502,7 @@
                     <th>증적자료</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         value={targetData?.fix_result?.[0]?.cfr_evidence_file
                           .split("/")
@@ -870,6 +521,7 @@
                     <th>조치수행자</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         value={targetData?.fix_result?.[0]
                           ?.user_index__user_name}
@@ -880,7 +532,10 @@
                   <tr>
                     <th>조치계획승인</th>
                     <td>
-                      <select bind:value={sendSetFixDoneApprove["approved"]}>
+                      <select
+                        bind:value={sendSetFixDoneApprove["approved"]}
+                        style="font-size: 16px;"
+                      >
                         <option value={""}>
                           조치계획승인 / 조치계획반려
                         </option>
@@ -890,9 +545,10 @@
                     </td>
                   </tr>
                   <tr>
-                    <th>조치승인자의견</th>
+                    <th>조치계획의견</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         bind:value={sendSetFixDoneApprove["approved_comment"]}
                       />
@@ -903,6 +559,7 @@
                     <th>조치방법</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         readonly
                         value={targetData?.fix_plan?.[0]
@@ -914,6 +571,7 @@
                     <th>조치수준</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         readonly
                         value={targetData?.fix_plan?.[0]?.cfi_fix_term ?? ""}
@@ -926,6 +584,7 @@
                       <div class="dateWrap">
                         <div class="date">
                           <input
+                            style="font-size: 16px;"
                             type="text"
                             class="datepicker"
                             readonly
@@ -937,6 +596,7 @@
                         <img src="./assets/images/icon/dash.svg" />
                         <div class="date">
                           <input
+                            style="font-size: 16px;"
                             type="text"
                             class="datepicker"
                             placeholder="종료일시"
@@ -963,6 +623,7 @@
                     <th>조치담당자</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         readonly
                         value={targetData?.fix_plan?.[0]
@@ -973,7 +634,10 @@
                   <tr>
                     <th>조치계획승인</th>
                     <td>
-                      <select bind:value={sendApproveData["approved"]}>
+                      <select
+                        bind:value={sendApproveData["approved"]}
+                        style="font-size: 16px;"
+                      >
                         <option value={""}>
                           조치계획승인 / 조치계획반려
                         </option>
@@ -983,9 +647,10 @@
                     </td>
                   </tr>
                   <tr>
-                    <th>조치승인자의견</th>
+                    <th>조치계획의견</th>
                     <td>
                       <input
+                        style="font-size: 16px;"
                         type="text"
                         bind:value={sendApproveData["approved_comment"]}
                       />
@@ -995,7 +660,10 @@
                   <tr>
                     <th>조치방법</th>
                     <td>
-                      <select bind:value={sendPlanRegisterData["fix_method"]}>
+                      <select
+                        bind:value={sendPlanRegisterData["fix_method"]}
+                        style="font-size: 16px;"
+                      >
                         <option value={""}>
                           조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
                         </option>
@@ -1012,7 +680,10 @@
                   <tr>
                     <th>조치수준</th>
                     <td>
-                      <select bind:value={sendPlanRegisterData["fix_level"]}>
+                      <select
+                        bind:value={sendPlanRegisterData["fix_level"]}
+                        style="font-size: 16px;"
+                      >
                         <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
                         <option value="긴급">긴급</option>
                         <option value="단기">단기</option>
@@ -1027,6 +698,7 @@
                       <div class="dateWrap">
                         <div class="date">
                           <input
+                            style="font-size: 16px;"
                             type="date"
                             class="datepicker"
                             placeholder="시작일시"
@@ -1036,6 +708,7 @@
                         <img src="./assets/images/icon/dash.svg" />
                         <div class="date">
                           <input
+                            style="font-size: 16px;"
                             type="date"
                             class="datepicker"
                             placeholder="종료일시"
@@ -1059,6 +732,7 @@
                     <td>
                       <select
                         bind:value={sendPlanRegisterData["fix_user_index"]}
+                        style="font-size: 16px;"
                       >
                         <option value={""}> 조치담당자</option>
                         {#if usernames?.length !== 0}
@@ -1177,16 +851,16 @@
                   <label class="mt-12" style="font-size: 16px;"
                     >취약점정보</label
                   >
-                  <textarea rows="8" readonly style="font-size: 16px;"
-                    >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
-                  >
+                  <textarea rows="8" readonly
+                    >{targetData?.ccr_item_no__ccc_item_title}
+                  </textarea>
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
                   <label class="mt-12" style="font-size: 16px;">평가기준</label>
                   <textarea rows="8" readonly style="font-size: 16px;"
-                    >{targetData?.ccr_item_no__ccc_item_title}</textarea
+                    >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
                   >
                 </div>
               </div>
@@ -1290,5 +964,22 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
+  }
+
+  .menu-wrapper-container {
+    overflow: hidden; /* Prevents Swiper from breaking out of bounds */
+  }
+  .menu-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Ensure no wrapping of slides */
+  }
+  .swiper-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .swiper-slide {
+    flex-shrink: 0; /* Prevents shrinking of slides */
+    width: auto; /* or specific widths depending on how many slides you want to show */
   }
 </style>

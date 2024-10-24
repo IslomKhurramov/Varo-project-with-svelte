@@ -2,6 +2,7 @@
   import { getAllPlanLists } from "../../../services/page1/planInfoService";
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
   import { onMount } from "svelte";
+  import ModalCcEhistory from "../HeaderMenu/ModalCCEhistory.svelte";
 
   let plantoSHow = [];
   let allVulns = [];
@@ -11,11 +12,18 @@
   let assetData = [];
   let vulnerabilityData = [];
   let targetCounts = {};
+  let selectedItem = {};
+  let showItemDetail = false;
 
+  function itemClickHandle(vuln) {
+    selectedItem = vuln;
+    console.log("Select item", selectedItem);
+    showItemDetail = true;
+  }
   // Reactive block to set cceHistory and DetailOfAsset
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: DetailOfAsset = $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0] : [];
-
+  $: console.log("CCEHISTORY", cceHistory);
   // Extract project data and vulns from cceHistory
   $: {
     if (cceHistory.length > 0) {
@@ -293,15 +301,15 @@
         <tbody>
           {#if filteredVulns.length > 0}
             {#each filteredVulns as vuln, vulnIndex}
-              <tr>
-                <td class=" wordBreak text-center">{vulnIndex + 1}</td>
+              <tr on:click={() => itemClickHandle(vuln)}>
+                <td class="wordBreak text-center">{vulnIndex + 1}</td>
                 <td>{detailofAsset[0]?.ast_hostname || "No Title"}</td>
                 <td>
                   [{vuln?.ccr_item_no__ccc_item_no ||
                     "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
                     "No Title"}
                 </td>
-                <td class=" wordBreak">
+                <td class="wordBreak">
                   <div class="checklist">
                     <p>
                       {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
@@ -345,9 +353,36 @@
       </table>
     </div>
   </div>
+  {#if showItemDetail}
+    <dialog open on:close={() => (showItemDetail = false)}>
+      <ModalCcEhistory {selectedItem} />
+
+      <button
+        class="secondary-button"
+        style="margin-top:10px;"
+        on:click={() => (showItemDetail = false)}>Close</button
+      >
+    </dialog>
+  {/if}
 </main>
 
 <style>
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 600px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
   .wordBreak {
     white-space: pre-wrap; /* Ensures the text wraps within the cells */
     word-wrap: break-word;

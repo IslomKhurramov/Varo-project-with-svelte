@@ -1,7 +1,16 @@
 <script>
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
+  import ModalCcEhistory from "../HeaderMenu/ModalCCEhistory.svelte";
   let plantoSHow = [];
   let allVulns = [];
+  let selectedItem = {};
+  let showItemDetail = false;
+
+  function itemClickHandle(vuln) {
+    selectedItem = vuln;
+    console.log("Select item", selectedItem);
+    showItemDetail = true;
+  }
   // Reactive subscription to assetDeatilInfo store
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
@@ -121,7 +130,7 @@
             </thead>
             <tbody>
               {#each allVulns as vuln, vulnIndex}
-                <tr>
+                <tr on:click={() => itemClickHandle(vuln)}>
                   <td class=" wordBreak text-center">{vulnIndex + 1}</td>
                   <td>{assetDetails.ast_hostname || "No Title"}</td>
                   <td>
@@ -170,9 +179,35 @@
       </div>
     </div>
   </div>
+  {#if showItemDetail}
+    <dialog open on:close={() => (showItemDetail = false)}>
+      <ModalCcEhistory {selectedItem} />
+
+      <button
+        class="secondary-button"
+        style="margin-top:10px;"
+        on:click={() => (showItemDetail = false)}>Close</button
+      >
+    </dialog>
+  {/if}
 </main>
 
 <style>
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 600px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+  }
   .table1 td:hover {
     background-color: rgba(242, 242, 242, 1);
     cursor: pointer;

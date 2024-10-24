@@ -54,6 +54,9 @@
   }
   onMount(() => {
     assetGroupList();
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = [...$allAssetList]; // Copy all assets initially
+    }
   });
 
   function closeSwiper() {
@@ -66,18 +69,24 @@
   }
 
   function filterAssets() {
-    console.log("Selected Group:", selectedGroup);
-    console.log("Selected OSType:", asset_ostype); // Check selected OSType
+    if (
+      selectedGroup === "전체" &&
+      asset_ostype === "전체" &&
+      assetTargetReg === "전체" &&
+      assetAcitve === "전체"
+    ) {
+      // If all criteria are "전체", return all assets
+      filteredAssets = [...$allAssetList];
+      return filteredAssets;
+    }
 
-    // Filter the assets based on the selected criteria
+    // Otherwise, proceed with the filtering logic
     filteredAssets = $allAssetList.filter((asset) => {
-      // Check if asset belongs to the selected group
       const groupCondition =
         selectedGroup === "전체" ||
         (Array.isArray(asset.asset_group) &&
           asset.asset_group.some((group) => group.asg_index === selectedGroup));
 
-      // Check if asset matches the selected OSType
       const ostypeCondition =
         asset_ostype === "전체" ||
         (Array.isArray(asset.assessment_target_system) &&
@@ -87,19 +96,15 @@
             ),
           ));
 
-      // Check if asset matches the assetTargetReg
       const targetRegCondition =
         assetTargetReg === "전체" ||
         asset.asset_target_registered === assetTargetReg;
 
-      // Check if asset is active based on assetActive
       const activeCondition =
         assetAcitve === "전체" || asset.ast_activate === !!Number(assetAcitve);
 
-      // Check if hostname is filtered
       const hostCondition = isNotFiltered(asset.ast_hostname, assetHost);
 
-      // Return true only if all conditions are met
       return (
         groupCondition &&
         ostypeCondition &&
@@ -109,9 +114,13 @@
       );
     });
 
-    return filteredAssets; // Will be empty if no matches found
+    return filteredAssets;
   }
-
+  $: {
+    if ($allAssetList && $allAssetList.length > 0) {
+      filterAssets(); // Call filterAssets to ensure it has the latest data
+    }
+  }
   function handleFilter() {
     const results = filterAssets();
     console.table(results); // Use table for better visibility in console

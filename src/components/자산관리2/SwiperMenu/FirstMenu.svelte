@@ -177,7 +177,10 @@
 
     {#if currentData && currentData.length > 0}
       <div class="tableListWrap scrollTable">
-        <table class="tableList hdBorder" style="margin-bottom: 40px;">
+        <table
+          class="tableList hdBorder"
+          style="margin-bottom: 40px; font-size:16px;"
+        >
           <colgroup>
             <col style="width:60px;" />
             <col style="width: 300px;" />
@@ -207,6 +210,10 @@
 </main>
 
 <style>
+  .tableListWrap th,
+  td {
+    font-size: 16px;
+  }
   .subTabWrap a {
     cursor: pointer;
   }

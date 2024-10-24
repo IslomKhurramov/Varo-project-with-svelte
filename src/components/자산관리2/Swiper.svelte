@@ -471,8 +471,14 @@
         <dialog open on:close={() => (showModal = false)}>
           <div class="modal-content">
             <h2>Change Group Index</h2>
-            <label for="group-select">Select Group:</label>
-            <select id="group-select" on:change={handleGroupChange}>
+            <label for="group-select" style="margin-top: 15px;"
+              >Select Group:</label
+            >
+            <select
+              id="group-select"
+              style="margin-top: 15px;"
+              on:change={handleGroupChange}
+            >
               {#each $allAssetGroupList as group}
                 <option
                   value={group.asg_index}

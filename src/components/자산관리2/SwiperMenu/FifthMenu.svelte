@@ -95,12 +95,12 @@
           <h3>Please select an asset to see details</h3>
         </div>
       {/if}
-      <div class="tableListWrap maxh">
+      <div
+        class="tableListWrap maxh"
+        style="height: 80vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
+      >
         {#if allVulns.length > 0}
-          <table
-            class="tableList hdBorder tableScroll table2"
-            style="margin-top: 20px; height:500px overflow-y:auto"
-          >
+          <table class="tableList hdBorder tableScroll">
             <colgroup>
               <col style="width:90px;" />
               <col style="width:110px;" />
@@ -122,7 +122,7 @@
             <tbody>
               {#each allVulns as vuln, vulnIndex}
                 <tr>
-                  <td class=" wordBreak">{vulnIndex + 1}</td>
+                  <td class=" wordBreak text-center">{vulnIndex + 1}</td>
                   <td>{assetDetails.ast_hostname || "No Title"}</td>
                   <td>
                     [{vuln?.ccr_item_no__ccc_item_no ||
@@ -136,9 +136,13 @@
                       </p>
                     </div>
                   </td>
-                  <td class=" wordBreak"
-                    >{vuln?.ccr_item_status || "No Status"}</td
-                  >
+                  <td class="wordBreak">
+                    <div class="status-container">
+                      {vuln?.ccr_item_status
+                        ? vuln.ccr_item_status.trim()
+                        : "No Status"}
+                    </div>
+                  </td>
                   {#if vuln?.ccr_item_result === "양호"}
                     <td class="text-center">
                       <span class="badge badgePrimary">
@@ -173,6 +177,30 @@
     background-color: rgba(242, 242, 242, 1);
     cursor: pointer;
   }
+  * {
+    font-size: 16px;
+  }
+  .tableListWrap th,
+  td {
+    font-size: 16px;
+  }
+  .tableListWrap .hdBorder td {
+    font-size: 16px;
+  }
+  .status-container {
+    max-height: 100px; /* Set the maximum height for the content */
+    overflow-y: auto;
+    overflow-x: hidden; /* Allow scrolling only if content exceeds the height */
+    padding: 0;
+    margin: 0;
+  }
+
+  .tableScroll {
+    margin-bottom: 20px;
+    height: 70vh;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto;
+  }
   .empty-state-message {
     display: flex;
     flex-direction: column;
@@ -199,7 +227,16 @@
     text-align: center;
     margin: 10px 0; /* Add some spacing */
   }
-
+  .tableList thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
+  tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   /* If using FontAwesome or similar icon fonts */
   @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
 </style>

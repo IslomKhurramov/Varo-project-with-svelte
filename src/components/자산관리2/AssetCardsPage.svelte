@@ -3,12 +3,14 @@
   import {
     allAssetList,
     targetSystemList,
+    allAssetGroupList,
   } from "../../services/page2/asset.store";
   import {
     setAssetActivate,
     setAssetUnActivate,
     getAllAssetLists,
     getTargetSystemLists,
+    setAssetGroupChange,
   } from "../../services/page2/assetService";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
   import { onMount } from "svelte";
@@ -17,10 +19,12 @@
   import Swiper from "./Swiper.svelte";
 
   let showModal = false;
+  let showModalChange = false;
   export let showSwiperComponent;
   export let selected = [];
   export let selectedUUID = [];
   let selectedAsset = null;
+  let asset_group_index = "";
   export let filteredAssets = [];
   let allSelected;
   $: allAssetList.subscribe((data) => {
@@ -148,7 +152,7 @@
   }
 
   /**************************************************************/
-
+  let uuid_asset = "";
   // Function to compute stroke color based on the score
   function getStrokeColor(score) {
     if (score > 60)
@@ -161,181 +165,224 @@
     console.log("Asset clicked:", asset);
     selectedAsset = asset;
     showSwiperComponent = true; // This should set the showSwiperComponent to true
+    // Check if the asset belongs to any group
   }
-  $: console.log("showSwiperComponent in child:", showSwiperComponent);
+  function handleAssetUuid(asset) {
+    if (asset.asset_group && asset.asset_group.length > 0) {
+      asset_group_index = asset.asset_group[0].asg_index;
+    }
+    uuid_asset = asset.ass_uuid;
+  }
+
+  let selectedGroupIndex = "";
+  async function assetGroupChange() {
+    if (uuid_asset === "") {
+      errorAlert("자산을 선택해주세요");
+    }
+    try {
+      const response = await setAssetGroupChange(
+        uuid_asset,
+        asset_group_index,
+        selectedGroupIndex,
+      );
+
+      if (response.success) {
+        showModalChange = false;
+        successAlert("그룹이 성공적으로 변경되었습니다!");
+      } else {
+        errorAlert("자산을 선택해주세요!");
+      }
+    } catch (err) {
+      console.error(`Error fetching asset details: ${err.message}`);
+    }
+  }
+  /**********************************************************************/
+  function handleGroupChange(event) {
+    selectedGroupIndex = event.target.value;
+  }
 </script>
 
 {#if !showSwiperComponent}
-  <div class="allselect">
-    <div class="allSelectDiv">
-      <input type="checkbox" on:click={toggleAll} checked={allSelected} />
-      <strong class="selectButton">전체선택</strong>
+  <div class="car_container">
+    <div class="allselect">
+      <div class="allSelectDiv">
+        <input type="checkbox" on:click={toggleAll} checked={allSelected} />
+        <strong class="selectButton">전체선택</strong>
+      </div>
     </div>
-  </div>
+    <div class="graphCardWrap col3">
+      {#each filteredAssets as asset}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <article
+          class="graphCard hoverCard"
+          style="height: 250px;"
+          on:click={() => handleAssetClick(asset)}
+        >
+          <div class="head justify-between">
+            <div class="flex align-center" on:click|stopPropagation>
+              <div class="checkboxWrap default">
+                <input
+                  type="checkbox"
+                  class="checkbox"
+                  bind:group={selected}
+                  name={asset}
+                  value={asset}
+                /><span></span>
+              </div>
 
-  <div class="graphCardWrap col3 car_container">
-    {#each filteredAssets as asset}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <article
-        class="graphCard hoverCard"
-        style="height: 250px;"
-        on:click={() => handleAssetClick(asset)}
-      >
-        <div class="head justify-between">
-          <div class="flex align-center" on:click|stopPropagation>
-            <div class="checkboxWrap default">
-              <input
-                type="checkbox"
-                class="checkbox"
-                bind:group={selected}
-                name={asset}
-                value={asset}
-              /><span></span>
-            </div>
-
-            <span
-              class="badge badgePrimary noneborder"
-              style="color: {asset.ast_activate ? 'blue' : 'red'}"
-            >
-              {asset.ast_activate ? "연결중" : "연결 안됨"}
-            </span>
-          </div>
-          <div class="btnWrap">
-            <button
-              type="button"
-              class="btnImg"
-              on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
-            >
-              <img src="./assets/images/icon/edit.svg" alt="Edit" />
-              <span class="tooltip">활성화하다</span>
-            </button>
-            <button
-              type="button"
-              class="btnImg"
-              on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
-            >
-              <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
-              <span class="tooltip">비활성화하다</span>
-            </button>
-            <button type="button" class="btnImg">
-              <img src="./assets/images/icon/reset.svg" alt="Reset" />
-            </button>
-          </div>
-        </div>
-        <div class="flex contents">
-          <div class="graph">
-            <div>
-              <div
-                class="circle"
-                data-percent={asset.asset_point_history?.[0]
-                  ?.ast_security_point || 0}
-                data-offset="440"
+              <span
+                class="badge badgePrimary noneborder"
+                style="color: {asset.ast_activate ? 'blue' : 'red'}"
               >
-                <svg width="" height="" viewBox="0 0 150 150">
-                  <circle
-                    cx="75"
-                    cy="75"
-                    r="70"
-                    stroke="#fff"
-                    stroke-width="10"
-                    fill="none"
-                  />
-                  <circle
-                    class="progress"
-                    cx="75"
-                    cy="75"
-                    r="70"
-                    stroke={getStrokeColor(
-                      asset.asset_point_history?.[0]?.ast_security_point || 0,
-                    )}
-                    stroke-width="10"
-                    fill="none"
-                    stroke-dasharray="440"
-                    stroke-dashoffset={440 -
-                      (440 *
-                        (asset.asset_point_history?.[0]?.ast_security_point ||
-                          0)) /
-                        100}
-                    stroke-linecap="round"
-                    transform="rotate(-90 75 75)"
-                  />
-                </svg>
-                <div class="percent">
-                  <div class="title">보안점수</div>
-                  <span
-                    class="number pointColor"
-                    style="color: {getStrokeColor(
-                      asset.asset_point_history?.[0]?.ast_security_point || 0,
-                    )};"
-                  >
-                    {asset.asset_point_history?.[0]?.ast_security_point > 0
-                      ? asset.asset_point_history?.[0]?.ast_security_point
-                      : 0}%
-                  </span>
-                </div>
-              </div>
-              <h4 class="name">
-                {asset.asset_group?.[0]?.asg_index__asg_title ||
-                  "Unknown Group"}
-              </h4>
+                {asset.ast_activate ? "연결중" : "연결 안됨"}
+              </span>
             </div>
-            <span class="date">
-              {formatDate(asset.ast_lastconnect) || "Unknown Date"}
-            </span>
+            <div class="btnWrap">
+              <button
+                type="button"
+                class="btnImg"
+                on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
+              >
+                <img src="./assets/images/icon/edit.svg" alt="Edit" />
+                <span class="tooltip">활성화하다</span>
+              </button>
+              <button
+                type="button"
+                class="btnImg"
+                on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
+              >
+                <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
+                <span class="tooltip">비활성화하다</span>
+              </button>
+              <button
+                type="button"
+                class="btnImg"
+                on:click|stopPropagation={() => {
+                  showModalChange = true;
+                  handleAssetUuid(asset);
+                }}
+              >
+                <img src="./assets/images/icon/reset.svg" alt="Reset" />
+                <span class="tooltip">move</span>
+              </button>
+            </div>
           </div>
-          <div class="text flex col justify-between">
-            <ul>
-              <li>
-                <span>운영체제 : </span>{asset.ast_os || "Unknown OS"}
-              </li>
-              <li>
-                <span>자산명 : </span>{asset.ast_hostname || "Unknown Hostname"}
-              </li>
-              <li>
-                <span>아이피주소 : </span>{asset.ast_ipaddr || "Unknown IP"}
-              </li>
-              <li>
-                <span>점검대상 : </span>{asset.asset_point_history?.[0]
-                  ?.ast_uuid__ast_target__cct_target || "No Target"}
-              </li>
-              <li>
-                <span>에이전트설치여부 : </span>{asset.ast_agent_installed
-                  ? "설치됨"
-                  : "설치 안됨"}
-              </li>
-            </ul>
+          <div class="flex contents">
+            <div class="graph">
+              <div>
+                <div
+                  class="circle"
+                  data-percent={asset.asset_point_history?.[0]
+                    ?.ast_security_point || 0}
+                  data-offset="440"
+                >
+                  <svg width="" height="" viewBox="0 0 150 150">
+                    <circle
+                      cx="75"
+                      cy="75"
+                      r="70"
+                      stroke="#fff"
+                      stroke-width="10"
+                      fill="none"
+                    />
+                    <circle
+                      class="progress"
+                      cx="75"
+                      cy="75"
+                      r="70"
+                      stroke={getStrokeColor(
+                        asset.asset_point_history?.[0]?.ast_security_point || 0,
+                      )}
+                      stroke-width="10"
+                      fill="none"
+                      stroke-dasharray="440"
+                      stroke-dashoffset={440 -
+                        (440 *
+                          (asset.asset_point_history?.[0]?.ast_security_point ||
+                            0)) /
+                          100}
+                      stroke-linecap="round"
+                      transform="rotate(-90 75 75)"
+                    />
+                  </svg>
+                  <div class="percent">
+                    <div class="title">보안점수</div>
+                    <span
+                      class="number pointColor"
+                      style="color: {getStrokeColor(
+                        asset.asset_point_history?.[0]?.ast_security_point || 0,
+                      )};"
+                    >
+                      {asset.asset_point_history?.[0]?.ast_security_point > 0
+                        ? asset.asset_point_history?.[0]?.ast_security_point
+                        : 0}%
+                    </span>
+                  </div>
+                </div>
+                <h4 class="name">
+                  {asset.asset_group?.[0]?.asg_index__asg_title ||
+                    "Unknown Group"}
+                </h4>
+              </div>
+              <span class="date">
+                {formatDate(asset.ast_lastconnect) || "Unknown Date"}
+              </span>
+            </div>
+            <div class="text flex col justify-between">
+              <ul>
+                <li>
+                  <span>운영체제 : </span>{asset.ast_os || "Unknown OS"}
+                </li>
+                <li>
+                  <span>자산명 : </span>{asset.ast_hostname ||
+                    "Unknown Hostname"}
+                </li>
+                <li>
+                  <span>아이피주소 : </span>{asset.ast_ipaddr || "Unknown IP"}
+                </li>
+                <li>
+                  <span>점검대상 : </span>{asset.asset_point_history?.[0]
+                    ?.ast_uuid__ast_target__cct_target || "No Target"}
+                </li>
+                <li>
+                  <span>에이전트설치여부 : </span>{asset.ast_agent_installed
+                    ? "설치됨"
+                    : "설치 안됨"}
+                </li>
+              </ul>
 
-            {#if asset.asset_target_registered === "YES"}
-              <div class="flex flex-end">
-                <button
-                  type="button"
-                  class="btn w140 btnGray"
-                  on:click|stopPropagation={() => {
-                    showModal = true;
-                    selectedAsset = asset;
-                  }}
-                >
-                  등록 미승인
-                </button>
-              </div>
-            {:else}
-              <div class="flex flex-end">
-                <button
-                  type="button"
-                  class="btn w140 btnGray"
-                  on:click|stopPropagation={() => {
-                    showModal = true;
-                    selectedAsset = asset;
-                  }}
-                >
-                  등록 해제
-                </button>
-              </div>
-            {/if}
+              {#if asset.asset_target_registered === "YES"}
+                <div class="flex flex-end">
+                  <button
+                    type="button"
+                    class="btn w140 btnGray"
+                    on:click|stopPropagation={() => {
+                      showModal = true;
+                      selectedAsset = asset;
+                    }}
+                  >
+                    등록 미승인
+                  </button>
+                </div>
+              {:else}
+                <div class="flex flex-end">
+                  <button
+                    type="button"
+                    class="btn w140 btnGray"
+                    on:click|stopPropagation={() => {
+                      showModal = true;
+                      selectedAsset = asset;
+                    }}
+                  >
+                    등록 해제
+                  </button>
+                </div>
+              {/if}
+            </div>
           </div>
-        </div>
-      </article>
-    {/each}
+        </article>
+      {/each}
+    </div>
   </div>
 
   {#if showModal}
@@ -346,18 +393,101 @@
 {:else}
   <Swiper {selectedAsset} {filteredAssets} />
 {/if}
+{#if showModalChange}
+  <dialog open on:close={() => (showModalChange = false)}>
+    <div class="modal-content">
+      <h2>Change Group Index</h2>
+      <label for="group-select">Select Group:</label>
+      <select id="group-select" on:change={handleGroupChange}>
+        {#each $allAssetGroupList as group}
+          <option
+            value={group.asg_index}
+            selected={group.asg_index == selectedGroupIndex}
+          >
+            {group.asg_index} - {group.asg_title}
+          </option>
+        {/each}
+      </select>
+      <p>Selected Group Index: {selectedGroupIndex}</p>
+      <div class="modal-buttons">
+        <button class="primary-button" on:click={assetGroupChange}>OK</button>
+        <button
+          class="secondary-button"
+          on:click={() => (showModalChange = false)}>Cancel</button
+        >
+      </div>
+    </div>
+  </dialog>
+{/if}
 
 <style>
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  .modal-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .primary-button {
+    background-color: #54b3d6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-button:hover {
+    background-color: #48a2bf;
+  }
+
+  .secondary-button {
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .secondary-button:hover {
+    background-color: #e0e0e0;
+  }
+
+  /****Modal Container*/
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: svelte-s7onsa-fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+
   .car_container {
-    max-height: 1200px;
+    height: 70vh;
     overflow-y: auto;
-    padding-top: 20px;
     padding-bottom: 20px;
     overflow-x: hidden;
   }
-  .contentArea {
-    background-color: #ccc;
-  }
+
   .dialog2 {
     width: 100%;
     height: auto;
@@ -385,7 +515,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
   }
 
   .allSelectDiv {
@@ -400,63 +529,6 @@
     font-weight: 600;
   }
 
-  /* Action buttons section */
-  .color_group {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    font-size: 12px;
-  }
-
-  .colors {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .blue_button,
-  .red_button {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-  }
-
-  .blue_button {
-    background-color: #6c757d;
-  }
-
-  .red_button {
-    background-color: #dc3545;
-  }
-
-  /* Checkbox in each card */
-
-  .header_buttons {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-
-  .header_buttons button {
-    background-color: #0056b3;
-    color: #ffffff;
-    border-radius: 5px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .header_buttons button:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
   .checkbox {
     width: 15px;
     height: 15px;
@@ -467,6 +539,8 @@
   .btnWrap {
     display: flex; /* Align buttons in a row */
     gap: 8px; /* Space between buttons */
+    position: relative; /* Ensure parent has no conflicting z-index */
+    z-index: auto;
   }
 
   .btnImg {
@@ -476,36 +550,36 @@
     border: none; /* Remove default button border */
     background-color: transparent; /* Transparent background */
     cursor: pointer; /* Change cursor on hover */
+    z-index: 1;
   }
-
-  /* Tooltip styling */
   .tooltip {
-    visibility: hidden; /* Hidden by default */
-    width: 120px; /* Width of the tooltip */
-    background-color: rgba(0, 0, 0, 0.7); /* Background color of the tooltip */
-    color: #fff; /* Text color */
-    text-align: center; /* Center text */
-    border-radius: 4px; /* Rounded corners */
-    padding: 5px; /* Padding inside tooltip */
-    position: absolute; /* Absolute positioning */
-    z-index: 1; /* On top of other elements */
-    bottom: 125%; /* Position above the button */
-    left: 50%; /* Center the tooltip */
-    margin-left: -60px; /* Adjust left position to center */
-    opacity: 0; /* Initial opacity */
-    transition: opacity 0.2s ease; /* Transition effect */
-    z-index: 9999 !important;
+    visibility: hidden;
+    width: 120px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+    position: fixed; /* Changed to fixed */
+    bottom: auto; /* Adjusted */
+    left: auto; /* Adjusted */
+    transform: translate(-50%, -100%); /* Adjust as necessary */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10000; /* Ensure a high z-index */
+    pointer-events: none; /* Prevent tooltip from interfering with clicks */
   }
 
-  /* Show the tooltip on hover */
   .btnImg:hover .tooltip {
-    visibility: visible; /* Show tooltip */
-    opacity: 1; /* Fade in the tooltip */
+    visibility: visible;
+    opacity: 1;
+    z-index: 9999;
+    position: absolute;
   }
 
   /* Adjust icon size */
   .btnImg img {
-    width: 24px; /* Set a consistent width for icons */
-    height: 24px; /* Set a consistent height for icons */
+    width: 24px;
+    height: 24px;
   }
 </style>

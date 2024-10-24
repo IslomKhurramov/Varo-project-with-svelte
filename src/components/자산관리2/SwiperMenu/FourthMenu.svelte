@@ -99,7 +99,7 @@
   <div class="flex col detail">
     <h3 class="title">관련프로젝트</h3>
     <div class="tableListWrap nofirstth">
-      <table class="tableList hdBorder">
+      <table class="tableList hdBorder font-size: 16px;">
         <colgroup>
           <col style="width:80px;" />
           <col />
@@ -269,12 +269,9 @@
 
     <div
       class="tableListWrap maxh"
-      style="height: 500px; overflow-y: auto; margin-top: 20px;"
+      style="height: 80vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
     >
-      <table
-        class="tableList hdBorder tableScroll"
-        style="margin-top: 20px; height:500px overflow-y:auto"
-      >
+      <table class="tableList hdBorder tableScroll">
         <colgroup>
           <col style="width:90px;" />
           <col style="width:110px;" />
@@ -297,7 +294,7 @@
           {#if filteredVulns.length > 0}
             {#each filteredVulns as vuln, vulnIndex}
               <tr>
-                <td class=" wordBreak">{vulnIndex + 1}</td>
+                <td class=" wordBreak text-center">{vulnIndex + 1}</td>
                 <td>{detailofAsset[0]?.ast_hostname || "No Title"}</td>
                 <td>
                   [{vuln?.ccr_item_no__ccc_item_no ||
@@ -311,9 +308,13 @@
                     </p>
                   </div>
                 </td>
-                <td class=" wordBreak"
-                  >{vuln?.ccr_item_status || "No Status"}</td
-                >
+                <td class="wordBreak">
+                  <div class="status-container">
+                    {vuln?.ccr_item_status
+                      ? vuln.ccr_item_status.trim()
+                      : "No Status"}
+                  </div>
+                </td>
                 {#if vuln?.ccr_item_result === "양호"}
                   <td class="text-center">
                     <span class="badge badgePrimary">
@@ -352,14 +353,36 @@
     word-wrap: break-word;
     text-align: left;
     padding: 10px;
+    overflow-y: auto;
   }
+  .status-container {
+    max-height: 100px; /* Set the maximum height for the content */
+    overflow-y: auto;
+    overflow-x: hidden; /* Allow scrolling only if content exceeds the height */
+    padding: 0;
+    margin: 0;
+  }
+
   .tableScroll {
-    height: 500px; /* Full width of the container */
+    margin-bottom: 20px;
+    height: 70vh;
     overflow-y: auto; /* Enable vertical scrolling */
     overflow-x: auto;
   }
-  td:hover {
+  tr:hover {
     background-color: rgba(242, 242, 242, 1);
     cursor: pointer;
+  }
+  * {
+    font-size: 16px;
+  }
+  .tableListWrap .hdBorder td {
+    font-size: 16px;
+  }
+  .tableList thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
 </style>

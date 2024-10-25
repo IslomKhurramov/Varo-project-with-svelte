@@ -7,6 +7,7 @@
   import { setDeletePlan } from "../../services/page1/newInspection";
   import { userData } from "../../stores/user.store";
   import Tooltip from "../../shared/Tooltip.svelte";
+  import { confirmSureDelete } from "../../shared/sweetAlert";
 
   let currentView = "default";
   let currentPage = null;
@@ -48,10 +49,14 @@
 
   const deleteProject = async () => {
     try {
-      if (projectArray.length > 0) {
-        const lastProject = projectArray[projectArray.length - 1];
-        await setDeletePlan(lastProject.ccp_index);
-        projectArray = projectArray.slice(0, -1);
+      const confirm = await confirmSureDelete();
+      console.log("+confirm:", confirm);
+      if (confirm) {
+        if (projectArray.length > 0) {
+          const lastProject = projectArray[projectArray.length - 1];
+          await setDeletePlan(lastProject.ccp_index);
+          projectArray = projectArray.slice(0, -1);
+        }
       }
     } catch (err) {
       console.log("ERROR deleteProject:", err);

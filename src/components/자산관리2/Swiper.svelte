@@ -171,7 +171,7 @@
         focusOnAsset(selectedAsset.ass_uuid);
       }, 0);
     }
-
+    menuWrapper = document.getElementById("menuWrapper");
     return () => {
       if (swiperInstance) {
         swiperInstance.destroy(true, true);
@@ -347,11 +347,6 @@
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
 
-  onMount(() => {
-    // This runs once the component is mounted
-    menuWrapper = document.getElementById("menuWrapper");
-  });
-
   function closeModalEdit() {
     currentPage = FirstMenu; // This will unmount ModalEdit when called
   }
@@ -359,15 +354,15 @@
 
 <main>
   <article class="contentArea mt-0">
-    <section bind:this={swiperContainer} class="swiper-container">
+    <section bind:this={swiperContainer} class="topCon">
       <div class="menu-container">
         <button
           class="arrow-btn"
           id="prevBtn"
           on:click={() => handleScroll("prev")}>◀</button
         >
-        <div class="menu-wrapper-container" style="width:100%">
-          <div class="menu-wrapper" id="menuWrapper">
+        <div class="menu-wrapper-container">
+          <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
             {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <!-- svelte-ignore a11y-no-noninteractive-tabindex -->

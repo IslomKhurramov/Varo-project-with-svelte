@@ -11,19 +11,31 @@
   export let lastCreatedChecklistId;
   export let showSlide;
   export let swiperContainer;
-
+  export let selectedRisk;
   export let selectedSlide;
   export let showModalSecond;
   export let slides;
+
   let selectedItem = null;
   let selected = [];
-  let showModal = false;
+  export let showModalModalEditItem;
   export let isNewlyCreatedChecklist;
   let selectedItemNumber = null;
 
   /**********************************************************************/
   $: if (selectedChecklist) {
-    filteredChecklistData.set(selectedChecklist[selectedCategory] || []);
+    // Get the checklist data for the selected category
+    let checklistData = selectedChecklist[selectedCategory] || [];
+
+    // If selectedRisk is not "위험도" (which means "all"), filter by ccc_item_level
+    if (selectedRisk !== "위험도") {
+      checklistData = checklistData.filter(
+        (item) => item.ccc_item_level === selectedRisk,
+      );
+    }
+
+    // Set the filtered data in the store
+    filteredChecklistData.set(checklistData);
   }
 
   // Subscribe to filteredChecklistData store to make it reactive
@@ -41,11 +53,6 @@
       }
       return data;
     });
-  }
-
-  // Extract ccc_index from selected items
-  function arrayOfDeletedItem() {
-    return selected.map((item) => item.ccc_index);
   }
 
   /***********************************************************************************/
@@ -99,7 +106,7 @@
 
 <div style="margin-top: 20px;">
   <article class="contentArea mt-0">
-    {#if showModal}
+    {#if showModalModalEditItem}
       <ModalEditItem
         {selectedItem}
         {selected}
@@ -114,9 +121,7 @@
         {deleteSelectedItem}
       />
     {:else}
-      <p style="padding:15px ; margin-top:15px; font-size:12px">
-        점검그룹 세부내용
-      </p>
+      <p style="padding:15px ;  font-size:16px">점검그룹 세부내용</p>
       {#if isNewlyCreatedChecklist}
         <div class="control-buttons">
           <input
@@ -133,12 +138,12 @@
           {#if isNewlyCreatedChecklist}
             <colgroup>
               <col style="width:90px;" />
+              <col style="width:90px;" />
               <col />
               <col />
               <col />
               <col />
-              <col />
-              <col />
+              <col style="width:90px;" />
               <col style="width:40%;" />
             </colgroup>
           {:else}
@@ -148,7 +153,7 @@
               <col />
               <col />
               <col />
-              <col />
+              <col style="width:90px;" />
               <col style="width:40%;" />
             </colgroup>
           {/if}
@@ -173,7 +178,7 @@
                   on:click={() => {
                     selectedItem = item;
                     selectedItemNumber = item.ccc_item_no;
-                    showModal = true;
+                    showModalModalEditItem = true;
                     selected = [item];
                   }}
                 >
@@ -221,7 +226,7 @@
   }
   .table2 {
     width: 100%;
-    font-size: 12px;
+    font-size: 16px;
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -229,8 +234,12 @@
     background-color: rgba(242, 242, 242, 1);
     cursor: pointer;
   }
+  th,
+  td {
+    font-size: 16px;
+  }
   .table2 {
-    max-height: 1200px;
+    max-height: 70vh;
     padding-bottom: 20px;
   }
 
@@ -244,10 +253,16 @@
   pre {
     white-space: pre-line; /* Preserves newlines but collapses multiple spaces */
   }
-
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
   .control-buttons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    width: 100%;
     margin-bottom: 10px;
   }
 

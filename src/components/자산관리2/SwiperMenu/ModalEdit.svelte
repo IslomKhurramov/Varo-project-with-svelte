@@ -215,13 +215,15 @@
           <div class="flex align-center btnWrap gap-6">
             <button class="btn w140 btnBlue" type="submit">Submit</button>
             <button
-              class="btn w140 btnPrimaryFontGray"
+              class="btn w140"
+              style="background-color: red; color:white"
               type="reset"
               on:click={() => (formData = { ...assetDetails })}>Reset</button
             >
 
             <button
-              class="btn w140 btnPrimaryFontGray"
+              class="btn w140"
+              style="background-color: green; color:white"
               on:click={closeModalEdit}>Cancel</button
             >
           </div>

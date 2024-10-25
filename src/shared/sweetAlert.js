@@ -1,10 +1,9 @@
 import swal from "sweetalert";
 
-// Reusable function for delete confirmation
 export function confirmDelete() {
   return swal({
-    title: "Are you sure?",
-    text: "Once deleted, you will not be able to recover this file!",
+    title: "정말 삭제하시겠습니까?",
+    text: "삭제 후에는 복구할 수 없습니다!",
     icon: "warning",
     buttons: true,
     dangerMode: true,

@@ -202,29 +202,6 @@
     {#if showCopyReg}
       <article class="contentArea registCon">
         <div class="formControlWrap center">
-          <div class="upload-section">
-            <label for="file-upload" class="file-label">파일첨부</label>
-            <input
-              type="file"
-              id="file-upload"
-              accept=".xls,.xlsx"
-              class="file-input"
-              on:change={handleFileUpload}
-            />
-
-            <p class="btn btnPrimary w190 h50">
-              {#if uploadedFile}
-                {uploadedFile.name}
-              {:else}
-                대용량업로드(엑셀파일)
-              {/if}
-            </p>
-            <a
-              href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
-              style="color: black;">샘플다운로드</a
-            >
-          </div>
-
           <div style="margin-left: 20px;">
             <select bind:value={newRegGroupIndex}>
               <option value="전체" selected>전체</option>
@@ -251,6 +228,28 @@
             <div class="top registCon">
               <section class="filterWrap">
                 <div>
+                  <div class="upload-section">
+                    <label for="file-upload" class="file-label">파일첨부</label>
+                    <input
+                      type="file"
+                      id="file-upload"
+                      accept=".xls,.xlsx"
+                      class="file-input"
+                      on:change={handleFileUpload}
+                    />
+
+                    <p class="btn btnPrimary w190 h50">
+                      {#if uploadedFile}
+                        {uploadedFile.name}
+                      {:else}
+                        대용량업로드(엑셀파일)
+                      {/if}
+                    </p>
+                    <a
+                      href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
+                      style="color: black;">샘플다운로드</a
+                    >
+                  </div>
                   <select
                     bind:value={newRegGroupIndex}
                     on:change={handleFilter}

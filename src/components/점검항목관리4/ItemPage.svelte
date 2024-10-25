@@ -12,11 +12,11 @@
   import { successAlert } from "../../shared/sweetAlert";
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
-  export let searchResult;
-  export let isSearchActive;
+
   export let selectedChecklist;
   export let lastCreatedChecklistId;
-  export let cleanSearch;
+  export let showDataTbale2;
+  export let selectedRisk;
   let selectedItem = null;
   let selected = [];
   let showModal = false;
@@ -25,20 +25,18 @@
 
   /**********************************************************************/
   $: if (selectedChecklist) {
-    filteredChecklistData.set(selectedChecklist[selectedCategory] || []);
-  }
+    // Get the checklist data for the selected category
+    let checklistData = selectedChecklist[selectedCategory] || [];
 
-  // Subscribe to filteredChecklistData store to make it reactive
-  let allSelected;
-  $: filteredChecklistData.subscribe((data) => {
-    allSelected = data.length === selected.length;
-  });
+    // If selectedRisk is not "위험도" (which means "all"), filter by ccc_item_level
+    if (selectedRisk !== "위험도") {
+      checklistData = checklistData.filter(
+        (item) => item.ccc_item_level === selectedRisk,
+      );
+    }
 
-  function selectAll() {
-    $filteredChecklistData.update((data) => {
-      selected = allSelected ? [] : [...data];
-      return data;
-    });
+    // Set the filtered data in the store
+    filteredChecklistData.set(checklistData);
   }
 
   // Extract ccc_index from selected items
@@ -90,7 +88,22 @@
   } else {
     isNewlyCreatedChecklist = false;
   }
+  // Subscribe to filteredChecklistData store to make it reactive
+  let allSelected;
+  $: filteredChecklistData.subscribe((data) => {
+    allSelected = data.length === selected.length;
+  });
 
+  function selectAll() {
+    $filteredChecklistData.update((data) => {
+      if (allSelected) {
+        selected = []; // Deselect all
+      } else {
+        selected = data.slice(); // Select all
+      }
+      return data;
+    });
+  }
   /******************************************************************************/
   // Convert to a more human-readable format
   function formatDate(dateString) {
@@ -130,147 +143,109 @@
       alert("An error occurred while deleting the project."); // Provide user feedback
     }
   }
+
+  function handleProjectData(data) {
+    selectedChecklist = data;
+    console.log("selected", selectedChecklist);
+    showDataTbale2 = true;
+  }
+  function closeShowModal() {
+    showModal = false;
+  }
 </script>
 
 <div style="margin-top: 20px;">
   <article class="contentArea mt-0">
     <p style="padding:15px; ">점검그룹</p>
-    {#if isSearchActive}
-      <div class="tableListWrap table1">
-        <table class="tableList hdBorder">
-          <colgroup>
-            <col style="width:90px;" />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col style="width:40%;" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th class="text-center">남버</th>
-              <th class="text-center">점검대상</th>
-              <th class="text-center">항목그룹</th>
-              <th class="text-center">식별코드</th>
-              <th>점검항목</th>
-              <th class="text-center">위험도</th>
-              <th>평가기준</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#if searchResult.length > 0}
-              {#each searchResult as item, index}
-                <tr
-                  on:click={() => {
-                    selected = item;
-                    showModal = true;
-                  }}
-                >
-                  <td class="text-center">{index + 1}</td>
-                  <td class="text-center">{selectedCategory}</td>
-                  <td class="text-center">{item.ccc_item_group}</td>
-                  <td class="text-center">{item.ccc_item_no}</td>
-                  <td class="text-center">{item.ccc_item_title}</td>
-                  <td class="text-center">{item.ccc_item_level}</td>
-                  <td>{item.ccc_item_criteria}</td>
-                </tr>
-              {/each}
-            {:else}
-              <tr>
-                <td colspan="7">점검대상 선택해 주세요</td>
-              </tr>
-            {/if}
-          </tbody>
-        </table>
-      </div>
-      <div class="reset">
-        <button class="reset_button" on:click={cleanSearch}
-          >테이블 재설정</button
-        >
-      </div>
-    {:else}
-      <div class="tableListWrap table1">
-        <table class="tableList hdBorder">
-          <colgroup>
-            <col style="width:90px;" />
-            <col />
-            <col style="width:90px;" />
-            <col style="width:30%;" />
-            <col style="width:20%;" />
-            <col style="width:120px;" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th class="text-center">넘버</th>
-              <th class="text-center">점검항목이름</th>
-              <th class="text-center">분류</th>
-              <th>지원대상</th>
-              <th class="text-center">등록일</th>
-              <th class="text-center">삭제</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each allChecklistArray as data}
-              <tr>
-                <td class="text-center">{data.cgl_index_id}</td>
-                <td class="text-center">{data.ccg_group}</td>
-                <td class="text-center">{data.ccg_checklist_year}</td>
-                <td class="text-center">{data.ccg_support_part}</td>
-                <td class="text-center">{formatDate(data.ccg_createdate)}</td>
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <td class="text-center" on:click|stopPropagation>
-                  <button
-                    class="btn btnRed"
-                    on:click={() => deleteProject(data.ccg_index)}
-                    ><img
-                      src="./assets/images/icon/delete.svg"
-                      alt="createGroup"
-                    />삭제</button
-                  >
-                </td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
-    {/if}
 
-    <p style="padding:15px ; margin-top:15px; font-size:12px">
-      점검그룹 세부내용
+    <div class="tableListWrap table1">
+      <table class="tableList hdBorder font-size: 16px;">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col style="width:90px;" />
+          <col style="width:30%;" />
+          <col style="width:20%;" />
+          <col style="width:120px;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center">넘버</th>
+            <th class="text-center">점검항목이름</th>
+            <th class="text-center">분류</th>
+            <th>지원대상</th>
+            <th class="text-center">등록일</th>
+            <th class="text-center">삭제</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each allChecklistArray as data, index}
+            <tr on:click={() => handleProjectData(data)}>
+              <td class="text-center">{index + 1}</td>
+              <td class="text-center">{data.ccg_group}</td>
+              <td class="text-center">{data.ccg_checklist_year}</td>
+              <td
+                class="text-center"
+                style=" word-break: normal; white-space: pre-wrap;    
+    overflow-wrap: break-word;">{data.ccg_support_part}</td
+              >
+              <td class="text-center">{formatDate(data.ccg_createdate)}</td>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <td class="text-center" on:click|stopPropagation>
+                <button
+                  class="btn btnRed"
+                  on:click={() => deleteProject(data.ccg_index)}
+                  ><img
+                    src="./assets/images/icon/delete.svg"
+                    alt="createGroup"
+                  />삭제</button
+                >
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+
+    <p style="padding:15px ; margin-top:15px; font-size:16px">
+      {#if selectedChecklist && selectedChecklist.ccg_group}
+        {selectedChecklist.ccg_group}
+      {/if}
     </p>
     {#if isNewlyCreatedChecklist}
       <div class="control-buttons">
-        <input
-          type="checkbox"
-          on:click={selectAll}
-          checked={allSelected}
-        /><strong> 전체선택 </strong>
+        <div style="display: flex; align-items:center">
+          <input
+            type="checkbox"
+            on:click={selectAll}
+            checked={allSelected}
+          /><strong> 전체선택 </strong>
+        </div>
 
         <button on:click={deleteSelectedItem}>선택항목삭제</button>
       </div>
     {/if}
     <div class="tableListWrap table2">
-      <table class="tableList hdBorder">
+      <table class="tableList hdBorder font-size: 16px;">
         {#if isNewlyCreatedChecklist}
           <colgroup>
+            <col style="width:90px;" />
             <col style="width:90px;" />
             <col />
             <col />
             <col />
             <col />
-            <col />
-            <col />
+            <col style="width:90px;" />
             <col style="width:40%;" />
           </colgroup>
         {:else}
           <colgroup>
             <col style="width:90px;" />
+            <col style="width:120px;" />
             <col />
             <col />
             <col />
-            <col />
-            <col />
+            <col style="width:90px;" />
             <col style="width:40%;" />
           </colgroup>
         {/if}
@@ -289,34 +264,36 @@
           </tr>
         </thead>
         <tbody>
-          {#if $filteredChecklistData.length > 0}
-            {#each $filteredChecklistData as item, index}
-              <tr
-                on:click={() => {
-                  selectedItem = item;
-                  showModal = true;
-                }}
-              >
-                {#if isNewlyCreatedChecklist}
-                  <!-- svelte-ignore a11y-click-events-have-key-events -->
-                  <td on:click|stopPropagation
-                    ><input
-                      type="checkbox"
-                      bind:group={selected}
-                      value={item}
-                      name={item}
-                    /></td
-                  >
-                {/if}
-                <td class="text-center">{index + 1}</td>
-                <td class="text-center">{selectedCategory}</td>
-                <td class="text-center">{item.ccc_item_group}</td>
-                <td class="text-center">{item.ccc_item_no}</td>
-                <td class="text-center">{item.ccc_item_title}</td>
-                <td class="text-center">{item.ccc_item_level}</td>
-                <td>{item.ccc_item_criteria}</td>
-              </tr>
-            {/each}
+          {#if showDataTbale2}
+            {#if $filteredChecklistData.length > 0}
+              {#each $filteredChecklistData as item, index}
+                <tr
+                  on:click={() => {
+                    selectedItem = item;
+                    showModal = true;
+                  }}
+                >
+                  {#if isNewlyCreatedChecklist}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <td on:click|stopPropagation
+                      ><input
+                        type="checkbox"
+                        bind:group={selected}
+                        value={item}
+                        name={item}
+                      /></td
+                    >
+                  {/if}
+                  <td class="text-center">{index + 1}</td>
+                  <td class="text-center">{selectedCategory}</td>
+                  <td class="text-center">{item.ccc_item_group}</td>
+                  <td class="text-center">{item.ccc_item_no}</td>
+                  <td class="text-center">{item.ccc_item_title}</td>
+                  <td class="text-center">{item.ccc_item_level}</td>
+                  <td>{item.ccc_item_criteria}</td>
+                </tr>
+              {/each}
+            {/if}
           {:else}
             <tr
               ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
@@ -328,31 +305,70 @@
       </table>
     </div>
 
-    <Modal bind:showModal>
-      <ModalEditItem
-        {selectedItem}
-        {selectedCategory}
-        {isNewlyCreatedChecklist}
-      />
-    </Modal>
+    {#if showModal}
+      <dialog open on:close={() => (showModal = false)}>
+        <ModalEditItem
+          {selectedItem}
+          {selectedCategory}
+          {isNewlyCreatedChecklist}
+          {closeShowModal}
+        />
+      </dialog>
+    {/if}
   </article>
 </div>
 
 <style>
+  * {
+    font-size: 16px;
+  }
+  /****Modal Container*/
+  dialog {
+    position: fixed;
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    top: 50%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    width: 1103px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: svelte-s7onsa-fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
   .table1,
   .table2 {
     width: 100%;
-    font-size: 12px;
+    font-size: 16px;
     overflow-y: auto;
     overflow-x: hidden;
   }
-
+  th,
+  td {
+    font-size: 16px;
+  }
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
   .table1 {
     height: 300px;
   }
 
   .table2 {
-    height: 450px;
+    height: 70vh;
     margin-bottom: 20px;
   }
   tr:hover {
@@ -363,74 +379,16 @@
     width: 100%;
   }
 
-  /* th,
-  td {
-    padding: 10px;
-    text-align: center;
-    vertical-align: middle;
-  } */
-  /* 
-  th {
-    background-color: #005fa3;
-    color: #ffffff;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    font-size: 14px;
-    white-space: nowrap;
-  } */
-
   tr {
     cursor: pointer;
   }
 
-  .delete_button {
-    background-color: #e74c3c;
-    color: #ffffff;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .delete_button:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .reset_button {
-    justify-content: end;
-    background-color: #ff6b6b; /* Red background color */
-    color: #ffffff; /* White text color */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 5px 10px; /* Padding around the text */
-    font-size: 12px; /* Font size for the button text */
-    font-weight: bold; /* Make text bold */
-    cursor: pointer; /* Change cursor to pointer on hover */
-    transition:
-      background-color 0.3s ease,
-      box-shadow 0.3s ease; /* Smooth transition */
-    margin-right: 15px;
-  }
-
-  .reset_button:hover {
-    background-color: #e74c3c; /* Darker red on hover */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
-  }
-  .reset {
-    display: flex;
-    width: 100%;
-    justify-content: end;
-    margin-top: 10px;
-  }
   .control-buttons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 10px;
+    width: 100%;
+    align-items: center;
   }
 
   .control-buttons button {

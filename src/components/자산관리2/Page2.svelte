@@ -130,21 +130,24 @@
       console.log("No matching assets found.");
       // Here you can also clear or update the UI to show a 'no assets found' message
     }
+    activeMenu = selectedGroup;
   }
 
   function resetFilters() {
     // Reset filters to their default values
     assetHost = "전체";
-    selectedGroup = "전체";
+    selectedGroup = "전체"; // Resetting this value
     asset_ostype = "전체";
     assetTargetReg = "전체";
     assetAcitve = "전체";
+
+    // Update the active menu to reflect the reset
+    activeMenu = "전체"; // Set the active menu to '전체'
 
     // Reapply filters to get the initial asset list
     const results = filterAssets();
     console.table(results); // Optionally log the initial results after reset
   }
-
   /***********************************************************/
   const addNewGroup = async () => {
     if (!newGroupName.trim()) {
@@ -196,7 +199,7 @@
       activeMenu = "전체";
       selectedGroup = "전체"; // Explicitly set "전체" for filtering and dropdown
     } else {
-      activeMenu = group; // Use group title for active menu
+      activeMenu = group; // Correctly set the active menu
       selectedGroup = group.asg_index; // Use group index for filtering
     }
     filterAssets(); // Apply filtering
@@ -436,7 +439,7 @@
                     <button
                       class="asset_button"
                       on:click|stopPropagation={() =>
-                        selectPage(AssetManagement, group)}>자산관리</button
+                        selectPage(AssetManagement)}>자산관리</button
                     >
                   {/if}
                   <span class="arrowIcon"></span>

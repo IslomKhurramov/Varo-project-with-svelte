@@ -240,22 +240,23 @@
             <div class="btnWrap">
               <button
                 type="button"
+                title="활성화하다"
                 class="btnImg"
                 on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
               >
                 <img src="./assets/images/icon/edit.svg" alt="Edit" />
-                <span class="tooltip">활성화하다</span>
               </button>
               <button
                 type="button"
+                title="비활성화하다"
                 class="btnImg"
                 on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
               >
                 <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
-                <span class="tooltip">비활성화하다</span>
               </button>
               <button
                 type="button"
+                title="이전(다른그룹으로)"
                 class="btnImg"
                 on:click|stopPropagation={() => {
                   showModalChange = true;
@@ -263,7 +264,6 @@
                 }}
               >
                 <img src="./assets/images/icon/reset.svg" alt="Reset" />
-                <span class="tooltip">move</span>
               </button>
             </div>
           </div>
@@ -355,7 +355,7 @@
                 <div class="flex flex-end">
                   <button
                     type="button"
-                    class="btn w140 btnGray"
+                    class="btn w140 btnGray hoverbtn"
                     on:click|stopPropagation={() => {
                       showModal = true;
                       selectedAsset = asset;
@@ -368,7 +368,7 @@
                 <div class="flex flex-end">
                   <button
                     type="button"
-                    class="btn w140 btnGray"
+                    class="btn w140 btnGray hoverbtn"
                     on:click|stopPropagation={() => {
                       showModal = true;
                       selectedAsset = asset;
@@ -391,7 +391,9 @@
     </div>
   {/if}
 {:else}
-  <Swiper {selectedAsset} {filteredAssets} />
+  <div class="car_container">
+    <Swiper {selectedAsset} {filteredAssets} />
+  </div>
 {/if}
 {#if showModalChange}
   <dialog open on:close={() => (showModalChange = false)}>
@@ -482,7 +484,7 @@
   }
 
   .car_container {
-    height: 70vh;
+    height: 80vh;
     overflow-y: auto;
     padding-bottom: 20px;
     overflow-x: hidden;
@@ -554,7 +556,7 @@
   }
   .tooltip {
     visibility: hidden;
-    width: 120px;
+    width: 150px;
     background-color: rgba(0, 0, 0, 0.7);
     color: #fff;
     text-align: center;
@@ -581,5 +583,47 @@
   .btnImg img {
     width: 24px;
     height: 24px;
+  }
+  /* Tooltip styling */
+  .btnImg[title] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .btnImg[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Tooltip arrow */
+  .btnImg[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+  }
+  .btnImg img:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .hoverbtn:hover {
+    background-color: #0067ff;
+    color: white;
   }
 </style>

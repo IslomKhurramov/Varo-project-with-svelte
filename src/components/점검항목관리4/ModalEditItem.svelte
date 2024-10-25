@@ -10,7 +10,7 @@
   export let selectedSlide;
   export let isNewlyCreatedChecklist;
   export let slides = [];
-  export let selected = [];
+  export let closeShowModal;
   export let deleteSelectedItem;
 
   let activeAsset = null;
@@ -142,68 +142,51 @@
     </section>
   {/if}
 
-  <div class="scrollModal" style="margin-top: 20px;">
-    <table class="tableForm">
-      <colgroup>
-        <col style="width: 8%;" />
-        <col style="width: 70%;" />
-      </colgroup>
+  <div class="modal">
+    <table>
       <tbody>
         {#if selectedItem}
           <tr>
-            <th>점검대상</th>
-            <td>{selectedCategory}</td>
+            <th class="center-align">점검항목</th>
+            <td class="line-height">{selectedCategory}</td>
           </tr>
           <tr>
-            <th>항목그룹</th>
-            <td
-              ><pre
-                class="preformatted-content">{selectedItem.ccc_item_group}</pre></td
-            >
+            <th class="center-align">항목그룹</th>
+            <td class="line-height">{selectedItem.ccc_item_group}</td>
           </tr>
           <tr>
-            <th>정검목적</th>
-            <td
-              ><pre
-                class="preformatted-content">{selectedItem.ccc_check_purpose}</pre></td
-            >
+            <th class="center-align">정검목적</th>
+            <td class="line-height">{selectedItem.ccc_check_purpose}</td>
           </tr>
           <tr>
-            <th>보안위협</th>
-            <td
-              ><pre
-                class="preformatted-content">{selectedItem.ccc_security_threat}</pre></td
-            >
+            <th class="center-align">보안위협</th>
+            <td class="line-height">{selectedItem.ccc_security_threat}</td>
           </tr>
           <tr>
-            <th>점검내용</th>
-            <td
-              ><pre
-                class="preformatted-content">{selectedItem.ccc_check_content}</pre></td
-            >
+            <th class="center-align">점검내용</th>
+            <td class="line-height">{selectedItem.ccc_check_content}</td>
           </tr>
           <tr>
-            <th>대상시스템</th>
-            <td>{selectedItem.ccc_target_system}</td>
+            <th class="center-align">대상시스템</th>
+            <td class="line-height">{selectedItem.ccc_target_system}</td>
           </tr>
           <tr>
-            <th>식별코드</th>
-            <td>{selectedItem.ccc_item_no}</td>
+            <th class="center-align">식별코드</th>
+            <td class="line-height">{selectedItem.ccc_item_no}</td>
           </tr>
           <tr>
-            <th>점검항목</th>
-            <td>{selectedItem.ccc_item_title}</td>
+            <th class="center-align">점검항목</th>
+            <td class="line-height">{selectedItem.ccc_item_title}</td>
           </tr>
           <tr>
-            <th>위험도</th>
-            <td>{selectedItem.ccc_item_level}</td>
+            <th class="center-align">위험도</th>
+            <td class="line-height">{selectedItem.ccc_item_level}</td>
           </tr>
           <tr>
-            <th>평가기준</th>
-            <td>
-              <pre class="preformatted-content">
-                  {selectedItem.ccc_item_criteria}
-                </pre>
+            <th class="center-align">평가기준</th>
+            <td class="line-height">
+              {@html selectedItem.ccc_item_criteria.replace(/\n/g, "<br/>")}
+
               {#if isNewlyCreatedChecklist}
                 <td class="new_input">
                   <div class="first_col">
@@ -219,34 +202,39 @@
             </td>
           </tr>
           <tr>
-            <th>조치방안</th>
+            <th class="center-align">조치방안</th>
             <td
-              ><pre
-                class="preformatted-content">{selectedItem.ccc_mitigation_method}</pre></td
+              class="line-height"
+              style="display: flex; height: 100px;width:auto; overflow-x:hidden; overflow-y: auto; flex-direction: column; "
+              >{selectedItem.ccc_mitigation_method}</td
             >
           </tr>
           <tr>
-            <th>조치예시</th>
-            <td class="longData">
-              <pre
-                class="preformatted-content longData">{selectedItem.ccc_mitigation_example}</pre>
+            <th class="center-align">조치예시</th>
+            <td
+              style="display: flex; height: 100px;width:auto; overflow-y: auto; overflow-x:hidden; flex-direction: column;"
+              class="line-height"
+            >
+              {@html selectedItem.ccc_mitigation_example.replace(
+                /\n/g,
+                "<br/>",
+              )}
             </td>
           </tr>
           <tr>
-            <th>조치시영향도</th>
-            <td
-              ><pre class="preformatted-content">{selectedItem.ccc_impact ||
-                  "N/A"}</pre></td
-            >
+            <th class="center-align">조치시영향도</th>
+            <td class="line-height">{selectedItem.ccc_impact || "N/A"}</td>
           </tr>
         {:else}
           <tr>
-            <td colspan="2">No data available</td>
+            <td class="line-height" colspan="2">No data available</td>
           </tr>
         {/if}
       </tbody>
     </table>
-
+    {#if closeShowModal}
+      <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
+    {/if}
     {#if isNewlyCreatedChecklist}
       <div class="buttons">
         <div class="buttonGroup">
@@ -262,6 +250,25 @@
 </article>
 
 <style>
+  * {
+    font-size: 16px;
+  }
+  .center-align {
+    text-align: center;
+  }
+
+  .line-height {
+    line-height: 30px;
+  }
+  .modal {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
+    max-width: 100%;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+  }
   .menu-container .menu-item.active {
     background-color: #0067ff;
     color: #fff;
@@ -291,47 +298,43 @@
   }
   .first_col input {
     height: 30px;
-    width: 155px;
+    width: 250px;
   }
   .new_input {
     display: flex;
     flex-direction: row;
-    gap: 20px;
+
     align-items: center;
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .tableForm pre.mitigation-example {
-    white-space: pre-wrap; /* Ensures long content wraps */
-    background-color: #f8f9fa;
-    padding: 10px;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: 0;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background-color: #f7fafc;
+    font-weight: bold;
+    color: #000000;
+    width: 15px;
   }
 
   .mitigation-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
   }
 
-  /* Responsive styling */
-  @media (max-width: 768px) {
-    .tableForm {
-      font-size: 14px;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .tableForm {
-      font-size: 12px;
-    }
-
-    .tableForm th,
-    .tableForm td {
-      padding: 8px;
-    }
-  }
   .btn {
     padding: 10px 20px; /* Padding for buttons */
     border: none; /* Remove default border */
@@ -382,24 +385,12 @@
     height: 100%; /* Ensure the modal takes up the full height */
   }
 
-  .mitigation-example {
-    margin: 0;
-    padding: 5px;
-    white-space: pre-wrap;
-    font-size: 16px;
-    background-color: #f4f4f4;
-  }
-
   .new_input {
     margin-top: 10px; /* Add margin for input fields in new checklists */
   }
 
   .first_col {
     margin-bottom: 10px;
-  }
-
-  .longData pre {
-    white-space: pre-wrap; /* Ensure long data wraps properly */
   }
 
   .buttons {
@@ -417,30 +408,6 @@
   .btn:hover {
     background-color: #0056b3; /* Darker background on hover */
   }
-  /* Set fixed layout for the table */
-  /* Set fixed layout for the table */
-  .tableForm {
-    table-layout: fixed; /* Ensures fixed layout */
-    width: 100%; /* Full width */
-    border-collapse: collapse; /* Collapse borders */
-  }
-
-  .tableForm th,
-  .tableForm td {
-    padding: 10px; /* Padding for cells */
-    border: 10px solid #fff; /* Cell borders */
-    word-wrap: break-word; /* Wrap content */
-    font-size: 16px; /* Increase font size */
-    border-radius: 20px;
-  }
-
-  .tableForm colgroup col {
-    width: 30%; /* Fixed width for the first column */
-  }
-
-  .tableForm colgroup col:nth-child(2) {
-    width: 70%; /* Fixed width for the second column */
-  }
 
   /* Style the buttons */
   .buttons {
@@ -455,7 +422,6 @@
   }
   .tableForm th {
     background-color: #f7fafc;
-    border-radius: 20px;
   }
   /* Button styles */
   .btn {
@@ -499,37 +465,18 @@
   }
 
   /* Fixed height for large data sections */
-  .longData pre {
-    height: 150px;
-    overflow-y: auto;
-  }
 
   /* Preformatted text */
   .preformatted-content {
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* Preserve line breaks, but ignore extra spaces */
+    word-wrap: break-word;
+    margin-left: 0; /* Ensure no extra margin */
+    padding-left: 0;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     margin: 0;
-    font-size: 18px; /* Increase font size in preformatted content */
-  }
-
-  /* Responsive styling */
-  @media (max-width: 768px) {
-    .tableForm {
-      font-size: 16px; /* Adjust for smaller screens */
-    }
-  }
-
-  @media (max-width: 576px) {
-    .tableForm {
-      font-size: 14px; /* Further reduce font size on small screens */
-    }
-
-    .tableForm th,
-    .tableForm td {
-      padding: 8px;
-    }
+    font-size: 16px; /* Increase font size in preformatted content */
   }
 
   .menu-wrapper-container {
@@ -539,17 +486,7 @@
     display: flex;
     flex-wrap: nowrap; /* Ensure no wrapping of slides */
   }
-  .swiper-wrapper {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .swiper-slide {
-    flex-shrink: 0; /* Prevents shrinking of slides */
-    width: auto; /* or specific widths depending on how many slides you want to show */
-  }
-
-  .modal-content {
-    z-index: 100; /* Set higher z-index for modal */
+  td {
+    font-size: 16px;
   }
 </style>

@@ -271,9 +271,9 @@
   }
 
   th {
-    background-color: #005fa3;
+    background-color: #f7fafc;
     font-weight: bold;
-    color: #ffffff;
+    color: #000000;
     width: 160px;
   }
 

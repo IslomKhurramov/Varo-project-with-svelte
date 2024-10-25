@@ -17,6 +17,9 @@
   } from "../../services/page4/checklistStore";
   import CheckListDetail from "./checkListDetail.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
+  import { filteredChecklistData } from "../../services/page4/checklistStore";
+  import ModalEdit from "../자산관리2/SwiperMenu/ModalEdit.svelte";
+  import { confirmDelete, successAlert } from "../../shared/sweetAlert";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -41,12 +44,20 @@
   let showModalSecond = false;
   let selectedSlide = null;
   let selectedRisk = "위험도";
-  let item_no = "";
   let searchResult = [];
   let isSearchActive = false;
   let activeChecklistElement = null;
   let isNewlyCreatedChecklist = false;
+  let showDataTbale2 = false;
+  let showModalModalEditItem = false;
 
+  // Create a local variable to hold the filtered checklist data
+  let filteredChecklists = [];
+
+  // Subscribe to the store
+  filteredChecklistData.subscribe((value) => {
+    filteredChecklists = value;
+  });
   $: if (
     selectedChecklist &&
     selectedChecklist.ccg_index === lastCreatedChecklistId
@@ -111,10 +122,11 @@
       if (response.success) {
         // Fetch the updated checklist data
         showModal = false;
-        sweetAlert("Checklist created successfully!");
+        sweetAlert("체크리스트가 성공적으로 생성되었습니다!");
+
         await refreshChecklistData();
         lastCreatedChecklistId = selectedChecklist.ccg_index;
-
+        showEdit = true;
         // Add the new checklist to createdChecklists
         createdChecklists = [
           ...createdChecklists,
@@ -147,6 +159,7 @@
 
   // Ensure that the selected page scrolls into view
   const selectPage = (page, checklist) => {
+    console.log("Setting currentPage to:", page);
     selectedChecklist = checklist; // Store the selected checklist
     currentPage = page;
     activeMenu = checklist;
@@ -181,12 +194,14 @@
 
   /*********************************************************************************/
   // Delete a checklist (only for the last created checklist)
+  // Define a confirmation prompt with a promise
+
   async function deleteChecklist(checklistId) {
     try {
       const response = await setDeleteChecklistGroup(checklistId);
 
       if (response.success) {
-        alert("Checklist deleted successfully!");
+        alert("체크리스트가 성공적으로 삭제되었습니다!");
 
         // Update local state without re-fetching
         allChecklistArray = allChecklistArray.filter(
@@ -208,15 +223,20 @@
 
   const deleteProject = async () => {
     try {
-      if (allChecklistArray.length > 0) {
-        const lastProject = allChecklistArray[allChecklistArray.length - 1];
-        await setDeleteChecklistGroup(lastProject.ccg_index);
-        allChecklistArray = allChecklistArray.filter(
-          (checklist) => checklist.ccg_index !== lastProject.ccg_index,
-        );
-        createdChecklists = createdChecklists.filter(
-          (checklist) => checklist.ccg_index !== lastProject.ccg_index,
-        );
+      const isConfirmed = await confirmDelete(); // Wait for confirmation
+
+      if (isConfirmed) {
+        if (allChecklistArray.length > 0) {
+          const lastProject = allChecklistArray[allChecklistArray.length - 1];
+          await setDeleteChecklistGroup(lastProject.ccg_index);
+          allChecklistArray = allChecklistArray.filter(
+            (checklist) => checklist.ccg_index !== lastProject.ccg_index,
+          );
+          createdChecklists = createdChecklists.filter(
+            (checklist) => checklist.ccg_index !== lastProject.ccg_index,
+          );
+        }
+        successAlert("성공적으로 삭제되었습니다.");
       }
     } catch (err) {
       console.log("ERROR deleteProject:", err);
@@ -224,25 +244,42 @@
   };
 
   /************************************************************************/
-  // Filter data based on selected category
   function filterData() {
-    if (selectedCategory && allChecklistArray.length > 0) {
-      // Filter by selected category or return all data
-      filteredData = allChecklistArray.flatMap(
-        (item) => item[selectedCategory] || [],
-      );
+    if (selectedCategory && selectedRisk && allChecklistArray.length > 0) {
+      // First, filter by selected category
+      let filteredData = allChecklistArray.flatMap((item) => {
+        // Check if the current item has the selected category and return its data, or an empty array
+        const categoryData = item[selectedCategory] || [];
+        return categoryData;
+      });
 
-      // Check if we have data to display
-      slides = filteredData.map((item) => item);
+      // Now, filter the data by selected risk if the selectedRisk is not "위험도"
+      if (selectedRisk !== "위험도") {
+        filteredData = filteredData.filter((item) => {
+          console.log("Filtering by Risk:", item.ccc_item_level); // Log the risk level of each item
+          return item.ccc_item_level === selectedRisk; // Filter by matching risk level
+        });
+      }
+
+      // Now set the filtered data to the slides and also to the store
+      slides = filteredData; // Assign the filtered data to slides
+      filteredChecklistData.set(filteredData); // Update the store with filtered data
+
+      // Check if there is any data to display
       showSlide = slides.length > 0;
+
+      // Log the final filtered data for debugging
+      console.log("Filtered Data:", filteredData);
 
       // Initialize Swiper after updating the slides
       initializeSwiper();
     } else {
-      // No data case, hide slides
+      // If no valid category or checklist data available, hide slides
       showSlide = false;
+      console.log("No valid category or no checklist data available.");
     }
   }
+
   onMount(async () => {
     try {
       await fetchChecklistData(); // Wait for the data to be fetched
@@ -289,50 +326,18 @@
   }
   /*********************************************************************/
   //Search
-  async function searchItem(
-    selectedChecklist,
-    selectedCategory,
-    item_no,
-    selectedRisk,
-  ) {
-    const ccg_index = selectedChecklist.ccg_index || "";
-    const category = selectedCategory || "";
-    const item_number = item_no || "";
-    const riskLevel = selectedRisk || "";
 
-    try {
-      const response = await getChecklistItemBySearch(
-        ccg_index,
-        category,
-        item_number,
-        riskLevel,
-      );
-
-      console.log("SEARCH RESPONSE:", response);
-
-      if (response.RESULT === "OK" && Array.isArray(response.CODE)) {
-        currentPage = ItemPage;
-        if (response.CODE.length > 0) {
-          console.log("SEARCH SUCCEED:", response.CODE);
-          searchResult = response.CODE;
-          isSearchActive = true;
-        } else {
-          alert("No results found for your search.");
-        }
-      } else {
-        throw new Error(`Search failed: ${response.CODE}`);
-      }
-    } catch (err) {
-      console.error("ERROR searching checklistItem:", err.message);
-      alert(`ERROR searching checklistItem: ${err.message}`);
-    }
-  }
   function cleanSearch() {
-    isSearchActive = false;
-    selectedCategory = "UNIX";
-    item_no = "";
-    selectedRisk = "위험도";
-    selectedChecklist = null;
+    selectedCategory = "UNIX"; // Reset to default category
+    selectedRisk = "위험도"; // Reset to default risk level
+    selectedChecklist = ""; // Reset selected checklist
+    showDataTbale2 = false; // Reset any UI flags
+
+    // Optionally, clear the filtered checklists in the store
+    filteredChecklistData.set([]); // Reset store data to empty array
+
+    // Trigger filtering with the defaults
+    filterData();
   }
 
   // Trigger edit mode
@@ -344,6 +349,21 @@
   function cancelEditing() {
     editingChecklistId = null;
     editedChecklistName = "";
+  }
+
+  let showEdit = false;
+
+  function resetEditAndModalState() {
+    // If currently editing, save the changes
+    if (editingChecklistId !== null) {
+      editChecklist(editingChecklistId, editedChecklistName);
+    }
+
+    // Reset all relevant states
+    editingChecklistId = null;
+    editedChecklistName = "";
+    showModalModalEditItem = false;
+    showEdit = false; // Reset showEdit state as well
   }
 </script>
 
@@ -369,7 +389,9 @@
     </div>
 
     {#if loading}
-      <p>Loading...</p>
+      <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+      </div>
     {:else if error}
       <p>Error: {error}</p>
     {:else}
@@ -438,8 +460,6 @@
             <option value="SECURITY">SECURITY</option>
           </select>
 
-          <input placeholder="입력 점검항목" type="text" bind:value={item_no} />
-
           <select
             bind:value={selectedRisk}
             name="agent_status"
@@ -457,25 +477,11 @@
           <button
             style="padding: 15px;"
             class="btn btnPrimary"
-            on:click={() =>
-              searchItem(
-                selectedChecklist,
-                selectedCategory,
-                item_no,
-                selectedRisk,
-              )}
+            on:click={cleanSearch}
           >
-            조회
+            <img src="./assets/images/reset.png" alt="search" />초기화
           </button>
-          <button
-            style="padding: 15px;"
-            class="btn btnPrimary"
-            on:click={() => {
-              selectPage(ItemPage);
-            }}
-          >
-            뒤로 가기
-          </button>
+
           <button
             style="padding: 15px;"
             class="btn btnPrimary"
@@ -483,31 +489,65 @@
               showModal = true;
             }}>복사</button
           >
+          {#if showModalModalEditItem}
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                showEdit = false;
+                showModalModalEditItem = false;
+                resetEditAndModalState();
+              }}
+            >
+              뒤로 가기
+            </button>
+          {:else if currentPage === CheckListDetail}
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                selectPage(ItemPage);
+                showDataTbale2 = false;
+                resetEditAndModalState();
+                showEdit = false;
+              }}
+            >
+              뒤로 가기
+            </button>
+          {/if}
+
           {#each createdChecklists as checklist (checklist.ccg_index)}
             {#if editingChecklistId === checklist.ccg_index}
               <!-- Show Save/Cancel buttons in edit mode -->
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary save"
-                on:click={() =>
-                  editChecklist(checklist.ccg_index, editedChecklistName)}
+                on:click={() => {
+                  editChecklist(checklist.ccg_index, editedChecklistName);
+                  resetEditAndModalState();
+                }}
               >
                 Save
               </button>
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary cancel"
-                on:click={cancelEditing}
+                on:click={() => {
+                  cancelEditing();
+                  resetEditAndModalState(); // Reset the editing state on cancel
+                }}
               >
                 Cancel
               </button>
-            {:else}
+            {:else if showEdit}
               <!-- Normal mode: show Edit, Copy, Delete buttons -->
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary edit"
-                on:click={() =>
-                  startEditing(checklist.ccg_index, checklist.ccg_group)}
+                on:click={() => {
+                  startEditing(checklist.ccg_index, checklist.ccg_group);
+                  showEdit = true; // Set showEdit to true when editing starts
+                }}
               >
                 Edit
               </button>
@@ -529,6 +569,7 @@
         this={currentPage}
         {allChecklistArray}
         {filteredData}
+        {selectedRisk}
         {selectedCategory}
         {selectedChecklist}
         {searchResult}
@@ -540,7 +581,9 @@
         {showModalSecond}
         {selectedSlide}
         {cleanSearch}
+        bind:showDataTbale2
         {slides}
+        bind:showModalModalEditItem
         {isNewlyCreatedChecklist}
         on:projectDeleted={(event) => {
           const id = event.detail;
@@ -792,5 +835,36 @@
   }
   .active:hover {
     color: #fff; /* Change text color to white on hover */
+  }
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it sits above other content */
+  }
+
+  .loading-spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

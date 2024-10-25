@@ -167,6 +167,7 @@
           href="javascript:void(0);"
           class={`btn ${showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
+            activePlan = null;
             toggleList("project");
             plans = await getVulnsOfPlan();
             tableData = plans?.vulns;
@@ -269,6 +270,7 @@
                   class="menu"
                   style="position: relative;"
                   on:click={() => {
+                    setView = "plan";
                     search.plan_index = plan.plan_index;
                     getPlanDataSearch();
                     toggleAccordion(plan.plan_index);
@@ -302,6 +304,7 @@
                                     ? "active"
                                     : ""}
                                   on:click={async () => {
+                                    setView = "plan";
                                     assets = await getVulnsOfPlan({
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
@@ -350,6 +353,7 @@
                         <div
                           class="menu"
                           on:click={async () => {
+                            setView = "plan";
                             selectPage(
                               MainPageProject,
                               host?.ast_uuid__ass_uuid__ast_hostname +

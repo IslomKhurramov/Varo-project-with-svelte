@@ -47,90 +47,83 @@
   }
 </script>
 
-<table class="">
-  <thead>
-    <tr>
-      <th>넘버</th>
-      <th
-        on:click={() =>
-          sortData("hostname", sortHost, (newSort) => (sortHost = newSort))}
-      >
-        <p class="sort-img">
-          hostname
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <img
-            src="./assets/images/icon/sort.svg"
-            class={sortHost !== "ASC" ? "rotate" : ""}
-          />
-        </p>
-      </th>
-      <th>ip address</th>
-      <th>target</th>
-      <th>checklist</th>
-      <th
-        on:click={() =>
-          sortData(
-            "uploaded_result_count",
-            sortPoint,
-            (newSort) => (sortPoint = newSort),
-          )}
-      >
-        <p class="sort-img">
-          Result
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <img
-            src="./assets/images/icon/sort.svg"
-            class={sortPoint !== "ASC" ? "rotate" : ""}
-          />
-        </p>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {#each uploadStatusModalData?.uploaded_status && uploadStatusModalData?.uploaded_status?.length !== 0 && uploadStatusModalData?.uploaded_status as data, index}
+<div class="tableListWrap">
+  <table class="tableList hdBorder font-size: 16px;">
+    <colgroup>
+      <col style="width:90px;" />
+      <col style="width:120px" />
+      <col style="width:120px;" />
+      <col style="width:120px;" />
+      <col style="width:20%;" />
+      <col style="width:120px;" />
+    </colgroup>
+    <thead>
       <tr>
-        <td>{index + 1}</td>
-        <td>{data?.hostname}</td>
-        <td>{data?.ipaddr}</td>
-        <td>{data?.target}</td>
-        <td>{data?.checklist_count}</td>
-        <td>{data?.uploaded_result_count}</td>
+        <th class="text-center">넘버</th>
+        <th
+          on:click={() =>
+            sortData("hostname", sortHost, (newSort) => (sortHost = newSort))}
+        >
+          <p class="sort-img">
+            hostname
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <img
+              src="./assets/images/icon/sort.svg"
+              class={sortHost !== "ASC" ? "rotate" : ""}
+            />
+          </p>
+        </th>
+        <th class="text-center">ip address</th>
+        <th class="text-center">target</th>
+        <th class="text-center">checklist</th>
+        <th
+          class="text-center"
+          on:click={() =>
+            sortData(
+              "uploaded_result_count",
+              sortPoint,
+              (newSort) => (sortPoint = newSort),
+            )}
+        >
+          <p class="sort-img">
+            Result
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <img
+              src="./assets/images/icon/sort.svg"
+              class={sortPoint !== "ASC" ? "rotate" : ""}
+            />
+          </p>
+        </th>
       </tr>
-    {/each}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {#each uploadStatusModalData?.uploaded_status && uploadStatusModalData?.uploaded_status?.length !== 0 && uploadStatusModalData?.uploaded_status as data, index}
+        <tr>
+          <td class="text-center">{index + 1}</td>
+          <td class="text-center">{data?.hostname}</td>
+          <td class="text-center">{data?.ipaddr}</td>
+          <td class="text-center">{data?.target}</td>
+          <td class="text-center">{data?.checklist_count}</td>
+          <td class="text-center">{data?.uploaded_result_count}</td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
 
 <style>
   table {
     width: 100%;
   }
-  table,
-  th,
-  td {
-    border: 1px solid;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-    color: #6e6f6f;
-  }
-  thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
-    z-index: 10; /* Ensure the header is above the scrolling content */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
-  }
-  thead tr {
-    background-color: #f3f7d9;
-  }
 
-  td {
-    text-align: center;
+  tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
   }
-
-  th,
-  td {
-    padding: 5px 3px;
+  td,
+  th {
+    font-size: 16px;
   }
-
   .sort-img {
     cursor: pointer;
     display: flex;

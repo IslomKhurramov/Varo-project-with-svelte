@@ -40,87 +40,85 @@
   }
 </script>
 
-<table class="">
-  <thead>
-    <tr>
-      <th>넘버</th>
-      <th
-        on:click={() =>
-          sortData(
-            "ast_uuid__ass_uuid__ast_hostname",
-            sortHost,
-            (newSort) => (sortHost = newSort),
-          )}
-      >
-        <p class="sort-img">
-          호스트명
-          <img
-            src="./assets/images/icon/sort.svg"
-            class={sortHost !== "ASC" ? "rotate" : ""}
-          />
-        </p>
-      </th>
-      <th>아이피주소</th>
-      <th>점검대상</th>
-      <th
-        on:click={() =>
-          sortData(
-            "ast_security_point",
-            sortPoint,
-            (newSort) => (sortPoint = newSort),
-          )}
-      >
-        <p class="sort-img">
-          보안점수
-          <img
-            src="./assets/images/icon/sort.svg"
-            class={sortPoint !== "ASC" ? "rotate" : ""}
-          />
-        </p>
-      </th>
-    </tr><tr />
-  </thead>
-  <tbody>
-    {#each modalData as data, index}
+<div class="tableListWrap">
+  <table class="tableList hdBorder font-size: 16px;">
+    <colgroup>
+      <col style="width:90px;" />
+      <col />
+      <col style="width:120px;" />
+      <col style="width:30%;" />
+      <col style="width:15%;" />
+    </colgroup>
+    <thead>
       <tr>
-        <td>{index + 1}</td>
-        <td>{data?.ast_uuid__ass_uuid__ast_hostname}</td>
-        <td>{data?.ast_uuid__ass_uuid__ast_ipaddr}</td>
-        <td>{data?.ast_uuid__ast_target__cct_target}</td>
-        <td>
-          {data?.ast_security_point > 0
-            ? `${data?.ast_security_point}%`
-            : "결과미등록"}
-        </td>
-      </tr>
-    {/each}
-  </tbody>
-</table>
+        <th>넘버</th>
+        <th
+          on:click={() =>
+            sortData(
+              "ast_uuid__ass_uuid__ast_hostname",
+              sortHost,
+              (newSort) => (sortHost = newSort),
+            )}
+        >
+          <p class="sort-img">
+            호스트명
+            <img
+              src="./assets/images/icon/sort.svg"
+              class={sortHost !== "ASC" ? "rotate" : ""}
+            />
+          </p>
+        </th>
+        <th>아이피주소</th>
+        <th>점검대상</th>
+        <th
+          on:click={() =>
+            sortData(
+              "ast_security_point",
+              sortPoint,
+              (newSort) => (sortPoint = newSort),
+            )}
+        >
+          <p class="sort-img">
+            보안점수
+            <img
+              src="./assets/images/icon/sort.svg"
+              class={sortPoint !== "ASC" ? "rotate" : ""}
+            />
+          </p>
+        </th>
+      </tr><tr />
+    </thead>
+    <tbody>
+      {#each modalData as data, index}
+        <tr>
+          <td>{index + 1}</td>
+          <td>{data?.ast_uuid__ass_uuid__ast_hostname}</td>
+          <td>{data?.ast_uuid__ass_uuid__ast_ipaddr}</td>
+          <td>{data?.ast_uuid__ast_target__cct_target}</td>
+          <td>
+            {data?.ast_security_point > 0
+              ? `${data?.ast_security_point}%`
+              : "결과미등록"}
+          </td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
 
 <style>
   table {
     width: 100%;
   }
-  table,
-  th,
-  td {
-    border: 1px solid;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-    color: #6e6f6f;
-  }
 
-  thead tr {
-    background-color: #f3f7d9;
+  tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
   }
-
-  td {
+  td,
+  th {
     text-align: center;
-  }
-
-  th,
-  td {
-    padding: 5px 3px;
+    font-size: 16px;
   }
 
   .sort-img {

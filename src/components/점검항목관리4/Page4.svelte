@@ -437,7 +437,10 @@
     {/if}
   </article>
 
-  <div class="contentsWrap logWrap inspectionitems">
+  <div
+    class="contentsWrap logWrap inspectionitems"
+    style="width: calc(100% - 280px);"
+  >
     <article class="contentArea mt-0">
       <section class="filterWrap">
         <div>

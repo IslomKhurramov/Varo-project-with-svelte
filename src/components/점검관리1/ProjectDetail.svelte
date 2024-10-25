@@ -1625,19 +1625,52 @@
 <!--//Modal:자산 상세-->
 
 {#if lastModal}
-  <Modal bind:showModal={lastModal} bind:insertData>
+  <!-- <Modal bind:showModal={lastModal} bind:insertData>
     <ModalPage
       bind:modalData
       bind:insertData
       planIndex={projectIndex}
       {changeDataHandler}
     />
-  </Modal>
+  </Modal> -->
+
+  <dialog open on:close={() => (lastModal = false)}>
+    <ModalPage
+      bind:showModal={lastModal}
+      bind:modalData
+      bind:insertData
+      planIndex={projectIndex}
+      {changeDataHandler}
+    />
+  </dialog>
 {/if}
 
 <style>
   * {
     font-size: 16px;
+  }
+  dialog {
+    position: fixed;
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    top: 50%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    width: 1103px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: svelte-s7onsa-fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
   }
 
   .tableForm input,

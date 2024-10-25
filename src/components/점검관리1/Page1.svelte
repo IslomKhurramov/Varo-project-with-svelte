@@ -31,6 +31,8 @@
 
   $: {
     console.log("$userData2:", $userData);
+    console.log("projectData:", projectData);
+    console.log("projectArray:", projectArray);
   }
 
   /**********************************/

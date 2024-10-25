@@ -24,6 +24,8 @@
   let selectedSendData;
   let wholeOption = null;
   let selectedItems = [];
+  let sortAscending = true;
+  let sorted = false;
 
   let search = {
     plan_index: "",
@@ -55,7 +57,7 @@
     plans = await getVulnsOfPlan();
     tableData = plans?.vulns;
 
-    assets = await getVulnsOfAsset(search);
+    // assets = await getVulnsOfAsset(search);
   });
 
   const getPlanDataSearch = async () => {
@@ -122,8 +124,34 @@
     link.click();
     document.body.removeChild(link);
   }
+
+  let firstClick = true;
+
+  function sortAssets(assets) {
+    const isAscending = sortAscending ? 1 : -1;
+    console.log("isAscending:", isAscending);
+
+    if (assets && assets.plans && assets.plans.length > 0) {
+      assets.plans.forEach((asset) => {
+        asset.plan_target.forEach((target) => {
+          Object.entries(target).forEach(([osType, hosts]) => {
+            hosts.sort((hostA, hostB) => {
+              return (
+                hostA.ast_uuid__ass_uuid__ast_hostname.localeCompare(
+                  hostB.ast_uuid__ass_uuid__ast_hostname,
+                ) * isAscending
+              );
+            });
+          });
+        });
+      });
+    }
+
+    sortAscending = !sortAscending;
+  }
+
   $: {
-    console.log("activePlan:", activePlan);
+    console.log("sortAscending:", sortAscending);
   }
 </script>
 
@@ -152,6 +180,8 @@
               asset_target_uuid: "",
             };
             selectedItems = [];
+            sortAscending = true;
+            firstClick = true;
           }}
         >
           프로젝트별
@@ -161,8 +191,7 @@
           class={`btn ${!showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
             toggleList("asset");
-            assets = await getVulnsOfAsset(search);
-            tableData = assets?.vulns;
+            activeMenu = null;
             search = {
               plan_index: "",
               asset_target_uuid: "",
@@ -174,9 +203,51 @@
             };
             selectedItems = [];
             activePlan = null;
+
+            assets = await getVulnsOfAsset(search);
+            tableData = assets?.vulns;
+            if (firstClick) {
+              const isAscending = sortAscending ? 1 : -1;
+
+              if (assets && assets.plans && assets.plans.length > 0) {
+                assets.plans.forEach((asset) => {
+                  asset.plan_target.forEach((target) => {
+                    Object.entries(target).forEach(([osType, hosts]) => {
+                      hosts.sort((hostA, hostB) => {
+                        return (
+                          hostA.ast_uuid__ass_uuid__ast_hostname.localeCompare(
+                            hostB.ast_uuid__ass_uuid__ast_hostname,
+                          ) * isAscending
+                        );
+                      });
+                    });
+                  });
+                });
+              }
+
+              sortAscending = false;
+              firstClick = false; // Birinchi bosishni belgilash
+            } else {
+              // Keyingi bosishlarda sortAssets funksiyasini chaqirish
+              sortAssets(assets);
+            }
           }}
         >
           자산별
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 576 512"
+            style="transform: rotate({firstClick
+              ? '0deg'
+              : sortAscending
+                ? '180deg'
+                : '0deg'}); transition: transform 0.2s;"
+          >
+            <path
+              d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+              fill={!showProject ? "#fff" : "#0067ff"}
+            />
+          </svg>
         </button>
       </div>
       <ul class="prMenuListToggle">
@@ -460,5 +531,16 @@
   .menu:hover .tooltip {
     visibility: visible; /* Show tooltip */
     opacity: 1; /* Fade in the tooltip */
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    /* transform: rotate(180deg); */
+  }
+
+  .rotate {
+    transform: rotate(180deg);
   }
 </style>

@@ -406,7 +406,12 @@
   * {
     font-size: 16px;
   }
-
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;

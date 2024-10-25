@@ -121,14 +121,18 @@
         {deleteSelectedItem}
       />
     {:else}
-      <p style="padding:15px ;  font-size:16px">점검그룹 세부내용</p>
+      <p style="padding:15px ;  font-size:16px">
+        {selectedChecklist.ccg_group} 세부내용
+      </p>
       {#if isNewlyCreatedChecklist}
         <div class="control-buttons">
-          <input
-            type="checkbox"
-            on:click={selectAll}
-            checked={allSelected}
-          /><strong> 전체선택 </strong>
+          <div style="display: flex; align-items:center">
+            <input
+              type="checkbox"
+              on:click={selectAll}
+              checked={allSelected}
+            /><strong> 전체선택 </strong>
+          </div>
 
           <button on:click={deleteSelectedItem}>선택항목삭제</button>
         </div>
@@ -264,6 +268,7 @@
     justify-content: space-between;
     width: 100%;
     margin-bottom: 10px;
+    align-items: center;
   }
 
   .control-buttons button {

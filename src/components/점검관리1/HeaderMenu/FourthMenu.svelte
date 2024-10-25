@@ -212,16 +212,27 @@
           {#if logData && logData.length !== 0}
             {#each logData as data, index}
               <tr>
-                <td class="text-center">{index + 1}</td>
-                <td class="text-center">{data?.ccp_index}</td>
-                <td class="text-center">{data?.ast_uuid}</td>
-                <td class="text-center">{data?.his_type}</td>
-                <td class="text-center">{data?.his_orig_data}</td>
-                <td class="text-center">{data?.his_order_user}</td>
-                <td class="text-center"
+                <td class="text-center" style="font-size: 16px;">{index + 1}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.ccp_index}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.ast_uuid}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_type}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_orig_data}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_order_user}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
                   >{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td
                 >
-                <td class="text-center">
+                <td class="text-center" style="font-size: 16px;">
                   <Tooltip text={data?.his_full_data}>비고</Tooltip>
                 </td>
               </tr>
@@ -245,6 +256,19 @@
 
 <style>
   * {
+    font-size: 16px;
+  }
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
+  td,
+  th {
+    font-size: 16px;
+  }
+  td {
     font-size: 16px;
   }
   tr:hover {

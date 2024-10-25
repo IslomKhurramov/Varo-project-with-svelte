@@ -202,6 +202,7 @@
       activeMenu = group; // Correctly set the active menu
       selectedGroup = group.asg_index; // Use group index for filtering
     }
+    showSwiperComponent = false;
     filterAssets(); // Apply filtering
   }
   /**********************************************************************/

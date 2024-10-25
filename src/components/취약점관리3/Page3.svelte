@@ -227,9 +227,8 @@
               }
 
               sortAscending = false;
-              firstClick = false; // Birinchi bosishni belgilash
+              firstClick = false;
             } else {
-              // Keyingi bosishlarda sortAssets funksiyasini chaqirish
               sortAssets(assets);
             }
           }}

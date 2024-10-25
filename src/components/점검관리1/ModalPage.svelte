@@ -1,6 +1,7 @@
 <script>
   import { setSpecificItemResultsChange } from "../../services/result/resultService";
 
+  export let showModal;
   export let modalData;
   export let planIndex;
   export let insertData;
@@ -195,30 +196,44 @@
       >
     </tr>
   </table>
-  <button
-    class="modify-button"
-    style="float: right;"
-    disabled={Object.keys(insertData).length === 0}
-    on:click={() => {
-      changeDataHandler({
-        plan_index: planIndex,
-        result_index: modalData?.ccr_index,
-        checklist_index: modalData?.ccr_item_no__ccc_index,
-        change_result: insertData?.change_result,
-        change_option: change_option,
-        change_status_text: insertData?.change_status_text,
-        change_evidence_file: insertData?.change_evidence_file,
-      });
-      change_option = "ONE";
-    }}
-  >
-    저장하기
-  </button>
+  <div style="display: flex; justify-content: space-between">
+    <button class="btn modify-btn" on:click={() => (showModal = false)}
+      >Close</button
+    >
+    <button
+      class="modify-button"
+      style="float: right;"
+      disabled={Object.keys(insertData).length === 0}
+      on:click={() => {
+        changeDataHandler({
+          plan_index: planIndex,
+          result_index: modalData?.ccr_index,
+          checklist_index: modalData?.ccr_item_no__ccc_index,
+          change_result: insertData?.change_result,
+          change_option: change_option,
+          change_status_text: insertData?.change_status_text,
+          change_evidence_file: insertData?.change_evidence_file,
+        });
+        change_option = "ONE";
+      }}
+    >
+      저장하기
+    </button>
+  </div>
 </div>
 
 <style>
   * {
     font-size: 16px;
+  }
+  .modify-btn {
+    background-color: #4caf50; /* Green background for modify button */
+    color: white; /* White text */
+  }
+
+  .modify-btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
   }
   .modal {
     background-color: #ffffff;

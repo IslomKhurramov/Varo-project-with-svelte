@@ -392,26 +392,63 @@
 </article>
 
 {#if showModal}
-  <Modal bind:showModal bind:insertData>
+  <!-- <Modal bind:showModal bind:insertData>
     <ModalPage
       bind:modalData
       bind:insertData
       planIndex={search?.plan_index}
       {changeDataHandler}
     />
-  </Modal>
+  </Modal> -->
+
+  <dialog open on:close={() => (showModal = false)}>
+    <ModalPage
+      bind:showModal
+      bind:modalData
+      bind:insertData
+      planIndex={search?.plan_index}
+      {changeDataHandler}
+    />
+  </dialog>
 {/if}
 
 <style>
   * {
     font-size: 16px;
   }
+<<<<<<< HEAD
   thead {
     position: sticky; /* Make the header sticky */
     top: 0; /* Stick the header to the top */
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
+=======
+  dialog {
+    position: fixed;
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    top: 50%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    width: 1103px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: svelte-s7onsa-fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+
+>>>>>>> 70c6ebfc731802facb15f497aeecdbe2b7aa12c1
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;

@@ -475,7 +475,10 @@
       </ul>
     </article>
     <!--ASSET CARDS MENU-->
-    <div class="contentsWrap asset flex col gap-8">
+    <div
+      class="contentsWrap asset flex col gap-8"
+      style="width: calc(100% - 280px);"
+    >
       <article class="contentArea">
         <section class="filterWrap">
           <div>

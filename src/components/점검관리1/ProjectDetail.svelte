@@ -1649,14 +1649,12 @@
   * {
     font-size: 16px;
   }
-<<<<<<< HEAD
   thead {
     position: sticky; /* Make the header sticky */
     top: 0; /* Stick the header to the top */
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
-=======
   dialog {
     position: fixed;
     height: 600px;
@@ -1681,7 +1679,6 @@
     animation: fadeInBackdrop 0.3s ease;
   }
 
->>>>>>> 70c6ebfc731802facb15f497aeecdbe2b7aa12c1
   .tableForm input,
   .tableForm select {
     width: 348px;

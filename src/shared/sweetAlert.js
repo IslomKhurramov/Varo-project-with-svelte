@@ -10,6 +10,16 @@ export function confirmDelete() {
   });
 }
 
+export function confirmSureDelete() {
+  return swal({
+    title: "정말 삭제하시겠습니까?",
+    text: "삭제시 데이터를 복원할수 없습니다. 계속 진행하시겠습니까?",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  });
+}
+
 // Reusable function for unactivate confirmation
 export function confirmUnactivate() {
   return swal({

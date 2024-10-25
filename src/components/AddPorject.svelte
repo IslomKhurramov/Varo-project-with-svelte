@@ -222,7 +222,10 @@
 </script>
 
 <div class="contentsWrap">
-  <div class="contentArea" style="margin: 0;">
+  <div
+    class="contentArea"
+    style="margin: 0; height: calc(100vh - 146px); overflow: auto;"
+  >
     <section class="subTabWrap">
       <a
         href="javascript:void(0);"

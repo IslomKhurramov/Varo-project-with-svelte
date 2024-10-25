@@ -8,7 +8,14 @@ export const getAllPlanLists = async () => {
     });
 
     console.log("getAllPlanLists RESPONSE:", response);
-    return response.data;
+
+    const data = Object.values(response.data).sort(
+      (a, b) => b.ccp_index - a.ccp_index,
+    );
+
+    console.log("++data", data);
+
+    return data;
   } catch (error) {
     console.error("Error fetching plan info:", error);
     throw error;

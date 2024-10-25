@@ -88,215 +88,13 @@
   $: {
     if (projectIndex) selectedPlan = projectIndex;
   }
+
+  $: {
+    console.log("+modalData:", modalData);
+    console.log("+modalErrorData:", modalErrorData);
+    console.log("+uploadStatusModalData:", uploadStatusModalData);
+  }
 </script>
-
-<!-- <div class="container_page">
-  <div class="header">
-    {#if resultStatus?.assets_info?.length > 0}
-      <button
-        on:click={() => {
-          showModal = true;
-          modalData = resultStatus?.assets_info;
-        }}
-      >
-        등록현황조회
-      </button>
-    {:else}
-      <button style="background-color:  #33333342;">등록현황조회</button>
-    {/if}
-
-    {#if resultErrors?.length > 0}
-      <button
-        on:click={() => {
-          showErrorModal = true;
-          modalErrorData = resultErrors;
-        }}
-      >
-        에러내역확인
-      </button>
-    {:else}
-      <button style="background-color:  #33333342;">에러내역확인</button>
-    {/if}
-  </div>
-
-  <div class="table_center">
-    <div class="table_container">
-      <div class="secondLine">
-        <div class="thirdCol">
-          <div class="first_line">
-            <p class="button2 width">프로젝트명</p>
-            <div class="row">
-              <select class="dropdown" bind:value={selectedPlan}>
-                <option value="" selected disabled>선택</option>
-                {#if planList}
-                  {#each planList as plan}
-                    <option value={plan.ccp_index}>{plan.ccp_title}</option>
-                  {/each}
-                {/if}
-              </select>
-            </div>
-          </div>
-          <div class="first_line">
-            <p class="button1 width">자동</p>
-            <p class="button2 width">에이전트결과</p>
-            <input
-              class="input"
-              placeholder={`점검대상 ${uploadStatus?.total_asset_count ?? 0}대중 ${uploadStatus?.uploaded_asset_count ?? 0}대 업로드 완료`}
-              readonly
-            />
-            <button
-              class="save_button"
-              disabled={!selectedPlan}
-              on:click={getResultStatus}
-            >
-              등록내역확인
-            </button>
-          </div>
-          <div class="first_line">
-            <p class="button1 width">수동</p>
-            <p class="button2">점겸결과파일</p>
-            <span class="span_at">
-              {jsonFiles && jsonFiles.length
-                ? `${jsonFiles.length} files uploaded`
-                : " JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)"}
-            </span>
-            <input
-              bind:this={jsonInput}
-              on:change={(event) => {
-                jsonFiles = Array.from(event.target.files);
-              }}
-              class="upload"
-              type="file"
-              accept=".json"
-              multiple
-              hidden
-            />
-            <button
-              class="save_button"
-              on:click={() => {
-                jsonInput.click();
-              }}
-              disabled={!selectedPlan}
-            >
-              파일업로드
-            </button>
-            <button
-              class="save_button"
-              on:click={() => submitNewSystemCommand("JSON", jsonFiles)}
-              disabled={!selectedPlan || !jsonFiles.length}
-            >
-              저장
-            </button>
-          </div>
-          <div class="first_line">
-            <p class="button1 width">수동</p>
-            <p class="button2">네트워크설정파일</p>
-            <span class="span_at">
-              {txtFiles && txtFiles.length
-                ? `${txtFiles.length} files uploaded`
-                : "설정파일(TXT) 파일 업로드"}
-            </span>
-            <input
-              bind:this={txtInput}
-              on:change={(event) => {
-                txtFiles = Array.from(event.target.files);
-              }}
-              class="upload"
-              type="file"
-              accept=".txt"
-              multiple
-              hidden
-            />
-            <button
-              class="save_button"
-              on:click={() => {
-                txtInput.click();
-              }}
-              disabled={!selectedPlan}
-            >
-              파일업로드
-            </button>
-            <button
-              class="save_button"
-              on:click={() => submitNewSystemCommand("TXT", txtFiles)}
-              disabled={!selectedPlan || !txtFiles.length}
-            >
-              저장
-            </button>
-          </div>
-          <div class="first_line">
-            <p class="button1 width">수동</p>
-            <p class="button2">정보보호시스템</p>
-            <span class="span_at">
-              {excelFiles && excelFiles.length
-                ? `${excelFiles.length} files uploaded`
-                : "인터뷰파일(EXCEL) 파일 업로드"}
-            </span>
-            <input
-              bind:this={excelInput}
-              on:change={(event) => {
-                excelFiles = Array.from(event.target.files);
-              }}
-              class="upload"
-              type="file"
-              accept=".xls,.xlsx"
-              multiple
-              hidden
-            />
-            <button
-              class="save_button"
-              on:click={() => {
-                excelInput.click();
-              }}
-              disabled={!selectedPlan}
-            >
-              파일업로드
-            </button>
-            <button
-              class="save_button"
-              on:click={() => submitNewSystemCommand("EXCEL", excelFiles)}
-              disabled={!selectedPlan || !excelFiles.length}
-            >
-              저장
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-<!-- {#if modalData}
-  <ModalDynamic
-    bind:showModal
-    modalWidth={60}
-    modalHeight={modalData?.length > 10 ? 70 : null}
-  >
-    <ResultPopup bind:modalData />
-  </ModalDynamic>
-{/if}
-
-{#if modalErrorData}
-  <ModalDynamic
-    bind:showModal={showErrorModal}
-    modalWidth={80}
-    modalHeight={modalErrorData?.length > 10 ? 70 : null}
-  >
-    <ResultErrorPopup bind:modalErrorData />
-  </ModalDynamic>
-{/if}
-
-{#if uploadStatusModalData}
-  <ModalDynamic
-    bind:showModal={uploadStatusModalData}
-    modalWidth={80}
-    modalHeight={uploadStatusModalData?.uploaded_status?.length > 10
-      ? 70
-      : null}
-  >
-    <ResultUploadStatusPopup bind:uploadStatusModalData />
-  </ModalDynamic>
-{/if} -->
 
 <article class="flex contentArea projectTitle">
   <div class="flex">
@@ -485,33 +283,36 @@
   </div>
 </article>
 
-{#if modalData}
+{#if modalData && modalData?.length !== 0}
   <ModalDynamic
     bind:showModal
     modalWidth={60}
-    modalHeight={modalData?.length > 10 ? 70 : null}
+    modalHeight={modalData?.length > 10 ? 600 : null}
+    bind:modalData
   >
     <ResultPopup bind:modalData />
   </ModalDynamic>
 {/if}
 
-{#if modalErrorData}
+{#if modalErrorData && modalErrorData?.length !== 0}
   <ModalDynamic
     bind:showModal={showErrorModal}
     modalWidth={80}
-    modalHeight={modalErrorData?.length > 10 ? 70 : null}
+    modalHeight={modalErrorData?.length > 10 ? 600 : null}
+    bind:modalData={modalErrorData}
   >
     <ResultErrorPopup bind:modalErrorData />
   </ModalDynamic>
 {/if}
 
-{#if uploadStatusModalData}
+{#if uploadStatusModalData && uploadStatusModalData?.length !== 0}
   <ModalDynamic
     bind:showModal={uploadStatusModalData}
     modalWidth={80}
     modalHeight={uploadStatusModalData?.uploaded_status?.length > 10
-      ? 70
+      ? 600
       : null}
+    bind:modalData={uploadStatusModalData}
   >
     <ResultUploadStatusPopup bind:uploadStatusModalData />
   </ModalDynamic>

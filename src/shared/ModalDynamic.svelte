@@ -4,6 +4,7 @@
   export let modalHeight;
   export let showModalSecond;
   export let showModalRegisteredAdmin;
+  export let modalData;
 
   let dialog;
   let dialogSecond;
@@ -29,15 +30,23 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <dialog
-  style="width: {modalWidth}%; height: {modalHeight}%"
+  style="width: {modalWidth}%; height: {modalHeight}px;"
   bind:this={dialog}
   on:close={() => (showModal = false)}
-  on:click|self={() => dialog.close()}
+  on:click|self={() => {
+    dialog.close();
+    modalData = [];
+  }}
 >
   <div on:click|stopPropagation>
     <slot name="header" />
     <slot />
-    <button on:click={() => dialog.close()}>닫기</button>
+    <button
+      on:click={() => {
+        dialog.close();
+        modalData = [];
+      }}>닫기</button
+    >
   </div>
 </dialog>
 

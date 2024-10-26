@@ -21,6 +21,7 @@
   export let wholeOption;
   export let search;
   export let selectedItems = [];
+  export let loading;
 
   // let isAgenUser = $userData?.userInfo?.user_roletype__role_index == 1;
   let isAgenUser = true;
@@ -173,6 +174,7 @@
             href="javascript:void(0);"
             class={setView == "plan" ? "active" : ""}
             on:click={async () => {
+              loading = true;
               setView = "plan";
               selectedItems = [];
 
@@ -183,6 +185,7 @@
                 const data = await getVulnsOfAsset();
                 tableData = data?.vulns;
               }
+              loading = false;
             }}
           >
             조치계획
@@ -192,6 +195,7 @@
               href="javascript:void(0);"
               class={setView == "result" ? "active" : ""}
               on:click={async () => {
+                loading = true;
                 setView = "result";
                 selectedItems = [];
                 const data = await getFixDoneLists(selectedSendData);
@@ -205,6 +209,7 @@
                     ),
                   ),
                 );
+                loading = false;
               }}
             >
               조치결과

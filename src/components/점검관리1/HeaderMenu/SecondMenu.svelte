@@ -153,16 +153,20 @@
   };
 
   const resetFilters = async () => {
-    search = {
-      plan_index: projectIndex,
-      assessment_target: "",
-      hostname: "",
-      checklist_item_no: "",
-      check_result: "",
-      show_option: "",
-    };
-    await searchDataHandler();
-    await selectPlan(projectIndex);
+    try {
+      search = {
+        plan_index: projectIndex ?? "",
+        assessment_target: "",
+        hostname: "",
+        checklist_item_no: "",
+        check_result: "",
+        show_option: "",
+      };
+      await searchDataHandler();
+      await selectPlan(projectIndex);
+    } catch {
+      resultData = [];
+    }
   };
 
   $: {
@@ -274,7 +278,7 @@
           <col />
           <col />
           <col style="width:8%;" />
-          <col style="width:8%;" />
+          <col style="width:165px;" />
         </colgroup>
         <thead>
           <tr>
@@ -329,7 +333,7 @@
                 <td class="text-center" style="font-size: 16px;">
                   <div class="flex gap-4" style="justify-content: center;">
                     <select
-                      style="font-size: 16px;"
+                      style="font-size: 16px; width: 70px;"
                       class="xs"
                       on:change={(e) =>
                         changeItemResult({
@@ -378,7 +382,7 @@
                       </option>
                     </select>
                     <select
-                      style="font-size: 16px;"
+                      style="font-size: 16px; width: 70px;"
                       class="xs"
                       on:change={(e) => {
                         change_option = e.target.value;

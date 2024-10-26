@@ -515,6 +515,7 @@
 
         {#if currentView === "default" && !wholePage}
           <MainPageProject
+            bind:loading
             bind:tableData
             bind:vulnerabilityStatusValue
             bind:actionStatusValue

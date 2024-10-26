@@ -402,7 +402,10 @@
     transform: scale(1.2);
     margin-top: 10px;
   }
-
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
+  }
   .first_check_cont {
     display: flex;
     flex-direction: row;

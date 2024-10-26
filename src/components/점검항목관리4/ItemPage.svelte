@@ -154,9 +154,12 @@
   }
 </script>
 
-<div style="margin-top: 20px;">
-  <article class="contentArea mt-0">
-    <p style="padding:15px; ">점검그룹</p>
+<div class="contentArea" style="height: 75vh; overflow-y:auto;">
+  <article
+    class="contentArea"
+    style="height: 70vh; padding-top:0px; padding-left: 0px;padding-right:0px"
+  >
+    <p style="padding-bottom:15px; ">점검그룹</p>
 
     <div class="tableListWrap table1">
       <table class="tableList hdBorder font-size: 16px;">
@@ -187,7 +190,7 @@
               <td
                 class="text-center"
                 style=" word-break: normal; white-space: pre-wrap;    
-    overflow-wrap: break-word;">{data.ccg_support_part}</td
+      overflow-wrap: break-word;">{data.ccg_support_part}</td
               >
               <td class="text-center">{formatDate(data.ccg_createdate)}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -284,13 +287,13 @@
                       /></td
                     >
                   {/if}
-                  <td class="text-center">{index + 1}</td>
-                  <td class="text-center">{selectedCategory}</td>
-                  <td class="text-center">{item.ccc_item_group}</td>
-                  <td class="text-center">{item.ccc_item_no}</td>
-                  <td class="text-center">{item.ccc_item_title}</td>
-                  <td class="text-center">{item.ccc_item_level}</td>
-                  <td>{item.ccc_item_criteria}</td>
+                  <td class="text-center line-height">{index + 1}</td>
+                  <td class="text-center line-height">{selectedCategory}</td>
+                  <td class="text-center line-height">{item.ccc_item_group}</td>
+                  <td class="text-center line-height">{item.ccc_item_no}</td>
+                  <td class="text-center line-height">{item.ccc_item_title}</td>
+                  <td class="text-center line-height">{item.ccc_item_level}</td>
+                  <td class="line-height">{item.ccc_item_criteria}</td>
                 </tr>
               {/each}
             {/if}
@@ -321,6 +324,9 @@
 <style>
   * {
     font-size: 16px;
+  }
+  .line-height {
+    line-height: 23px;
   }
   /****Modal Container*/
   dialog {

@@ -133,13 +133,13 @@
               {#if historyItem.plans}
                 <tr>
                   <td class="text-center">{index + 1}</td>
-                  <td class="text-center"
+                  <td class="text-center line-height"
                     >{historyItem.plans.ccp_index__ccp_title}</td
                   >
-                  <td class="text-center"
+                  <td class="text-center line-height"
                     >{historyItem.plans.asg_index__asg_title}</td
                   >
-                  <td class="text-center"
+                  <td class="text-center line-height"
                     >{new Intl.DateTimeFormat("ko-KR", {
                       year: "numeric",
                       month: "long",
@@ -153,17 +153,17 @@
                   {#if detailofAsset[0]?.ast_security_point === -1}
                     <td class="text-center">0</td>
                   {:else}
-                    <td class="text-center"
+                    <td class="text-center line-height"
                       >{detailofAsset[0]?.ast_security_point}</td
                     >
                   {/if}
                   {#if historyItem.plans.ast_security_point === -1}
-                    <td class="text-center"
+                    <td class="text-center line-height"
                       >{historyItem.plans
                         .ast_uuid__ast_target__cct_target}(0)</td
                     >
                   {:else}
-                    <td class="text-center"
+                    <td class="text-center line-height"
                       >{historyItem.plans
                         .ast_uuid__ast_target__cct_target}({historyItem.plans
                         .ast_security_point})</td
@@ -303,21 +303,23 @@
             {#each filteredVulns as vuln, vulnIndex}
               <tr on:click={() => itemClickHandle(vuln)}>
                 <td class="wordBreak text-center">{vulnIndex + 1}</td>
-                <td>{detailofAsset[0]?.ast_hostname || "No Title"}</td>
-                <td>
+                <td class="line-height"
+                  >{detailofAsset[0]?.ast_hostname || "No Title"}</td
+                >
+                <td class="line-height">
                   [{vuln?.ccr_item_no__ccc_item_no ||
                     "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
                     "No Title"}
                 </td>
                 <td class="wordBreak">
                   <div class="checklist">
-                    <p>
+                    <p class="line-height">
                       {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
                     </p>
                   </div>
                 </td>
                 <td class="wordBreak">
-                  <div class="status-container">
+                  <div class="status-container line-height">
                     {vuln?.ccr_item_status
                       ? vuln.ccr_item_status.trim()
                       : "No Status"}
@@ -367,6 +369,9 @@
 </main>
 
 <style>
+  .line-height {
+    line-height: 23px;
+  }
   dialog {
     position: fixed;
     top: 50%;

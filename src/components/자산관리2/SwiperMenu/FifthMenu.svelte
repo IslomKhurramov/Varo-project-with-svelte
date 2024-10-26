@@ -109,7 +109,7 @@
         style="height: 80vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
       >
         {#if allVulns.length > 0}
-          <table class="tableList hdBorder tableScroll">
+          <table class="tableList hdBorder tableScroll table2">
             <colgroup>
               <col style="width:90px;" />
               <col style="width:110px;" />
@@ -132,21 +132,23 @@
               {#each allVulns as vuln, vulnIndex}
                 <tr on:click={() => itemClickHandle(vuln)}>
                   <td class=" wordBreak text-center">{vulnIndex + 1}</td>
-                  <td>{assetDetails.ast_hostname || "No Title"}</td>
-                  <td>
+                  <td class="line-height"
+                    >{assetDetails.ast_hostname || "No Title"}</td
+                  >
+                  <td class="line-height">
                     [{vuln?.ccr_item_no__ccc_item_no ||
                       "No Item No"}]{vuln?.ccr_item_no__ccc_item_title ||
                       "No Title"}
                   </td>
                   <td class=" wordBreak">
                     <div class="checklist">
-                      <p>
+                      <p class="line-height">
                         {vuln?.ccr_item_no__ccc_item_criteria || "No Criteria"}
                       </p>
                     </div>
                   </td>
                   <td class="wordBreak">
-                    <div class="status-container">
+                    <div class="status-container line-height">
                       {vuln?.ccr_item_status
                         ? vuln.ccr_item_status.trim()
                         : "No Status"}
@@ -184,7 +186,7 @@
       <ModalCcEhistory {selectedItem} />
 
       <button
-        class="secondary-button"
+        class="btn modify-btn"
         style="margin-top:10px;"
         on:click={() => (showItemDetail = false)}>Close</button
       >
@@ -193,6 +195,13 @@
 </main>
 
 <style>
+  .line-height {
+    line-height: 23px;
+  }
+  .modify-btn {
+    background-color: #4caf50; /* Green background for modify button */
+    color: white; /* White text */
+  }
   dialog {
     position: fixed;
     top: 50%;
@@ -218,6 +227,9 @@
   .tableListWrap th,
   td {
     font-size: 16px;
+  }
+  .table1 td:hover {
+    background-color: rgba(242, 242, 242, 1);
   }
   .tableListWrap .hdBorder td {
     font-size: 16px;
@@ -268,10 +280,7 @@
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
-  tr:hover {
-    background-color: rgba(242, 242, 242, 1);
-    cursor: pointer;
-  }
+
   /* If using FontAwesome or similar icon fonts */
   @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
 </style>

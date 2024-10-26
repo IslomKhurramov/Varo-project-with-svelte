@@ -197,14 +197,14 @@
                       /></td
                     >
                   {/if}
-                  <td class="text-center">{index + 1}</td>
-                  <td class="text-center">{selectedCategory}</td>
-                  <td class="text-center">{item.ccc_item_group}</td>
-                  <td class="text-center">{item.ccc_item_no}</td>
-                  <td class="text-center">{item.ccc_item_title}</td>
-                  <td class="text-center">{item.ccc_item_level}</td>
+                  <td class="text-center line-height">{index + 1}</td>
+                  <td class="text-center line-height">{selectedCategory}</td>
+                  <td class="text-center line-height">{item.ccc_item_group}</td>
+                  <td class="text-center line-height">{item.ccc_item_no}</td>
+                  <td class="text-center line-height">{item.ccc_item_title}</td>
+                  <td class="text-center line-height">{item.ccc_item_level}</td>
                   <td>
-                    <pre>
+                    <pre class="line-height">
                       {item.ccc_item_criteria}
                     </pre>
                   </td>
@@ -225,6 +225,9 @@
 </div>
 
 <style>
+  .line-height {
+    line-height: 23px;
+  }
   .contentArea {
     height: 100%;
   }

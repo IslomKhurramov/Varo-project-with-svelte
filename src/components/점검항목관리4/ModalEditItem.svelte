@@ -103,151 +103,155 @@
   }
 </script>
 
-<article class="contentArea mt-0">
-  <!-- Menu for selecting the active slide -->
-  {#if showSlide}
-    <section bind:this={swiperContainer} class="topCon swiper-container">
-      <div class="menu-container" style="margin-top:20px">
-        <button
-          class="arrow-btn"
-          id="prevBtn"
-          on:click={() => handleScroll("prev")}>◀</button
-        >
+<div class="contentArea" style="height: 75vh; overflow-y:auto; padding-top:0px">
+  <article
+    class="contentArea"
+    style="height: 70vh; padding-top:0px; padding-left: 0px;padding-right:0px; margin-top:0px"
+  >
+    {#if showSlide}
+      <section bind:this={swiperContainer} class="topCon swiper-container">
+        <div class="menu-container" style="margin-top:20px">
+          <button
+            class="arrow-btn"
+            id="prevBtn"
+            on:click={() => handleScroll("prev")}>◀</button
+          >
 
-        <div class="menu-wrapper-container">
-          <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
-            {#each slides as slide}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                value={slide.ccc_item_no}
-                name={slide}
-                class="menu-item {activeAsset &&
-                activeAsset.ccc_item_no === slide.ccc_item_no
-                  ? 'active'
-                  : ''}"
-                on:click={() => handleSlideclick(slide)}
+          <div class="menu-wrapper-container">
+            <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
+              {#each slides as slide}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div
+                  value={slide.ccc_item_no}
+                  name={slide}
+                  class="menu-item {activeAsset &&
+                  activeAsset.ccc_item_no === slide.ccc_item_no
+                    ? 'active'
+                    : ''}"
+                  on:click={() => handleSlideclick(slide)}
+                >
+                  {slide.ccc_item_no}
+                </div>
+              {/each}
+            </div>
+          </div>
+
+          <button
+            id="nextBtn"
+            class="arrow-btn"
+            on:click={() => handleScroll("next")}>▶</button
+          >
+        </div>
+      </section>
+    {/if}
+
+    <div class="modal" style="margin-bottom: 20px;">
+      <table style="margin-bottom: 20px;">
+        <tbody>
+          {#if selectedItem}
+            <tr>
+              <th class="center-align">점검항목</th>
+              <td class="line-height">{selectedCategory}</td>
+            </tr>
+            <tr>
+              <th class="center-align">항목그룹</th>
+              <td class="line-height">{selectedItem.ccc_item_group}</td>
+            </tr>
+            <tr>
+              <th class="center-align">정검목적</th>
+              <td class="line-height">{selectedItem.ccc_check_purpose}</td>
+            </tr>
+            <tr>
+              <th class="center-align">보안위협</th>
+              <td class="line-height">{selectedItem.ccc_security_threat}</td>
+            </tr>
+            <tr>
+              <th class="center-align">점검내용</th>
+              <td class="line-height">{selectedItem.ccc_check_content}</td>
+            </tr>
+            <tr>
+              <th class="center-align">대상시스템</th>
+              <td class="line-height">{selectedItem.ccc_target_system}</td>
+            </tr>
+            <tr>
+              <th class="center-align">식별코드</th>
+              <td class="line-height">{selectedItem.ccc_item_no}</td>
+            </tr>
+            <tr>
+              <th class="center-align">점검항목</th>
+              <td class="line-height">{selectedItem.ccc_item_title}</td>
+            </tr>
+            <tr>
+              <th class="center-align">위험도</th>
+              <td class="line-height">{selectedItem.ccc_item_level}</td>
+            </tr>
+            <tr>
+              <th class="center-align">평가기준</th>
+              <td class="line-height">
+                {@html selectedItem.ccc_item_criteria.replace(/\n/g, "<br/>")}
+
+                {#if isNewlyCreatedChecklist}
+                  <td class="new_input">
+                    <div class="first_col">
+                      <p>점검항목</p>
+                      <input type="text" />
+                    </div>
+                    <div class="first_col">
+                      <p>점검데이터</p>
+                      <input type="text" />
+                    </div>
+                  </td>
+                {/if}
+              </td>
+            </tr>
+            <tr>
+              <th class="center-align">조치방안</th>
+              <td
+                class="line-height"
+                style="display: flex; height: 100px;width:auto; overflow-x:hidden; overflow-y: auto; flex-direction: column; "
+                >{selectedItem.ccc_mitigation_method}</td
               >
-                {slide.ccc_item_no}
-              </div>
-            {/each}
+            </tr>
+            <tr>
+              <th class="center-align">조치예시</th>
+              <td
+                style="display: flex; height: 100px;width:auto; overflow-y: auto; overflow-x:hidden; flex-direction: column;"
+                class="line-height"
+              >
+                {@html selectedItem.ccc_mitigation_example.replace(
+                  /\n/g,
+                  "<br/>",
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th class="center-align">조치시영향도</th>
+              <td class="line-height">{selectedItem.ccc_impact || "N/A"}</td>
+            </tr>
+          {:else}
+            <tr>
+              <td class="line-height" colspan="2">No data available</td>
+            </tr>
+          {/if}
+        </tbody>
+      </table>
+      {#if closeShowModal}
+        <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
+      {/if}
+      {#if isNewlyCreatedChecklist}
+        <div class="buttons">
+          <div class="buttonGroup">
+            <button class="btn modify-btn">수정하기</button>
+            <button on:click={deleteSelectedItem} class="btn delete-btn"
+              >삭제하기</button
+            >
+            <button class="btn close-btn">창닫기</button>
           </div>
         </div>
-
-        <button
-          id="nextBtn"
-          class="arrow-btn"
-          on:click={() => handleScroll("next")}>▶</button
-        >
-      </div>
-    </section>
-  {/if}
-
-  <div class="modal">
-    <table>
-      <tbody>
-        {#if selectedItem}
-          <tr>
-            <th class="center-align">점검항목</th>
-            <td class="line-height">{selectedCategory}</td>
-          </tr>
-          <tr>
-            <th class="center-align">항목그룹</th>
-            <td class="line-height">{selectedItem.ccc_item_group}</td>
-          </tr>
-          <tr>
-            <th class="center-align">정검목적</th>
-            <td class="line-height">{selectedItem.ccc_check_purpose}</td>
-          </tr>
-          <tr>
-            <th class="center-align">보안위협</th>
-            <td class="line-height">{selectedItem.ccc_security_threat}</td>
-          </tr>
-          <tr>
-            <th class="center-align">점검내용</th>
-            <td class="line-height">{selectedItem.ccc_check_content}</td>
-          </tr>
-          <tr>
-            <th class="center-align">대상시스템</th>
-            <td class="line-height">{selectedItem.ccc_target_system}</td>
-          </tr>
-          <tr>
-            <th class="center-align">식별코드</th>
-            <td class="line-height">{selectedItem.ccc_item_no}</td>
-          </tr>
-          <tr>
-            <th class="center-align">점검항목</th>
-            <td class="line-height">{selectedItem.ccc_item_title}</td>
-          </tr>
-          <tr>
-            <th class="center-align">위험도</th>
-            <td class="line-height">{selectedItem.ccc_item_level}</td>
-          </tr>
-          <tr>
-            <th class="center-align">평가기준</th>
-            <td class="line-height">
-              {@html selectedItem.ccc_item_criteria.replace(/\n/g, "<br/>")}
-
-              {#if isNewlyCreatedChecklist}
-                <td class="new_input">
-                  <div class="first_col">
-                    <p>점검항목</p>
-                    <input type="text" />
-                  </div>
-                  <div class="first_col">
-                    <p>점검데이터</p>
-                    <input type="text" />
-                  </div>
-                </td>
-              {/if}
-            </td>
-          </tr>
-          <tr>
-            <th class="center-align">조치방안</th>
-            <td
-              class="line-height"
-              style="display: flex; height: 100px;width:auto; overflow-x:hidden; overflow-y: auto; flex-direction: column; "
-              >{selectedItem.ccc_mitigation_method}</td
-            >
-          </tr>
-          <tr>
-            <th class="center-align">조치예시</th>
-            <td
-              style="display: flex; height: 100px;width:auto; overflow-y: auto; overflow-x:hidden; flex-direction: column;"
-              class="line-height"
-            >
-              {@html selectedItem.ccc_mitigation_example.replace(
-                /\n/g,
-                "<br/>",
-              )}
-            </td>
-          </tr>
-          <tr>
-            <th class="center-align">조치시영향도</th>
-            <td class="line-height">{selectedItem.ccc_impact || "N/A"}</td>
-          </tr>
-        {:else}
-          <tr>
-            <td class="line-height" colspan="2">No data available</td>
-          </tr>
-        {/if}
-      </tbody>
-    </table>
-    {#if closeShowModal}
-      <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
-    {/if}
-    {#if isNewlyCreatedChecklist}
-      <div class="buttons">
-        <div class="buttonGroup">
-          <button class="btn modify-btn">수정하기</button>
-          <button on:click={deleteSelectedItem} class="btn delete-btn"
-            >삭제하기</button
-          >
-          <button class="btn close-btn">창닫기</button>
-        </div>
-      </div>
-    {/if}
-  </div>
-</article>
+      {/if}
+    </div>
+  </article>
+</div>
 
 <style>
   * {
@@ -258,7 +262,7 @@
   }
 
   .line-height {
-    line-height: 30px;
+    line-height: 23px;
   }
   .modal {
     background-color: #ffffff;

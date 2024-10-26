@@ -328,6 +328,6 @@
   }
 
   .line-height {
-    line-height: 30px;
+    line-height: 23px;
   }
 </style>

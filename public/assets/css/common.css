@@ -275,6 +275,7 @@ th.pl-20 {
 
 /***************** HEADER *****************/
 #wrap {
+  height: 100vh;
   width: 100%;
   margin: 0 auto;
   display: flex;

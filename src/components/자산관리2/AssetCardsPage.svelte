@@ -256,7 +256,7 @@
               </button>
               <button
                 type="button"
-                title="이전(다른그룹으로)"
+                title="그룹이동"
                 class="btnImg"
                 on:click|stopPropagation={() => {
                   showModalChange = true;

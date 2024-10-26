@@ -85,4 +85,8 @@
   * {
     font-size: 16px;
   }
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
+  }
 </style>

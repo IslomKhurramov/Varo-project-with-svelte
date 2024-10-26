@@ -510,7 +510,10 @@
     background-color: #f4f4f4;
     transition-duration: 0.3s;
   }
-
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
+  }
   .contentsWrap::-webkit-scrollbar {
     display: none;
   }

@@ -135,6 +135,10 @@
   a {
     position: relative;
   }
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
+  }
 
   /* Tooltip styling */
   .tooltip {

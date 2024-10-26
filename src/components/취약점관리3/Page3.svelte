@@ -513,7 +513,10 @@
     cursor: pointer;
     width: 24px;
   }
-
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
+  }
   /* Tooltip styling */
   .tooltip {
     visibility: hidden; /* Hidden by default */

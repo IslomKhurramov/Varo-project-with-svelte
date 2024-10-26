@@ -212,155 +212,165 @@
 
 <!-- Form to display and edit the selected asset and its targets -->
 <form on:submit|preventDefault={submit} class="container">
-  <div class="header_group">
-    <div class="header">
-      <span>운영제체</span>
-      <div class="select">
-        {#if selectedAsset.assessment_target_system && Array.isArray(selectedAsset.assessment_target_system)}
-          {#each selectedAsset.assessment_target_system as target}
-            {#if target && typeof target === "object"}
-              {#each Object.entries(target) as [key, value]}
-                {#if value}
-                  <p>{key}</p>
+  <div class="bg-gray">
+    <article class="formWrap xs font13">
+      <div class="formControlWrap">
+        <div class="formControl">
+          <label>운영제체</label>
+          <div class="input-like">
+            {#if selectedAsset.assessment_target_system && Array.isArray(selectedAsset.assessment_target_system)}
+              {#each selectedAsset.assessment_target_system as target}
+                {#if target && typeof target === "object"}
+                  {#each Object.entries(target) as [key, value]}
+                    {#if value}
+                      <span class="data-item">{key}</span>
+                    {/if}
+                  {/each}
                 {/if}
               {/each}
             {/if}
-          {/each}
+          </div>
+        </div>
+      </div>
+
+      <div class="formControlWrap">
+        <div class="formControl">
+          <label>자산명</label>
+          <div class="input-like">
+            <p>{selectedAsset.ast_hostname}</p>
+          </div>
+        </div>
+      </div>
+      <div class="formControlWrap">
+        <div class="formControl">
+          <label>아이피주소</label>
+          <div class="input-like">
+            <p>{selectedAsset.ast_ipaddr}</p>
+          </div>
+        </div>
+      </div>
+      <div class="formControlWrap">
+        <div class="formControl">
+          <label>승인여부</label>
+          <div class="input-like">
+            {#if selectedAsset.ast_approve_status === 1}
+              <p>승인</p>
+            {:else}
+              <p>미승인</p>
+            {/if}
+          </div>
+        </div>
+      </div>
+
+      <!-- Editable target systems from selectedAsset -->
+      {#each targetData.targets as target}
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            checked={isTargetChecked(target.cct_target)}
+            on:change={handleCheckboxChange(target)}
+          />
+          <!-- svelte-ignore a11y-label-has-associated-control -->
+          <label>{target.cct_target}</label>
+        </div>
+        {#if target.cct_target === "NETWORK" && isNetworkChecked}
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>IP</label>
+            <input type="text" bind:value={network.ipaddress} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>PORT</label>
+            <input type="text" bind:value={network.port} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>USERID</label>
+            <input type="text" bind:value={network.userid} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>USERPW</label>
+            <input type="text" bind:value={network.userpw} />
+          </div>
         {/if}
-      </div>
-    </div>
-    <div class="header">
-      <span>자산명</span>
-      <div class="select">
-        <p>{selectedAsset.ast_hostname}</p>
-      </div>
-    </div>
-    <div class="header">
-      <span>아이피주소</span>
-      <div class="select">
-        <p>{selectedAsset.ast_ipaddr}</p>
-      </div>
-    </div>
-    <div class="header">
-      <span>승인여부</span>
-      <div class="select">
-        {#if selectedAsset.ast_approve_status === 1}
-          <p>승인</p>
-        {:else}
-          <p>미승인</p>
+
+        {#if target.cct_target === "DBMS" && isDbmsChecked}
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>DBNAME</label>
+            <input type="text" bind:value={dbmsValues.dbname} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>USERMODE</label>
+            <input type="text" bind:value={dbmsValues.usermode} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>PW</label>
+            <input type="text" bind:value={dbmsValues.pw} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>IP</label>
+            <input type="text" bind:value={dbmsValues.ip} />
+          </div>
+          <div class="input-group">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+
+            <label>PORT</label>
+            <input type="text" bind:value={dbmsValues.port} />
+          </div>
         {/if}
-      </div>
+
+        {#if (target.cct_target === "WEB" || target.cct_target === "WAS") && (target.cct_target === "WEB" ? isWebChecked : isWasChecked)}
+          {#if target.cct_target === "WEB"}
+            <div class="input-group">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+
+              <label>APP NAME</label>
+              <input type="text" bind:value={web.webApplicatioName} />
+            </div>
+            <div class="input-group">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+
+              <label>INSTALLED PATH</label>
+              <input type="text" bind:value={web.installedPath} />
+            </div>
+          {/if}
+          {#if target.cct_target === "WAS"}
+            <div class="input-group">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+
+              <label>APP NAME</label>
+              <input type="text" bind:value={was.webApplicatioName} />
+            </div>
+            <div class="input-group">
+              <!-- svelte-ignore a11y-label-has-associated-control -->
+
+              <label>INSTALLED PATH</label>
+              <input type="text" bind:value={was.installedPath} />
+            </div>
+          {/if}
+        {/if}
+      {/each}
+    </article>
+    <div class="button-group">
+      <button class="btn submit" type="submit">Submit</button>
+      <button class="btn cancel" type="button" on:click|preventDefault={cancel}>
+        Cancel
+      </button>
     </div>
-  </div>
-
-  <!-- Editable target systems from selectedAsset -->
-  {#each targetData.targets as target}
-    <div class="checkbox-group">
-      <input
-        type="checkbox"
-        checked={isTargetChecked(target.cct_target)}
-        on:change={handleCheckboxChange(target)}
-      />
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>{target.cct_target}</label>
-    </div>
-    {#if target.cct_target === "NETWORK" && isNetworkChecked}
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>IP</label>
-        <input type="text" bind:value={network.ipaddress} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>PORT</label>
-        <input type="text" bind:value={network.port} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>USERID</label>
-        <input type="text" bind:value={network.userid} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>USERPW</label>
-        <input type="text" bind:value={network.userpw} />
-      </div>
-    {/if}
-
-    {#if target.cct_target === "DBMS" && isDbmsChecked}
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>DBNAME</label>
-        <input type="text" bind:value={dbmsValues.dbname} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>USERMODE</label>
-        <input type="text" bind:value={dbmsValues.usermode} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>PW</label>
-        <input type="text" bind:value={dbmsValues.pw} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>IP</label>
-        <input type="text" bind:value={dbmsValues.ip} />
-      </div>
-      <div class="input-group">
-        <!-- svelte-ignore a11y-label-has-associated-control -->
-
-        <label>PORT</label>
-        <input type="text" bind:value={dbmsValues.port} />
-      </div>
-    {/if}
-
-    {#if (target.cct_target === "WEB" || target.cct_target === "WAS") && (target.cct_target === "WEB" ? isWebChecked : isWasChecked)}
-      {#if target.cct_target === "WEB"}
-        <div class="input-group">
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-
-          <label>APP NAME</label>
-          <input type="text" bind:value={web.webApplicatioName} />
-        </div>
-        <div class="input-group">
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-
-          <label>INSTALLED PATH</label>
-          <input type="text" bind:value={web.installedPath} />
-        </div>
-      {/if}
-      {#if target.cct_target === "WAS"}
-        <div class="input-group">
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-
-          <label>APP NAME</label>
-          <input type="text" bind:value={was.webApplicatioName} />
-        </div>
-        <div class="input-group">
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-
-          <label>INSTALLED PATH</label>
-          <input type="text" bind:value={was.installedPath} />
-        </div>
-      {/if}
-    {/if}
-  {/each}
-
-  <div class="button-group">
-    <button class="btn submit" type="submit">Submit</button>
-    <button class="btn cancel" type="button" on:click|preventDefault={cancel}>
-      Cancel
-    </button>
   </div>
 </form>
 
@@ -373,6 +383,7 @@
     border-radius: 10px;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    z-index: 99999;
   }
 
   .header_group {
@@ -380,7 +391,34 @@
     flex-direction: column;
     gap: 4px;
   }
+  .input-like {
+    display: inline-block; /* Keeps the element inline */
+    border: 1px solid #ccc; /* Border similar to an input */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px; /* Padding inside the element */
+    width: 100%; /* Full width, or adjust as needed */
+    max-width: 400px; /* Optional max width */
+    background-color: #ffffff; /* White background */
+    color: #333; /* Text color */
+    font-size: 16px; /* Font size */
+    cursor: default; /* Cursor changes to default */
+    user-select: none; /* Prevent text selection */
+    overflow: hidden; /* Hide overflow */
+  }
 
+  .data-item {
+    display: inline-block; /* Ensure items are in-line */
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflowed content */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+    margin-right: 10px; /* Space between items */
+    font-size: 13px;
+  }
+
+  .input-like p {
+    margin: 0;
+    font-size: 13px; /* Prevent text wrapping */
+  }
   .header {
     display: flex;
     justify-content: space-between;

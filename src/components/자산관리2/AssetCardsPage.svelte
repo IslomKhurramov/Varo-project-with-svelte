@@ -542,7 +542,6 @@
     display: flex; /* Align buttons in a row */
     gap: 8px; /* Space between buttons */
     position: relative; /* Ensure parent has no conflicting z-index */
-    z-index: auto;
   }
 
   .btnImg {
@@ -552,31 +551,6 @@
     border: none; /* Remove default button border */
     background-color: transparent; /* Transparent background */
     cursor: pointer; /* Change cursor on hover */
-    z-index: 1;
-  }
-  .tooltip {
-    visibility: hidden;
-    width: 150px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    text-align: center;
-    border-radius: 4px;
-    padding: 5px;
-    position: fixed; /* Changed to fixed */
-    bottom: auto; /* Adjusted */
-    left: auto; /* Adjusted */
-    transform: translate(-50%, -100%); /* Adjust as necessary */
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    z-index: 10000; /* Ensure a high z-index */
-    pointer-events: none; /* Prevent tooltip from interfering with clicks */
-  }
-
-  .btnImg:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-    z-index: 9999;
-    position: absolute;
   }
 
   /* Adjust icon size */

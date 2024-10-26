@@ -32,7 +32,7 @@
   let approve_status = "";
   let scrollAmount = 0;
   let itemWidth = 146;
-  let menuWidth = 100; // Total width of the menu
+  let menuWidth = 1260; // Total width of the menu
 
   let menuWrapper;
   export let selectedAsset;
@@ -649,10 +649,6 @@
     flex-shrink: 0; /* Prevents shrinking of slides */
     width: auto; /* or specific widths depending on how many slides you want to show */
   }
-  .swiper-container {
-    z-index: 1; /* Ensure Swiper is layered correctly */
-  }
-
   .modal-content {
     z-index: 100; /* Set higher z-index for modal */
   }

@@ -382,7 +382,7 @@
               <col style="width:70px;" />
               <col style="width:100px;" />
               {#if isAgenUser}
-                <col style="width:50px;" />
+                <col style="width:90px;" />
               {/if}
             </colgroup>
             <thead>
@@ -492,7 +492,7 @@
                         }}
                       >
                         <select
-                          style="font-size: 16px;"
+                          style="font-size: 16px; width:70px"
                           class="xs"
                           on:change={(e) => {
                             if (setView == "plan") {
@@ -573,7 +573,12 @@
     background-color: #f4f4f4;
     transition-duration: 0.3s;
   }
-
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
   table td,
   th {
     font-size: 16px;

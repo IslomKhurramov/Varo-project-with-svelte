@@ -880,4 +880,9 @@
     width: 10px;
     height: 10px;
   }
+
+  .excel-img {
+    filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
+      brightness(100%) contrast(98%);
+  }
 </style>

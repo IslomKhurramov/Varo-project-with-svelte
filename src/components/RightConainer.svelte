@@ -148,6 +148,21 @@
     link.click();
     document.body.removeChild(link);
   }
+
+  async function resetFilters() {
+    selectedStatus = "";
+    selectedScheduleRange = "";
+    selectedOS = "";
+    try {
+      projectData = await getAllPlanLists();
+      projectArray = Object.values(projectData);
+      filteredProjects = projectArray;
+    } catch (err) {
+      error = err.message;
+    } finally {
+      loading = false;
+    }
+  }
   $: {
     console.log("tabmenu:", tabMenu);
   }
@@ -261,8 +276,16 @@
               <option value="NETWORK">Network</option>
               <option value="DBMS">Dbms</option>
             </select>
+            <button
+              type="button"
+              class="btn btnPrimary"
+              on:click={resetFilters}
+            >
+              <img src="./assets/images/reset.png" alt="search" />
+              초기화
+            </button>
             <button type="button" class="btn btnPrimary" on:click={downloadCSV}>
-              <img src="./assets/images/icon/download.svg" />
+              <img src="./assets/images/icon/download.svg" class="excel-img" />
               엑셀 다운로드
             </button>
           </div>
@@ -526,5 +549,10 @@
     overflow: auto;
     height: 77vh;
     padding-bottom: 60px;
+  }
+
+  .excel-img {
+    filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
+      brightness(100%) contrast(98%);
   }
 </style>

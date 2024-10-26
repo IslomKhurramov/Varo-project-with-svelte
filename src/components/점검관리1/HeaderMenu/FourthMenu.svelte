@@ -30,6 +30,17 @@
     logData = await getAuditNLog(search);
   };
 
+  const resetFilters = async () => {
+    search = {
+      plan_index: projectIndex,
+      asset_name: "",
+      order_user: "",
+      search_start_date: "",
+      search_end_date: "",
+    };
+    await searchDataHandler();
+  };
+
   $: {
     if (projectIndex && !logData) {
       search = { ...search, plan_index: projectIndex };
@@ -39,94 +50,6 @@
     }
   }
 </script>
-
-<!-- <main>
-  <div class="firstLine">
-    <div class="dropdown-group">
-      <div class="dropdown-container">
-        <label for="project">프로젝트:</label>
-        <select
-          id="project"
-          bind:value={search.plan_index}
-          on:change={searchDataHandler}
-        >
-          <option value="" selected disabled>선택</option>
-          {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
-            {#each searchFilters?.plans as plan}
-              <option value={plan.ccp_index}>{plan.ccp_title}</option>
-            {/each}
-          {/if}
-        </select>
-      </div>
-      <div class="dropdown-container">
-        <label for="target">수행자:</label>
-        <select
-          id="target"
-          bind:value={search.order_user}
-          on:change={searchDataHandler}
-        >
-          <option value="" selected>선택</option>
-          {#if searchFilters?.users && searchFilters?.users?.length !== 0}
-            {#each searchFilters?.users as user}
-              <option value={user.user_name}>{user.user_name}</option>
-            {/each}
-          {/if}
-        </select>
-      </div>
-      <div class="dropdown-container">
-        <label for="target">날짜:</label>
-        <div>
-          <input
-            type="date"
-            bind:value={search.search_start_date}
-            on:change={searchDataHandler}
-          />
-          ~
-          <input
-            type="date"
-            bind:value={search.search_end_date}
-            on:change={searchDataHandler}
-          />
-        </div>
-      </div>
-    </div>
-    <div class="button-group">
-      <button class="firstlineButton">엑셀저장</button>
-    </div>
-  </div>
-  <table>
-    <thead>
-      <tr class="first_line">
-        <th>순번</th>
-        <th>프로젝트NO</th>
-        <th>자산명</th>
-        <th>분류코드</th>
-        <th>로그내용</th>
-        <th>수행자</th>
-        <th>날짜</th>
-        <th>비고</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#if logData && logData.length !== 0}
-        {#each logData as data, index}
-          <tr>
-            <td>{index + 1}</td>
-            <td>{data?.ccp_index}</td>
-            <td>{data?.ast_uuid}</td>
-            <td>{data?.his_type}</td>
-            <td>{data?.his_orig_data}</td>
-            <td>{data?.his_order_user}</td>
-            <td>{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td>
-            <td>
-              <Tooltip text={data?.his_full_data}>비고</Tooltip>
-            </td>
-          </tr>
-        {/each}
-      {/if}
-    </tbody>
-  </table>
-</main> -->
 
 <article class="contentArea">
   <section class="filterWrap">
@@ -178,9 +101,10 @@
           />
         </div>
       </div>
-      <!-- <button type="button" class="btn btnPrimary"
-        ><img src="./assets/images/icon/search.svg" />조회</button
-      > -->
+      <button type="button" class="btn btnPrimary" on:click={resetFilters}>
+        <img src="./assets/images/reset.png" alt="search" />
+        초기화
+      </button>
     </div>
   </section>
   <section class="tableWrap" style="height: 69vh; overflow: auto;">

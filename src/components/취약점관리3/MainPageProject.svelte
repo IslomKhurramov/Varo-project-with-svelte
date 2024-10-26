@@ -106,7 +106,7 @@
       await successAlert(result);
 
       if (showProject) {
-        const plans = await getVulnsOfPlan(selectedSendData);
+        const plans = await getVulnsOfAsset(selectedSendData);
         tableData = plans?.vulns;
       } else {
         const assets = await getVulnsOfAsset(selectedSendData);
@@ -177,7 +177,7 @@
               selectedItems = [];
 
               if (showProject) {
-                const data = await getVulnsOfPlan();
+                const data = await getVulnsOfAsset();
                 tableData = data?.vulns;
               } else {
                 const data = await getVulnsOfAsset();

@@ -71,14 +71,13 @@
 
   const searchDataHandler = async () => {
     fullResultData = await getViewPlanResults(search);
-    changeDataCount(100);
-
+    resultData = fullResultData;
     selectPlan(projectIndex);
   };
 
   const refetchDataHandler = async () => {
     fullResultData = await getViewPlanResults(search);
-    changeDataCount(100);
+    resultData = fullResultData;
   };
 
   const selectPlan = async (plan_index) => {
@@ -153,6 +152,19 @@
     }
   };
 
+  const resetFilters = async () => {
+    search = {
+      plan_index: projectIndex,
+      assessment_target: "",
+      hostname: "",
+      checklist_item_no: "",
+      check_result: "",
+      show_option: "",
+    };
+    await searchDataHandler();
+    await selectPlan(projectIndex);
+  };
+
   $: {
     if (projectIndex && !fullResultData) {
       search = { ...search, plan_index: projectIndex };
@@ -220,10 +232,10 @@
           {/each}
         {/if}
       </select>
-      <!-- <button type="button" class="btn btnPrimary">
-        <img src="./assets/images/icon/search.svg" />
-        조회
-      </button> -->
+      <button type="button" class="btn btnPrimary" on:click={resetFilters}>
+        <img src="./assets/images/reset.png" alt="search" />
+        초기화
+      </button>
       <button
         type="button"
         class={`btn ${!search?.plan_index || !resultData ? "btnPrimary" : "btnBlue"}`}

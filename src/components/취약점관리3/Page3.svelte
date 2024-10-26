@@ -26,6 +26,7 @@
   let selectedItems = [];
   let sortAscending = true;
   let sorted = false;
+  let loading = true;
 
   let search = {
     plan_index: "",
@@ -54,15 +55,19 @@
   }
 
   onMount(async () => {
-    plans = await getVulnsOfPlan();
+    loading = true;
+    plans = await getVulnsOfAsset(search);
     tableData = plans?.vulns;
+    loading = false;
 
     // assets = await getVulnsOfAsset(search);
   });
 
   const getPlanDataSearch = async () => {
-    plans = await getVulnsOfPlan(search);
+    loading = true;
+    plans = await getVulnsOfAsset(search);
     tableData = plans?.vulns;
+    loading = false;
   };
 
   function downloadCSV(data) {
@@ -128,6 +133,7 @@
   let firstClick = true;
 
   function sortAssets(assets) {
+    loading = true;
     const isAscending = sortAscending ? 1 : -1;
     console.log("isAscending:", isAscending);
 
@@ -148,12 +154,29 @@
     }
 
     sortAscending = !sortAscending;
+    loading = false;
   }
+
+  const resetFilters = async () => {
+    vulnerabilityStatusValue = "";
+    actionStatusValue = "";
+    search = {
+      plan_index: "",
+      asset_target_uuid: "",
+    };
+    await getPlanDataSearch();
+  };
 
   $: {
     console.log("sortAscending:", sortAscending);
   }
 </script>
+
+{#if loading}
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+{/if}
 
 <div class="container">
   <section>
@@ -167,9 +190,10 @@
           href="javascript:void(0);"
           class={`btn ${showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
+            loading = true;
             activePlan = null;
             toggleList("project");
-            plans = await getVulnsOfPlan();
+            plans = await getVulnsOfAsset(search);
             tableData = plans?.vulns;
             search = {
               plan_index: "",
@@ -183,6 +207,7 @@
             selectedItems = [];
             sortAscending = true;
             firstClick = true;
+            loading = false;
           }}
         >
           프로젝트별
@@ -191,6 +216,7 @@
           type="button"
           class={`btn ${!showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
+            loading = true;
             toggleList("asset");
             activeMenu = null;
             search = {
@@ -231,6 +257,7 @@
             } else {
               sortAssets(assets);
             }
+            loading = false;
           }}
         >
           자산별
@@ -304,7 +331,7 @@
                                     : ""}
                                   on:click={async () => {
                                     setView = "plan";
-                                    assets = await getVulnsOfPlan({
+                                    assets = await getVulnsOfAsset({
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
                                     });
@@ -454,9 +481,20 @@
               <button
                 type="button"
                 class="btn btnPrimary"
+                on:click={resetFilters}
+              >
+                <img src="./assets/images/reset.png" alt="search" />
+                초기화
+              </button>
+              <button
+                type="button"
+                class="btn btnPrimary"
                 on:click={downloadCSV}
               >
-                <img src="./assets/images/icon/download.svg" /> 엑셀 다운로드
+                <img
+                  src="./assets/images/icon/download.svg"
+                  class="excel-img"
+                /> 엑셀 다운로드
               </button>
 
               {#if wholePage}
@@ -509,6 +547,38 @@
   * {
     font-size: 16px;
   }
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it sits above other content */
+  }
+
+  .loading-spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .backImage {
     cursor: pointer;
     width: 24px;
@@ -548,5 +618,10 @@
 
   .rotate {
     transform: rotate(180deg);
+  }
+
+  .excel-img {
+    filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
+      brightness(100%) contrast(98%);
   }
 </style>

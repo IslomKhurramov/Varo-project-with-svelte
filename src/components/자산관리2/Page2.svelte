@@ -561,6 +561,7 @@
               class="btn btnPrimary padding_button"
               ><img
                 src="./assets/images/icon/download.svg"
+                class="excel-img"
                 alt="download"
               />엑셀저장</button
             >
@@ -790,5 +791,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+
+  .excel-img {
+    filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
+      brightness(100%) contrast(98%);
   }
 </style>

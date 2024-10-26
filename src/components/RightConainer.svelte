@@ -236,7 +236,7 @@
     bind:tabMenu
   /> -->
   {:else}
-    <div class="scroll-div">
+    <div class="scroll-div" style="height: calc(-180px + 100vh);">
       <article class="contentArea">
         <section class="filterWrap">
           <div>
@@ -268,13 +268,7 @@
           </div>
         </section>
         <section>
-          <div
-            class="tableListWrap"
-            style="
-          overflow: auto;
-          height: 100vh;
-      "
-          >
+          <div class="tableListWrap">
             <table class="tableList">
               <colgroup>
                 <col style="width:6%;" />

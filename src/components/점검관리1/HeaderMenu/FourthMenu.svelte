@@ -183,7 +183,7 @@
       > -->
     </div>
   </section>
-  <section class="tableWrap" style="height: 66vh;">
+  <section class="tableWrap" style="height: 69vh; overflow: auto;">
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>
@@ -240,16 +240,6 @@
           {/if}
         </tbody>
       </table>
-    </div>
-    <div class="paginationWrap end">
-      <div class="pagination">
-        <!-- <a href="">&lt;</a> -->
-        <a href="" class="active">1</a>
-        <a href="">2</a>
-        <a href="">...</a>
-        <a href="">4</a>
-        <a href="">&gt;</a>
-      </div>
     </div>
   </section>
 </article>

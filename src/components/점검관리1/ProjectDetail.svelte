@@ -679,12 +679,13 @@
                 <label
                   for="file-upload"
                   class="file-label"
-                  style="width: 576px;"
+                  style="width: 576px; font-size: 16px;"
                   >{updateInfo?.assessment_command
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
                 >
                 <input
+                  style="font-size: 16px;"
                   type="file"
                   id="file-upload"
                   accept=".xls,.xlsx"

@@ -86,7 +86,7 @@
             />
           </p>
         </th>
-      </tr><tr />
+      </tr>
     </thead>
     <tbody>
       {#each modalData as data, index}

@@ -84,10 +84,25 @@
       opacity: 1;
     }
   }
+
   button {
-    display: block;
+    display: flex;
     float: right;
-    background-color: #315e83;
-    color: #fff;
+    margin-top: 20px;
+    background-color: #4caf50;
+    color: white;
+    display: flex;
+    height: 40px;
+    justify-content: space-around;
+    align-items: center;
+    outline: none;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition-duration: 0.3s;
   }
 </style>

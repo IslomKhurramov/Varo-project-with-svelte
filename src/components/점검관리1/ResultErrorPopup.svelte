@@ -8,13 +8,24 @@
   }
 </script>
 
-<table class="">
-  <thead>
+<table class="tableListWrap">
+  <colgroup>
+    <col style="width:90px;" />
+    <col />
+    <col />
+    <col style="width:120px;" />
+    <col style="width:30%;" />
+    <col style="width:15%;" />
+  </colgroup>
+  <thead class="tableList hdBorder font-size: 16px;">
     <tr>
-      {#each tableHead as columnHeading}
-        <th>{columnHeading}</th>
-      {/each}
-    </tr><tr />
+      <th>넘버</th>
+      <th>target</th>
+      <th>hostname</th>
+      <th>ip address</th>
+      <th>file</th>
+      <th>etc</th>
+    </tr>
   </thead>
   <tbody>
     {#each modalErrorData as data, index}
@@ -34,16 +45,26 @@
   table {
     width: 100%;
   }
-  table,
+  tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
+  td,
+  th {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  /* table,
   th,
   td {
     border: 1px solid;
     border-collapse: collapse;
     margin-bottom: 10px;
     color: #6e6f6f;
-  }
+  } */
 
-  thead tr {
+  /* thead tr {
     background-color: #f3f7d9;
   }
 
@@ -54,5 +75,5 @@
   th,
   td {
     padding: 5px 3px;
-  }
+  } */
 </style>

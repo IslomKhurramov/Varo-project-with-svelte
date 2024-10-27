@@ -95,7 +95,7 @@
         plan_execution_type: parseInt(schedule),
         plan_execute_interval_value: schedule == 1 ? 1 : 0,
         plan_execute_interval_term: schedule == 0 ? "hours" : repeatCycle,
-        plan_name_repeat_rule_type: parseInt(ruleType),
+        plan_name_repeat_rule_type: ruleType ? parseInt(ruleType) : 0,
         plan_name_repeat_rule: repealRule,
         fix_date_setup: parseInt(actionSchedule),
         fix_start_date: actionStartDate,

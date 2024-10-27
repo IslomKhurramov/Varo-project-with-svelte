@@ -90,19 +90,22 @@
     isNewlyCreatedChecklist = false;
   }
   // Subscribe to filteredChecklistData store to make it reactive
-  let allSelected;
+  let allSelected = false; // Indicates if all items are selected
+
+  // Subscribe to filteredChecklistData and update allSelected accordingly
   $: filteredChecklistData.subscribe((data) => {
-    allSelected = data.length === selected.length;
+    allSelected = data.length > 0 && selected.length === data.length;
   });
 
+  // Function to select or deselect all items
   function selectAll() {
-    $filteredChecklistData.update((data) => {
+    filteredChecklistData.update((data) => {
       if (allSelected) {
         selected = []; // Deselect all
       } else {
         selected = data.slice(); // Select all
       }
-      return data;
+      return data; // Return unchanged data
     });
   }
   /******************************************************************************/
@@ -139,6 +142,8 @@
         selectedChecklist = "";
         showDataTbale2 = false;
         showEdit = false;
+        selected = []; // Clear selection
+        allSelected = false;
       } else {
         alert("Failed to delete the project."); // Provide user feedback
       }

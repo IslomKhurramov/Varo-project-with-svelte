@@ -191,14 +191,6 @@
     isAddingNewGroup = false;
   };
   /*****************************************/
-  // Create a derived store to sort the asset group list by `created_date` in descending order
-  const sortedAssetGroupList = derived(
-    allAssetGroupList,
-    ($allAssetGroupList) =>
-      $allAssetGroupList
-        .slice() // create a shallow copy to avoid mutation
-        .sort((a, b) => new Date(b.asg_cdate) - new Date(a.asg_cdate)), // sort by newest date first
-  );
 
   /************************************************************************/
 
@@ -405,10 +397,8 @@
         class="prMenuList"
         style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
       >
-        {#if $sortedAssetGroupList.length > 0}
+        {#if $allAssetGroupList.length > 0}
           <li class={activeMenu === "전체" ? "active" : ""}>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-missing-attribute -->
             <a
               on:click={() => {
                 activeMenu = "전체";
@@ -426,10 +416,7 @@
             </a>
           </li>
 
-          {#each $sortedAssetGroupList as group, index}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-missing-attribute -->
-
+          {#each [...$allAssetGroupList].sort((a, b) => b.asg_count - a.asg_count) as group}
             <li class={activeMenu === group ? "active" : ""}>
               <a
                 on:click={() => {
@@ -439,16 +426,12 @@
                 title={group.asg_title}
               >
                 <span
-                  style="white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: inline-block;
-          max-width: 100%;"
+                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%;"
                 >
                   {group.asg_title} ({group.asg_count})
                 </span>
                 <div
-                  style="display: flex; flex-direction:row; align-items:center;"
+                  style="display: flex; flex-direction: row; align-items: center;"
                 >
                   {#if group.asg_count === 0}
                     <button
@@ -465,6 +448,7 @@
             </li>
           {/each}
         {/if}
+
         {#if isAddingNewGroup}
           <div class="modal-open-wrap">
             <dialog open on:close={() => (isAddingNewGroup = false)}>

@@ -422,7 +422,7 @@
         class="prMenuList"
         style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
       >
-        {#each allChecklistArray as checkList (checkList.ccg_index)}
+        {#each [...allChecklistArray].sort((a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate)) as checkList (checkList.ccg_index)}
           <li class={activeMenu === checkList ? "active" : ""}>
             <a
               href="#"
@@ -433,14 +433,13 @@
               <span
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
               >
-                {checkList.ccg_group
-                  ? checkList.ccg_group
-                  : "No group info"}({checkList.ccg_checklist_year})
+                {checkList.ccg_group ? checkList.ccg_group : "No group info"} ({checkList.ccg_checklist_year})
               </span>
               <span class="arrowIcon"></span>
             </a>
           </li>
         {/each}
+
         <!-- Render newly created checklists with Edit/Delete buttons -->
         {#each createdChecklists as checklist (checklist.ccg_index)}
           <li>

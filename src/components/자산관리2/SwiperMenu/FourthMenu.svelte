@@ -292,9 +292,9 @@
           <tr>
             <th class="text-center">번호</th>
             <th class="text-center">호스트명</th>
-            <th>항목</th>
-            <th>점검항목</th>
-            <th>시스템상태</th>
+            <th class="text-center">항목</th>
+            <th class="text-center">점검항목</th>
+            <th class="text-center">시스템상태</th>
             <th class="text-center">점검결과</th>
           </tr>
         </thead>

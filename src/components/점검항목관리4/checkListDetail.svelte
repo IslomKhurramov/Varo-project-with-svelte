@@ -104,8 +104,15 @@
   /******************************************************************************/
 </script>
 
-<div style="margin-top: 20px;">
-  <article class="contentArea mt-0">
+<section
+  style="margin-top: 
+10px;"
+>
+  <article
+    class="contentArea"
+    style="overflow: auto; height: 72vh;
+    padding: 10px;"
+  >
     {#if showModalModalEditItem}
       <ModalEditItem
         {selectedItem}
@@ -170,9 +177,9 @@
               <th class="text-center">점검대상</th>
               <th class="text-center">항목그룹</th>
               <th class="text-center">식별코드</th>
-              <th>점검항목</th>
+              <th class="text-center">점검항목</th>
               <th class="text-center">위험도</th>
-              <th>평가기준</th>
+              <th class="text-center">평가기준</th>
             </tr>
           </thead>
           <tbody>
@@ -222,20 +229,20 @@
       </div>
     {/if}
   </article>
-</div>
+</section>
 
 <style>
   .line-height {
     line-height: 23px;
   }
-  .contentArea {
-    height: 100%;
-  }
+
   .table2 {
     width: 100%;
     font-size: 16px;
     overflow-y: auto;
     overflow-x: hidden;
+    height: 70vh;
+    margin-bottom: 25px;
   }
   tr:hover {
     background-color: rgba(242, 242, 242, 1);

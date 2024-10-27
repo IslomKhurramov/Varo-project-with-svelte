@@ -154,20 +154,20 @@
   }
 </script>
 
-<div class="contentArea" style="height: 78vh; overflow-y:auto;">
+<div class="contentArea" style="height: 72vh; overflow-y:auto;">
   <article
     class="contentArea"
-    style="height: 75vh; padding-top:0px; padding-left: 0px;padding-bottom:10px;  padding-right:0px"
+    style=" height: calc(100vh - 134px); padding-left:0px; padding-top:0px; padding-right:0px"
   >
     <p style="padding-bottom:15px; ">점검그룹</p>
 
     <div class="tableListWrap table1">
       <table class="tableList hdBorder font-size: 16px;">
         <colgroup>
+          <col style="width:50px;" />
+          <col style="width:150px" />
           <col style="width:90px;" />
-          <col />
-          <col style="width:90px;" />
-          <col style="width:30%;" />
+          <col style="width:35%;" />
           <col style="width:20%;" />
           <col style="width:120px;" />
         </colgroup>
@@ -176,7 +176,7 @@
             <th class="text-center">넘버</th>
             <th class="text-center">점검항목이름</th>
             <th class="text-center">분류</th>
-            <th>지원대상</th>
+            <th class="text-center">지원대상</th>
             <th class="text-center">등록일</th>
             <th class="text-center">삭제</th>
           </tr>
@@ -194,7 +194,11 @@
               >
               <td class="text-center">{formatDate(data.ccg_createdate)}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td class="text-center" on:click|stopPropagation>
+              <td
+                class="text-center"
+                style="display: flex; justify-content:center"
+                on:click|stopPropagation
+              >
                 <button
                   class="btn btnRed"
                   on:click={() => deleteProject(data.ccg_index)}
@@ -210,7 +214,7 @@
       </table>
     </div>
 
-    <p style="padding:15px ; margin-top:15px; font-size:16px">
+    <p style="padding:10px ;  font-size:16px">
       {#if selectedChecklist && selectedChecklist.ccg_group}
         {selectedChecklist.ccg_group}
       {/if}
@@ -228,7 +232,7 @@
         <button on:click={deleteSelectedItem}>선택항목삭제</button>
       </div>
     {/if}
-    <div class="tableListWrap table2" style="margin-bottom: 10px;">
+    <div class="tableListWrap table2" style="margin-bottom: 20px;">
       <table class="tableList hdBorder font-size: 16px;">
         {#if isNewlyCreatedChecklist}
           <colgroup>
@@ -261,9 +265,9 @@
             <th class="text-center">점검대상</th>
             <th class="text-center">항목그룹</th>
             <th class="text-center">식별코드</th>
-            <th>점검항목</th>
+            <th class="text-center">점검항목</th>
             <th class="text-center">위험도</th>
-            <th>평가기준</th>
+            <th class="text-center">평가기준</th>
           </tr>
         </thead>
         <tbody>
@@ -375,7 +379,7 @@
 
   .table2 {
     height: 70vh;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
   }
   tr:hover {
     background-color: rgba(242, 242, 242, 1);

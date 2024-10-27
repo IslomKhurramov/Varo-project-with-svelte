@@ -401,7 +401,10 @@
           />그룹삭제</button
         >
       </div>
-      <ul class="prMenuList">
+      <ul
+        class="prMenuList"
+        style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
+      >
         {#if $sortedAssetGroupList.length > 0}
           <li class={activeMenu === "전체" ? "active" : ""}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -463,27 +466,29 @@
           {/each}
         {/if}
         {#if isAddingNewGroup}
-          <dialog open on:close={() => (isAddingNewGroup = false)}>
-            <div class="modal-content">
-              <div class="modal">
-                <input
-                  type="text"
-                  placeholder="Enter Group Name"
-                  bind:value={newGroupName}
-                  bind:this={inputRef}
-                  class="editable_input"
-                />
-                <div class="modal-buttons">
-                  <button class="primary-button" on:click={addNewGroup}
-                    >Save</button
-                  >
-                  <button class="secondary-button" on:click={cancelNewGroup}
-                    >Cancel</button
-                  >
+          <div class="modal-open-wrap">
+            <dialog open on:close={() => (isAddingNewGroup = false)}>
+              <div class="modal-content">
+                <div class="modal">
+                  <input
+                    type="text"
+                    placeholder="Enter Group Name"
+                    bind:value={newGroupName}
+                    bind:this={inputRef}
+                    class="editable_input"
+                  />
+                  <div class="modal-buttons">
+                    <button class="primary-button" on:click={addNewGroup}
+                      >Save</button
+                    >
+                    <button class="secondary-button" on:click={cancelNewGroup}
+                      >Cancel</button
+                    >
+                  </div>
                 </div>
               </div>
-            </div>
-          </dialog>
+            </dialog>
+          </div>
         {/if}
       </ul>
     </article>
@@ -634,16 +639,39 @@
   {#if showModal}
     <!-- Modal background, closes when clicked outside modal content -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="showModal" on:click={handleClickOutside}>
-      <!-- Modal content goes here -->
-      <div class="modal-content">
-        <ModalChasanGroup {closeModal} />
+
+    <div class="modal-open-wrap">
+      <div class="showModal" on:click={handleClickOutside}>
+        <!-- Modal content goes here -->
+        <div class="modal-content">
+          <ModalChasanGroup {closeModal} />
+        </div>
       </div>
     </div>
   {/if}
 </div>
 
 <style>
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
   .modal-content {
     text-align: center;
   }
@@ -792,11 +820,6 @@
     padding: 2px;
     transition: all 0.3s ease;
     text-align: center;
-  }
-  .sideMenu {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: calc(100vh - 141px);
   }
 
   .asset_button:hover {

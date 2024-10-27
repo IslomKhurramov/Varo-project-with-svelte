@@ -464,44 +464,56 @@
       </div>
 
       {#if showModal}
-        <dialog open on:close={() => (showModal = false)}>
-          <div class="modal-content">
-            <h2>Change Group Index</h2>
-            <label for="group-select" style="margin-top: 15px;"
-              >Select Group:</label
-            >
-            <select
-              id="group-select"
-              style="margin-top: 15px;"
-              on:change={handleGroupChange}
-            >
-              {#each $allAssetGroupList as group}
-                <option
-                  value={group.asg_index}
-                  selected={group.asg_index == selectedGroupIndex}
+        <div class="modal-open-wrap">
+          <dialog open on:close={() => (showModal = false)}>
+            <div class="modal-content">
+              <h2>Change Group Index</h2>
+              <label for="group-select" style="margin-top: 15px;"
+                >Select Group:</label
+              >
+              <select
+                id="group-select"
+                style="margin-top: 15px;"
+                on:change={handleGroupChange}
+              >
+                {#each $allAssetGroupList as group}
+                  <option
+                    value={group.asg_index}
+                    selected={group.asg_index == selectedGroupIndex}
+                  >
+                    {group.asg_index} - {group.asg_title}
+                  </option>
+                {/each}
+              </select>
+              <p>Selected Group Index: {selectedGroupIndex}</p>
+              <div class="modal-buttons">
+                <button class="primary-button" on:click={assetGroupChange}
+                  >OK</button
                 >
-                  {group.asg_index} - {group.asg_title}
-                </option>
-              {/each}
-            </select>
-            <p>Selected Group Index: {selectedGroupIndex}</p>
-            <div class="modal-buttons">
-              <button class="primary-button" on:click={assetGroupChange}
-                >OK</button
-              >
-              <button
-                class="secondary-button"
-                on:click={() => (showModal = false)}>Cancel</button
-              >
+                <button
+                  class="secondary-button"
+                  on:click={() => (showModal = false)}>Cancel</button
+                >
+              </div>
             </div>
-          </div>
-        </dialog>
+          </dialog>
+        </div>
       {/if}
     </section>
   </article>
 </main>
 
 <style>
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
   .menu-container .menu-item.active {
     background-color: #0067ff;
     color: #fff;

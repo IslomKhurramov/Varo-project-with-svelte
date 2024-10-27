@@ -196,7 +196,7 @@
     flex-direction: column;
   }
   .containerModal {
-    width: 100%;
+    width: 98%;
     height: 100%;
     display: flex;
     flex-direction: row;

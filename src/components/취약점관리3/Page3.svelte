@@ -255,7 +255,10 @@
           </svg>
         </button>
       </div>
-      <ul class="prMenuListToggle" style="overflow: scroll; height: 92%;">
+      <ul
+        class="prMenuListToggle"
+        style="overflow-y: scroll; height: 92%; overflow-x:hidden;"
+      >
         {#if showProject}
           {#if plans && plans?.plans && plans?.plans?.length !== 0}
             {#each plans?.plans as plan, index}

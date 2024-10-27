@@ -91,7 +91,10 @@
         점검삭제
       </button>
     </div>
-    <ul class="prMenuList" style="overflow: scroll;height: 92%;">
+    <ul
+      class="prMenuList"
+      style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
+    >
       {#if projectArray && projectArray?.length !== 0}
         {#each projectArray as project, index}
           <li class={activeMenu === project.ccp_index ? "active" : ""}>

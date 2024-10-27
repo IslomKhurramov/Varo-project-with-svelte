@@ -118,10 +118,11 @@
       if (response.success) {
         // Fetch the updated checklist data
         showModal = false;
-        sweetAlert("체크리스트가 성공적으로 생성되었습니다!");
-        await fetchChecklistData();
-        lastCreatedChecklistId = selectedChecklist.ccg_index;
         showEdit = true;
+        sweetAlert("Checklist created successfully!");
+        await refreshChecklistData();
+        lastCreatedChecklistId = selectedChecklist.ccg_index;
+
         // Add the new checklist to createdChecklists
         createdChecklists = [
           ...createdChecklists,
@@ -130,7 +131,7 @@
             ccg_group: newChecklistName,
           },
         ];
-
+        showDataTbale2 = true;
         // Scroll to the newly created checklist
         await tick(); // Wait for DOM updates
         if (activeChecklistElement) {
@@ -149,6 +150,22 @@
       }
     } catch (err) {
       alert(`Failed to create new checklist group: ${err.message}`);
+    }
+  }
+
+  async function refreshChecklistData() {
+    try {
+      const allCheckList = await getAllCheckList();
+      allChecklistArray = Object.values(allCheckList); // Convert to array
+
+      // Automatically set the newly created checklist as the active one
+      if (allChecklistArray.length > 0) {
+        selectedChecklist = allChecklistArray[allChecklistArray.length - 1];
+        activeMenu = selectedChecklist;
+        console.log("Refreshed data:", selectedChecklist);
+      }
+    } catch (error) {
+      console.error("Error fetching checklist data:", error);
     }
   }
 
@@ -174,11 +191,12 @@
   /*********************************************************************************/
 
   async function deleteChecklist(checklistId) {
+    console.log("checkliust id", checklistId);
     try {
       const response = await setDeleteChecklistGroup(checklistId);
 
       if (response.success) {
-        alert("체크리스트가 성공적으로 삭제되었습니다!");
+        alert("Checklist deleted successfully!");
 
         // Update local state without re-fetching
         allChecklistArray = allChecklistArray.filter(
@@ -187,6 +205,10 @@
         createdChecklists = createdChecklists.filter(
           (checklist) => checklist.ccg_index !== checklistId,
         );
+        showDataTbale2 = false;
+        filteredChecklistData.set([]); // Reset store data to empty array
+        selectedChecklist = "";
+        filterData();
 
         // Reset the last created checklist ID after deletion
         lastCreatedChecklistId = null;
@@ -369,10 +391,7 @@
 </script>
 
 <section>
-  <article
-    class="sideMenu"
-    style="overflow: auto; height: calc(100vh - 141px);"
-  >
+  <article class="sideMenu" style=" height: calc(100vh - 141px);">
     <div class="btnWrap">
       <!-- svelte-ignore a11y-missing-attribute -->
       <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -399,8 +418,11 @@
     {:else if error}
       <p>Error: {error}</p>
     {:else}
-      <ul class="prMenuList">
-        {#each $sortedChecklistByDate as checkList (checkList.ccg_index)}
+      <ul
+        class="prMenuList"
+        style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
+      >
+        {#each allChecklistArray as checkList (checkList.ccg_index)}
           <li class={activeMenu === checkList ? "active" : ""}>
             <a
               href="#"
@@ -588,6 +610,7 @@
         {showModalSecond}
         {selectedSlide}
         {cleanSearch}
+        bind:showEdit
         bind:showDataTbale2
         {slides}
         bind:showModalModalEditItem
@@ -603,52 +626,63 @@
   </div>
 
   {#if showModal}
-    <dialog open on:close={() => (showModal = false)}>
-      <div class="modal-content">
-        <div class="modal">
-          <h3>새로운 진단 그룹 생성</h3>
-          <div class="first_line">
-            <label for="source-group">복사 대상:</label>
-            <select
-              class="first_line_input"
-              bind:value={selectedChecklistForCopyId}
-              id="source-group"
-            >
-              {#each allChecklistArray as checklist}
-                <option value={checklist.ccg_index}
-                  >{checklist.ccg_group}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="second_line">
-            <label for="new-group">신규 그룹명:</label>
-            <input
-              class="second_line_input"
-              type="text"
-              bind:value={newChecklistName}
-              id="new-group"
-              placeholder="새로운 진단 그룹명을 입력하세요"
-            />
-          </div>
-          <div class="modal-buttons">
-            <button class="primary-button" on:click={createNewChecklistGroup}
-              >저장하기</button
-            >
-            <button
-              class="secondary-button"
-              on:click={() => (showModal = false)}>Cancel</button
-            >
+    <div class="modal-open-wrap">
+      <dialog open on:close={() => (showModal = false)}>
+        <div class="modal-content">
+          <div class="modal">
+            <h3>새로운 진단 그룹 생성</h3>
+            <div class="first_line">
+              <label for="source-group">복사 대상:</label>
+              <select
+                class="first_line_input"
+                bind:value={selectedChecklistForCopyId}
+                id="source-group"
+              >
+                {#each allChecklistArray as checklist}
+                  <option value={checklist.ccg_index}
+                    >{checklist.ccg_group}</option
+                  >
+                {/each}
+              </select>
+            </div>
+            <div class="second_line">
+              <label for="new-group">신규 그룹명:</label>
+              <input
+                class="second_line_input"
+                type="text"
+                bind:value={newChecklistName}
+                id="new-group"
+                placeholder="새로운 진단 그룹명을 입력하세요"
+              />
+            </div>
+            <div class="modal-buttons">
+              <button class="primary-button" on:click={createNewChecklistGroup}
+                >저장하기</button
+              >
+              <button
+                class="secondary-button"
+                on:click={() => (showModal = false)}>Cancel</button
+              >
+            </div>
           </div>
         </div>
-      </div>
-    </dialog>
+      </dialog>
+    </div>
   {/if}
 </section>
 
 <style>
   /* General Reset */
-
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
   .edit {
     background-color: rgba(0, 255, 140, 0.06);
     color: #27ae60;

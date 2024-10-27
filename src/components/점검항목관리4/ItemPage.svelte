@@ -17,6 +17,7 @@
   export let lastCreatedChecklistId;
   export let showDataTbale2;
   export let selectedRisk;
+  export let showEdit;
   let selectedItem = null;
   let selected = [];
   let showModal = false;
@@ -135,6 +136,9 @@
       if (response.success) {
         // Dispatch an event to notify the parent of the deletion
         dispatch("projectDeleted", id);
+        selectedChecklist = "";
+        showDataTbale2 = false;
+        showEdit = false;
       } else {
         alert("Failed to delete the project."); // Provide user feedback
       }
@@ -313,19 +317,32 @@
     </div>
 
     {#if showModal}
-      <dialog open on:close={() => (showModal = false)}>
-        <ModalEditItem
-          {selectedItem}
-          {selectedCategory}
-          {isNewlyCreatedChecklist}
-          {closeShowModal}
-        />
-      </dialog>
+      <div class="modal-open-wrap">
+        <dialog open on:close={() => (showModal = false)}>
+          <ModalEditItem
+            {selectedItem}
+            {selectedCategory}
+            {isNewlyCreatedChecklist}
+            {closeShowModal}
+          />
+        </dialog>
+      </div>
     {/if}
   </article>
 </div>
 
 <style>
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
+
   * {
     font-size: 16px;
   }

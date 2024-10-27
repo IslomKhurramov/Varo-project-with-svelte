@@ -849,7 +849,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.8);
+    background-color: rgba(167, 167, 167, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;

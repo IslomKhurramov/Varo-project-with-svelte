@@ -27,6 +27,7 @@
   let sortAscending = true;
   let sorted = false;
   let loading = true;
+  let assetsMenuData = [];
 
   let search = {
     plan_index: "",
@@ -60,7 +61,7 @@
     tableData = plans?.vulns;
     loading = false;
 
-    // assets = await getVulnsOfAsset(search);
+    await getVulnsOfAsset(search);
   });
 
   const getPlanDataSearch = async () => {
@@ -132,26 +133,22 @@
 
   let firstClick = true;
 
-  function sortAssets(assets) {
+  function sortAssets() {
     loading = true;
     const isAscending = sortAscending ? 1 : -1;
     console.log("isAscending:", isAscending);
 
-    if (assets && assets.plans && assets.plans.length > 0) {
-      assets.plans.forEach((asset) => {
-        asset.plan_target.forEach((target) => {
-          Object.entries(target).forEach(([osType, hosts]) => {
-            hosts.sort((hostA, hostB) => {
-              return (
-                hostA.ast_uuid__ass_uuid__ast_hostname.localeCompare(
-                  hostB.ast_uuid__ass_uuid__ast_hostname,
-                ) * isAscending
-              );
-            });
-          });
-        });
+    if (assetsMenuData && assetsMenuData.length > 0) {
+      sorted = assetsMenuData.sort((hostA, hostB) => {
+        return (
+          hostA.ast_uuid__ass_uuid__ast_hostname.localeCompare(
+            hostB.ast_uuid__ass_uuid__ast_hostname,
+          ) * isAscending
+        );
       });
     }
+
+    assetsMenuData = [...sorted];
 
     sortAscending = !sortAscending;
     loading = false;
@@ -168,7 +165,7 @@
   };
 
   $: {
-    console.log("sortAscending:", sortAscending);
+    console.log("assetsMenuData:", assetsMenuData);
   }
 </script>
 
@@ -215,7 +212,7 @@
           on:click={async () => {
             loading = true;
             toggleList("asset");
-            activeMenu = null;
+            // activeMenu = null;
             search = {
               plan_index: "",
               asset_target_uuid: "",
@@ -228,31 +225,15 @@
             selectedItems = [];
             activePlan = null;
 
-            assets = await getVulnsOfAsset(search);
-            tableData = assets?.vulns;
             if (firstClick) {
-              const isAscending = sortAscending ? 1 : -1;
-
-              if (assets && assets.plans && assets.plans.length > 0) {
-                assets.plans.forEach((asset) => {
-                  asset.plan_target.forEach((target) => {
-                    Object.entries(target).forEach(([osType, hosts]) => {
-                      hosts.sort((hostA, hostB) => {
-                        return (
-                          hostA.ast_uuid__ass_uuid__ast_hostname.localeCompare(
-                            hostB.ast_uuid__ass_uuid__ast_hostname,
-                          ) * isAscending
-                        );
-                      });
-                    });
-                  });
-                });
-              }
-
+              activeMenu = null;
               sortAscending = false;
               firstClick = false;
+              assets = await getVulnsOfAsset(search);
+              assetsMenuData = assets?.asset_asc;
+              tableData = assets?.vulns;
             } else {
-              sortAssets(assets);
+              sortAssets();
             }
             loading = false;
           }}
@@ -356,50 +337,38 @@
           {/if}
         {:else}
           <div>
-            {#if assets && assets?.plans && assets?.plans?.length !== 0}
-              {#each assets?.plans as asset, index}
-                {#each asset?.plan_target as target}
-                  {#each Object.entries(target) as [osType, hosts]}
-                    {#each hosts as host}
-                      <!-- svelte-ignore a11y-click-events-have-key-events -->
-                      <li
-                        style="cursor: pointer;"
-                        class={`menuItem ${
-                          activeMenu ===
-                          host?.ast_uuid__ass_uuid__ast_hostname +
-                            host?.ast_uuid +
-                            asset?.plan_index
-                            ? "active"
-                            : ""
-                        } `}
-                      >
-                        <div
-                          class="menu"
-                          on:click={async () => {
-                            setView = "plan";
-                            selectPage(
-                              MainPageProject,
-                              host?.ast_uuid__ass_uuid__ast_hostname +
-                                host?.ast_uuid +
-                                asset?.plan_index,
-                            );
-                            assets = await getVulnsOfAsset({
-                              plan_index: asset?.plan_index,
-                              asset_target_uuid: host?.ast_uuid,
-                            });
-                            tableData = assets?.vulns;
-                            selectedSendData = {
-                              plan_index: asset?.plan_index,
-                              asset_target_uuid: host?.ast_uuid,
-                            };
-                          }}
-                        >
-                          {host?.ast_uuid__ass_uuid__ast_hostname}
-                        </div>
-                      </li>
-                    {/each}
-                  {/each}
-                {/each}
+            {#if assetsMenuData && assetsMenuData?.length !== 0}
+              {#each assetsMenuData as asset, index}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <li
+                  style="cursor: pointer;"
+                  class={`menuItem ${
+                    activeMenu === asset.ast_uuid ? "active" : ""
+                  } `}
+                >
+                  <div
+                    class="menu"
+                    on:click={async () => {
+                      setView = "plan";
+                      selectPage(MainPageProject, asset.ast_uuid);
+                      assets = await getVulnsOfAsset({
+                        plan_index: "",
+                        asset_target_uuid: asset.ast_uuid,
+                      });
+                      tableData = assets?.vulns;
+                      selectedSendData = {
+                        plan_index: "",
+                        asset_target_uuid: asset.ast_uuid,
+                      };
+                    }}
+                  >
+                    <span
+                      style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"
+                    >
+                      {asset?.ast_uuid__ass_uuid__ast_hostname} ({asset?.ast_uuid__ast_target__cct_target})</span
+                    >
+                  </div>
+                </li>
               {/each}
             {/if}
           </div>
@@ -584,6 +553,9 @@
   .btn:hover {
     color: #fff;
     background-color: #0067ff;
+  }
+  .btn:hover svg path {
+    fill: white; /* Change SVG fill color to white on hover */
   }
   /* Tooltip styling */
   .tooltip {

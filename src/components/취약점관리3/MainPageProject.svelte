@@ -23,6 +23,7 @@
   export let selectedItems = [];
   export let loading;
 
+  let theadChecked = false;
   // let isAgenUser = $userData?.userInfo?.user_roletype__role_index == 1;
   let isAgenUser = true;
 
@@ -118,10 +119,64 @@
     }
   };
 
+  const fixApproveAssetHandler = async (data, approved) => {
+    try {
+      console.log("fixApproveAssetHandler:", data);
+      const approved_targets = data.map((ele) => ele.ccr_index);
+      console.log("approved_targets:", approved_targets);
+      const result = await setFixApprove({
+        plan_index: data[0].ccp_index,
+        asset_target_uuid: selectedSendData?.asset_target_uuid,
+        approved: approved,
+        approved_targets: approved_targets,
+        approved_comment: "",
+      });
+      await successAlert(result);
+
+      if (showProject) {
+        const plans = await getVulnsOfAsset(selectedSendData);
+        tableData = plans?.vulns;
+      } else {
+        const assets = await getVulnsOfAsset(selectedSendData);
+        tableData = assets?.vulns;
+      }
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
   const fixDoneApproveHandler = async (data) => {
     try {
       console.log("fixDoneApproveHandler:", data);
       const result = await setFixDoneApprove(data);
+      successAlert(result);
+
+      const list = await getFixDoneLists(selectedSendData);
+      tableData = Object.fromEntries(
+        Object.entries(list?.vulns).filter(([key, value]) =>
+          value.some(
+            (item) =>
+              item.result && item.result.cfi_fix_status__cvs_index === 3,
+          ),
+        ),
+      );
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  const fixDoneApproveAssetHandler = async (data, approved) => {
+    try {
+      console.log("fixDoneApproveAssetHandler:", data);
+      const approved_targets = data.map((ele) => ele.ccr_index);
+      console.log("approved_targets:", approved_targets);
+      const result = await setFixDoneApprove({
+        plan_index: data[0].ccp_index,
+        asset_target_uuid: selectedSendData?.asset_target_uuid,
+        approved: approved,
+        approved_targets: approved_targets,
+        approved_comment: "",
+      });
       successAlert(result);
 
       const list = await getFixDoneLists(selectedSendData);
@@ -159,7 +214,7 @@
 
   $: {
     console.log("search:", search);
-    console.log("selectedSendData:", selectedSendData);
+    console.log("theadChecked:", theadChecked);
   }
 </script>
 
@@ -169,7 +224,7 @@
     <div class="section">
       <!-- 탭메뉴 -->
       <div class="flex justify-between submenuWrap">
-        <section class="subTabWrap">
+        <section class="subTabWrap" style="height: 50px;">
           <a
             href="javascript:void(0);"
             class={setView == "plan" ? "active" : ""}
@@ -177,6 +232,7 @@
               loading = true;
               setView = "plan";
               selectedItems = [];
+              theadChecked = false;
 
               if (showProject) {
                 const data = await getVulnsOfAsset();
@@ -222,7 +278,7 @@
               {#if selectedItems?.length !== 0}
                 <button
                   type="button"
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -233,13 +289,14 @@
                     };
                     fixApproveHandler(data);
                     selectedItems = [];
+                    theadChecked = false;
                   }}
                 >
                   선택항목승인
                 </button>
                 <button
                   type="button"
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -250,6 +307,7 @@
                     };
                     fixApproveHandler(data);
                     selectedItems = [];
+                    theadChecked = false;
                   }}
                 >
                   선택항목반려
@@ -258,7 +316,7 @@
 
               {#if selectedSendData?.plan_index}
                 <button
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -274,7 +332,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -296,7 +354,7 @@
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -307,12 +365,13 @@
                     };
                     fixDoneApproveHandler(data);
                     selectedItems = [];
+                    theadChecked = false;
                   }}
                 >
                   선택항목승인
                 </button>
                 <button
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -323,6 +382,7 @@
                     };
                     fixDoneApproveHandler(data);
                     selectedItems = [];
+                    theadChecked = false;
                   }}
                 >
                   선택항목반려
@@ -332,7 +392,7 @@
               {#if selectedSendData?.plan_index}
                 <button
                   type="button"
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -348,7 +408,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btnBlue xs"
+                  class="btn btnBlue"
                   on:click={() => {
                     const data = {
                       plan_index: selectedSendData?.plan_index,
@@ -366,6 +426,129 @@
             </section>
           {/if}
         {/if}
+
+        {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && data?.length !== 0}
+          {#if setView == "plan"}
+            <section class="flex btnWrap gap-4">
+              {#if selectedItems?.length !== 0}
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "1",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목승인
+                </button>
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "0",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목반려
+                </button>
+              {/if}
+
+              {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+                <button
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveAssetHandler(data, "1");
+                  }}
+                >
+                  일괄승인
+                </button>
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveAssetHandler(data, "0");
+                  }}
+                >
+                  일괄반려
+                </button>
+              {/if}
+            </section>
+          {/if}
+
+          {#if setView == "result"}
+            <section class="flex btnWrap gap-4">
+              {#if selectedItems?.length !== 0}
+                <button
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "1",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목승인
+                </button>
+                <button
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "0",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목반려
+                </button>
+              {/if}
+
+              {#if selectedSendData?.plan_index}
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveAssetHandler(data, "1");
+                  }}
+                >
+                  일괄승인
+                </button>
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveAssetHandler(data, "0");
+                  }}
+                >
+                  일괄반려
+                </button>
+              {/if}
+            </section>
+          {/if}
+        {/if}
       </div>
 
       <!-- 테이블리스트 -->
@@ -374,6 +557,9 @@
           <table class="tableList hdBorder">
             <colgroup>
               {#if isAgenUser && selectedSendData?.plan_index}
+                <col style="width:33px;" />
+              {/if}
+              {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
                 <col style="width:33px;" />
               {/if}
               <col style="width:90px;" />
@@ -399,6 +585,29 @@
                         <input
                           type="checkbox"
                           name="target"
+                          bind:checked={theadChecked}
+                          on:change={(e) => {
+                            if (e.target.checked)
+                              selectedItems = data?.map(
+                                (ele) => ele?.ccr_index,
+                              );
+                            else selectedItems = [];
+                          }}
+                        />
+                        <span></span>
+                      </label>
+                    </div>
+                  </th>
+                {/if}
+
+                {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+                  <th class="text-center">
+                    <div class="checkboxWrap">
+                      <label class="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="target"
+                          bind:checked={theadChecked}
                           on:change={(e) => {
                             if (e.target.checked)
                               selectedItems = data?.map(
@@ -443,6 +652,27 @@
                     }}
                   >
                     {#if isAgenUser && selectedSendData?.plan_index}
+                      <!-- svelte-ignore a11y-click-events-have-key-events -->
+                      <td
+                        class="text-center"
+                        on:click={(e) => e.stopPropagation()}
+                      >
+                        <div class="checkboxWrap">
+                          <label class="checkbox-label">
+                            <input
+                              type="checkbox"
+                              name="target"
+                              on:click={(e) => e.stopPropagation()}
+                              on:change={() => toggleSelection(item?.ccr_index)}
+                              checked={selectedItems.includes(item?.ccr_index)}
+                            />
+                            <span></span>
+                          </label>
+                        </div>
+                      </td>
+                    {/if}
+
+                    {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
                       <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <td
                         class="text-center"
@@ -511,6 +741,7 @@
 
                               fixApproveHandler(data);
                               selectedItems = [];
+                              theadChecked = false;
                             } else {
                               const data = {
                                 plan_index: item?.ccp_index,
@@ -522,6 +753,7 @@
 
                               fixDoneApproveHandler(data);
                               selectedItems = [];
+                              theadChecked = false;
                             }
                           }}
                         >

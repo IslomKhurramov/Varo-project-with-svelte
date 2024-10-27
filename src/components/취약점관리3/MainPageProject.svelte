@@ -417,7 +417,7 @@
                 <th class="text-center">자산명</th>
                 <th class="text-center">점검대상</th>
                 <th class="text-center">대분류</th>
-                <th>취약점명</th>
+                <th class="text-center">취약점명</th>
                 <th class="text-center">위험도</th>
                 <th class="text-center">조치현황</th>
                 <th class="text-center">조치분류상태</th>

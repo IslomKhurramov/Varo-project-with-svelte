@@ -7,7 +7,8 @@
   import { setDeletePlan } from "../../services/page1/newInspection";
   import { userData } from "../../stores/user.store";
   import Tooltip from "../../shared/Tooltip.svelte";
-  import { confirmSureDelete } from "../../shared/sweetAlert";
+  import { confirmDelete, confirmSureDelete } from "../../shared/sweetAlert";
+  import { navigate } from "svelte-routing";
 
   let currentView = "default";
   let currentPage = null;
@@ -49,14 +50,10 @@
 
   const deleteProject = async () => {
     try {
-      const confirm = await confirmSureDelete();
-      console.log("+confirm:", confirm);
+      const confirm = await confirmDelete();
       if (confirm) {
-        if (projectArray.length > 0) {
-          const lastProject = projectArray[projectArray.length - 1];
-          await setDeletePlan(lastProject.ccp_index);
-          projectArray = projectArray.slice(0, -1);
-        }
+        await setDeletePlan(selectedProjectIndex);
+        navigate(window.location?.pathname == "/" ? "/page1" : "/");
       }
     } catch (err) {
       console.log("ERROR deleteProject:", err);
@@ -84,7 +81,12 @@
         <img src="./assets/images/icon/add.svg" />
         신규점검
       </a>
-      <button type="button" class="btn btnRed" on:click={deleteProject}>
+      <button
+        type="button"
+        class="btn btnRed"
+        on:click={deleteProject}
+        disabled={!selectedProjectIndex}
+      >
         <img src="./assets/images/icon/delete.svg" />
         점검삭제
       </button>

@@ -426,31 +426,34 @@
               </div>
             {/if}
 
-            <div class="formControl">
-              <label style="width: 115px; font-size: 16px;"
-                >점검 플랜 <br /> 생성 규칙</label
-              >
-              <div class="controlWrap">
-                <select bind:value={ruleType} style="font-size: 16px;">
-                  <option value="" selected disabled>
-                    반복실행시 마다 신규점검 자동 생성/현 점검 하위로 점검 자동
-                    생성
-                  </option>
-                  <option value="1">반복실행시 마다 신규점검 자동 생성</option>
-                  <option value="0">현 점검 하위로 점검 자동 생성</option>
-                </select>
-                {#if ruleType === "1"}
-                  <input
-                    style="font-size: 16px;"
-                    class="w472"
-                    type="text"
-                    placeholder={"점검플랜명 '{}' ({}는 순차이며 프로젝트명에서 위치를 지정해 주세요.)"}
-                    bind:value={repealRule}
-                    disabled
-                  />
-                {/if}
+            {#if schedule == "1"}
+              <div class="formControl">
+                <label style="width: 115px; font-size: 16px;"
+                  >점검 플랜 <br /> 생성 규칙</label
+                >
+                <div class="controlWrap">
+                  <select bind:value={ruleType} style="font-size: 16px;">
+                    <option value="" selected disabled>
+                      반복실행시 마다 신규점검 자동 생성/현 점검 하위로 점검
+                      자동 생성
+                    </option>
+                    <option value="1">반복실행시 마다 신규점검 자동 생성</option
+                    >
+                    <option value="0">현 점검 하위로 점검 자동 생성</option>
+                  </select>
+                  {#if ruleType === "1"}
+                    <input
+                      style="font-size: 16px;"
+                      class="w472"
+                      type="text"
+                      placeholder={"점검플랜명 '{}' ({}는 순차이며 프로젝트명에서 위치를 지정해 주세요.)"}
+                      bind:value={repealRule}
+                      disabled
+                    />
+                  {/if}
+                </div>
               </div>
-            </div>
+            {/if}
           </div>
         </div>
         <div class="formControlWrap">
@@ -786,23 +789,23 @@
                 <input
                   type="radio"
                   name="repeat"
-                  checked={assetInsertData.reserved == "1"}
-                  on:change={(e) => {
-                    if (e.target.checked) assetInsertData.reserved = "1";
-                  }}
-                />
-                <span style="font-size: 16px;">예약실행</span>
-              </label>
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  name="repeat"
                   checked={assetInsertData.reserved == "0"}
                   on:change={(e) => {
                     if (e.target.checked) assetInsertData.reserved = "0";
                   }}
                 />
                 <span style="font-size: 16px;">즉시실행</span>
+              </label>
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="repeat"
+                  checked={assetInsertData.reserved == "1"}
+                  on:change={(e) => {
+                    if (e.target.checked) assetInsertData.reserved = "1";
+                  }}
+                />
+                <span style="font-size: 16px;">예약실행</span>
               </label>
             </div>
           </div>

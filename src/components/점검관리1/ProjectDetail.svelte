@@ -1017,7 +1017,7 @@
 <div class={`modalWrap detail table ${showModal ? "active" : ""}`}>
   {#if showModal}
     <div class="modalContents big">
-      <div class="contents">
+      <div class="contents" style="max-height: 600px;">
         <div class="closeWrap">
           <button
             type="button"
@@ -1033,7 +1033,10 @@
           <div class="flex head">
             <h3 class="title">점검결과 등록 내역</h3>
           </div>
-          <div class="tableListWrap">
+          <div
+            class="tableListWrap"
+            style="max-height: 550px; overflow: scroll;"
+          >
             <table class="tableList hdBorder">
               <colgroup>
                 <col style="width:90px;" />
@@ -1057,18 +1060,20 @@
                 {#if modalData && modalData?.length !== 0}
                   {#each modalData as data, index}
                     <tr>
-                      <td class="text-center">{index + 1}</td>
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
+                        >{index + 1}</td
+                      >
+                      <td class="text-center" style="font-size: 16px;"
                         >{data?.ast_uuid__ass_uuid__ast_hostname}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{data?.ast_uuid__ass_uuid__ast_ipaddr}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{data?.ast_uuid__ast_target__cct_target}</td
                       >
                       <!-- <td class="text-center">Y</td> -->
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{data?.ast_security_point > 0
                           ? `${data?.ast_security_point}%`
                           : "결과미등록"}</td
@@ -1121,12 +1126,6 @@
   * {
     font-size: 16px;
   }
-  thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
-    z-index: 10; /* Ensure the header is above the scrolling content */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
-  }
   dialog {
     position: fixed;
     height: 600px;
@@ -1158,7 +1157,7 @@
 
   .scroll-div {
     overflow: auto;
-    height: 77vh;
+    height: calc(-175px + 100vh);
     padding-bottom: 60px;
   }
 
@@ -1191,5 +1190,16 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
+  }
+
+  .last thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
+  .modalWrap tr:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
   }
 </style>

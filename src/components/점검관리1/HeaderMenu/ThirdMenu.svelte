@@ -62,171 +62,6 @@
   }
 </script>
 
-<!-- <main>
-  <div class="table_center">
-    <div class="table_container">
-      <div class="secondLine">
-        <div class="thirdCol">
-          <div class="first_line">
-            <p class="button2 width">프로젝트명</p>
-            <div class="row">
-              <select class="dropdown" bind:value={selectedPlan}>
-                <option value="" selected disabled>선택</option>
-                {#if planList}
-                  {#each planList as plan}
-                    <option value={plan.ccp_index}>{plan.ccp_title}</option>
-                  {/each}
-                {/if}
-              </select>
-            </div>
-          </div>
-          <div class="first_line">
-            <p
-              class="button2 width"
-              style="cursor: pointer;"
-              on:click={() => {
-                if (
-                  planReports?.v_excel &&
-                  planReports?.v_excel?.length !== 0
-                ) {
-                  planSummaryReportHandler();
-                }
-              }}
-            >
-              요약 보고서생성 (양식 향후 지정)
-            </p>
-            <div class="report-box">
-              <div class="top">
-                <h5 class="txt1">보고서유형</h5>
-                <h5 class="txt2">보고서목록</h5>
-                <div>
-                  <h5>생성하기</h5>
-                  <h5>보고서삭제</h5>
-                </div>
-              </div>
-              <div class="bottom">
-                <div>
-                  <h5>취약점분석퍙기보고서 (엑셀)</h5>
-                </div>
-                <div>
-                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
-                    {#each planReports?.v_excel as report}
-                      <h5>{report}</h5>
-                    {/each}
-                  {/if}
-                </div>
-                <div>
-                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
-                    <button
-                      class="save_button"
-                      disabled={!planReports?.v_excel?.length}
-                      on:click={() =>
-                        setMakeFullReport({
-                          plan_index: selectedPlan,
-                          report_type: "v_excel",
-                          report_target: "ALL",
-                        })}
-                    >
-                      보고서생성
-                    </button>
-                    <button
-                      class="save_button"
-                      disabled={!planReports?.v_excel?.length}
-                    >
-                      보고서삭제
-                    </button>
-                  {/if}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="first_line">
-            <p class="button2 width">상세 보고서생성</p>
-            <div class="report-box">
-              <div class="top">
-                <h5 class="txt1">보고서유형</h5>
-                <h5 class="txt2">보고서목록</h5>
-                <div>
-                  <h5>생성하기</h5>
-                  <h5>보고서삭제</h5>
-                </div>
-              </div>
-              <div class="bottom">
-                <div>
-                  <h5>취약점분석퍙기보고서 (엑셀)</h5>
-                </div>
-                <div>
-                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
-                    {#each planReports?.v_excel as report}
-                      <h5>{report}</h5>
-                    {/each}
-                  {/if}
-                </div>
-                <div>
-                  {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
-                    <button
-                      class="save_button"
-                      disabled={!planReports?.v_excel?.length}
-                      on:click={() =>
-                        setMakeFullReport({
-                          plan_index: selectedPlan,
-                          report_type: "v_excel",
-                          report_target: "ALL",
-                        })}
-                    >
-                      보고서생성
-                    </button>
-                    <button
-                      class="save_button"
-                      disabled={!planReports?.v_excel?.length}
-                    >
-                      보고서삭제
-                    </button>
-                  {/if}
-                </div>
-              </div>
-              <div class="bottom word">
-                <div>
-                  <h5>파취약점분석퍙기보고서 (워드)</h5>
-                </div>
-                <div>
-                  {#if planReports?.v_word && planReports?.v_word?.length !== 0}
-                    {#each planReports?.v_word as report}
-                      <h5>{report}</h5>
-                    {/each}
-                  {/if}
-                </div>
-                <div>
-                  {#if planReports?.v_word && planReports?.v_word?.length !== 0}
-                    <button
-                      class="save_button"
-                      disabled={!planReports?.v_word?.length}
-                      on:click={() =>
-                        setMakeFullReport({
-                          plan_index: selectedPlan,
-                          report_type: "v_word",
-                          report_target: "ALL",
-                        })}
-                    >
-                      보고서생성
-                    </button>
-                    <button
-                      class="save_button"
-                      disabled={!planReports?.v_word?.length}
-                    >
-                      보고서삭제
-                    </button>
-                  {/if}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</main> -->
-
 <article class="flex contentArea projectTitle">
   <div class="flex">
     <div class="formControlWrap">
@@ -266,15 +101,17 @@
       </colgroup>
       <thead>
         <tr>
-          <th class="text-center">보고서유형</th>
-          <th class="pl-20">보고서목록</th>
-          <th class="text-center">생성하기</th>
-          <th class="text-center">보고서삭제</th>
+          <th class="text-center" style="font-size: 16px;">보고서유형</th>
+          <th class="pl-20 text-center" style="font-size: 16px;">보고서목록</th>
+          <th class="text-center" style="font-size: 16px;">생성하기</th>
+          <th class="text-center" style="font-size: 16px;">보고서삭제</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="text-center">취약점분석평가보고서(엑셀)</td>
+          <td class="text-center" style="font-size: 16px;"
+            >취약점분석평가보고서(엑셀)</td
+          >
           <td class="pl-20">
             <div class="flex excel">
               {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
@@ -330,15 +167,17 @@
       </colgroup>
       <thead>
         <tr>
-          <th class="text-center">보고서유형</th>
-          <th class="pl-20">보고서목록</th>
-          <th class="text-center">생성하기</th>
-          <th class="text-center">보고서삭제</th>
+          <th class="text-center" style="font-size: 16px;">보고서유형</th>
+          <th class="pl-20 text-center" style="font-size: 16px;">보고서목록</th>
+          <th class="text-center" style="font-size: 16px;">생성하기</th>
+          <th class="text-center" style="font-size: 16px;">보고서삭제</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="text-center">취약점분석평가보고서(엑셀)</td>
+          <td class="text-center" style="font-size: 16px;"
+            >취약점분석평가보고서(엑셀)</td
+          >
           <td class="pl-20">
             <div class="flex excel">
               {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
@@ -380,7 +219,9 @@
           </td>
         </tr>
         <tr>
-          <td class="text-center">취약점분석평가보고서(워드)</td>
+          <td class="text-center" style="font-size: 16px;"
+            >취약점분석평가보고서(워드)</td
+          >
           <td class="pl-20">
             <div class="flex excel">
               {#if planReports?.v_word && planReports?.v_word?.length !== 0}

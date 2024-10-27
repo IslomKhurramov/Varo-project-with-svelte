@@ -251,7 +251,7 @@
     bind:tabMenu
   /> -->
   {:else}
-    <div class="scroll-div" style="height: calc(-180px + 100vh);">
+    <div class="scroll-div" style="height:calc(-178px + 100vh); padding: 0;">
       <article class="contentArea">
         <section class="filterWrap">
           <div>
@@ -305,14 +305,14 @@
               </colgroup>
               <thead>
                 <tr>
-                  <th class="text-center">보안점수</th>
-                  <th>제목</th>
-                  <th>점검대상</th>
-                  <th>생성자</th>
-                  <th class="text-center">진행상태</th>
-                  <th>점검일시</th>
-                  <th>점검방법</th>
-                  <th></th>
+                  <th class="text-center" style="font-size: 16px;">보안점수</th>
+                  <th class="text-center" style="font-size: 16px;">제목</th>
+                  <th class="text-center" style="font-size: 16px;">점검대상</th>
+                  <th class="text-center" style="font-size: 16px;">생성자</th>
+                  <th class="text-center" style="font-size: 16px;">진행상태</th>
+                  <th class="text-center" style="font-size: 16px;">점검일시</th>
+                  <th class="text-center" style="font-size: 16px;">점검방법</th>
+                  <th class="text-center" style="font-size: 16px;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -433,7 +433,7 @@
                       </td>
                       <td
                         class="tableTootipWrap"
-                        style="background: none;"
+                        style="background: none; position: relative;"
                         on:click={(e) => {
                           e.stopPropagation();
                         }}
@@ -449,7 +449,10 @@
                         >
                           <img src="./assets/images/icon/options.svg" />
                         </button>
-                        <div class="tooltip-modal" style="display: none;">
+                        <div
+                          class="tooltip-modal"
+                          style="display: none; right: -16px;"
+                        >
                           <ul>
                             <li>
                               <a

@@ -239,9 +239,11 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
+    height: 91%;
+    overflow: auto;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-    max-width: 800px;
-    margin: 20px auto;
+    /* max-width: 800px;
+    margin: 20px auto; */
     font-family: Arial, sans-serif;
   }
 

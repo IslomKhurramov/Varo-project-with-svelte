@@ -268,7 +268,7 @@
       </li>
     </ul>
   </section> -->
-  <section class="tableWrap" style="height: 69vh;">
+  <section class="tableWrap" style="height: calc(-294px + 100vh);">
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>
@@ -284,9 +284,9 @@
           <tr>
             <th class="text-center" style="font-size: 16px;">번호</th>
             <th class="text-center" style="font-size: 16px;">호스트명</th>
-            <th style="font-size: 16px;">항목</th>
-            <th style="font-size: 16px;">점검항목</th>
-            <th style="font-size: 16px;">시스템상태</th>
+            <th class="text-center" style="font-size: 16px;">항목</th>
+            <th class="text-center" style="font-size: 16px;">점검항목</th>
+            <th class="text-center" style="font-size: 16px;">시스템상태</th>
             <th class="text-center" style="font-size: 16px;">점검결과</th>
             <th class="text-center" style="font-size: 16px;">결과변경</th>
           </tr>
@@ -294,17 +294,15 @@
         <tbody>
           {#if resultData && resultData?.length !== 0}
             {#each resultData as data, index}
-              <tr>
+              <tr
+                on:click={() => {
+                  modalData = { ...data };
+                  showModal = true;
+                }}
+              >
                 <td class="text-center" style="font-size: 16px;">{index + 1}</td
                 >
-                <td
-                  style="font-size: 16px;"
-                  on:click={() => {
-                    modalData = { ...data };
-                    showModal = true;
-                  }}
-                  class="cursor-pointer text-center"
-                >
+                <td style="font-size: 16px;" class="cursor-pointer text-center">
                   {data?.ast_uuid__ass_uuid__ast_hostname}
                 </td>
                 <td style="font-size: 16px;" class="line-height">
@@ -335,14 +333,17 @@
                     <select
                       style="font-size: 16px; width: 70px;"
                       class="xs"
-                      on:change={(e) =>
+                      on:click={(e) => e.stopPropagation()}
+                      on:change={(e) => {
+                        e.stopPropagation();
                         changeItemResult({
                           plan_index: search.plan_index,
                           result_index: data?.ccr_index,
                           checklist_index: data?.ccr_item_no__ccc_index,
                           change_result: e.target.value,
                           change_option: change_option,
-                        })}
+                        });
+                      }}
                     >
                       <option
                         style="font-size: 16px;"
@@ -384,7 +385,9 @@
                     <select
                       style="font-size: 16px; width: 70px;"
                       class="xs"
+                      on:click={(e) => e.stopPropagation()}
                       on:change={(e) => {
+                        e.stopPropagation();
                         change_option = e.target.value;
                       }}
                     >
@@ -441,8 +444,8 @@
   dialog {
     position: fixed;
     height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow-y: auto;
+    overflow-x: hidden; */
     top: 50%;
     left: 56%;
     transform: translate(-50%, -50%);

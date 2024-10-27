@@ -236,7 +236,7 @@
   let swiperContainer;
   let swiperInstance;
   let menuWrapper;
-  let scrollAmount = 0;
+  let scrollAmount = 9999;
   let itemWidth = 146;
   let menuWidth = 100;
   let activeAsset = null;
@@ -302,18 +302,22 @@
 
   const handleScroll = (direction) => {
     menuWrapper = document.getElementById("menuWrapper");
-    if (!menuWrapper) return;
-    const maxScroll = menuWrapper.scrollWidth - menuWidth;
+    console.log("++menuWrapper:", menuWrapper);
+    console.log("++itemWidth:", itemWidth);
+    if (!menuWrapper) return; // Ensure menuWrapper is initialized
+    const maxScroll = menuWrapper.scrollWidth - menuWrapper.clientWidth;
+    console.log("++maxScroll:", maxScroll);
 
     if (direction === "prev") {
       scrollAmount -= itemWidth;
+      console.log("++scrollAmount:", scrollAmount);
       if (scrollAmount < 0) scrollAmount = 0;
     } else if (direction === "next") {
       scrollAmount += itemWidth;
       if (scrollAmount > maxScroll) scrollAmount = maxScroll;
     }
 
-    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`; // Template literal corrected
   };
 
   $: {
@@ -848,24 +852,25 @@
             <article class="formWrap font13">
               <div class="formControlWrap">
                 <div class="formControl align-start">
-                  <label class="mt-12" style="font-size: 16px;"
-                    >취약점정보</label
-                  >
-                  <textarea rows="8" readonly
+                  <!-- svelte-ignore a11y-label-has-associated-control -->
+                  <label class="mt-12" style="font-size: 16px;"> 제목 </label>
+                  <textarea rows="2" readonly
                     >{targetData?.ccr_item_no__ccc_item_title}
                   </textarea>
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
+                  <!-- svelte-ignore a11y-label-has-associated-control -->
                   <label class="mt-12" style="font-size: 16px;">평가기준</label>
-                  <textarea rows="8" readonly style="font-size: 16px;"
+                  <textarea rows="4" readonly style="font-size: 16px;"
                     >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
                   >
                 </div>
               </div>
               <div class="formControlWrap">
                 <div class="formControl align-start">
+                  <!-- svelte-ignore a11y-label-has-associated-control -->
                   <label class="mt-12" style="font-size: 16px;">조치방법</label>
                   <textarea rows="8" readonly style="font-size: 16px;"
                     >{targetData?.ccr_item_no__ccc_mitigation_example}</textarea

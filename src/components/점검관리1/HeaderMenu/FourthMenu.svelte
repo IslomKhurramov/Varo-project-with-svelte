@@ -59,7 +59,6 @@
         bind:value={search.plan_index}
         on:change={searchDataHandler}
       >
-        <option value="" selected disabled>프로젝트명</option>
         <option value="" selected>전체</option>
 
         {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
@@ -107,7 +106,10 @@
       </button>
     </div>
   </section>
-  <section class="tableWrap" style="height: 69vh; overflow: auto;">
+  <section
+    class="tableWrap"
+    style="height: calc(-294px + 100vh); overflow: auto;"
+  >
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>

@@ -141,13 +141,13 @@
 <article class="contentArea mt-40">
   <h4 class="title border">전체등록현황</h4>
   <div class="flex semiProgressWrap">
-    <h5>등록현황</h5>
+    <h5 style="font-size: 16px;">등록현황</h5>
     <div class="semi-oval-progress">
       <div
         class="progress-bar"
         style={`width: ${(uploadStatus?.uploaded_asset_count / uploadStatus?.total_asset_count) * 100}%;`}
       ></div>
-      <div class="progress-text">
+      <div class="progress-text" style="font-size: 16px;">
         <span>{uploadStatus?.uploaded_asset_count ?? 0}</span> / {uploadStatus?.total_asset_count ??
           0}
       </div>
@@ -165,14 +165,15 @@
   <h4 class="title border">수동등록</h4>
   <div class="formControlWrap fileUploadWrap col">
     <div class="formControl">
-      <label>점검결과파일</label>
+      <label style="font-size: 16px;">점검결과파일</label>
       <div class="upload-section">
-        <label for="file-upload" class="file-label">
+        <label for="file-upload" class="file-label" style="font-size: 16px;">
           {jsonFiles && jsonFiles.length
             ? `${jsonFiles.length} files uploaded`
             : " JSON 파일 업로드 (UNIX/WINDOWS/DBMS/CLOUD…)"}
         </label>
         <input
+          style="font-size: 16px;"
           type="file"
           id="file-upload"
           accept=".json"
@@ -204,14 +205,15 @@
     </div>
 
     <div class="formControl">
-      <label>네트워크설정파일</label>
+      <label style="font-size: 16px;">네트워크설정파일</label>
       <div class="upload-section">
-        <label for="file-upload" class="file-label">
+        <label for="file-upload" class="file-label" style="font-size: 16px;">
           {txtFiles && txtFiles.length
             ? `${txtFiles.length} files uploaded`
             : "설정파일(TXT) 파일 업로드"}
         </label>
         <input
+          style="font-size: 16px;"
           type="file"
           id="file-upload"
           accept=".txt"
@@ -243,14 +245,15 @@
     </div>
 
     <div class="formControl">
-      <label>정보보호시스템</label>
+      <label style="font-size: 16px;">정보보호시스템</label>
       <div class="upload-section">
-        <label for="file-upload" class="file-label">
+        <label for="file-upload" class="file-label" style="font-size: 16px;">
           {excelFiles && excelFiles.length
             ? `${excelFiles.length} files uploaded`
             : "인터뷰파일(EXCEL) 파일 업로드"}
         </label>
         <input
+          style="font-size: 16px;"
           type="file"
           id="file-upload"
           accept=".xls,.xlsx"

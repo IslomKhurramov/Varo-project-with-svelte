@@ -18,6 +18,7 @@
   import GetLogHeader from "./getLogHeader.svelte";
   import { getAuditNLog, getPlanFilter } from "../../services/logs/logsService";
   import axios from "axios";
+  import { derived } from "svelte/store";
   import { serverApi } from "../../lib/config";
 
   let currentView = "default";
@@ -190,6 +191,14 @@
     isAddingNewGroup = false;
   };
   /*****************************************/
+  // Create a derived store to sort the asset group list by `created_date` in descending order
+  const sortedAssetGroupList = derived(
+    allAssetGroupList,
+    ($allAssetGroupList) =>
+      $allAssetGroupList
+        .slice() // create a shallow copy to avoid mutation
+        .sort((a, b) => new Date(b.asg_cdate) - new Date(a.asg_cdate)), // sort by newest date first
+  );
 
   /************************************************************************/
 
@@ -393,45 +402,47 @@
         >
       </div>
       <ul class="prMenuList">
-        {#if $allAssetGroupList.length > 0}
+        {#if $sortedAssetGroupList.length > 0}
           <li class={activeMenu === "전체" ? "active" : ""}>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-missing-attribute -->
             <a
               on:click={() => {
-                activeMenu = "전체"; // Highlight the active menu
-                selectedGroup = "전체"; // Set the selected group explicitly
-                selectPage(AssetCardsPage, "전체"); // Load all assets
+                activeMenu = "전체";
+                selectedGroup = "전체";
+                selectPage(AssetCardsPage, "전체");
               }}
               title="전체"
             >
               <span
-                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
-                >전체</span
-              ><span class="arrowIcon"></span>
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+              >
+                전체
+              </span>
+              <span class="arrowIcon"></span>
             </a>
           </li>
 
-          {#each $allAssetGroupList as group, index}
+          {#each $sortedAssetGroupList as group, index}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-missing-attribute -->
 
             <li class={activeMenu === group ? "active" : ""}>
               <a
                 on:click={() => {
+                  activeMenu = group;
                   selectPage(AssetCardsPage, group);
                 }}
                 title={group.asg_title}
               >
                 <span
                   style="white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: inline-block;
-                    max-width: 100%;"
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: inline-block;
+          max-width: 100%;"
                 >
-                  {group.asg_title}
-                  ({group.asg_count})
+                  {group.asg_title} ({group.asg_count})
                 </span>
                 <div
                   style="display: flex; flex-direction:row; align-items:center;"
@@ -440,8 +451,10 @@
                     <button
                       class="asset_button"
                       on:click|stopPropagation={() =>
-                        selectPage(AssetManagement)}>자산관리</button
+                        selectPage(AssetManagement)}
                     >
+                      자산관리
+                    </button>
                   {/if}
                   <span class="arrowIcon"></span>
                 </div>
@@ -779,6 +792,11 @@
     padding: 2px;
     transition: all 0.3s ease;
     text-align: center;
+  }
+  .sideMenu {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 141px);
   }
 
   .asset_button:hover {

@@ -168,8 +168,11 @@
   }
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
-  <article class="contentArea">
+<form
+  on:submit|preventDefault={handleSubmit}
+  style="overflow: scroll; height: 100vh;"
+>
+  <article class="contentArea" style="height: 90vh;">
     <div class="formControlWrap">
       <div class="formControl">
         <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -224,7 +227,7 @@
     {:else if showAssetReg}
       <article class="contentArea flex col gap-20">
         <div class="second_line_container">
-          <div class="right_container" style="overflow-y: hidden;">
+          <div class="right_container" style="height:70vh">
             <div class="top registCon">
               <section class="filterWrap">
                 <div>
@@ -365,7 +368,9 @@
   }
   .maxheight {
     padding-bottom: 20px;
-    max-height: 775px;
+    height: 50vh;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
   }
   .center {
     display: flex;

@@ -103,10 +103,10 @@
   }
 </script>
 
-<div class="contentArea" style="height: 75vh; overflow-y:auto; padding-top:0px">
+<div class="contentArea" style="height: 80vh; overflow-y:auto; padding-top:0px">
   <article
     class="contentArea"
-    style="height: 70vh; padding-top:0px; padding-left: 0px;padding-right:0px; margin-top:0px"
+    style="height: 75vh; padding-top:0px; padding-left: 0px;padding-right:0px; margin-top:0px"
   >
     {#if showSlide}
       <section bind:this={swiperContainer} class="topCon swiper-container">

@@ -484,7 +484,7 @@
   }
 
   .car_container {
-    height: 70vh;
+    height: 75vh;
     overflow-y: auto;
     padding-bottom: 20px;
     overflow-x: hidden;

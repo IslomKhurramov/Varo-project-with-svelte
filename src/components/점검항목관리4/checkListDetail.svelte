@@ -246,7 +246,7 @@
     font-size: 16px;
   }
   .table2 {
-    max-height: 70vh;
+    max-height: 75vh;
     padding-bottom: 20px;
   }
 

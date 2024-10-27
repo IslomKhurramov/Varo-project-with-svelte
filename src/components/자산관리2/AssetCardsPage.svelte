@@ -68,6 +68,7 @@
 
   onMount(() => {
     targetList();
+    console.log("allassetList", $allAssetList);
     assetList();
   });
 

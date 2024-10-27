@@ -8,12 +8,14 @@
     activeData = menu;
     console.log("data selected", page);
   };
+  $: console.log("assetdetail", $assetDeatilInfo);
 
   // Reactive subscription to assetDeatilInfo store
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
+  $: console.log("cce ", assetHistory);
 </script>
 
 <main>

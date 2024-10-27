@@ -112,6 +112,7 @@
 
       if (response) {
         assetDeatilInfo.set(Object.values(response));
+        console.log("detailasset  info", response);
       } else {
         console.error("Failed to get asset details.");
       }

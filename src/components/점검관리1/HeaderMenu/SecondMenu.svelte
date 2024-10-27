@@ -18,6 +18,7 @@
 
   export const changeDataHandler = async (data) => {
     try {
+      console.log("++data:", data);
       const formData = new FormData();
 
       formData.append("plan_index", data?.plan_index);

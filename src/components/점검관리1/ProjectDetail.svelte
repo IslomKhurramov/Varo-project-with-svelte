@@ -18,6 +18,7 @@
   import { onMount } from "svelte";
   import Modal from "../../shared/Modal.svelte";
   import ModalPage from "./ModalPage.svelte";
+  import ModalPageForDetail from "./ModalPageForDetail.svelte";
 
   export let projectIndex;
 
@@ -1102,23 +1103,8 @@
 <!--//Modal:자산 상세-->
 
 {#if lastModal}
-  <!-- <Modal bind:showModal={lastModal} bind:insertData>
-    <ModalPage
-      bind:modalData
-      bind:insertData
-      planIndex={projectIndex}
-      {changeDataHandler}
-    />
-  </Modal> -->
-
   <dialog open on:close={() => (lastModal = false)}>
-    <ModalPage
-      bind:showModal={lastModal}
-      bind:modalData
-      bind:insertData
-      planIndex={projectIndex}
-      {changeDataHandler}
-    />
+    <ModalPageForDetail bind:showModal={lastModal} bind:modalData />
   </dialog>
 {/if}
 

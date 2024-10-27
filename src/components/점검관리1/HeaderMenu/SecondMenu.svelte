@@ -420,21 +420,35 @@
     />
   </Modal> -->
 
-  <dialog open on:close={() => (showModal = false)}>
-    <ModalPage
-      bind:showModal
-      bind:modalData
-      bind:insertData
-      planIndex={search?.plan_index}
-      {changeDataHandler}
-    />
-  </dialog>
+  <div class="modal-open-wrap">
+    <dialog open on:close={() => (showModal = false)}>
+      <ModalPage
+        bind:showModal
+        bind:modalData
+        bind:insertData
+        planIndex={search?.plan_index}
+        {changeDataHandler}
+      />
+    </dialog>
+  </div>
 {/if}
 
 <style>
   * {
     font-size: 16px;
   }
+
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
+
   thead {
     position: sticky; /* Make the header sticky */
     top: 0; /* Stick the header to the top */
@@ -447,7 +461,7 @@
     /* overflow-y: auto;
     overflow-x: hidden; */
     top: 50%;
-    left: 56%;
+    left: 50%;
     transform: translate(-50%, -50%);
     width: 1103px;
     border: none;

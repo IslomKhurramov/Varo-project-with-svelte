@@ -213,17 +213,17 @@
             </div>
           </div>
           <div class="flex align-center btnWrap gap-6">
-            <button class="btn w140 btnBlue" type="submit">Submit</button>
+            <button class="btn w140 btnPrimaryFontGray" type="submit"
+              >Submit</button
+            >
             <button
-              class="btn w140"
-              style="background-color: red; color:white"
+              class="btn w140 btnPrimaryFontGray"
               type="reset"
               on:click={() => (formData = { ...assetDetails })}>Reset</button
             >
 
             <button
-              class="btn w140"
-              style="background-color: green; color:white"
+              class="btn w140 btnPrimaryFontGray"
               on:click={closeModalEdit}>Cancel</button
             >
           </div>
@@ -275,5 +275,12 @@
   .not-installed .value {
     color: #dc3545; /* Red color for not installed */
     font-weight: 600; /* Bold text */
+  }
+  .btn:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  .btn {
+    font-size: 16px;
   }
 </style>

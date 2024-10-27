@@ -154,10 +154,10 @@
   }
 </script>
 
-<div class="contentArea" style="height: 75vh; overflow-y:auto;">
+<div class="contentArea" style="height: 78vh; overflow-y:auto;">
   <article
     class="contentArea"
-    style="height: 70vh; padding-top:0px; padding-left: 0px;padding-right:0px"
+    style="height: 75vh; padding-top:0px; padding-left: 0px;padding-bottom:10px;  padding-right:0px"
   >
     <p style="padding-bottom:15px; ">점검그룹</p>
 
@@ -228,7 +228,7 @@
         <button on:click={deleteSelectedItem}>선택항목삭제</button>
       </div>
     {/if}
-    <div class="tableListWrap table2">
+    <div class="tableListWrap table2" style="margin-bottom: 10px;">
       <table class="tableList hdBorder font-size: 16px;">
         {#if isNewlyCreatedChecklist}
           <colgroup>

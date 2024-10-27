@@ -3,23 +3,19 @@
   import { onMount, afterUpdate } from "svelte";
   import { getAllCheckList } from "../../services/page4/getAllCheckList";
   import { setNewChecklistGroup } from "../../services/page4/getAllCheckList";
-  import { getChecklistItemBySearch } from "../../services/page4/getAllCheckList";
-  import Modal2 from "../../shared/Modal2.svelte";
   import { setDeleteChecklistGroup } from "../../services/page4/getAllCheckList";
   import { setUpdateGroupName } from "../../services/page4/getAllCheckList";
   import { Swiper, Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
-  import ModalSwiper from "./ModalSwiper.svelte";
   import { tick } from "svelte";
   import {
     checklistStore,
     fetchChecklistData,
   } from "../../services/page4/checklistStore";
   import CheckListDetail from "./checkListDetail.svelte";
-  import ModalEditItem from "./ModalEditItem.svelte";
   import { filteredChecklistData } from "../../services/page4/checklistStore";
-  import ModalEdit from "../자산관리2/SwiperMenu/ModalEdit.svelte";
   import { confirmDelete, successAlert } from "../../shared/sweetAlert";
+  import { derived } from "svelte/store";
 
   let currentView = "default";
   let currentPage = ItemPage;
@@ -94,7 +90,7 @@
   }
 
   /*****************************************************************************/
-  // Fetching data on component mount
+
   // Subscribe to checklistStore
   checklistStore.subscribe(
     ({ loading: storeLoading, data, error: storeError }) => {
@@ -123,8 +119,7 @@
         // Fetch the updated checklist data
         showModal = false;
         sweetAlert("체크리스트가 성공적으로 생성되었습니다!");
-
-        await refreshChecklistData();
+        await fetchChecklistData();
         lastCreatedChecklistId = selectedChecklist.ccg_index;
         showEdit = true;
         // Add the new checklist to createdChecklists
@@ -176,25 +171,7 @@
     });
   };
 
-  async function refreshChecklistData() {
-    try {
-      const allCheckList = await getAllCheckList();
-      allChecklistArray = Object.values(allCheckList); // Convert to array
-
-      // Automatically set the newly created checklist as the active one
-      if (allChecklistArray.length > 0) {
-        selectedChecklist = allChecklistArray[allChecklistArray.length - 1];
-        activeMenu = selectedChecklist;
-        console.log("Refreshed data:", selectedChecklist);
-      }
-    } catch (error) {
-      console.error("Error fetching checklist data:", error);
-    }
-  }
-
   /*********************************************************************************/
-  // Delete a checklist (only for the last created checklist)
-  // Define a confirmation prompt with a promise
 
   async function deleteChecklist(checklistId) {
     try {
@@ -220,23 +197,43 @@
       alert(`Failed to delete checklist group: ${err.message}`);
     }
   }
-
+  /**************************************************************************************/
   const deleteProject = async () => {
     try {
       const isConfirmed = await confirmDelete(); // Wait for confirmation
 
-      if (isConfirmed) {
-        if (allChecklistArray.length > 0) {
-          const lastProject = allChecklistArray[allChecklistArray.length - 1];
-          await setDeleteChecklistGroup(lastProject.ccg_index);
+      if (isConfirmed && selectedChecklist) {
+        // Get the index of the selected checklist
+        const selectedChecklistIndex = selectedChecklist.ccg_index;
+
+        // Attempt to delete the selected checklist group
+        const response = await setDeleteChecklistGroup(selectedChecklistIndex);
+
+        if (response.success) {
+          // Update the checklist arrays by filtering out the deleted checklist
+          currentPage = ItemPage;
           allChecklistArray = allChecklistArray.filter(
-            (checklist) => checklist.ccg_index !== lastProject.ccg_index,
+            (checklist) => checklist.ccg_index !== selectedChecklistIndex,
           );
           createdChecklists = createdChecklists.filter(
-            (checklist) => checklist.ccg_index !== lastProject.ccg_index,
+            (checklist) => checklist.ccg_index !== selectedChecklistIndex,
           );
+
+          // Reset the selected checklist and active menu after deletion
+          selectedChecklist = null;
+          activeMenu = null;
+          lastCreatedChecklistId = null;
+
+          // Show a success message
+          successAlert("체크리스트가 성공적으로 삭제되었습니다!");
+
+          // Refresh checklist data to update UI
+          await fetchChecklistData();
+        } else {
+          throw new Error("Failed to delete checklist.");
         }
-        successAlert("성공적으로 삭제되었습니다.");
+      } else if (!selectedChecklist) {
+        alert("삭제할 체크리스트를 선택해주세요."); // Alert if no checklist is selected
       }
     } catch (err) {
       console.log("ERROR deleteProject:", err);
@@ -330,13 +327,9 @@
   function cleanSearch() {
     selectedCategory = "UNIX"; // Reset to default category
     selectedRisk = "위험도"; // Reset to default risk level
-    selectedChecklist = ""; // Reset selected checklist
     showDataTbale2 = false; // Reset any UI flags
-
-    // Optionally, clear the filtered checklists in the store
     filteredChecklistData.set([]); // Reset store data to empty array
 
-    // Trigger filtering with the defaults
     filterData();
   }
 
@@ -365,10 +358,21 @@
     showModalModalEditItem = false;
     showEdit = false; // Reset showEdit state as well
   }
+  const sortedChecklistByDate = derived(checklistStore, ($checklistStore) => {
+    if ($checklistStore.data) {
+      return [...$checklistStore.data].sort(
+        (a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate),
+      );
+    }
+    return [];
+  });
 </script>
 
 <section>
-  <article class="sideMenu">
+  <article
+    class="sideMenu"
+    style="overflow: auto; height: calc(100vh - 141px);"
+  >
     <div class="btnWrap">
       <!-- svelte-ignore a11y-missing-attribute -->
       <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -396,9 +400,8 @@
       <p>Error: {error}</p>
     {:else}
       <ul class="prMenuList">
-        {#each allChecklistArray as checkList (checkList.ccg_index)}
+        {#each $sortedChecklistByDate as checkList (checkList.ccg_index)}
           <li class={activeMenu === checkList ? "active" : ""}>
-            <!-- svelte-ignore a11y-invalid-attribute -->
             <a
               href="#"
               on:click|preventDefault={() =>
@@ -406,12 +409,13 @@
               title={checkList.ccg_group}
             >
               <span
-                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
               >
                 {checkList.ccg_group
                   ? checkList.ccg_group
-                  : "No group info"}({checkList.ccg_checklist_year})</span
-              ><span class="arrowIcon"></span>
+                  : "No group info"}({checkList.ccg_checklist_year})
+              </span>
+              <span class="arrowIcon"></span>
             </a>
           </li>
         {/each}

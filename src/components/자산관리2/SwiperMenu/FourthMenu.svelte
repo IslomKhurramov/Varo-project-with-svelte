@@ -405,7 +405,7 @@
 
   .tableScroll {
     margin-bottom: 20px;
-    height: 70vh;
+    height: 75vh;
     overflow-y: auto; /* Enable vertical scrolling */
     overflow-x: auto;
   }

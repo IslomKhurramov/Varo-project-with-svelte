@@ -307,7 +307,7 @@
                 >
                   {data?.ast_uuid__ass_uuid__ast_hostname}
                 </td>
-                <td style="font-size: 16px;">
+                <td style="font-size: 16px;" class="line-height">
                   [{data?.ccr_item_no__ccc_item_no}] {data?.ccr_item_no__ccc_item_title}
                 </td>
                 <td
@@ -468,6 +468,6 @@
     transition-duration: 0.3s;
   }
   .line-height {
-    line-height: 30px;
+    line-height: 23px;
   }
 </style>

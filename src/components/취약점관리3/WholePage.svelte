@@ -240,7 +240,7 @@
   let swiperContainer;
   let swiperInstance;
   let menuWrapper;
-  let scrollAmount = 9999;
+  let scrollAmount = 0;
   let itemWidth = 146;
   let menuWidth = 100;
   let activeAsset = null;
@@ -309,7 +309,7 @@
     console.log("++menuWrapper:", menuWrapper);
     console.log("++itemWidth:", itemWidth);
     if (!menuWrapper) return; // Ensure menuWrapper is initialized
-    const maxScroll = menuWrapper.scrollWidth - menuWrapper.clientWidth;
+    const maxScroll = menuWrapper.scrollWidth - menuWidth;
     console.log("++maxScroll:", maxScroll);
 
     if (direction === "prev") {

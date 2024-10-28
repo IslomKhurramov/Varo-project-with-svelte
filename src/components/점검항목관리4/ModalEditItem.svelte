@@ -103,10 +103,7 @@
   }
 </script>
 
-<section
-  style="margin-top: 
-10px;"
->
+<section style="margin-top:10px; overflow: auto; height: 99%">
   <article
     class="contentArea"
     style="height: 72vh;

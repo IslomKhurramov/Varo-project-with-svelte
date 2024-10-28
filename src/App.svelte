@@ -61,7 +61,9 @@
 
   onMount(async () => {
     try {
-      nofiticationData = await getUserAllMessages();
+      if ($userData.isLoggedIn) {
+        nofiticationData = await getUserAllMessages();
+      }
     } catch (err) {
       console.log("err", err);
     }
@@ -95,10 +97,6 @@
     });
     navigate("/login"); // Redirect to login
   };
-
-  $: {
-    console.log("++openNotificaiton", openNotification);
-  }
 </script>
 
 <Router>

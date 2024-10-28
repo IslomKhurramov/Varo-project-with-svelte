@@ -9,6 +9,7 @@
   } from "../../services/vulns/vulnsService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { userData } from "../../stores/user.store";
+  import { decryptData } from "../../services/login/loginService";
 
   export let tableData;
   export let vulnerabilityStatusValue;
@@ -24,8 +25,9 @@
   export let loading;
 
   let theadChecked = false;
-  // let isAgenUser = $userData?.userInfo?.user_roletype__role_index == 1;
-  let isAgenUser = true;
+  let isAgenUser =
+    decryptData($userData?.userInfo?.user_roletype__role_index) == 1;
+  // let isAgenUser = true;
 
   let data = [];
 

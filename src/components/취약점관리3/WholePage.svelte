@@ -1,5 +1,8 @@
 <script>
-  import { getUserName } from "./../../services/login/loginService.js";
+  import {
+    decryptData,
+    getUserName,
+  } from "./../../services/login/loginService.js";
   import { onMount } from "svelte";
   import Modal from "../../shared/Modal.svelte";
   import ModalRegisteredAdmin from "./ModalRegisteredAdmin.svelte";
@@ -23,8 +26,9 @@
   export let currentView;
   export let wholePage;
 
-  // let isAgentUser = $userData?.userInfo?.user_roletype__role_index == 1;
-  let isAgentUser = true;
+  let isAgentUser =
+    decryptData($userData?.userInfo?.user_roletype__role_index) == 1;
+  // let isAgentUser = true;
 
   let usernames = [];
   let options = [];

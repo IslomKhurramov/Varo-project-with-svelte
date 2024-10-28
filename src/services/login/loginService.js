@@ -1,4 +1,5 @@
 import axios from "axios";
+import CryptoJS from "crypto-js";
 import { serverApi } from "../../lib/config";
 
 export const getUserExist = async (user_email) => {
@@ -80,3 +81,20 @@ export const getUserAllMessages = async () => {
     throw error;
   }
 };
+
+export function decryptData(encryptedString) {
+  const AES_ENCRYPT_KEY = "oingisprettyintheworld1234567890".slice(0, 32);
+  const IV = CryptoJS.enc.Utf8.parse("\0".repeat(16));
+  try {
+    const ciphertext = CryptoJS.enc.Base64.parse(encryptedString);
+    const bytes = CryptoJS.AES.decrypt(
+      { ciphertext },
+      CryptoJS.enc.Utf8.parse(AES_ENCRYPT_KEY),
+      { iv: IV, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 },
+    );
+    return bytes.toString(CryptoJS.enc.Utf8); // Return the decrypted text
+  } catch (error) {
+    console.error("Decryption error:", error);
+    return null;
+  }
+}

@@ -112,13 +112,15 @@
             >
             {#if activeMenu === project.ccp_index && project?.plan_execution_type == true}
               <ul class="submenu" style="background: none;padding-left: 10px;">
-                <li class="active">
-                  <a
-                    href="./vulnerability.html"
-                    style="background: none; color: #9197b3;font-size: 14px;"
-                    >- 조치계획관리</a
-                  >
-                </li>
+                {#each Array.from({ length: project.plan_execute_interval_value }, (_, i) => i + 1) as data}
+                  <li class="active">
+                    <a
+                      href="javascript:void(0);"
+                      style="background: none; color: #9197b3;font-size: 14px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                      >- {project.ccp_title} {data}차</a
+                    >
+                  </li>
+                {/each}
               </ul>
             {/if}
           </li>

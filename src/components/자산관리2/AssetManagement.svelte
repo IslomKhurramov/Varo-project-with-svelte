@@ -166,6 +166,13 @@
     }
     console.log("Selected Assets UUIDs (after toggle):", selectedAssets);
   }
+
+  let showCards = true;
+
+  // Function to toggle the visibility
+  const toggleCardsVisibility = () => {
+    showCards = !showCards;
+  };
 </script>
 
 <form
@@ -306,55 +313,64 @@
               </section>
             </div>
 
-            <div class="first_check_cont">
-              <input
-                type="checkbox"
-                class="first_checkbox"
-                on:click={toggleAll}
-                checked={allSelected}
-              />
-              <p>전체선택</p>
-            </div>
-            <section class="maxheight" style="overflow-y: auto;">
-              <div class="cardWrap col5">
-                {#each filteredAssets as asset}
-                  <article class="card">
-                    <div class="checkboxWrap default">
-                      <input
-                        class="checkboxWrap default"
-                        type="checkbox"
-                        checked={selectedAssets.includes(asset.ass_uuid)}
-                        on:change={(event) =>
-                          handleAssetSelection(asset, event)}
-                      /> <span></span>
-                    </div>
-                    <div class="imageWrap flex align-center gap-20">
-                      <!-- svelte-ignore a11y-img-redundant-alt -->
-                      <img src="./assets/images/asset_window.png" alt="img" />
-                      <div class="head">
-                        {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
-                          {#each asset.assessment_target_system as target}
-                            {#if target && typeof target === "object"}
-                              {#each Object.entries(target) as [key, value]}
-                                {#if value}
-                                  <p>{key}</p>
-                                {/if}
-                              {/each}
-                            {/if}
-                          {/each}
-                        {/if}
-                      </div>
-                    </div>
-                    <div class="content">
-                      <ul>
-                        <li><span>이름:</span> {asset.ast_hostname}</li>
-                        <li><span>아피:</span> {asset.ast_ipaddr}</li>
-                      </ul>
-                    </div>
-                  </article>
-                {/each}
+            <!-- Button to toggle visibility of cards -->
+            <button
+              class="btn w140 btnBlue"
+              on:click|preventDefault={toggleCardsVisibility}
+            >
+              {showCards ? "자산 숨기기" : "자산 보기"}
+            </button>
+            {#if showCards}
+              <div class="first_check_cont">
+                <input
+                  type="checkbox"
+                  class="first_checkbox"
+                  on:click={toggleAll}
+                  checked={allSelected}
+                />
+                <p>전체선택</p>
               </div>
-            </section>
+              <section class="maxheight" style="overflow-y: auto;">
+                <div class="cardWrap col5">
+                  {#each filteredAssets as asset}
+                    <article class="card">
+                      <div class="checkboxWrap default">
+                        <input
+                          class="checkboxWrap default"
+                          type="checkbox"
+                          checked={selectedAssets.includes(asset.ass_uuid)}
+                          on:change={(event) =>
+                            handleAssetSelection(asset, event)}
+                        /> <span></span>
+                      </div>
+                      <div class="imageWrap flex align-center gap-20">
+                        <!-- svelte-ignore a11y-img-redundant-alt -->
+                        <img src="./assets/images/asset_window.png" alt="img" />
+                        <div class="head">
+                          {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
+                            {#each asset.assessment_target_system as target}
+                              {#if target && typeof target === "object"}
+                                {#each Object.entries(target) as [key, value]}
+                                  {#if value}
+                                    <p>{key}</p>
+                                  {/if}
+                                {/each}
+                              {/if}
+                            {/each}
+                          {/if}
+                        </div>
+                      </div>
+                      <div class="content">
+                        <ul>
+                          <li><span>이름:</span> {asset.ast_hostname}</li>
+                          <li><span>아피:</span> {asset.ast_ipaddr}</li>
+                        </ul>
+                      </div>
+                    </article>
+                  {/each}
+                </div>
+              </section>
+            {/if}
           </div>
         </div>
       </article>

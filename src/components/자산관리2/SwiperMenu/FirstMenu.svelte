@@ -374,7 +374,7 @@
 
   /* Optional alternating row color within each card */
   .itemTable tr:nth-child(even) .fieldValue {
-    background-color: #f9f9f9;
+    background-color: rgba(0, 103, 255, 0.05);
   }
   .tableListWrap th,
   td {

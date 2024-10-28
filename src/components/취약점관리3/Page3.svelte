@@ -311,6 +311,7 @@
                                     ? "active"
                                     : ""}
                                   on:click={async () => {
+                                    loading = true;
                                     setView = "plan";
                                     assets = await getVulnsOfAsset({
                                       plan_index: plan?.plan_index,
@@ -321,6 +322,7 @@
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
                                     };
+                                    loading = false;
                                   }}
                                 >
                                   <a href="javascript:void(0);">
@@ -352,6 +354,7 @@
                   <div
                     class="menu"
                     on:click={async () => {
+                      loading = true;
                       setView = "plan";
                       selectPage(MainPageProject, asset.ast_uuid);
                       assets = await getVulnsOfAsset({
@@ -363,6 +366,7 @@
                         plan_index: "",
                         asset_target_uuid: asset.ast_uuid,
                       };
+                      loading = false;
                     }}
                   >
                     <span

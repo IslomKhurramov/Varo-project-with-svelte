@@ -744,6 +744,7 @@ th.pl-20 {
   background-color: #f5f6fa;
 }
 #wrap .titleWrap {
+  position: relative;
   padding: 0 24px;
   justify-content: space-between;
   background-color: #fff;

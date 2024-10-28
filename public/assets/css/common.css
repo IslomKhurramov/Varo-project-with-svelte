@@ -870,11 +870,11 @@ button.tableTootip {
   padding: 10px 12px;
   position: relative;
 }
-#wrap .container .containerMenu {
+/* #wrap .container .containerMenu {
   min-height: calc(100vh - 134px);
   padding: 10px 12px;
   position: relative;
-}
+} */
 #wrap .container .sideMenu .btnWrap {
   display: flex;
   gap: 4px;

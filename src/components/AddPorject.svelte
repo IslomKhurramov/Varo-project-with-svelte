@@ -50,6 +50,7 @@
   let repealRule = "";
   let conductorInfo = "";
   let recheckplanIndex = null;
+  let plan_execute_interval_value = 0;
 
   // SECOND DATA
   let assetInsertData = {
@@ -93,7 +94,7 @@
         plan_start_date: moment(startDate).format("YYYY-MM-DD h:mm:ss"),
         plan_end_date: moment(endDate).format("YYYY-MM-DD h:mm:ss"),
         plan_execution_type: parseInt(schedule),
-        plan_execute_interval_value: schedule == 1 ? 1 : 0,
+        plan_execute_interval_value: plan_execute_interval_value,
         plan_execute_interval_term: schedule == 0 ? "hours" : repeatCycle,
         plan_name_repeat_rule_type: ruleType ? parseInt(ruleType) : 0,
         plan_name_repeat_rule: repealRule,
@@ -408,7 +409,7 @@
                     type="text"
                     placeholder="반복주기지정(반복설정"
                     class="w90"
-                    disabled
+                    bind:value={plan_execute_interval_value}
                   />
                   <select
                     class="w120"

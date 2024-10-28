@@ -749,7 +749,10 @@
 
   {#if projectDetails?.ccp_index}
     <section class="rowContents">
-      <article class="contentArea securityLevel">
+      <article
+        class="contentArea securityLevel"
+        style="box-sizing: border-box;"
+      >
         <h4 class="title border">보안수준</h4>
         <div class="flex">
           <div class="circleGraph">

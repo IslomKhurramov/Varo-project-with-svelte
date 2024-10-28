@@ -169,7 +169,7 @@
 </script>
 
 <div
-  style="overflow: scroll; height: 100vh;"
+  style="overflow: scroll; height: 100vh; width: calc(100% - 280px);"
   class={`contentsWrap ${tabMenu == "결과등록" && "resultCreate"} ${tabMenu == "결과조회/변경" && "resultView"} ${tabMenu == "보고서생성" && "reportCreate"} ${tabMenu == "이력관리" && "logWrap"}`}
 >
   <nav class="tabMenu">

@@ -98,7 +98,6 @@
       {#if projectArray && projectArray?.length !== 0}
         {#each projectArray as project, index}
           <li class={activeMenu === project.ccp_index ? "active" : ""}>
-            <!-- <Tooltip text={project.ccp_title}> -->
             <a
               href="javascript:void(0)"
               on:click={() => selectPage(RightContainerMenu, project)}
@@ -111,7 +110,17 @@
               <span class="tooltip">{project.ccp_title}</span>
               <span class="arrowIcon"></span></a
             >
-            <!-- </Tooltip> -->
+            <!-- {#if activeMenu === project.ccp_index && project?.plan_execution_type == true}
+              <ul class="submenu" style="background: none;padding-left: 10px;">
+                <li class="active">
+                  <a
+                    href="./vulnerability.html"
+                    style="background: none; color: #9197b3;font-size: 14px;"
+                    >- 조치계획관리</a
+                  >
+                </li>
+              </ul>
+            {/if} -->
           </li>
         {/each}
       {/if}
@@ -131,6 +140,18 @@
 </section>
 
 <style>
+  .submenu {
+    display: block;
+    background-color: #f7fafc;
+    padding-left: 50px;
+  }
+  .submenu .active a {
+    color: #0067ff;
+    display: block;
+    font-size: 14px;
+    padding: 10px 12px;
+    font-weight: 400;
+  }
   .buttonActive {
     background-color: #0067ff;
     color: #fff;

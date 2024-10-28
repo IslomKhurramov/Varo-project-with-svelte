@@ -3,19 +3,86 @@
   let currentData = null;
   let activeData = null;
 
+  // Separate filter selection variables
+  let selectedProcessNetworkPort = "";
+  let selectedProcessPname = "";
+  let selectedInstalledProgPname = "";
+  let selectedPatchStatusPatchName = "";
+  let selectedDll = "";
+
+  // Reactive dropdown options based on the active tab
+  $: processNetworkPorts =
+    activeData === "네트워크 정보" && currentData
+      ? [...new Set(currentData.map((item) => item.apn_nlocal_port))]
+      : [];
+
+  $: processNames =
+    activeData === "프로세스목록" && currentData
+      ? [...new Set(currentData.map((item) => item.app_pname))]
+      : [];
+
+  $: installedProgNames =
+    activeData === "설치된 프로그램 목록" && currentData
+      ? [...new Set(currentData.map((item) => item.aip_pname))]
+      : [];
+
+  $: patchNames =
+    activeData === "패치내역" && currentData
+      ? [...new Set(currentData.map((item) => item.aps_patch_name))]
+      : [];
+
+  $: dllNames =
+    activeData === "DLL 정보" && currentData
+      ? [...new Set(currentData.map((item) => item.ads_dll))]
+      : [];
+
+  // Filtered data: Shows all data for 운영체제정보 or patchstatus
+  $: filteredData =
+    activeData === "운영체제정보" || activeData === "patchstatus"
+      ? currentData // Show all data for 운영체제정보 and patchstatus tabs
+      : activeData === "네트워크 정보" && selectedProcessNetworkPort
+        ? currentData.filter(
+            (item) => item.apn_nlocal_port === selectedProcessNetworkPort,
+          )
+        : activeData === "프로세스목록" && selectedProcessPname
+          ? currentData.filter(
+              (item) => item.app_pname === selectedProcessPname,
+            )
+          : activeData === "설치된 프로그램 목록" && selectedInstalledProgPname
+            ? currentData.filter(
+                (item) => item.aip_pname === selectedInstalledProgPname,
+              )
+            : activeData === "패치내역" && selectedPatchStatusPatchName
+              ? currentData.filter(
+                  (item) =>
+                    item.aps_patch_name === selectedPatchStatusPatchName,
+                )
+              : activeData === "DLL 정보" && selectedDll
+                ? currentData.filter((item) => item.ads_dll === selectedDll)
+                : []; // Show no data if no filter is selected or if not one of the filtered tabs
+
   const selectData = (page, menu) => {
     currentData = page;
     activeData = menu;
-    console.log("data selected", page);
+    resetFilters();
   };
-  $: console.log("assetdetail", $assetDeatilInfo);
 
+  // Reset filter selections when switching tabs
+  const resetFilters = () => {
+    selectedProcessNetworkPort = "";
+    selectedProcessPname = "";
+    selectedInstalledProgPname = "";
+    selectedPatchStatusPatchName = "";
+    selectedDll = "";
+  };
   // Reactive subscription to assetDeatilInfo store
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
   $: console.log("cce ", assetHistory);
+  $: fieldOptions =
+    currentData && currentData.length > 0 ? Object.keys(currentData[0]) : [];
 </script>
 
 <main>
@@ -174,41 +241,141 @@
       </section>
     </div>
 
-    {#if currentData && currentData.length > 0}
-      <div class="tableListWrap scrollTable">
-        <table
-          class="tableList hdBorder"
-          style="margin-bottom: 40px; font-size:16px;"
+    <div class="flex col detail">
+      <!-- Dropdowns for filtering (no dropdown for 운영체제정보) -->
+      {#if activeData === "네트워크 정보"}
+        <label for="networkPortSelect">Filter by Local Port:</label>
+        <select id="networkPortSelect" bind:value={selectedProcessNetworkPort}>
+          <option value="">Select a Port</option>
+          {#each processNetworkPorts as port}
+            <option value={port}>{port}</option>
+          {/each}
+        </select>
+      {/if}
+
+      {#if activeData === "프로세스목록"}
+        <label for="processNameSelect">Filter by Process Name:</label>
+        <select id="processNameSelect" bind:value={selectedProcessPname}>
+          <option value="">Select a Process</option>
+          {#each processNames as name}
+            <option value={name}>{name}</option>
+          {/each}
+        </select>
+      {/if}
+
+      {#if activeData === "설치된 프로그램 목록"}
+        <label for="installedProgSelect">Filter by Program Name:</label>
+        <select
+          id="installedProgSelect"
+          bind:value={selectedInstalledProgPname}
         >
-          <colgroup>
-            <col style="width:60px;" />
-            <col style="width: 300px;" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th class="text-center">Field</th>
-              <th class="text-center">Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each Object.entries(currentData[0]) as [key, value]}
-              <tr>
-                <td>{key}</td>
-                <td>{value}</td>
-              </tr>
+          <option value="">Select a Program</option>
+          {#each installedProgNames as progName}
+            <option value={progName}>{progName}</option>
+          {/each}
+        </select>
+      {/if}
+
+      {#if activeData === "패치내역"}
+        <label for="patchNameSelect">Filter by Patch Name:</label>
+        <select id="patchNameSelect" bind:value={selectedPatchStatusPatchName}>
+          <option value="">Select a Patch</option>
+          {#each patchNames as patchName}
+            <option value={patchName}>{patchName}</option>
+          {/each}
+        </select>
+      {/if}
+
+      {#if activeData === "DLL 정보"}
+        <label for="dllSelect">Filter by DLL:</label>
+        <select id="dllSelect" bind:value={selectedDll}>
+          <option value="">Select a DLL</option>
+          {#each dllNames as dllName}
+            <option value={dllName}>{dllName}</option>
+          {/each}
+        </select>
+      {/if}
+
+      <!-- Table to display data, shows all entries for 운영체제정보 and patchstatus -->
+      <div class="flex col detail">
+        <h3 class="title">Asset Details</h3>
+
+        <!-- Table to display data, with separate sections for each item -->
+        {#if filteredData && filteredData.length > 0}
+          <div class="itemListWrap">
+            {#each filteredData as item}
+              <div class="itemCard">
+                <table class="itemTable">
+                  <colgroup>
+                    <col style="width: 150px;" />
+                    <col />
+                  </colgroup>
+                  <tbody>
+                    {#each Object.entries(item) as [key, value]}
+                      <tr>
+                        <td class="fieldName">{key}</td>
+                        <td class="fieldValue">{value}</td>
+                      </tr>
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
             {/each}
-          </tbody>
-        </table>
+          </div>
+        {:else if activeData}
+          <div class="empty_state">
+            <p>
+              {activeData === "운영체제정보" || activeData === "patchstatus"
+                ? "No data available"
+                : "Select a filter option to display data"}
+            </p>
+          </div>
+        {/if}
       </div>
-    {:else}
-      <div class="empty_state">
-        <p>No information available for this tab</p>
-      </div>
-    {/if}
+    </div>
   </div>
 </main>
 
 <style>
+  .itemListWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adds space between each item card */
+    margin: 20px;
+  }
+
+  .itemCard {
+    background-color: #fff;
+    border: 1px solid #ddd; /* Border for clear separation */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for card effect */
+  }
+
+  .itemTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .itemTable td {
+    padding: 8px 10px;
+    vertical-align: top;
+  }
+
+  .fieldName {
+    font-weight: bold;
+    color: #333;
+    width: 150px;
+  }
+
+  .fieldValue {
+    color: #555;
+  }
+
+  /* Optional alternating row color within each card */
+  .itemTable tr:nth-child(even) .fieldValue {
+    background-color: #f9f9f9;
+  }
   .tableListWrap th,
   td {
     font-size: 16px;
@@ -216,10 +383,18 @@
   .subTabWrap a {
     cursor: pointer;
   }
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
   .scrollTable {
     overflow-y: auto;
     overflow-x: hidden;
     height: 500px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .contenArea {
     min-height: 1200px;

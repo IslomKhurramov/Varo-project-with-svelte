@@ -110,7 +110,7 @@
               <span class="tooltip">{project.ccp_title}</span>
               <span class="arrowIcon"></span></a
             >
-            <!-- {#if activeMenu === project.ccp_index && project?.plan_execution_type == true}
+            {#if activeMenu === project.ccp_index && project?.plan_execution_type == true}
               <ul class="submenu" style="background: none;padding-left: 10px;">
                 <li class="active">
                   <a
@@ -120,7 +120,7 @@
                   >
                 </li>
               </ul>
-            {/if} -->
+            {/if}
           </li>
         {/each}
       {/if}

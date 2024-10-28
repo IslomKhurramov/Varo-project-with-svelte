@@ -63,3 +63,20 @@ export const getUserName = async () => {
     throw error;
   }
 };
+
+export const getUserAllMessages = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getUserAllMessages/`, {
+      withCredentials: true,
+    });
+
+    console.log("getUserAllMessages:", response);
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.ALRAM;
+  } catch (error) {
+    console.error("Error getUserAllMessages:", error);
+    throw error;
+  }
+};

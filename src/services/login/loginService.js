@@ -95,6 +95,5 @@ export function decryptData(encryptedString) {
     return bytes.toString(CryptoJS.enc.Utf8); // Return the decrypted text
   } catch (error) {
     console.error("Decryption error:", error);
-    return null;
   }
 }

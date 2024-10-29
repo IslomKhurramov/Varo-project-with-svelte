@@ -109,6 +109,7 @@
             <a
               href="javascript:void(0)"
               on:click={() => selectPage(RightContainerMenu, project)}
+              title={project.ccp_title}
             >
               <span
                 style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"

@@ -167,7 +167,7 @@
     console.log("Selected Assets UUIDs (after toggle):", selectedAssets);
   }
 
-  let showCards = true;
+  let showCards = false;
 
   // Function to toggle the visibility
   const toggleCardsVisibility = () => {

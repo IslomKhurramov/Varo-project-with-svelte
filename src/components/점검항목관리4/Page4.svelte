@@ -671,6 +671,9 @@
 </section>
 
 <style>
+  .sideMenu .btnWrap .btn:hover img {
+    filter: brightness(0) invert(1);
+  }
   /* General Reset */
   .modal-open-wrap {
     display: block;

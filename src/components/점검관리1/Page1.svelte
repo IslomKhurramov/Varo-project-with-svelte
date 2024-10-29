@@ -206,4 +206,8 @@
   * {
     font-size: 16px;
   }
+
+  .btn:hover img {
+    filter: brightness(0) invert(1);
+  }
 </style>

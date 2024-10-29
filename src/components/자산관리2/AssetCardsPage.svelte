@@ -204,14 +204,14 @@
 </script>
 
 {#if !showSwiperComponent}
-  <div class="car_container">
+  <div class="car_container" style="height: calc(-236px + 100vh);">
     <div class="allselect">
       <div class="allSelectDiv">
         <input type="checkbox" on:click={toggleAll} checked={allSelected} />
         <strong class="selectButton">전체선택</strong>
       </div>
     </div>
-    <div class="graphCardWrap col3">
+    <div class="graphCardWrap col3" style="height: 100%;">
       {#each filteredAssets as asset}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article
@@ -392,7 +392,7 @@
     </div>
   {/if}
 {:else}
-  <div class="car_container">
+  <div class="car_container" style="height: calc(-236px + 100vh);">
     <Swiper {selectedAsset} {filteredAssets} />
   </div>
 {/if}

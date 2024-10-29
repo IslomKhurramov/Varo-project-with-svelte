@@ -353,7 +353,7 @@
   }
 </script>
 
-<main>
+<main style="height: 100%;">
   <article class="contentArea mt-0">
     <section bind:this={swiperContainer} class="topCon">
       <div class="menu-container">

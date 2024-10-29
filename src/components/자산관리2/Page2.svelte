@@ -636,6 +636,9 @@
 </div>
 
 <style>
+  .sideMenu .btnWrap .btn:hover img {
+    filter: brightness(0) invert(1);
+  }
   .modal-open-wrap {
     display: block;
     z-index: 99;

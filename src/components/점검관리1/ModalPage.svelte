@@ -41,7 +41,7 @@
       <th class="center-align">점검기준</th>
       <td class="lineCol">
         <div class="line-height">
-          양호: <span class="line-height">
+          <span class="line-height">
             {@html modalData?.ccr_item_no__ccc_item_criteria}
           </span>
         </div>

@@ -74,10 +74,7 @@
 </script>
 
 <section>
-  <article
-    class="sideMenu"
-    style="overflow: auto; height: calc(100vh - 134px);"
-  >
+  <article class="sideMenu" style="height: calc(100vh - 134px);">
     <div class="btnWrap">
       <!-- svelte-ignore a11y-missing-attribute -->
       <!-- svelte-ignore a11y-click-events-have-key-events -->

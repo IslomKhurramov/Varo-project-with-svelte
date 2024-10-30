@@ -148,7 +148,7 @@
                   <!-- svelte-ignore a11y-missing-attribute -->
                   <img src="./assets/images/icon/person.svg" />
                   <div class="user">
-                    <span>{decryptData($userData?.userInfo?.user_name)}</span>님
+                    <span>{$userData?.userInfo?.user_name}</span>님
                   </div>
                   <div class="logout-menu">
                     <button on:click={handleLogout} class="logout-button">

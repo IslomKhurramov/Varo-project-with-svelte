@@ -4,118 +4,128 @@
 </script>
 
 <div class="modal">
-  <table>
-    <tr>
-      <th class="center-align">점검항목</th>
-      <td class="line-height"
-        >[{modalData?.ccr_item_no__ccc_item_no}] {modalData?.ccr_item_no__ccc_item_title}</td
-      >
-    </tr>
-    <!-- <tr>
-      <th class="center-align">점검대상</th>
-      <td class="line-height">
-        {modalData?.ccr_item_no__ccc_target_system}
-      </td>
-    </tr> -->
-    <tr>
-      <th class="center-align">항목그룹</th>
-      <td class="line-height">{modalData?.ccr_item_no__ccc_item_group}</td>
-    </tr>
-    <tr>
-      <th class="center-align">위험도</th>
-      <td class="line-height">{modalData?.ccr_item_no__ccc_item_level}</td>
-    </tr>
-    <tr>
-      <th class="center-align">점검기준</th>
-      <td class="lineCol">
-        <div class="line-height">
-          양호: <span class="line-height">
-            {@html modalData?.ccr_item_no__ccc_item_criteria}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검내용</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_check_content}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검목적</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_check_purpose}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">보안위협</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_security_threat}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">영향도</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_impact}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검결과</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_result}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검현황</th>
-      <td
-        style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
-        class="line-height"
-        >{@html modalData?.ccr_item_status.replace(/\n/g, "<br/>")}</td
-      >
-    </tr>
+  <div style="height: 930px;overflow: scroll;overflow-x: hidden;">
+    <table>
+      <tr style="height: 50px; position: sticky;top: -1px;">
+        <th class="center-align" style="color: white;background: #0072fd;"
+          >구분</th
+        >
+        <td class="center-align" style="color: white;background: #0072fd;"
+          >설명</td
+        >
+      </tr>
+      <tr>
+        <th class="center-align">점검항목</th>
+        <td class="line-height"
+          >[{modalData?.ccr_item_no__ccc_item_no}] {modalData?.ccr_item_no__ccc_item_title}</td
+        >
+      </tr>
+      <!-- <tr>
+        <th class="center-align">점검대상</th>
+        <td class="line-height">
+          {modalData?.ccr_item_no__ccc_target_system}
+        </td>
+      </tr> -->
+      <tr>
+        <th class="center-align">항목그룹</th>
+        <td class="line-height">{modalData?.ccr_item_no__ccc_item_group}</td>
+      </tr>
+      <tr>
+        <th class="center-align">위험도</th>
+        <td class="line-height">{modalData?.ccr_item_no__ccc_item_level}</td>
+      </tr>
+      <tr>
+        <th class="center-align">점검기준</th>
+        <td class="lineCol">
+          <div class="line-height">
+            <span class="line-height">
+              {@html modalData?.ccr_item_no__ccc_item_criteria}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검내용</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_check_content}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검목적</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_check_purpose}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">보안위협</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_security_threat}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">영향도</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_impact}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검결과</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_result}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검현황</th>
+        <td
+          style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
+          class="line-height"
+          >{@html modalData?.ccr_item_status.replace(/\n/g, "<br/>")}</td
+        >
+      </tr>
 
-    <tr>
-      <th class="center-align">개선방법</th>
-      <td class="line-height"
-        >{modalData?.ccr_item_no__ccc_mitigation_method}</td
+      <tr>
+        <th class="center-align">개선방법</th>
+        <td class="line-height"
+          >{modalData?.ccr_item_no__ccc_mitigation_method}</td
+        >
+      </tr>
+      <tr>
+        <th class="center-align">개선예시</th>
+        <td
+          style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
+          class="line-height"
+          >{@html modalData?.ccr_item_no__ccc_mitigation_example.replace(
+            /\n/g,
+            "<br/>",
+          )}</td
+        >
+      </tr>
+    </table>
+    <div style="display: flex; justify-content: flex-end;">
+      <button class="btn modify-btn" on:click={() => (showModal = false)}
+        >Close</button
       >
-    </tr>
-    <tr>
-      <th class="center-align">개선예시</th>
-      <td
-        style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
-        class="line-height"
-        >{@html modalData?.ccr_item_no__ccc_mitigation_example.replace(
-          /\n/g,
-          "<br/>",
-        )}</td
-      >
-    </tr>
-  </table>
-  <div style="display: flex; justify-content: flex-end;">
-    <button class="btn modify-btn" on:click={() => (showModal = false)}
-      >Close</button
-    >
+    </div>
   </div>
 </div>
 
@@ -136,8 +146,8 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    height: 93%;
-    overflow: auto;
+    /* height: 93%;
+    overflow: auto; */
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
     /* max-width: 800px;
     margin: 20px auto; */

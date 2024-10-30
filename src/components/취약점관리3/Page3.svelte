@@ -17,7 +17,7 @@
   let activeMenu = null;
   let showProject = true;
   let tableData;
-  let vulnerabilityStatusValue;
+  let vulnerabilityStatusValue = "취약";
   let actionStatusValue;
   let activePlan = null;
   let wholePage = false;
@@ -390,7 +390,7 @@
     >
       <article
         class="contentArea flex col"
-        style="height: calc(100vh - 160px);"
+        style="height: calc(100vh - 153px);"
       >
         <section class="topCon">
           <section class="filterWrap">

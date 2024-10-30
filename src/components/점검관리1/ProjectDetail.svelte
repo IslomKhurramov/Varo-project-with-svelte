@@ -924,7 +924,7 @@
       </article>
     </section>
 
-    <section class="rowContents last">
+    <section class="rowContents last" style="padding-bottom: 40px">
       <article class="contentArea securityVulnerability">
         <h4 class="title border">주요 취약점</h4>
         <div class="tableListWrap" style="max-height: 256px;">
@@ -942,7 +942,7 @@
                 <th class="text-center">번호</th>
                 <th class="text-center">대상</th>
                 <th class="text-center">점검그룹</th>
-                <th>점검항목</th>
+                <th class="text-center">점검항목</th>
                 <th class="text-center">위험도</th>
                 <!-- <th class="text-center">점검결과</th> -->
               </tr>
@@ -955,15 +955,19 @@
                     lastModal = true;
                   }}
                 >
-                  <td class="text-center">{index + 1}</td>
-                  <td class="text-center">{vuln?.cct_index__cct_target}</td>
-                  <td class="text-center"
+                  <td class="text-center" style="font-size: 16px;"
+                    >{index + 1}</td
+                  >
+                  <td class="text-center" style="font-size: 16px;"
+                    >{vuln?.cct_index__cct_target}</td
+                  >
+                  <td class="text-center" style="font-size: 16px;"
                     >{vuln?.ccr_item_no__ccc_item_group}</td
                   >
-                  <td>
+                  <td style="font-size: 16px;">
                     {vuln?.ccr_item_no__ccc_item_title}
                   </td>
-                  <td class="text-center"
+                  <td class="text-center" style="font-size: 16px;"
                     >{vuln?.ccr_item_no__ccc_item_level}</td
                   >
                 </tr>

@@ -417,19 +417,21 @@
                           )
                         </div>
                       </td>
-                      <td> {project.plan_planer_info__user_name} </td>
+                      <td class="text-center">
+                        {project.plan_planer_info__user_name}
+                      </td>
                       <td class="text-center">
                         <span class="badge badgePrimary">
                           {project?.ccp_b_finalized ? "완료" : "진행 중"}
                         </span>
                         <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
                       </td>
-                      <td>
+                      <td class="text-center">
                         {moment(project?.plan_start_date).format("YYYY MM DD")} ~
                         {moment(project?.plan_end_date).format("YYYY MM DD")}
                       </td>
-                      <td>
-                        {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
+                      <td class="text-center">
+                        {project?.recheck == 0 ? "신규점검" : "이행점검"}
                       </td>
                       <td
                         class="tableTootipWrap"

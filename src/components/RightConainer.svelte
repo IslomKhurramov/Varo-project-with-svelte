@@ -255,7 +255,11 @@
       <article class="contentArea">
         <section class="filterWrap">
           <div>
-            <select bind:value={selectedStatus} on:change={filterProjects}>
+            <select
+              bind:value={selectedStatus}
+              on:change={filterProjects}
+              style="width: 170px;"
+            >
               <option value="">프로젝트명</option>
               <option value="true">완료된 프로젝트</option>
               <option value="false">진행 중인 프로젝트</option>
@@ -263,12 +267,17 @@
             <select
               bind:value={selectedScheduleRange}
               on:change={filterProjects}
+              style="width: 170px;"
             >
               <option value="">일정범위</option>
               <option value="last7days">Past 7 Days</option>
               <option value="past90days">Past 90 Days</option>
             </select>
-            <select bind:value={selectedOS} on:change={filterProjects}>
+            <select
+              bind:value={selectedOS}
+              on:change={filterProjects}
+              style="width: 170px;"
+            >
               <option value="">운영체제</option>
               <option value="WINDOWS">Windows</option>
               <option value="UNIX">Unix</option>
@@ -291,7 +300,10 @@
           </div>
         </section>
         <section>
-          <div class="tableListWrap">
+          <div
+            class="tableListWrap"
+            style="height: calc(-294px + 100vh); overflow: auto;"
+          >
             <table class="tableList">
               <colgroup>
                 <col style="width:6%;" />
@@ -417,22 +429,24 @@
                           )
                         </div>
                       </td>
-                      <td> {project.plan_planer_info__user_name} </td>
+                      <td class="text-center">
+                        {project.plan_planer_info__user_name}
+                      </td>
                       <td class="text-center">
                         <span class="badge badgePrimary">
                           {project?.ccp_b_finalized ? "완료" : "진행 중"}
                         </span>
                         <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
                       </td>
-                      <td>
+                      <td class="text-center">
                         {moment(project?.plan_start_date).format("YYYY MM DD")} ~
                         {moment(project?.plan_end_date).format("YYYY MM DD")}
                       </td>
-                      <td>
-                        {project?.recheck == 0 ? "신규점겅검" : "이행점검"}
+                      <td class="text-center">
+                        {project?.recheck == 0 ? "신규점검" : "이행점검"}
                       </td>
                       <td
-                        class="tableTootipWrap"
+                        class="tableTootipWrap text-center"
                         style="background: none; position: relative;"
                         on:click={(e) => {
                           e.stopPropagation();
@@ -441,7 +455,6 @@
                         <button
                           type="button"
                           class="tableTootip"
-                          style="width: 100%;"
                           on:click={(e) => {
                             e.stopPropagation();
                             toggleTooltip(e);
@@ -549,7 +562,6 @@
   }
 
   .scroll-div {
-    overflow: auto;
     height: 77vh;
     padding-bottom: 60px;
   }

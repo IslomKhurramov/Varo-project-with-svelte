@@ -319,7 +319,7 @@
         </div>
         <div class="formControlWrap">
           <div class="formControl">
-            <label style="font-size: 16px;">점검자 지정</label>
+            <label style="font-size: 16px;">점검자</label>
             <select bind:value={selectedPersons} style="font-size: 16px;">
               <option value="" selected disabled>선택</option>
               {#if planOptions.member_group}
@@ -332,7 +332,7 @@
         </div>
         <div class="formControlWrap">
           <div class="formControl">
-            <label style="font-size: 16px;">조치담당자 지정</label>
+            <label style="font-size: 16px;">조치승인담당자</label>
             <select bind:value={conductorInfo} style="font-size: 16px;">
               <option value="" selected disabled>선택</option>
               {#if planOptions.member_group}

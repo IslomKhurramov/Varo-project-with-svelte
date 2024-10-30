@@ -336,7 +336,7 @@
                 }}
               >
                 <div class="progress-info">
-                  <h4>UNIX</h4>
+                  <h4 style="font-size: 16px;">UNIX</h4>
                   <span
                     >{projectDetails.target_securitypoint.filter(
                       (ele) => ele.label === "UNIX",
@@ -350,7 +350,7 @@
                       projectDetails.target_securitypoint.filter(
                         (ele) => ele.label === "UNIX",
                       )[0]?.["y"]
-                    }%;`}
+                    }%; font-size: 16px;`}
                   ></div>
                 </div>
               </li>
@@ -368,7 +368,7 @@
                 }}
               >
                 <div class="progress-info">
-                  <h4>NETWORK</h4>
+                  <h4 style="font-size: 16px;">NETWORK</h4>
                   <span
                     >{projectDetails.target_securitypoint.filter(
                       (ele) => ele.label === "NETWORK",
@@ -400,7 +400,7 @@
                 }}
               >
                 <div class="progress-info">
-                  <h4>DBMS</h4>
+                  <h4 style="font-size: 16px;">DBMS</h4>
                   <span
                     >{projectDetails.target_securitypoint.filter(
                       (ele) => ele.label === "DBMS",
@@ -432,7 +432,7 @@
                 }}
               >
                 <div class="progress-info">
-                  <h4>SECURITY</h4>
+                  <h4 style="font-size: 16px;">SECURITY</h4>
                   <span
                     >{projectDetails.target_securitypoint.filter(
                       (ele) => ele.label === "SECURITY",
@@ -680,7 +680,7 @@
                 <label
                   for="file-upload"
                   class="file-label"
-                  style="width: 576px; font-size: 16px;"
+                  style="width: 576px; font-size: 16px; padding: 0 10px;"
                   >{updateInfo?.assessment_command
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
@@ -762,7 +762,7 @@
                   ? projectDetails?.ccp_security_point
                   : 0}%
               </h6>
-              <span>전체보안수준</span>
+              <span style="font-size: 16px;">전체보안수준</span>
             </div>
 
             <div class="circle" data-percent="80" data-offset="345">
@@ -830,8 +830,13 @@
                     }}
                   >
                     <div class="progress-info">
-                      <h4 class={securityMenu == key ? "active" : ""}>{key}</h4>
-                      <span>
+                      <h4
+                        class={securityMenu == key ? "active" : ""}
+                        style="font-size: 16px;"
+                      >
+                        {key}
+                      </h4>
+                      <span style="font-size: 16px;">
                         {calculateSecurityLevelByGroup(security)}%
                       </span>
                     </div>
@@ -853,8 +858,8 @@
                 {#each securityPointData as data}
                   <li>
                     <div class="progress-info">
-                      <h4>{data?.label}</h4>
-                      <span>
+                      <h4 style="font-size: 16px;">{data?.label}</h4>
+                      <span style="font-size: 16px;">
                         {data?.y}%
                       </span>
                     </div>
@@ -869,8 +874,8 @@
               {:else}
                 <li>
                   <div class="progress-info">
-                    <h4>계정관리</h4>
-                    <span> 0% </span>
+                    <h4 style="font-size: 16px;">계정관리</h4>
+                    <span style="font-size: 16px;"> 0% </span>
                   </div>
                   <div class="progress">
                     <div class="progress-bar blue" style={`width: 0%;`}></div>
@@ -878,8 +883,8 @@
                 </li>
                 <li>
                   <div class="progress-info">
-                    <h4>접근관리</h4>
-                    <span> 0% </span>
+                    <h4 style="font-size: 16px;">접근관리</h4>
+                    <span style="font-size: 16px;"> 0% </span>
                   </div>
                   <div class="progress">
                     <div class="progress-bar blue" style={`width: 0%;`}></div>
@@ -887,8 +892,8 @@
                 </li>
                 <li>
                   <div class="progress-info">
-                    <h4>패치관리</h4>
-                    <span> 0% </span>
+                    <h4 style="font-size: 16px;">패치관리</h4>
+                    <span style="font-size: 16px;"> 0% </span>
                   </div>
                   <div class="progress">
                     <div class="progress-bar blue" style={`width: 0%;`}></div>
@@ -896,8 +901,8 @@
                 </li>
                 <li>
                   <div class="progress-info">
-                    <h4>로그관리</h4>
-                    <span> 0% </span>
+                    <h4 style="font-size: 16px;">로그관리</h4>
+                    <span style="font-size: 16px;"> 0% </span>
                   </div>
                   <div class="progress">
                     <div class="progress-bar blue" style={`width: 0%;`}></div>
@@ -905,8 +910,8 @@
                 </li>
                 <li>
                   <div class="progress-info">
-                    <h4>기능관리</h4>
-                    <span> 0% </span>
+                    <h4 style="font-size: 16px;">기능관리</h4>
+                    <span style="font-size: 16px;"> 0% </span>
                   </div>
                   <div class="progress">
                     <div class="progress-bar blue" style={`width: 0%;`}></div>
@@ -924,7 +929,7 @@
       </article>
     </section>
 
-    <section class="rowContents last">
+    <section class="rowContents last" style="padding-bottom: 20px">
       <article class="contentArea securityVulnerability">
         <h4 class="title border">주요 취약점</h4>
         <div class="tableListWrap" style="max-height: 256px;">
@@ -942,7 +947,7 @@
                 <th class="text-center">번호</th>
                 <th class="text-center">대상</th>
                 <th class="text-center">점검그룹</th>
-                <th>점검항목</th>
+                <th class="text-center">점검항목</th>
                 <th class="text-center">위험도</th>
                 <!-- <th class="text-center">점검결과</th> -->
               </tr>
@@ -955,15 +960,19 @@
                     lastModal = true;
                   }}
                 >
-                  <td class="text-center">{index + 1}</td>
-                  <td class="text-center">{vuln?.cct_index__cct_target}</td>
-                  <td class="text-center"
+                  <td class="text-center" style="font-size: 16px;"
+                    >{index + 1}</td
+                  >
+                  <td class="text-center" style="font-size: 16px;"
+                    >{vuln?.cct_index__cct_target}</td
+                  >
+                  <td class="text-center" style="font-size: 16px;"
                     >{vuln?.ccr_item_no__ccc_item_group}</td
                   >
-                  <td>
+                  <td style="font-size: 16px;">
                     {vuln?.ccr_item_no__ccc_item_title}
                   </td>
-                  <td class="text-center"
+                  <td class="text-center" style="font-size: 16px;"
                     >{vuln?.ccr_item_no__ccc_item_level}</td
                   >
                 </tr>
@@ -1106,20 +1115,30 @@
 <!--//Modal:자산 상세-->
 
 {#if lastModal}
-  <dialog open on:close={() => (lastModal = false)}>
-    <ModalPageForDetail bind:showModal={lastModal} bind:modalData />
-  </dialog>
+  <div class="modal-open-wrap">
+    <dialog open on:close={() => (lastModal = false)}>
+      <ModalPageForDetail bind:showModal={lastModal} bind:modalData />
+    </dialog>
+  </div>
 {/if}
 
 <style>
   * {
     font-size: 16px;
   }
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
   dialog {
     position: fixed;
-    height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
+
     top: 50%;
     left: 56%;
     transform: translate(-50%, -50%);

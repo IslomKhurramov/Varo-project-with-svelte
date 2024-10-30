@@ -3,7 +3,9 @@ import { serverApi } from "../../lib/config";
 
 export const getAllCheckList = async () => {
   try {
-    const response = await axios.get(`${serverApi}/api/getAllCheckList/`);
+    const response = await axios.get(`${serverApi}/api/getAllCheckList/`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching plan info:", error);
@@ -21,6 +23,9 @@ export const setNewChecklistGroup = async (
       {
         source_chk: checklist_index,
         destion_name: new_checklist_name,
+      },
+      {
+        withCredentials: true,
       },
     );
 
@@ -48,6 +53,9 @@ export const setDeleteChecklistGroup = async (checklist_index) => {
       {
         checklist_group_no: checklist_index,
       },
+      {
+        withCredentials: true,
+      },
     );
 
     const data = response.data;
@@ -70,10 +78,16 @@ export const setUpdateGroupName = async (
   new_checklist_name,
 ) => {
   try {
-    const response = await axios.post(`${serverApi}/api/setUpdateGroupName/`, {
-      checklist_group_no: checklist_index,
-      checklist_new_group_name: new_checklist_name,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/setUpdateGroupName/`,
+      {
+        checklist_group_no: checklist_index,
+        checklist_new_group_name: new_checklist_name,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     const data = response.data;
 
@@ -105,6 +119,9 @@ export const getChecklistItemBySearch = async (
         checklist_item_id: item_no,
         item_security_level: riskLevel,
       },
+      {
+        withCredentials: true,
+      },
     );
 
     const data = response.data;
@@ -129,6 +146,9 @@ export const setDeleteChecklistItem = async (ccg_index, ccc_indexes) => {
       {
         checklist_group_no: ccg_index,
         selected_items: ccc_indexes,
+      },
+      {
+        withCredentials: true,
       },
     );
 

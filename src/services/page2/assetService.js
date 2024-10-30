@@ -4,7 +4,9 @@ import { serverApi } from "../../lib/config";
 /****************ASSET DATA LIST***************** */
 export const getAllAssetLists = async () => {
   try {
-    const response = await axios.get(`${serverApi}/api/getAllAssetLists/`);
+    const response = await axios.get(`${serverApi}/api/getAllAssetLists/`, {
+      withCredentials: true,
+    });
     console.log("Service", response.data);
     return response.data;
   } catch (error) {
@@ -16,9 +18,15 @@ export const getAllAssetLists = async () => {
 export const setAssetUnActivate = async (uuid) => {
   try {
     // Send request to server to unactivate the asset
-    const response = await axios.post(`${serverApi}/api/setAssetUnActivate/`, {
-      ass_uuid: uuid,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/setAssetUnActivate/`,
+      {
+        ass_uuid: uuid,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     const data = response.data;
     console.log("Data from unactivate", data);
@@ -37,9 +45,15 @@ export const setAssetUnActivate = async (uuid) => {
 export const setAssetActivate = async (uuid) => {
   try {
     // Send request to server to unactivate the asset
-    const response = await axios.post(`${serverApi}/api/setAssetActivate/`, {
-      ass_uuid: uuid,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/setAssetActivate/`,
+      {
+        ass_uuid: uuid,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     const data = response.data;
     console.log("Data from setAssetActivate", data);
@@ -58,7 +72,9 @@ export const setAssetActivate = async (uuid) => {
 /***********CREATE ASSET GROUP*************** */
 export const getAssetGroup = async () => {
   try {
-    const response = await axios.get(`${serverApi}/api/getAssetGroup/`);
+    const response = await axios.get(`${serverApi}/api/getAssetGroup/`, {
+      withCredentials: true,
+    });
     console.log("assetGroups:", response.data);
     return response.data;
   } catch (error) {
@@ -70,9 +86,15 @@ export const getAssetGroup = async () => {
 export const setNewAssetGroup = async (asset_group_name) => {
   try {
     // Send request to server to unactivate the asset
-    const response = await axios.post(`${serverApi}/api/setNewAssetGroup/`, {
-      asset_group_name: asset_group_name,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/setNewAssetGroup/`,
+      {
+        asset_group_name: asset_group_name,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     const data = response.data;
     console.log(" setNewAssetGroup", data);
@@ -97,6 +119,7 @@ export const getDetailInformationOfAsset = async (uuid) => {
       {
         asset_uuid: uuid,
       },
+      { withCredentials: true },
     );
 
     if (response.data.RESULT === "OK") {
@@ -118,11 +141,17 @@ export const setAssetGroupChange = async (
   next_group_index,
 ) => {
   try {
-    const response = await axios.post(`${serverApi}/api/setAssetGroupChange/`, {
-      ass_uuid: uuid,
-      current_group_index: current_group_index,
-      next_group_index: next_group_index,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/setAssetGroupChange/`,
+      {
+        ass_uuid: uuid,
+        current_group_index: current_group_index,
+        next_group_index: next_group_index,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     if (response.data.RESULT === "OK") {
       return { success: true }; // Return the data from the API
@@ -211,6 +240,9 @@ export const setAssetInformationUpdate = async (assetInfo) => {
         ast_activate,
         ast_agent_installed,
       },
+      {
+        withCredentials: true,
+      },
     );
 
     if (response.data.RESULT === "OK") {
@@ -236,6 +268,9 @@ export const setAssetRegisterChange = async (uuid, approve_status) => {
         asset_uuid: uuid,
         approve_status: approve_status,
       },
+      {
+        withCredentials: true,
+      },
     );
 
     if (response.data.RESULT === "OK") {
@@ -252,7 +287,9 @@ export const setAssetRegisterChange = async (uuid, approve_status) => {
 /****** get TARGET SYSTEMLIST *******************/
 export const getTargetSystemLists = async () => {
   try {
-    const response = await axios.get(`${serverApi}/api/getTargetSystemLists/`);
+    const response = await axios.get(`${serverApi}/api/getTargetSystemLists/`, {
+      withCredentials: true,
+    });
     console.log("assetGroups:", response.data);
     return response.data;
   } catch (error) {
@@ -266,7 +303,10 @@ export const setAssetTargetRegister = async (payload) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/setAssetTargetRegister/`,
-      payload, // Send the entire payload object
+      { payload },
+      {
+        withCredentials: true,
+      }, // Send the entire payload object
     );
 
     console.log("API response:", response.data);
@@ -295,6 +335,9 @@ export const getAssetRegisterStatus = async (current_day) => {
       `${serverApi}/api/getAssetRegisterStatus/`,
       {
         curr_day: current_day,
+      },
+      {
+        withCredentials: true,
       },
     );
 
@@ -351,6 +394,9 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
           "Content-Type": "multipart/form-data",
         },
       },
+      {
+        withCredentials: true,
+      },
     );
 
     if (response.data.RESULT === "OK") {
@@ -372,11 +418,17 @@ export const getSearch = async (
   asset_activate,
 ) => {
   try {
-    const response = await axios.post(`${serverApi}/api/getSearchAsset/`, {
-      asset_ostype: asset_ostype,
-      asset_target_registered: asset_target_registered,
-      asset_activate: asset_activate,
-    });
+    const response = await axios.post(
+      `${serverApi}/api/getSearchAsset/`,
+      {
+        asset_ostype: asset_ostype,
+        asset_target_registered: asset_target_registered,
+        asset_activate: asset_activate,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     if (response.data.RESULT === "OK") {
       return response.data; // Return the data from the API

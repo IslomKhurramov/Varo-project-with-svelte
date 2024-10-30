@@ -237,7 +237,7 @@
           <div class="right_container" style="height:70vh">
             <div class="top registCon">
               <section class="filterWrap">
-                <div>
+                <div style="gap: 40px;">
                   <div class="upload-section">
                     <label for="file-upload" class="file-label">파일첨부</label>
                     <input
@@ -260,50 +260,7 @@
                       style="color: black;">샘플다운로드</a
                     >
                   </div>
-                  <select
-                    bind:value={newRegGroupIndex}
-                    on:change={handleFilter}
-                  >
-                    <option value="전체" selected>전체</option>
-                    {#if $allAssetGroupList.length > 0}
-                      {#each $allAssetGroupList as group}
-                        <option value={group.asg_index}
-                          >{group.asg_title}</option
-                        >
-                      {/each}
-                    {/if}
-                  </select>
-                  <select
-                    style="margin"
-                    bind:value={assetHost}
-                    on:change={handleFilter}
-                  >
-                    <option value="전체" selected>전체</option>
-                    {#each $allAssetList as asset}
-                      <option value={asset.ast_hostname}>
-                        {asset.ast_hostname}
-                      </option>
-                    {/each}
-                  </select>
 
-                  <!-- Select for ast_ostype -->
-                  <select bind:value={asset_ostype} on:change={handleFilter}>
-                    <option value="전체" selected>전체</option>
-                    {#each $allAssetList as asset}
-                      {#if asset.ast_ostype !== ""}
-                        <option value={asset.ast_ostype}>
-                          {asset.ast_ostype}
-                        </option>
-                      {/if}
-                    {/each}
-                  </select>
-
-                  <button
-                    class="btn btnPrimary"
-                    on:click|preventDefault={resetFilters}
-                  >
-                    <img src="./assets/images/reset.png" alt="search" />초기화
-                  </button>
                   <div class="div2">
                     <button type="submit" class="btn w140 btnBlue"
                       >저장하기
@@ -314,12 +271,54 @@
             </div>
 
             <!-- Button to toggle visibility of cards -->
-            <button
-              class="btn w140 btnBlue"
-              on:click|preventDefault={toggleCardsVisibility}
-            >
-              {showCards ? "자산 숨기기" : "자산 보기"}
-            </button>
+            <div class="secondLine">
+              <button
+                class="btn w140 btnBlue"
+                on:click|preventDefault={toggleCardsVisibility}
+              >
+                {showCards ? "자산 숨기기" : "자산 보기"}
+              </button>
+              <select bind:value={newRegGroupIndex} on:change={handleFilter}>
+                <option value="전체" selected>전체</option>
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
+              </select>
+              <select
+                style="margin"
+                bind:value={assetHost}
+                on:change={handleFilter}
+              >
+                <option value="전체" selected>전체</option>
+                {#each $allAssetList as asset}
+                  <option value={asset.ast_hostname}>
+                    {asset.ast_hostname}
+                  </option>
+                {/each}
+              </select>
+
+              <!-- Select for ast_ostype -->
+              <select bind:value={asset_ostype} on:change={handleFilter}>
+                <option value="전체" selected>전체</option>
+                {#each $allAssetList as asset}
+                  {#if asset.ast_ostype !== ""}
+                    <option value={asset.ast_ostype}>
+                      {asset.ast_ostype}
+                    </option>
+                  {/if}
+                {/each}
+              </select>
+
+              <button
+                class="btn btnPrimary"
+                on:click|preventDefault={resetFilters}
+              >
+                <img src="./assets/images/reset.png" alt="search" />초기화
+              </button>
+            </div>
+
             {#if showCards}
               <div class="first_check_cont">
                 <input
@@ -379,6 +378,13 @@
 </form>
 
 <style>
+  .secondLine {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 20px;
+    margin-top: 20px;
+  }
   .cardWrap {
     height: 100%;
   }

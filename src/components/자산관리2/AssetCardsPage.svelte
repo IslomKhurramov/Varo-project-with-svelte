@@ -362,7 +362,7 @@
                       selectedAsset = asset;
                     }}
                   >
-                    등록 미승인
+                    등록 승인
                   </button>
                 </div>
               {:else}

@@ -291,7 +291,10 @@
           </div>
         </section>
         <section>
-          <div class="tableListWrap">
+          <div
+            class="tableListWrap"
+            style="height: calc(-294px + 100vh); overflow: auto;"
+          >
             <table class="tableList">
               <colgroup>
                 <col style="width:6%;" />
@@ -434,7 +437,7 @@
                         {project?.recheck == 0 ? "신규점검" : "이행점검"}
                       </td>
                       <td
-                        class="tableTootipWrap"
+                        class="tableTootipWrap text-center"
                         style="background: none; position: relative;"
                         on:click={(e) => {
                           e.stopPropagation();
@@ -443,7 +446,6 @@
                         <button
                           type="button"
                           class="tableTootip"
-                          style="width: 100%;"
                           on:click={(e) => {
                             e.stopPropagation();
                             toggleTooltip(e);
@@ -551,7 +553,6 @@
   }
 
   .scroll-div {
-    overflow: auto;
     height: 77vh;
     padding-bottom: 60px;
   }

@@ -53,14 +53,14 @@
 
     console.log("$userData:", $userData);
 
-    if ($userData.isLoggedIn) {
-      console.log("User is logged in:", $userData);
+    // if ($userData.isLoggedIn) {
+    //   console.log("User is logged in:", $userData);
 
-      navigate("/");
-    } else {
-      console.log("User is not logged in.");
-      navigate("/login");
-    }
+    //   navigate("/");
+    // } else {
+    //   console.log("User is not logged in.");
+    //   navigate("/login");
+    // }
   });
 
   onMount(async () => {});
@@ -110,69 +110,69 @@
 </script>
 
 <Router>
-  {#if $userData.isLoggedIn}
-    <body>
-      <div id="wrap">
-        <Header bind:activeMenu />
-        <div class="container">
-          <nav class="titleWrap">
-            <h1>{activeMenu}</h1>
-            {#if $userData?.userInfo}
-              <section>
-                <div class="alarmWrap">
-                  <button type="button" class="alarm on notification">
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <img src="./assets/images/icon/alarm.svg" />
-                  </button>
-                  <div class="tooltip-modal">
-                    <h3 class="title">알림</h3>
-                    <section
-                      class="content"
-                      style="height: 290px;overflow: auto;"
-                    >
-                      {#each nofiticationData as data}
-                        <div>
-                          <!-- svelte-ignore a11y-invalid-attribute -->
-                          <a href="javascript:void(0);">
-                            <div class="title">
-                              {data?.am_message}
-                            </div>
-                            <div class="day">{daysAgo(data.am_cdate)}</div>
-                          </a>
-                        </div>
-                      {/each}
-                    </section>
-                  </div>
-                </div>
-                <article class="user-box-menu">
+  <!-- {#if $userData.isLoggedIn} -->
+  <body>
+    <div id="wrap">
+      <Header bind:activeMenu />
+      <div class="container">
+        <nav class="titleWrap">
+          <h1>{activeMenu}</h1>
+          {#if $userData?.userInfo}
+            <section>
+              <div class="alarmWrap">
+                <button type="button" class="alarm on notification">
                   <!-- svelte-ignore a11y-missing-attribute -->
-                  <img src="./assets/images/icon/person.svg" />
-                  <div class="user">
-                    <span>{decryptData($userData?.userInfo?.user_name)}</span>님
-                  </div>
-                  <div class="logout-menu">
-                    <button on:click={handleLogout} class="logout-button">
-                      로그아웃
-                    </button>
-                  </div>
-                </article>
-              </section>
-            {/if}
-          </nav>
+                  <img src="./assets/images/icon/alarm.svg" />
+                </button>
+                <div class="tooltip-modal">
+                  <h3 class="title">알림</h3>
+                  <section
+                    class="content"
+                    style="height: 290px;overflow: auto;"
+                  >
+                    {#each nofiticationData as data}
+                      <div>
+                        <!-- svelte-ignore a11y-invalid-attribute -->
+                        <a href="javascript:void(0);">
+                          <div class="title">
+                            {data?.am_message}
+                          </div>
+                          <div class="day">{daysAgo(data.am_cdate)}</div>
+                        </a>
+                      </div>
+                    {/each}
+                  </section>
+                </div>
+              </div>
+              <article class="user-box-menu">
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <img src="./assets/images/icon/person.svg" />
+                <div class="user">
+                  <span>{decryptData($userData?.userInfo?.user_name)}</span>님
+                </div>
+                <div class="logout-menu">
+                  <button on:click={handleLogout} class="logout-button">
+                    로그아웃
+                  </button>
+                </div>
+              </article>
+            </section>
+          {/if}
+        </nav>
 
-          <Route path="/" component={Page1} />
-          <Route path="/page1" component={Page1} />
-          <Route path="/page2" component={Page2} />
-          <Route path="/page3" component={Page3} />
-          <Route path="/page4" component={Page4} />
-          <Route path="/page5" component={Page5} />
-          <Route path="/page6" component={Page6} />
-        </div>
+        <Route path="/" component={Page1} />
+        <Route path="/page1" component={Page1} />
+        <Route path="/page2" component={Page2} />
+        <Route path="/page3" component={Page3} />
+        <Route path="/page4" component={Page4} />
+        <Route path="/page5" component={Page5} />
+        <Route path="/page6" component={Page6} />
       </div>
-    </body>
-  {:else}
-    <Route path="/login" component={Login} />
-  {/if}
+    </div>
+  </body>
+  <!-- {:else} -->
+  <Route path="/login" component={Login} />
+  <!-- {/if} -->
 </Router>
 
 <style>

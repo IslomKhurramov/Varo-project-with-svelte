@@ -23,6 +23,7 @@
 
   onMount(async () => {
     try {
+      loading = true;
       projectData = await getAllPlanLists();
       projectArray = Object.values(projectData); // Convert object to array
     } catch (err) {
@@ -72,6 +73,12 @@
     console.log("==", decryptData(encryptedData?.user_name));
   }
 </script>
+
+{#if loading}
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+{/if}
 
 <section>
   <article class="sideMenu" style="height: calc(100vh - 134px);">
@@ -206,5 +213,37 @@
 
   .btn:hover img {
     filter: brightness(0) invert(1);
+  }
+
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(167, 167, 167, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it sits above other content */
+  }
+
+  .loading-spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

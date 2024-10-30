@@ -458,7 +458,7 @@
   }
   dialog {
     position: fixed;
-    height: 600px;
+    /* height: 600px; */
     /* overflow-y: auto;
     overflow-x: hidden; */
     top: 50%;

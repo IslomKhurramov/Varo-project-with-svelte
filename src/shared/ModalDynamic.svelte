@@ -30,7 +30,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <dialog
-  style="width: {modalWidth}%; height: {modalHeight}px;"
+  style="width: {modalWidth}%; height: {modalHeight}px; overflow: hidden;"
   bind:this={dialog}
   on:close={() => (showModal = false)}
   on:click|self={() => {
@@ -38,7 +38,7 @@
     modalData = [];
   }}
 >
-  <div on:click|stopPropagation>
+  <div style="height: 100%; overflow: auto;" on:click|stopPropagation>
     <slot name="header" />
     <slot />
     <button

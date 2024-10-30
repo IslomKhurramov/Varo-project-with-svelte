@@ -49,7 +49,7 @@
       <col style="width:30%;" />
       <col style="width:15%;" />
     </colgroup>
-    <thead>
+    <thead style="position: sticky;top: -16px;">
       <tr>
         <th>넘버</th>
         <th

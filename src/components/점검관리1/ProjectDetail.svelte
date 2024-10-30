@@ -1138,7 +1138,6 @@
   }
   dialog {
     position: fixed;
-
     top: 50%;
     left: 56%;
     transform: translate(-50%, -50%);

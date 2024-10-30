@@ -147,8 +147,10 @@
               <article class="user-box-menu">
                 <!-- svelte-ignore a11y-missing-attribute -->
                 <img src="./assets/images/icon/person.svg" />
-                <div class="user">
-                  <span>{decryptData($userData?.userInfo?.user_name)}</span>님
+                <div class="user" style="min-width: 60px;font-size: 16px;">
+                  <span style="font-size: 16px;"
+                    >{$userData?.userInfo?.user_name}</span
+                  >님
                 </div>
                 <div class="logout-menu">
                   <button on:click={handleLogout} class="logout-button">
@@ -213,6 +215,7 @@
   }
 
   .logout-button {
+    font-size: 16px;
     cursor: pointer;
     background-color: white; /* Logout button color */
     color: #9197b3; /* Button text color */

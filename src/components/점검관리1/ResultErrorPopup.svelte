@@ -17,7 +17,10 @@
     <col style="width:30%;" />
     <col style="width:15%;" />
   </colgroup>
-  <thead class="tableList hdBorder font-size: 16px;">
+  <thead
+    class="tableList hdBorder"
+    style="position: sticky;top: -16px;font-size: 16px;"
+  >
     <tr>
       <th>넘버</th>
       <th>target</th>

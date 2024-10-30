@@ -14,214 +14,226 @@
 </script>
 
 <div class="modal">
-  <table>
-    <tr>
-      <th class="center-align">점검항목</th>
-      <td class="line-height"
-        >[{modalData?.ccr_item_no__ccc_item_no}] {modalData?.ccr_item_no__ccc_item_title}</td
-      >
-    </tr>
-    <tr>
-      <th class="center-align">점검대상</th>
-      <td class="line-height">
-        {modalData?.ccr_item_no__ccc_target_system}
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">항목그룹</th>
-      <td class="line-height"
-        >[{modalData?.ast_uuid__ast_target__cct_target}] {modalData?.ccr_item_no__ccc_item_group}</td
-      >
-    </tr>
-    <tr>
-      <th class="center-align">위험도</th>
-      <td class="line-height">{modalData?.ccr_item_no__ccc_item_level}</td>
-    </tr>
-    <tr>
-      <th class="center-align">점검기준</th>
-      <td class="lineCol">
-        <div class="line-height">
-          <span class="line-height">
-            {@html modalData?.ccr_item_no__ccc_item_criteria}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검내용</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_check_content}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검목적</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_check_purpose}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">보안위협</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_security_threat}
-          </span>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">영향도</th>
-      <td class="lineCol">
-        <div>
-          <span class="line-height">
-            {modalData?.ccr_item_no__ccc_impact}
-          </span>
-        </div>
-      </td>
-    </tr>
-
-    <tr>
-      <th class="center-align">점검결과수정</th>
-      <td class="line5">
-        <div class="line5">
-          <p>점검결과:</p>
-          <select
-            style="font-size: 16px;"
-            value={modalData?.ccr_item_result}
-            on:change={(e) => (insertData.change_result = e.target.value)}
-          >
-            <option value="" disabled style="font-size: 16px;"> 없음 </option>
-            <option
-              style="font-size: 16px;"
-              value="양호"
-              selected={modalData?.ccr_item_result === "양호"}
-            >
-              양호
-            </option>
-            <option
-              style="font-size: 16px;"
-              value="취약"
-              selected={modalData?.ccr_item_result === "취약"}
-            >
-              취약
-            </option>
-            <option
-              style="font-size: 16px;"
-              value="예외처리"
-              selected={modalData?.ccr_item_result === "예외처리"}
-            >
-              예외처리
-            </option>
-            <option
-              style="font-size: 16px;"
-              value="해당없음"
-              selected={modalData?.ccr_item_result === "해당없음"}
-            >
-              해당없음
-            </option>
-          </select>
-        </div>
-        <div class="line5">
-          <p>수정범위:</p>
-          <select
-            style="font-size: 16px;"
-            on:change={(e) => {
-              change_option = e.target.value;
-            }}
-          >
-            <option value="ONE" style="font-size: 16px;">해당항목만</option>
-            <option value="ALL" style="font-size: 16px;">전체항목</option>
-          </select>
-        </div>
-        <p>(점검현황/점검결과 적용됨)</p>
-      </td>
-    </tr>
-    <tr>
-      <th class="center-align">점검현황</th>
-      <td>
-        <textarea
-          class="line-height"
-          name=""
-          id=""
-          rows="5"
-          cols="50"
-          style="width: 100%;"
-          bind:value={insertData["change_status_text"]}
-        ></textarea>
-      </td>
-    </tr>
-    {#if modalData?.evidence_file?.length !== 0 && modalData?.evidence_file[0]?.ccs_image}
+  <div
+    style="height: 930px;overflow: scroll;overflow-x: hidden;padding-bottom: 10px;"
+  >
+    <table>
+      <tr style="height: 50px; position: sticky;top: -1px;">
+        <th class="center-align" style="color: white;background: #0072fd;"
+          >구분</th
+        >
+        <td class="center-align" style="color: white;background: #0072fd;"
+          >설명</td
+        >
+      </tr>
       <tr>
-        <th class="center-align">증적이미지</th>
-        <td class="line7">
-          <div
-            style="    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 223px;"
-          >
-            [{modalData?.evidence_file?.length !== 0 &&
-              modalData?.evidence_file[0]?.ccs_image}]:
-          </div>
-          <input
-            type="file"
-            on:change={(e) =>
-              (insertData.change_evidence_file = e.target.files[0])}
-          />
+        <th class="center-align">점검항목</th>
+        <td class="line-height"
+          >[{modalData?.ccr_item_no__ccc_item_no}] {modalData?.ccr_item_no__ccc_item_title}</td
+        >
+      </tr>
+      <tr>
+        <th class="center-align">점검대상</th>
+        <td class="line-height">
+          {modalData?.ccr_item_no__ccc_target_system}
         </td>
       </tr>
-    {/if}
+      <tr>
+        <th class="center-align">항목그룹</th>
+        <td class="line-height"
+          >[{modalData?.ast_uuid__ast_target__cct_target}] {modalData?.ccr_item_no__ccc_item_group}</td
+        >
+      </tr>
+      <tr>
+        <th class="center-align">위험도</th>
+        <td class="line-height">{modalData?.ccr_item_no__ccc_item_level}</td>
+      </tr>
+      <tr>
+        <th class="center-align">점검기준</th>
+        <td class="lineCol">
+          <div class="line-height">
+            <span class="line-height">
+              {@html modalData?.ccr_item_no__ccc_item_criteria}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검내용</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_check_content}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검목적</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_check_purpose}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">보안위협</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_security_threat}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">영향도</th>
+        <td class="lineCol">
+          <div>
+            <span class="line-height">
+              {modalData?.ccr_item_no__ccc_impact}
+            </span>
+          </div>
+        </td>
+      </tr>
 
-    <tr>
-      <th class="center-align">개선방법</th>
-      <td class="line-height"
-        >{modalData?.ccr_item_no__ccc_mitigation_method}</td
+      <tr>
+        <th class="center-align">점검결과수정</th>
+        <td class="line5">
+          <div class="line5">
+            <p>점검결과:</p>
+            <select
+              style="font-size: 16px;"
+              value={modalData?.ccr_item_result}
+              on:change={(e) => (insertData.change_result = e.target.value)}
+            >
+              <option value="" disabled style="font-size: 16px;"> 없음 </option>
+              <option
+                style="font-size: 16px;"
+                value="양호"
+                selected={modalData?.ccr_item_result === "양호"}
+              >
+                양호
+              </option>
+              <option
+                style="font-size: 16px;"
+                value="취약"
+                selected={modalData?.ccr_item_result === "취약"}
+              >
+                취약
+              </option>
+              <option
+                style="font-size: 16px;"
+                value="예외처리"
+                selected={modalData?.ccr_item_result === "예외처리"}
+              >
+                예외처리
+              </option>
+              <option
+                style="font-size: 16px;"
+                value="해당없음"
+                selected={modalData?.ccr_item_result === "해당없음"}
+              >
+                해당없음
+              </option>
+            </select>
+          </div>
+          <div class="line5">
+            <p>수정범위:</p>
+            <select
+              style="font-size: 16px;"
+              on:change={(e) => {
+                change_option = e.target.value;
+              }}
+            >
+              <option value="ONE" style="font-size: 16px;">해당항목만</option>
+              <option value="ALL" style="font-size: 16px;">전체항목</option>
+            </select>
+          </div>
+          <p>(점검현황/점검결과 적용됨)</p>
+        </td>
+      </tr>
+      <tr>
+        <th class="center-align">점검현황</th>
+        <td>
+          <textarea
+            class="line-height"
+            name=""
+            id=""
+            rows="5"
+            cols="50"
+            style="width: 100%;"
+            bind:value={insertData["change_status_text"]}
+          ></textarea>
+        </td>
+      </tr>
+      {#if modalData?.evidence_file?.length !== 0 && modalData?.evidence_file[0]?.ccs_image}
+        <tr>
+          <th class="center-align">증적이미지</th>
+          <td class="line7">
+            <div
+              style="    white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 223px;"
+            >
+              [{modalData?.evidence_file?.length !== 0 &&
+                modalData?.evidence_file[0]?.ccs_image}]:
+            </div>
+            <input
+              type="file"
+              on:change={(e) =>
+                (insertData.change_evidence_file = e.target.files[0])}
+            />
+          </td>
+        </tr>
+      {/if}
+
+      <tr>
+        <th class="center-align">개선방법</th>
+        <td class="line-height"
+          >{modalData?.ccr_item_no__ccc_mitigation_method}</td
+        >
+      </tr>
+      <tr>
+        <th class="center-align">개선예시</th>
+        <td
+          style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
+          class="line-height"
+          >{@html modalData?.ccr_item_no__ccc_mitigation_example.replace(
+            /\n/g,
+            "<br/>",
+          )}</td
+        >
+      </tr>
+    </table>
+    <div style="display: flex; justify-content: space-between">
+      <button class="btn modify-btn" on:click={() => (showModal = false)}
+        >Close</button
       >
-    </tr>
-    <tr>
-      <th class="center-align">개선예시</th>
-      <td
-        style="display: flex; height: 100px; overflow-y: auto; flex-direction: column;"
-        class="line-height"
-        >{@html modalData?.ccr_item_no__ccc_mitigation_example.replace(
-          /\n/g,
-          "<br/>",
-        )}</td
+      <button
+        class="modify-button"
+        style="float: right;"
+        disabled={Object.keys(insertData).length === 0}
+        on:click={() => {
+          changeDataHandler({
+            plan_index: planIndex,
+            result_index: modalData?.ccr_index,
+            checklist_index: modalData?.ccr_item_no__ccc_index,
+            change_result:
+              insertData?.change_result ?? modalData?.ccr_item_result,
+            change_option: change_option,
+            change_status_text: insertData?.change_status_text,
+            change_evidence_file: insertData?.change_evidence_file,
+          });
+          change_option = "ONE";
+        }}
       >
-    </tr>
-  </table>
-  <div style="display: flex; justify-content: space-between">
-    <button class="btn modify-btn" on:click={() => (showModal = false)}
-      >Close</button
-    >
-    <button
-      class="modify-button"
-      style="float: right;"
-      disabled={Object.keys(insertData).length === 0}
-      on:click={() => {
-        changeDataHandler({
-          plan_index: planIndex,
-          result_index: modalData?.ccr_index,
-          checklist_index: modalData?.ccr_item_no__ccc_index,
-          change_result:
-            insertData?.change_result ?? modalData?.ccr_item_result,
-          change_option: change_option,
-          change_status_text: insertData?.change_status_text,
-          change_evidence_file: insertData?.change_evidence_file,
-        });
-        change_option = "ONE";
-      }}
-    >
-      저장하기
-    </button>
+        저장하기
+      </button>
+    </div>
   </div>
 </div>
 

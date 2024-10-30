@@ -325,7 +325,13 @@
                                     loading = false;
                                   }}
                                 >
-                                  <a href="javascript:void(0);">
+                                  <a
+                                    href="javascript:void(0);"
+                                    class={selectedSendData?.asset_target_uuid ==
+                                    host?.ast_uuid
+                                      ? "listActive"
+                                      : ""}
+                                  >
                                     {host.ast_uuid__ass_uuid__ast_hostname}
                                   </a>
                                 </li>
@@ -353,6 +359,7 @@
                 >
                   <div
                     class="menu"
+                    style="position: relative;"
                     on:click={async () => {
                       loading = true;
                       setView = "plan";
@@ -372,6 +379,9 @@
                     <span
                       style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"
                     >
+                      {asset?.ast_uuid__ass_uuid__ast_hostname} ({asset?.ast_uuid__ast_target__cct_target})</span
+                    >
+                    <span class="tooltip">
                       {asset?.ast_uuid__ass_uuid__ast_hostname} ({asset?.ast_uuid__ast_target__cct_target})</span
                     >
                   </div>
@@ -600,5 +610,26 @@
   .excel-img {
     filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
       brightness(100%) contrast(98%);
+  }
+
+  .listActive {
+    font-weight: 800;
+  }
+
+  /* Tooltip styling */
+  .tooltip {
+    visibility: hidden; /* Hidden by default */
+    width: 87%; /* Width of the tooltip */
+    background-color: rgba(0, 0, 0, 0.7); /* Background color of the tooltip */
+    color: #fff; /* Text color */
+    text-align: center; /* Center text */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px; /* Padding inside tooltip */
+    position: absolute; /* Absolute positioning */
+    z-index: 1; /* On top of other elements */
+    bottom: 125%; /* Position above the button */
+    opacity: 0; /* Initial opacity */
+    transition: opacity 0.2s ease; /* Transition effect */
+    z-index: 9999 !important;
   }
 </style>

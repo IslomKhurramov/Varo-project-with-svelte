@@ -26,8 +26,9 @@
   export let currentView;
   export let wholePage;
 
-  let isAgentUser =
-    decryptData($userData?.userInfo?.user_roletype__role_index) == 1;
+  let isAgentUser = ["1", "3", "5"].includes(
+    decryptData($userData?.userInfo?.user_roletype_role_index),
+  );
   // let isAgentUser = true;
 
   let usernames = [];
@@ -368,11 +369,11 @@
 </section>
 
 <section class="content" style="height: 100vh; overflow: scroll;">
-  <div>
+  <div style="height: 100%;">
     <!-- 자산상세 -->
-    <div class="section">
+    <div class="section" style="height: 100%;">
       <!-- 등록 -->
-      <div class="flex detail">
+      <div class="flex detail" style="height: 100%;">
         <section class="flex col gap-40">
           <article class="flex col">
             <h3 class="title border">조치계획등록</h3>

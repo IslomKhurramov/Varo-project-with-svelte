@@ -279,8 +279,9 @@
         </h1>
         <div class="form">
           <div class="formControl">
-            <label for="email">Email</label>
+            <label for="email" style="font-size: 16px;">Email</label>
             <input
+              style="font-size: 16px;"
               type="text"
               placeholder="admin@admin.com"
               id="email"
@@ -290,8 +291,9 @@
             />
           </div>
           <div class="formControl">
-            <label for="userPw">Password</label>
+            <label for="userPw" style="font-size: 16px;">Password</label>
             <input
+              style="font-size: 16px;"
               type="password"
               id="userPw"
               placeholder="Your password"
@@ -302,12 +304,16 @@
           </div>
           <div class="findIdPw">
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "find_user";
               }}>아이디 찾기</a
             >
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "reset_password";
@@ -315,17 +321,23 @@
             >
           </div>
           {#if errorMessage}
-            <p class="error">{errorMessage}</p>
+            <p style="font-size: 16px;" class="error">{errorMessage}</p>
           {/if}
         </div>
 
         <div class="btnWrap">
-          <a on:click={handleLogin} class="btn loginBtn">로그인</a>
+          <a
+            on:click={handleLogin}
+            class="btn loginBtn"
+            style="font-size: 16px;">로그인</a
+          >
         </div>
-        <div class="joinSummary">
+        <div class="joinSummary" style="font-size: 16px;">
           계정이 없으신가요?
           <span
             ><a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "signup";
@@ -344,8 +356,9 @@
         </h1>
         <div class="form">
           <div class="formControl">
-            <label for="email">Email</label>
+            <label for="email" style="font-size: 16px;">Email</label>
             <input
+              style="font-size: 16px;"
               type="text"
               placeholder="admin@admin.com"
               id="email"
@@ -355,8 +368,9 @@
             />
           </div>
           <div class="formControl">
-            <label for="userPw">Password</label>
+            <label for="userPw" style="font-size: 16px;">Password</label>
             <input
+              style="font-size: 16px;"
               type="password"
               id="userPw"
               placeholder="Your password"
@@ -366,8 +380,10 @@
             />
           </div>
           <div class="formControl">
-            <label for="userPw">Confirm Password</label>
+            <label for="userPw" style="font-size: 16px;">Confirm Password</label
+            >
             <input
+              style="font-size: 16px;"
               type="password"
               id="userPw"
               placeholder="Your password"
@@ -378,12 +394,16 @@
           </div>
           <div class="findIdPw">
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "find_user";
               }}>아이디 찾기</a
             >
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "reset_password";
@@ -396,12 +416,19 @@
         </div>
 
         <div class="btnWrap">
-          <a on:click={handleRegister} class="btn loginBtn">로그인</a>
+          <a
+            on:click={handleRegister}
+            class="btn loginBtn"
+            href="javascript:void(0);"
+            style="font-size: 16px;">회원가입</a
+          >
         </div>
-        <div class="joinSummary">
+        <div class="joinSummary" style="font-size: 16px;">
           계정이 있으신가요?
           <span
             ><a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "login";
@@ -414,14 +441,15 @@
 
     {#if tabMenu === "find_user"}
       <section>
-        <h1>
+        <h1 style="font-size: 16px;">
           <img src="./assets/images/login_logo.svg" />
           아이디 찾기
         </h1>
         <div class="form">
           <div class="formControl">
-            <label for="email">Email</label>
+            <label for="email" style="font-size: 16px;">Email</label>
             <input
+              style="font-size: 16px;"
               type="text"
               placeholder="admin@admin.com"
               id="email"
@@ -432,12 +460,16 @@
           </div>
           <div class="findIdPw">
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "find_user";
               }}>아이디 찾기</a
             >
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "reset_password";
@@ -445,17 +477,24 @@
             >
           </div>
           {#if errorMessage}
-            <p class="error">{errorMessage}</p>
+            <p class="error" style="font-size: 16px;">{errorMessage}</p>
           {/if}
         </div>
 
         <div class="btnWrap">
-          <a on:click={findUser} class="btn loginBtn">아이디 찾기</a>
+          <a
+            on:click={findUser}
+            class="btn loginBtn"
+            href="javascript:void(0);"
+            style="font-size: 16px;">아이디 찾기</a
+          >
         </div>
-        <div class="joinSummary">
+        <div class="joinSummary" style="font-size: 16px;">
           계정이 있으신가요?
           <span
             ><a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "login";
@@ -468,14 +507,15 @@
 
     {#if tabMenu === "reset_password"}
       <section>
-        <h1>
+        <h1 style="font-size: 16px;">
           <img src="./assets/images/login_logo.svg" />
           비밀번호 초기화
         </h1>
         <div class="form">
           <div class="formControl">
-            <label for="email">Email</label>
+            <label for="email" style="font-size: 16px;">Email</label>
             <input
+              style="font-size: 16px;"
               type="text"
               placeholder="admin@admin.com"
               id="email"
@@ -486,12 +526,16 @@
           </div>
           <div class="findIdPw">
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "find_user";
               }}>아이디 찾기</a
             >
             <a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "reset_password";
@@ -499,17 +543,24 @@
             >
           </div>
           {#if errorMessage}
-            <p class="error">{errorMessage}</p>
+            <p class="error" style="font-size: 16px;">{errorMessage}</p>
           {/if}
         </div>
 
         <div class="btnWrap">
-          <a on:click={resetPassword} class="btn loginBtn">비밀번호 초기화</a>
+          <a
+            on:click={resetPassword}
+            class="btn loginBtn"
+            href="javascript:void(0);"
+            style="font-size: 16px;">비밀번호 초기화</a
+          >
         </div>
-        <div class="joinSummary">
+        <div class="joinSummary" style="font-size: 16px;">
           계정이 있으신가요?
           <span
             ><a
+              href="javascript:void(0);"
+              style="font-size: 16px;"
               on:click={() => {
                 errorMessage = null;
                 tabMenu = "login";

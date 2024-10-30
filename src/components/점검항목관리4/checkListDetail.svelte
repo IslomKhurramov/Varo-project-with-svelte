@@ -110,7 +110,7 @@
 >
   <article
     class="contentArea"
-    style="overflow: auto; height: 72vh;
+    style="overflow: auto; height: 75vh;
     padding: 10px;"
   >
     {#if showModalModalEditItem}
@@ -119,6 +119,7 @@
         {selected}
         {selectedCategory}
         {showSlide}
+        {selectedChecklist}
         {swiperContainer}
         {showModalSecond}
         {selectedSlide}

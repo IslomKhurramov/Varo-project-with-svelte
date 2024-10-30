@@ -355,8 +355,12 @@
 
 <main style="height: 100%;">
   <article class="contentArea mt-0">
-    <section bind:this={swiperContainer} class="topCon">
-      <div class="menu-container">
+    <section
+      bind:this={swiperContainer}
+      class="topCon"
+      style="position: sticky; top: 10px; z-index:99;"
+    >
+      <div class="menu-container" style="position: sticky; top: 0; z-index:99;">
         <button
           class="arrow-btn"
           id="prevBtn"
@@ -365,8 +369,6 @@
         <div class="menu-wrapper-container">
           <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
             {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
               <div
                 value={asset.ass_uuid}
                 name={asset}

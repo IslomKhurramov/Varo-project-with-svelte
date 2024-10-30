@@ -319,7 +319,11 @@
     }
   });
   /*************************************************************/
-
+  $: {
+    if (selectedChecklist) {
+      selectedChecklistForCopyId = selectedChecklist.ccg_index;
+    }
+  }
   /***********************************************************/
   // Edit checklist function (to be defined)
   async function editChecklist(checklistId, editedName) {
@@ -380,14 +384,7 @@
     showModalModalEditItem = false;
     showEdit = false; // Reset showEdit state as well
   }
-  const sortedChecklistByDate = derived(checklistStore, ($checklistStore) => {
-    if ($checklistStore.data) {
-      return [...$checklistStore.data].sort(
-        (a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate),
-      );
-    }
-    return [];
-  });
+  let selectAll = false;
 </script>
 
 <section>
@@ -399,6 +396,7 @@
         class="btn btnPrimary"
         on:click={() => {
           showModal = true;
+          selectAll = true;
         }}><img src="./assets/images/icon/add.svg" />그룹추가</a
       >
       <!-- svelte-ignore a11y-missing-attribute -->
@@ -441,11 +439,11 @@
         {/each}
 
         <!-- Render newly created checklists with Edit/Delete buttons -->
-        {#each createdChecklists as checklist (checklist.ccg_index)}
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
           <li>
             <div class="project_button">
               <div class="new_input">
-                {#if editingChecklistId === checklist.ccg_index}
+                {#if editingChecklistId === selectedChecklist.ccg_index}
                   <!-- Edit mode: render input field -->
                   <input
                     type="text"
@@ -457,7 +455,7 @@
               </div>
             </div>
           </li>
-        {/each}
+        {/if}
       </ul>
     {/if}
   </article>
@@ -515,6 +513,7 @@
             class="btn btnPrimary"
             on:click={() => {
               showModal = true;
+              selectAll = false;
             }}>복사</button
           >
           {#if showModalModalEditItem}
@@ -543,15 +542,17 @@
               뒤로 가기
             </button>
           {/if}
-
-          {#each createdChecklists as checklist (checklist.ccg_index)}
-            {#if editingChecklistId === checklist.ccg_index}
-              <!-- Show Save/Cancel buttons in edit mode -->
+          {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+            <!-- If the checklist is in edit mode, show Save/Cancel buttons -->
+            {#if editingChecklistId === selectedChecklist.ccg_index}
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary save"
                 on:click={() => {
-                  editChecklist(checklist.ccg_index, editedChecklistName);
+                  editChecklist(
+                    selectedChecklist.ccg_index,
+                    editedChecklistName,
+                  );
                   resetEditAndModalState();
                 }}
               >
@@ -562,19 +563,22 @@
                 class="btn btnPrimary cancel"
                 on:click={() => {
                   cancelEditing();
-                  resetEditAndModalState(); // Reset the editing state on cancel
+                  resetEditAndModalState();
                 }}
               >
                 Cancel
               </button>
-            {:else if showEdit}
-              <!-- Normal mode: show Edit, Copy, Delete buttons -->
+            {:else}
+              <!-- Show Edit/Delete buttons in normal mode -->
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary edit"
                 on:click={() => {
-                  startEditing(checklist.ccg_index, checklist.ccg_group);
-                  showEdit = true; // Set showEdit to true when editing starts
+                  startEditing(
+                    selectedChecklist.ccg_index,
+                    selectedChecklist.ccg_group,
+                  );
+                  showEdit = true;
                 }}
               >
                 Edit
@@ -582,12 +586,12 @@
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary delete btnRed"
-                on:click={() => deleteChecklist(checklist.ccg_index)}
+                on:click={() => deleteChecklist(selectedChecklist.ccg_index)}
               >
                 Delete
               </button>
             {/if}
-          {/each}
+          {/if}
         </div>
       </section>
     </article>
@@ -632,16 +636,25 @@
             <h3>새로운 진단 그룹 생성</h3>
             <div class="first_line">
               <label for="source-group">복사 대상:</label>
+
               <select
                 class="first_line_input"
                 bind:value={selectedChecklistForCopyId}
                 id="source-group"
               >
-                {#each allChecklistArray as checklist}
-                  <option value={checklist.ccg_index}
-                    >{checklist.ccg_group}</option
-                  >
-                {/each}
+                {#if selectAll}
+                  {#each allChecklistArray as checklist}
+                    <option>
+                      {checklist.ccg_group}
+                    </option>
+                  {/each}
+                {:else}
+                  {#each allChecklistArray as checklist}
+                    <option value={checklist.ccg_index}>
+                      {checklist.ccg_group}
+                    </option>
+                  {/each}
+                {/if}
               </select>
             </div>
             <div class="second_line">

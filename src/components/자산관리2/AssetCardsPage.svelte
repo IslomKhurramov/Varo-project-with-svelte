@@ -211,7 +211,7 @@
         <strong class="selectButton">전체선택</strong>
       </div>
     </div>
-    <div class="graphCardWrap col3" style="height: 100%;">
+    <div class="graphCardWrap col3">
       {#each filteredAssets as asset}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article

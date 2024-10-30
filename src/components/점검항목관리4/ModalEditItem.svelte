@@ -12,6 +12,7 @@
   export let slides = [];
   export let closeShowModal;
   export let deleteSelectedItem;
+  export let selectedChecklist;
 
   let activeAsset = null;
   let scrollAmount = 0;
@@ -101,6 +102,7 @@
     selectedSlide = slide;
     selectedItem = slide; // Update selectedItem as well
   }
+  $: console.log("selected checklist", selectedChecklist);
 </script>
 
 <section style="margin-top:10px; overflow: auto; height: 99%">
@@ -110,16 +112,31 @@
     padding: 10px;"
   >
     {#if showSlide}
-      <section bind:this={swiperContainer} class="topCon swiper-container">
-        <div class="menu-container" style="margin-top:20px">
+      <section
+        bind:this={swiperContainer}
+        style="position: sticky; top: 10px; z-index:99; background-color:white;"
+        class="topCon swiper-container"
+      >
+        <div
+          class="menu-container"
+          style="position: sticky; top: 10px; z-index:99;  background-color:white;"
+        >
           <button
             class="arrow-btn"
             id="prevBtn"
             on:click={() => handleScroll("prev")}>◀</button
           >
 
-          <div class="menu-wrapper-container">
-            <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
+          <div
+            class="menu-wrapper-container"
+            style="background-color: white; z-index:99;"
+          >
+            <div
+              class="menu-wrapper"
+              id="menuWrapper"
+              style="background-color: white; z-index:99;"
+              bind:this={menuWrapper}
+            >
               {#each slides as slide}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div
@@ -191,7 +208,7 @@
               <td class="line-height">
                 {@html selectedItem.ccc_item_criteria.replace(/\n/g, "<br/>")}
 
-                {#if isNewlyCreatedChecklist}
+                {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
                   <td class="new_input">
                     <div class="first_col">
                       <p>점검항목</p>
@@ -239,7 +256,7 @@
       {#if closeShowModal}
         <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
       {/if}
-      {#if isNewlyCreatedChecklist}
+      {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
         <div class="buttons">
           <div class="buttonGroup">
             <button class="btn modify-btn">수정하기</button>
@@ -310,7 +327,7 @@
     flex-direction: row;
 
     align-items: center;
-    width: 100%;
+    width: 60%;
     justify-content: space-between;
   }
 

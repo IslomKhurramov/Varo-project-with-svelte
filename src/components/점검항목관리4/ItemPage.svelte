@@ -163,7 +163,7 @@
   }
 </script>
 
-<div class="contentArea" style="height: 72vh; overflow-y:auto;">
+<div class="contentArea" style="height: 75vh; overflow-y:auto;">
   <article
     class="contentArea"
     style=" height: calc(100vh - 134px); padding-left:0px; padding-top:0px; padding-right:0px"

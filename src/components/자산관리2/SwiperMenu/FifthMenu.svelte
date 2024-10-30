@@ -25,7 +25,7 @@
     } else if (activeData === "프로세스목록" && selectedProcessAppName) {
       // Filter 프로세스목록 by app_name only when selectedProcessAppName is set
       return currentData.filter(
-        (item) => item.app_name === selectedProcessAppName,
+        (item) => item.app_pname === selectedProcessAppName,
       );
     } else if (
       activeData === "설치된 프로그램 목록" &&
@@ -34,7 +34,7 @@
       // Filter 설치된 프로그램 목록 by date only when selectedInstalledProgDate is set
       return currentData.filter(
         (item) =>
-          new Date(item.aip_date).toISOString().slice(0, 10) ===
+          new Date(item.aip_cdate).toISOString().slice(0, 10) ===
           selectedInstalledProgDate, // Change to aip_date
       );
     } else if (["패치내역", "DLL 정보"].includes(activeData)) {
@@ -147,6 +147,7 @@
       {#if activeData === "네트워크 정보"}
         <label for="networkDateInput">Filter by Date:</label>
         <input
+          class="date_input"
           type="date"
           id="networkDateInput"
           bind:value={selectedNetworkDate}
@@ -155,9 +156,13 @@
 
       {#if activeData === "프로세스목록"}
         <label for="processAppNameSelect">Filter by App Name:</label>
-        <select id="processAppNameSelect" bind:value={selectedProcessAppName}>
+        <select
+          class="select_input"
+          id="processAppNameSelect"
+          bind:value={selectedProcessAppName}
+        >
           <option value="">Select an App Name</option>
-          {#each [...new Set(currentData.map((item) => item.app_name))] as appName}
+          {#each [...new Set(currentData.map((item) => item.app_pname))] as appName}
             <option value={appName}>{appName}</option>
           {/each}
         </select>
@@ -166,6 +171,7 @@
       {#if activeData === "설치된 프로그램 목록"}
         <label for="installedProgDateInput">Filter by Installation Date:</label>
         <input
+          class="date_input"
           type="date"
           id="installedProgDateInput"
           bind:value={selectedInstalledProgDate}
@@ -174,7 +180,6 @@
 
       <!-- Display filtered data -->
       <div class="flex col detail">
-        <h3 class="title">Asset Details</h3>
         {#if filteredData && filteredData.length > 0}
           <div class="itemListWrap" style="height: 55vh; overflow-y:auto;">
             {#each filteredData as item}
@@ -184,10 +189,18 @@
                     <col style="width: 150px;" />
                     <col />
                   </colgroup>
+                  <thead>
+                    <tr
+                      style="color: black; background-color: rgba(0, 103, 255, 0.05);"
+                    >
+                      <td class="text-center">구분</td>
+                      <td>설명</td>
+                    </tr>
+                  </thead>
                   <tbody>
                     {#each Object.entries(item) as [key, value]}
                       <tr>
-                        <td class="fieldName">{key}</td>
+                        <td class="fieldName text-center">{key}</td>
                         <td class="fieldValue">{value}</td>
                       </tr>
                     {/each}
@@ -207,10 +220,8 @@
 </main>
 
 <style>
-  .table_container {
-    height: 60vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+  td {
+    font-size: 16px;
   }
   .itemListWrap {
     display: flex;
@@ -218,7 +229,13 @@
     gap: 20px; /* Adds space between each item card */
     margin: 20px;
   }
-
+  .date_input {
+    width: 150px;
+    height: 30px;
+  }
+  .select_input {
+    width: 300px;
+  }
   .itemCard {
     background-color: #fff;
     border: 1px solid #ddd; /* Border for clear separation */
@@ -248,9 +265,7 @@
   }
 
   /* Optional alternating row color within each card */
-  .itemTable tr:nth-child(even) .fieldValue {
-    background-color: rgba(0, 103, 255, 0.05);
-  }
+
   .tableListWrap th,
   td {
     font-size: 16px;
@@ -259,21 +274,11 @@
     cursor: pointer;
   }
   thead {
-    position: sticky; /* Make the header sticky */
     top: 0; /* Stick the header to the top */
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
-  .scrollTable {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 500px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  .contenArea {
-    min-height: 1200px;
-  }
+
   .empty_state {
     display: flex;
     justify-content: center;
@@ -285,34 +290,5 @@
     margin-top: 20px;
     font-size: 14px;
     color: #555;
-  }
-  .empty-state-message {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px; /* Adjust the height based on your design */
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    color: #555; /* Text color */
-  }
-  td:hover {
-    background-color: rgba(242, 242, 242, 1);
-    cursor: pointer;
-  }
-  .empty-state-message h3 {
-    font-size: 18px;
-    color: #007bff;
-    font-weight: bold;
-    text-align: center;
-  }
-  .btn:hover {
-    background-color: #007bff;
-    color: white;
-  }
-  .btn {
-    font-size: 16px;
   }
 </style>

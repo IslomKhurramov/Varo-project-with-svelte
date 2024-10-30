@@ -423,7 +423,7 @@
                   activeMenu = group;
                   selectPage(AssetCardsPage, group);
                 }}
-                title={group.asg_title}
+                title="{group.asg_title}({group.asg_count})"
               >
                 <span
                   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%;"

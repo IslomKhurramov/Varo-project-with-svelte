@@ -48,7 +48,7 @@
 </script>
 
 <div class="tableListWrap">
-  <table class="tableList hdBorder font-size: 16px;">
+  <table class="tableList hdBorder" style="font-size: 16px;">
     <colgroup>
       <col style="width:90px;" />
       <col style="width:120px" />
@@ -57,7 +57,7 @@
       <col style="width:20%;" />
       <col style="width:120px;" />
     </colgroup>
-    <thead>
+    <thead style="position: sticky;top: -16px;font-size: 16px;">
       <tr>
         <th class="text-center">넘버</th>
         <th

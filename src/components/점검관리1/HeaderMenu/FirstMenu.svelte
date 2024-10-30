@@ -289,7 +289,7 @@
 {#if modalData && modalData?.length !== 0}
   <ModalDynamic
     bind:showModal
-    modalWidth={60}
+    modalWidth={80}
     modalHeight={modalData?.length > 10 ? 600 : null}
     bind:modalData
   >

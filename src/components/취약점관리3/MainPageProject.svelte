@@ -220,7 +220,7 @@
   }
 </script>
 
-<section class="content" style="height: 90%;">
+<section class="content">
   <div style=" overflow: auto;">
     <!-- 자산상세 -->
     <div class="section">
@@ -555,7 +555,10 @@
 
       <!-- 테이블리스트 -->
       <div class="flex col detail">
-        <div class="tableListWrap nofirstth">
+        <div
+          class="tableListWrap nofirstth"
+          style="    height: calc(-306px + 100vh);overflow: scroll;overflow-x: hidden;"
+        >
           <table class="tableList hdBorder">
             <colgroup>
               {#if isAgenUser && selectedSendData?.plan_index}

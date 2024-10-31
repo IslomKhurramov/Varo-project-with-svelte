@@ -50,20 +50,12 @@
 
   onMount(async () => {
     checkAuth();
-
-    console.log("$userData:", $userData);
-
-    if ($userData.isLoggedIn) {
-      console.log("User is logged in:", $userData);
-
-      navigate("/");
-    } else {
+    console.log("userData:", $userData.isLoggedIn);
+    if (!$userData.isLoggedIn) {
       console.log("User is not logged in.");
       navigate("/login");
     }
   });
-
-  onMount(async () => {});
 
   function daysAgo(dateString) {
     const date = new Date(dateString);
@@ -149,7 +141,7 @@
                   <img src="./assets/images/icon/person.svg" />
                   <div class="user" style="min-width: 60px;font-size: 16px;">
                     <span style="font-size: 16px;"
-                      >{$userData?.userInfo?.user_name}
+                      >{decryptData($userData?.userInfo?.user_name)}
                     </span>님
                   </div>
                   <div class="logout-menu">

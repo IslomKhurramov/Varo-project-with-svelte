@@ -201,6 +201,8 @@
             selectedItems = [];
             sortAscending = true;
             firstClick = true;
+            currentView === "default";
+            wholePage = false;
             loading = false;
           }}
         >
@@ -235,6 +237,8 @@
             } else {
               sortAssets();
             }
+            currentView === "default";
+            wholePage = false;
             loading = false;
           }}
         >

@@ -563,7 +563,7 @@
                       />
                     </td>
                   </tr>
-                {:else if isAgentUser && setView == "plan"}
+                {:else if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
                   <tr>
                     <th>조치방법</th>
                     <td>
@@ -758,7 +758,7 @@
               </tbody>
             </table>
             <div class="flex justify-center btnActionWrap">
-              {#if isAgentUser && setView == "plan"}
+              {#if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
                 <button
                   type="button"
                   class="btn btnBlue btnAction btnSave w220 h50"

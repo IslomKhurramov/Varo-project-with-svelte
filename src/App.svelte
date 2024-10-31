@@ -141,8 +141,8 @@
                   <img src="./assets/images/icon/person.svg" />
                   <div class="user" style="min-width: 60px;font-size: 16px;">
                     <span style="font-size: 16px;"
-                      >{$userData?.userInfo?.user_name}</span
-                    >님
+                      >{decryptData($userData?.userInfo?.user_name)}
+                    </span>님
                   </div>
                   <div class="logout-menu">
                     <button on:click={handleLogout} class="logout-button">

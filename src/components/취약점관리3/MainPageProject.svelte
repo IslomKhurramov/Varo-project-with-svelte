@@ -25,8 +25,9 @@
   export let loading;
 
   let theadChecked = false;
-  let isAgenUser =
-    decryptData($userData?.userInfo?.user_roletype__role_index) == 1;
+  let isAgenUser = ["1", "3", "5"].includes(
+    decryptData($userData?.userInfo?.user_roletype_role_index),
+  );
   // let isAgenUser = true;
 
   let data = [];

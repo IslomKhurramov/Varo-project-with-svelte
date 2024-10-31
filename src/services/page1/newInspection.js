@@ -7,6 +7,9 @@ export const postNewPlanInformation = async (planInfo) => {
     const response = await axios.post(
       `${serverApi}/api/getNewPlanInformation/`,
       planInfo,
+      {
+        withCredentials: true,
+      },
     );
     return response.data;
   } catch (error) {
@@ -95,7 +98,9 @@ export const setDeletePlan = async (plan_index) => {
 
 export const getAssetGroups = async () => {
   try {
-    const response = await axios.get(`${serverApi}/getAssetGroups/`);
+    const response = await axios.get(`${serverApi}/getAssetGroups/`, {
+      withCredentials: true,
+    });
 
     if (response.status === 200) {
       // Check if the response is OK
@@ -112,7 +117,9 @@ export const getAssetGroups = async () => {
 
 export const getOptionsForNewPlan = async () => {
   try {
-    const response = await axios.get(`${serverApi}/api/getOptionsForNewPlan/`);
+    const response = await axios.get(`${serverApi}/api/getOptionsForNewPlan/`, {
+      withCredentials: true,
+    });
     console.log("getOptionsForNewPlan: ", response.data.CODE);
 
     if (response.status === 200) {

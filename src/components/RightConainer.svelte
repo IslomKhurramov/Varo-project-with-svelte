@@ -453,6 +453,7 @@
                         }}
                       >
                         <button
+                          style="width: 100%;"
                           type="button"
                           class="tableTootip"
                           on:click={(e) => {

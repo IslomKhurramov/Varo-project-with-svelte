@@ -26,5 +26,9 @@ function decryptData(encryptedString) {
 }
 
 // Decrypt a single value like user_index
-const decryptedUserIndex = decryptData(encryptedData?.user_index);
-console.log("Decrypted user_index:", decryptedUserIndex);
+console.log("Decrypted user_index:", decryptData(encryptedData?.user_index));
+console.log("Decrypted user_name:", decryptData(encryptedData?.user_name));
+console.log(
+  "Decrypted user_roletype_role_index:",
+  decryptData(encryptedData?.user_roletype_role_index),
+);

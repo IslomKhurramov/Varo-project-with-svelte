@@ -356,15 +356,11 @@
     </div>
   </div>
   {#if showItemDetail}
-    <dialog open on:close={() => (showItemDetail = false)}>
-      <ModalCcEhistory {selectedItem} />
-
-      <button
-        class="secondary-button"
-        style="margin-top:10px;"
-        on:click={() => (showItemDetail = false)}>Close</button
-      >
-    </dialog>
+    <div class="modal-open-wrap">
+      <dialog open on:close={() => (showItemDetail = false)}>
+        <ModalCcEhistory {selectedItem} bind:showItemDetail />
+      </dialog>
+    </div>
   {/if}
 </main>
 
@@ -372,22 +368,39 @@
   .line-height {
     line-height: 23px;
   }
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
   dialog {
     position: fixed;
+    /* height: 600px; */
+    /* overflow-y: auto;
+    overflow-x: hidden; */
     top: 50%;
-    left: 40%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;
-    height: 600px;
+    width: 1103px;
     border: none;
     border-radius: 10px;
     background-color: white;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease;
+    animation: svelte-s7onsa-fadeIn 0.3s ease;
     z-index: 100;
   }
 
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
   .wordBreak {
     white-space: pre-wrap; /* Ensures the text wraps within the cells */
     word-wrap: break-word;

@@ -526,7 +526,7 @@
                 on:change={handleFilter}
               >
                 <option value="전체" selected>전체</option>
-                <option value="YES">등록 미승인</option>
+                <option value="YES">등록 승인</option>
                 <option value="NO">등록 해제</option>
               </select>
 

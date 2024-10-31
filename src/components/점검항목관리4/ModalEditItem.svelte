@@ -165,6 +165,14 @@
 
     <div class="modal" style="margin-bottom: 20px;">
       <table style="margin-bottom: 20px;">
+        <tr style="height: 50px; ">
+          <th class="center-align" style="color: white;background: #0072fd;"
+            >구분</th
+          >
+          <td class="center-align" style="color: white;background: #0072fd;"
+            >설명</td
+          >
+        </tr>
         <tbody>
           {#if selectedItem}
             <tr>

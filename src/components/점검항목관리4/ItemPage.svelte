@@ -128,6 +128,7 @@
     return `${date.toLocaleDateString("ko-KR", options)} ${date.toLocaleTimeString("ko-KR", timeOptions)}`;
   }
   import { createEventDispatcher } from "svelte";
+  import ModalPopUpDetail from "./ModalPopUpDetail.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -163,10 +164,10 @@
   }
 </script>
 
-<div class="contentArea" style="height: 75vh; overflow-y:auto;">
+<div class="contentArea" style="height: calc(-236px + 100vh); overflow-y:auto;">
   <article
     class="contentArea"
-    style=" height: calc(100vh - 134px); padding-left:0px; padding-top:0px; padding-right:0px"
+    style=" height: calc(100vh - 134px); padding-left:0px; padding-top:0px; padding-right:0px; margin-bottom:15px;"
   >
     <p style="padding-bottom:15px; ">점검그룹</p>
 
@@ -324,7 +325,7 @@
     {#if showModal}
       <div class="modal-open-wrap">
         <dialog open on:close={() => (showModal = false)}>
-          <ModalEditItem
+          <ModalPopUpDetail
             {selectedItem}
             {selectedCategory}
             {isNewlyCreatedChecklist}
@@ -357,11 +358,11 @@
   /****Modal Container*/
   dialog {
     position: fixed;
-    height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* height: 600px; */
+    /* overflow-y: auto;
+    overflow-x: hidden; */
     top: 50%;
-    left: 56%;
+    left: 50%;
     transform: translate(-50%, -50%);
     width: 1103px;
     border: none;
@@ -378,6 +379,7 @@
     background: rgba(0, 0, 0, 0.5);
     animation: fadeInBackdrop 0.3s ease;
   }
+
   .table1,
   .table2 {
     width: 100%;

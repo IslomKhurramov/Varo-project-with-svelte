@@ -3,27 +3,24 @@
   let currentData = null;
   let activeData = null;
 
-  // Filters for specific tabs
-  let selectedNetworkDate = ""; // Date filter for 네트워크 정보
-  let selectedProcessAppName = ""; // App name filter for 프로세스목록
-  let selectedInstalledProgDate = ""; // Date filter for 설치된 프로그램 목록
-  let selectedPatchDate = ""; // Filter for 패치내역
-  let selectedDllDate = ""; // Filter for DLL 정보
+  // Filter values for different tabs
+  let selectedNetworkDate = "";
+  let selectedProcessAppName = "";
+  let selectedInstalledProgDate = "";
+  let selectedPatchDate = "";
+  let selectedDllDate = "";
 
-  // Reactive `filteredData` based on `activeData` and selected filters
+  // Computed filtered data based on selected tab and filters
   $: filteredData = (() => {
     if (activeData === "운영체제정보") {
-      // Display all data for 운영체제정보 by default
       return currentData;
     } else if (activeData === "네트워크 정보" && selectedNetworkDate) {
-      // Filter 네트워크 정보 by date only when selectedNetworkDate is set
       return currentData.filter(
         (item) =>
           new Date(item.apn_cdate).toISOString().slice(0, 10) ===
           selectedNetworkDate,
       );
     } else if (activeData === "프로세스목록" && selectedProcessAppName) {
-      // Filter 프로세스목록 by app_name only when selectedProcessAppName is set
       return currentData.filter(
         (item) => item.app_pname === selectedProcessAppName,
       );
@@ -31,28 +28,48 @@
       activeData === "설치된 프로그램 목록" &&
       selectedInstalledProgDate
     ) {
-      // Filter 설치된 프로그램 목록 by date only when selectedInstalledProgDate is set
       return currentData.filter(
         (item) =>
           new Date(item.aip_cdate).toISOString().slice(0, 10) ===
-          selectedInstalledProgDate, // Change to aip_date
+          selectedInstalledProgDate,
       );
     } else if (["패치내역", "DLL 정보"].includes(activeData)) {
-      // Display all data by default for these tabs
       return currentData;
     } else {
-      return []; // Show no data if no filter is selected for filtered tabs
+      return [];
     }
   })();
 
-  // Function to set activeData and load data into currentData
+  // Function to handle tab selection
   const selectData = (page, menu) => {
-    currentData = page;
+    currentData = page.map((item) => ({
+      ...item,
+      modelType: determineModelType(menu), // Function to infer modelType based on menu
+    }));
     activeData = menu;
     resetFilters();
   };
 
-  // Reset filters when changing tabs
+  function determineModelType(menu) {
+    switch (menu) {
+      case "운영체제정보":
+        return "AssetStatusData";
+      case "네트워크 정보":
+        return "AssetProcessNetwork";
+      case "프로세스목록":
+        return "AssetProcess";
+      case "설치된 프로그램 목록":
+        return "AssetInstalledProgram";
+      case "패치내역":
+        return "AssetPatchStatus";
+      case "DLL 정보":
+        return "AssetsDlls";
+      default:
+        return null;
+    }
+  }
+
+  // Function to reset all filters on tab change
   const resetFilters = () => {
     selectedNetworkDate = "";
     selectedProcessAppName = "";
@@ -60,12 +77,62 @@
     selectedPatchDate = "";
     selectedDllDate = "";
   };
-  // Reactive subscription to assetDeatilInfo store
+  const allowedFields = {
+    AssetStatusData: [
+      "ast_hostname",
+      "ast_ipaddr",
+      "ast_ipaddrs",
+      "ast_platform",
+      "ast_release",
+      "ast_version",
+      "ast_cpuarch",
+      "ast_ostype",
+      "ast_cpuinfo",
+      "ast_cpu_used",
+      "ast_mem_size",
+      "ast_mem_used",
+      "ast_hdd_size",
+      "ast_hdd_used",
+    ],
+    AssetProcessNetwork: [
+      "apn_nlocal_ip",
+      "apn_nlocal_port",
+      "apn_nremote_ip",
+      "apn_nremote_port",
+      "apn_nstatus",
+      "apn_pid",
+      "apn_pname",
+      "apn_pexe",
+      "apn_pcmdline",
+      "apn_pusername",
+      "apn_ppid",
+      "apn_penv",
+    ],
+    AssetProcess: [
+      "app_pid",
+      "app_pname",
+      "app_status",
+      "app_start_time",
+      "app_cmdline",
+    ],
+    AssetInstalledProgram: [
+      "aip_pname",
+      "aip_pversion",
+      "aip_pvendor",
+      "aip_pdescription",
+      "aip_pidentifyingNumber",
+      "aip_date",
+      "aip_plocation",
+      "aip_installstate",
+      "aip_pcache",
+    ],
+    AssetPatchStatus: ["aps_patch_name", "aps_cdate", "aps_hash"],
+    AssetsDlls: ["ads_dll", "ads_hash", "ads_cdate"],
+  };
+  // Subscribe to the asset detail info store
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
-  $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
-  $: console.log("cce ", assetHistory);
   $: fieldOptions =
     currentData && currentData.length > 0 ? Object.keys(currentData[0]) : [];
 </script>
@@ -75,70 +142,53 @@
     <div class="section" style="margin-top:20px">
       <!-- svelte-ignore a11y-missing-attribute -->
       <section class="subTabWrap">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-missing-attribute -->
         <a
           on:click={() =>
             selectData(
               assetHistory[0]?.system_info?.osinfo || [],
               "운영체제정보",
             )}
-          class={activeData === "운영체제정보" ? "active" : ""}
+          class={activeData === "운영체제정보" ? "active" : ""}>운영체제정보</a
         >
-          운영체제정보
-        </a>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <a
           on:click={() =>
             selectData(
-              assetHistory[0].system_info?.installedprog || [],
+              assetHistory[0]?.system_info?.installedprog || [],
               "설치된 프로그램 목록",
             )}
           class={activeData === "설치된 프로그램 목록" ? "active" : ""}
+          >설치된 프로그램 목록</a
         >
-          설치된 프로그램 목록
-        </a>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <a
           on:click={() =>
             selectData(
-              assetHistory[0].system_info?.process || [],
+              assetHistory[0]?.system_info?.process || [],
               "프로세스목록",
             )}
-          class={activeData === "프로세스목록" ? "active" : ""}
+          class={activeData === "프로세스목록" ? "active" : ""}>프로세스목록</a
         >
-          프로세스목록
-        </a>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <a
           on:click={() =>
             selectData(
-              assetHistory[0].system_info?.process_network || [],
+              assetHistory[0]?.system_info?.process_network || [],
               "네트워크 정보",
             )}
           class={activeData === "네트워크 정보" ? "active" : ""}
+          >네트워크 정보</a
         >
-          네트워크 정보
-        </a>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <a
           on:click={() =>
-            selectData(assetHistory[0].system_info?.dlls || [], "DLL 정보")}
-          class={activeData === "DLL 정보" ? "active" : ""}
+            selectData(assetHistory[0]?.system_info?.dlls || [], "DLL 정보")}
+          class={activeData === "DLL 정보" ? "active" : ""}>DLL 정보</a
         >
-          DLL 정보
-        </a>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <a
           on:click={() =>
             selectData(
-              assetHistory[0].system_info?.patchstatus || [],
+              assetHistory[0]?.system_info?.patchstatus || [],
               "패치내역",
             )}
-          class={activeData === "패치내역" ? "active" : ""}
+          class={activeData === "패치내역" ? "active" : ""}>패치내역/대상</a
         >
-          패치내역/대상
-        </a>
       </section>
     </div>
 
@@ -182,31 +232,94 @@
       <div class="flex col detail">
         {#if filteredData && filteredData.length > 0}
           <div class="itemListWrap" style="height: 55vh; overflow-y:auto;">
-            {#each filteredData as item}
-              <div class="itemCard">
-                <table class="itemTable">
-                  <colgroup>
-                    <col style="width: 150px;" />
-                    <col />
-                  </colgroup>
-                  <thead>
-                    <tr
-                      style="color: black; background-color: rgba(0, 103, 255, 0.05);"
-                    >
-                      <td class="text-center">구분</td>
-                      <td>설명</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {#each Object.entries(item) as [key, value]}
-                      <tr>
-                        <td class="fieldName text-center">{key}</td>
-                        <td class="fieldValue">{value}</td>
+            {#each currentData as item}
+              {#if allowedFields[item.modelType]}
+                <!-- Ensure modelType is defined in allowedFields -->
+                <div class="tableListWrap table2">
+                  <table class="tableList hdBorder">
+                    <colgroup>
+                      <col style="width: 150px;" />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr
+                        style="color: black; background-color: rgba(0, 103, 255, 0.05);"
+                      >
+                        <th class="text-center">구분</th>
+                        <th>설명</th>
                       </tr>
-                    {/each}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {#each Object.entries(item).filter( ([key]) => allowedFields[item.modelType].includes(key), ) as [key, value]}
+                        <tr>
+                          <td class="fieldName text-center">
+                            {#if item.modelType === "AssetStatusData"}
+                              {#if key === "ast_hostname"}호스트명
+                              {:else if key === "ast_ipaddr"}아이피주소
+                              {:else if key === "ast_ipaddrs"}아이피주소전체
+                              {:else if key === "ast_platform"}운영플랫폼
+                              {:else if key === "ast_release"}릴리즈
+                              {:else if key === "ast_version"}버전
+                              {:else if key === "ast_cpuarch"}CPU타입
+                              {:else if key === "ast_ostype"}운영체제
+                              {:else if key === "ast_cpuinfo"}CPU정보
+                              {:else if key === "ast_cpu_used"}CPU사용량
+                              {:else if key === "ast_mem_size"}메모리크기
+                              {:else if key === "ast_mem_used"}메모리사용량
+                              {:else if key === "ast_hdd_size"}HDD크기
+                              {:else if key === "ast_hdd_used"}HDD사용량
+                              {/if}
+                            {:else if item.modelType === "AssetProcessNetwork"}
+                              {#if key === "apn_nlocal_ip"}로컬아이피
+                              {:else if key === "apn_nlocal_port"}로컬포트
+                              {:else if key === "apn_nremote_ip"}원격아이피
+                              {:else if key === "apn_nremote_port"}원격포트
+                              {:else if key === "apn_nstatus"}연결상태
+                              {:else if key === "apn_pid"}프로세스ID
+                              {:else if key === "apn_pname"}프로세스이름
+                              {:else if key === "apn_pexe"}실행파일
+                              {:else if key === "apn_pcmdline"}명령라인
+                              {:else if key === "apn_pusername"}실행자
+                              {:else if key === "apn_ppid"}부모프로세스
+                              {:else if key === "apn_penv"}환경변수
+                              {/if}
+                            {:else if item.modelType === "AssetProcess"}
+                              {#if key === "app_pid"}프로세스ID
+                              {:else if key === "app_pname"}프로세스이름
+                              {:else if key === "app_status"}프로세스상태
+                              {:else if key === "app_start_time"}시작시간
+                              {:else if key === "app_cmdline"}명령어
+                              {/if}
+                            {:else if item.modelType === "AssetInstalledProgram"}
+                              {#if key === "aip_pname"}프로그램명
+                              {:else if key === "aip_pversion"}버전
+                              {:else if key === "aip_pvendor"}벤더
+                              {:else if key === "aip_pdescription"}설명
+                              {:else if key === "aip_pidentifyingNumber"}레지스트리키
+                              {:else if key === "aip_date"}설치일
+                              {:else if key === "aip_plocation"}설치위치
+                              {:else if key === "aip_installstate"}설치상태
+                              {:else if key === "aip_pcache"}캐시정보
+                              {/if}
+                            {:else if item.modelType === "AssetPatchStatus"}
+                              {#if key === "aps_patch_name"}패치명
+                              {:else if key === "aps_cdate"}수집일
+                              {:else if key === "aps_hash"}해시값
+                              {/if}
+                            {:else if item.modelType === "AssetsDlls"}
+                              {#if key === "ads_dll"}DLL이름
+                              {:else if key === "ads_hash"}HASH값
+                              {:else if key === "ads_cdate"}수집일
+                              {/if}
+                            {/if}
+                          </td>
+                          <td class="fieldValue">{value}</td>
+                        </tr>
+                      {/each}
+                    </tbody>
+                  </table>
+                </div>
+              {/if}
             {/each}
           </div>
         {:else if activeData}
@@ -220,14 +333,15 @@
 </main>
 
 <style>
+  .subTabWrap a.active {
+    font-weight: bold;
+    border-bottom: 2px solid #007aff;
+  }
   td {
     font-size: 16px;
   }
-  .itemListWrap {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Adds space between each item card */
-    margin: 20px;
+  .table2 {
+    margin-bottom: 20px;
   }
   .date_input {
     width: 150px;
@@ -235,23 +349,6 @@
   }
   .select_input {
     width: 300px;
-  }
-  .itemCard {
-    background-color: #fff;
-    border: 1px solid #ddd; /* Border for clear separation */
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for card effect */
-  }
-
-  .itemTable {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .itemTable td {
-    padding: 8px 10px;
-    vertical-align: top;
   }
 
   .fieldName {

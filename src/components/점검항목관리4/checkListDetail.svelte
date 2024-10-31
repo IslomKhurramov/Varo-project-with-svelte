@@ -146,7 +146,7 @@
         </div>
       {/if}
       <div class="tableListWrap table2">
-        <table class="tableList hdBorder">
+        <table class="tableList hdBorder" style="height: 50vh;">
           {#if isNewlyCreatedChecklist}
             <colgroup>
               <col style="width:90px;" />

@@ -231,91 +231,121 @@
       <!-- Display filtered data -->
       <div class="flex col detail">
         {#if filteredData && filteredData.length > 0}
-          <div class="itemListWrap" style="height: 55vh; overflow-y:auto;">
-            {#each currentData as item}
-              {#if allowedFields[item.modelType]}
-                <!-- Ensure modelType is defined in allowedFields -->
-                <div class="tableListWrap table2">
-                  <table class="tableList hdBorder">
-                    <colgroup>
-                      <col style="width: 150px;" />
-                      <col />
-                    </colgroup>
-                    <thead>
-                      <tr
-                        style="color: black; background-color: rgba(0, 103, 255, 0.05);"
-                      >
-                        <th class="text-center">구분</th>
-                        <th>설명</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {#each Object.entries(item).filter( ([key]) => allowedFields[item.modelType].includes(key), ) as [key, value]}
+          <div class="itemListWrap" style="height: 55vh; overflow-y: auto;">
+            <!-- Consolidated Table for AssetStatusData Items -->
+            {#if currentData.some((item) => item.modelType === "AssetStatusData")}
+              <div class="tableListWrap table2">
+                <table class="tableList hdBorder">
+                  <colgroup>
+                    <col style="width: 150px;" />
+                    <col />
+                  </colgroup>
+                  <thead>
+                    <tr
+                      style="color: black; background-color: rgba(0, 103, 255, 0.05);"
+                    >
+                      <th class="text-center">구분</th>
+                      <th>설명</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {#each currentData.filter((item) => item.modelType === "AssetStatusData") as item}
+                      {#each Object.entries(item).filter( ([key]) => allowedFields["AssetStatusData"].includes(key), ) as [key, value]}
                         <tr>
                           <td class="fieldName text-center">
-                            {#if item.modelType === "AssetStatusData"}
-                              {#if key === "ast_hostname"}호스트명
-                              {:else if key === "ast_ipaddr"}아이피주소
-                              {:else if key === "ast_ipaddrs"}아이피주소전체
-                              {:else if key === "ast_platform"}운영플랫폼
-                              {:else if key === "ast_release"}릴리즈
-                              {:else if key === "ast_version"}버전
-                              {:else if key === "ast_cpuarch"}CPU타입
-                              {:else if key === "ast_ostype"}운영체제
-                              {:else if key === "ast_cpuinfo"}CPU정보
-                              {:else if key === "ast_cpu_used"}CPU사용량
-                              {:else if key === "ast_mem_size"}메모리크기
-                              {:else if key === "ast_mem_used"}메모리사용량
-                              {:else if key === "ast_hdd_size"}HDD크기
-                              {:else if key === "ast_hdd_used"}HDD사용량
-                              {/if}
-                            {:else if item.modelType === "AssetProcessNetwork"}
-                              {#if key === "apn_nlocal_ip"}로컬아이피
-                              {:else if key === "apn_nlocal_port"}로컬포트
-                              {:else if key === "apn_nremote_ip"}원격아이피
-                              {:else if key === "apn_nremote_port"}원격포트
-                              {:else if key === "apn_nstatus"}연결상태
-                              {:else if key === "apn_pid"}프로세스ID
-                              {:else if key === "apn_pname"}프로세스이름
-                              {:else if key === "apn_pexe"}실행파일
-                              {:else if key === "apn_pcmdline"}명령라인
-                              {:else if key === "apn_pusername"}실행자
-                              {:else if key === "apn_ppid"}부모프로세스
-                              {:else if key === "apn_penv"}환경변수
-                              {/if}
-                            {:else if item.modelType === "AssetProcess"}
-                              {#if key === "app_pid"}프로세스ID
-                              {:else if key === "app_pname"}프로세스이름
-                              {:else if key === "app_status"}프로세스상태
-                              {:else if key === "app_start_time"}시작시간
-                              {:else if key === "app_cmdline"}명령어
-                              {/if}
-                            {:else if item.modelType === "AssetInstalledProgram"}
-                              {#if key === "aip_pname"}프로그램명
-                              {:else if key === "aip_pversion"}버전
-                              {:else if key === "aip_pvendor"}벤더
-                              {:else if key === "aip_pdescription"}설명
-                              {:else if key === "aip_pidentifyingNumber"}레지스트리키
-                              {:else if key === "aip_date"}설치일
-                              {:else if key === "aip_plocation"}설치위치
-                              {:else if key === "aip_installstate"}설치상태
-                              {:else if key === "aip_pcache"}캐시정보
-                              {/if}
-                            {:else if item.modelType === "AssetPatchStatus"}
-                              {#if key === "aps_patch_name"}패치명
-                              {:else if key === "aps_cdate"}수집일
-                              {:else if key === "aps_hash"}해시값
-                              {/if}
-                            {:else if item.modelType === "AssetsDlls"}
-                              {#if key === "ads_dll"}DLL이름
-                              {:else if key === "ads_hash"}HASH값
-                              {:else if key === "ads_cdate"}수집일
-                              {/if}
+                            {#if key === "ast_hostname"}호스트명
+                            {:else if key === "ast_ipaddr"}아이피주소
+                            {:else if key === "ast_ipaddrs"}아이피주소전체
+                            {:else if key === "ast_platform"}운영플랫폼
+                            {:else if key === "ast_release"}릴리즈
+                            {:else if key === "ast_version"}버전
+                            {:else if key === "ast_cpuarch"}CPU타입
+                            {:else if key === "ast_ostype"}운영체제
+                            {:else if key === "ast_cpuinfo"}CPU정보
+                            {:else if key === "ast_cpu_used"}CPU사용량
+                            {:else if key === "ast_mem_size"}메모리크기
+                            {:else if key === "ast_mem_used"}메모리사용량
+                            {:else if key === "ast_hdd_size"}HDD크기
+                            {:else if key === "ast_hdd_used"}HDD사용량
                             {/if}
                           </td>
                           <td class="fieldValue">{value}</td>
                         </tr>
                       {/each}
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
+            {/if}
+
+            <!-- Separate Tables for Other modelTypes -->
+            {#each currentData.filter((item) => item.modelType !== "AssetStatusData") as item}
+              {#if allowedFields[item.modelType]}
+                <div class="tableListWrap table2">
+                  <table class="tableList hdBorder">
+                    <colgroup>
+                      <colgroup>
+                        {#if item.modelType === "AssetPatchStatus" || item.modelType === "AssetsDlls"}
+                          <col style="width: 100%;" />
+                        {:else}
+                          <col />
+                          <col />
+                        {/if}
+                      </colgroup>
+                    </colgroup>
+                    <thead>
+                      <tr
+                        style="color: black; background-color: rgba(0, 103, 255, 0.05);"
+                      >
+                        {#if item.modelType === "AssetProcessNetwork"}
+                          <th class="text-center">로컬아이피</th>
+                          <th>로컬포트</th>
+                          <th>원격아이피</th>
+                          <th>원격포트</th>
+                          <th>연결상태</th>
+                        {:else if item.modelType === "AssetProcess"}
+                          <th class="text-center">프로세스ID</th>
+                          <th>프로세스이름</th>
+                          <th>프로세스상태</th>
+                          <th>시작시간</th>
+                        {:else if item.modelType === "AssetInstalledProgram"}
+                          <th class="text-center">프로그램명</th>
+                          <th>버전</th>
+                          <th>벤더</th>
+                          <th>설명</th>
+                          <th>설치일</th>
+                        {:else if item.modelType === "AssetPatchStatus"}
+                          <th class="text-center">패치명</th>
+                        {:else if item.modelType === "AssetsDlls"}
+                          <th class="text-center">DLL이름</th>
+                        {/if}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        {#if item.modelType === "AssetProcessNetwork"}
+                          <td>{item.apn_nlocal_ip}</td>
+                          <td>{item.apn_nlocal_port}</td>
+                          <td>{item.apn_nremote_ip}</td>
+                          <td>{item.apn_nremote_port}</td>
+                          <td>{item.apn_nstatus}</td>
+                        {:else if item.modelType === "AssetProcess"}
+                          <td>{item.app_pid}</td>
+                          <td>{item.app_pname}</td>
+                          <td>{item.app_status}</td>
+                          <td>{item.app_start_time}</td>
+                        {:else if item.modelType === "AssetInstalledProgram"}
+                          <td>{item.aip_pname}</td>
+                          <td>{item.aip_pversion}</td>
+                          <td>{item.aip_pvendor}</td>
+                          <td>{item.aip_pdescription}</td>
+                          <td>{item.aip_date}</td>
+                        {:else if item.modelType === "AssetPatchStatus"}
+                          <td>{item.aps_patch_name}</td>
+                        {:else if item.modelType === "AssetsDlls"}
+                          <td>{item.ads_dll}</td>
+                        {/if}
+                      </tr>
                     </tbody>
                   </table>
                 </div>

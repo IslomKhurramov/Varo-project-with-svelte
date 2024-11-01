@@ -26,7 +26,13 @@
 
 <div class="modal">
   <div
-    style="height: 930px;overflow: scroll;overflow-x: hidden;padding-bottom: 10px;"
+    style="height: 930px; 
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-bottom: 10px;
+  scrollbar-width: none;          
+  -ms-overflow-style: none;      
+  -webkit-overflow-scrolling: touch;"
   >
     <table>
       <tr style="height: 50px; position: sticky;top: -1px;">

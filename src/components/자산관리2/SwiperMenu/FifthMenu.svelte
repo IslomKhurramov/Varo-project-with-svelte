@@ -1,6 +1,6 @@
 <script>
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
-  let currentData = null;
+  let currentData = [];
   let activeData = null;
 
   // Filter values for different tabs
@@ -9,8 +9,21 @@
   let selectedInstalledProgDate = "";
   let selectedPatchDate = "";
   let selectedDllDate = "";
+  // Compute unique dates for dropdowns
+  const getUniqueDates = (dateField) => {
+    if (!currentData || currentData.length === 0) return []; // Return empty if no data
+    // Extract date only (YYYY-MM-DD) and make unique
+    const dates = [
+      ...new Set(
+        currentData.map((item) => {
+          return item[dateField].split("T")[0]; // Split to get date part
+        }),
+      ),
+    ].filter((date) => date);
 
-  // Computed filtered data based on selected tab and filters
+    return dates.sort((a, b) => new Date(b) - new Date(a)); // Sort dates in descending order
+  };
+
   $: filteredData = (() => {
     if (activeData === "운영체제정보") {
       return currentData;
@@ -22,7 +35,9 @@
       );
     } else if (activeData === "프로세스목록" && selectedProcessAppName) {
       return currentData.filter(
-        (item) => item.app_pname === selectedProcessAppName,
+        (item) =>
+          new Date(item.app_cdate).toISOString().slice(0, 10) ===
+          selectedProcessAppName,
       );
     } else if (
       activeData === "설치된 프로그램 목록" &&
@@ -33,8 +48,18 @@
           new Date(item.aip_cdate).toISOString().slice(0, 10) ===
           selectedInstalledProgDate,
       );
-    } else if (["패치내역", "DLL 정보"].includes(activeData)) {
-      return currentData;
+    } else if (activeData === "패치내역" && selectedPatchDate) {
+      return currentData.filter(
+        (item) =>
+          new Date(item.aps_cdate).toISOString().slice(0, 10) ===
+          selectedPatchDate,
+      );
+    } else if (activeData === "DLL 정보" && selectedDllDate) {
+      return currentData.filter(
+        (item) =>
+          new Date(item.ads_cdate).toISOString().slice(0, 10) ===
+          selectedDllDate,
+      );
     } else {
       return [];
     }
@@ -193,45 +218,77 @@
     </div>
 
     <div class="flex col detail">
-      <!-- Dropdowns based on activeData -->
       {#if activeData === "네트워크 정보"}
-        <label for="networkDateInput">Filter by Date:</label>
-        <input
+        <select
           class="date_input"
-          type="date"
-          id="networkDateInput"
+          id="networkDateSelect"
           bind:value={selectedNetworkDate}
-        />
+        >
+          <option value="">Select a Date</option>
+          {#each getUniqueDates("apn_cdate") as date}
+            <option value={date}>{date}</option>
+          {/each}
+        </select>
       {/if}
 
       {#if activeData === "프로세스목록"}
-        <label for="processAppNameSelect">Filter by App Name:</label>
         <select
           class="select_input"
           id="processAppNameSelect"
           bind:value={selectedProcessAppName}
         >
-          <option value="">Select an App Name</option>
-          {#each [...new Set(currentData.map((item) => item.app_pname))] as appName}
-            <option value={appName}>{appName}</option>
+          <option value="">Filter by Date</option>
+          {#each getUniqueDates("app_cdate") as date}
+            <option value={date}>{date}</option>
           {/each}
         </select>
       {/if}
 
       {#if activeData === "설치된 프로그램 목록"}
-        <label for="installedProgDateInput">Filter by Installation Date:</label>
-        <input
+        <select
           class="date_input"
-          type="date"
-          id="installedProgDateInput"
+          id="installedProgDateSelect"
           bind:value={selectedInstalledProgDate}
-        />
+        >
+          <option value="">Select a Date</option>
+          {#each getUniqueDates("aip_cdate") as date}
+            <option value={date}>{date}</option>
+          {/each}
+        </select>
       {/if}
 
+      {#if activeData === "패치내역"}
+        <select
+          class="date_input"
+          id="patchDateSelect"
+          bind:value={selectedPatchDate}
+        >
+          <option value="">Select a Date</option>
+          {#each getUniqueDates("aps_cdate") as date}
+            <option value={date}>{date}</option>
+          {/each}
+        </select>
+      {/if}
+
+      {#if activeData === "DLL 정보"}
+        <select
+          class="date_input"
+          id="dllDateSelect"
+          bind:value={selectedDllDate}
+        >
+          <option value="">Select a Date</option>
+          {#each getUniqueDates("ads_cdate") as date}
+            <option value={date}>{date}</option>
+          {/each}
+        </select>
+      {/if}
       <!-- Display filtered data -->
       <div class="flex col detail">
         {#if filteredData && filteredData.length > 0}
-          <div class="itemListWrap" style="height: 55vh; overflow-y: auto;">
+          <div
+            class="itemListWrap"
+            style="height: 70vh; overflow-y: auto; margin-top:10px;"
+          >
             <!-- Consolidated Table for AssetStatusData Items -->
             {#if currentData.some((item) => item.modelType === "AssetStatusData")}
               <div class="tableListWrap table2">
@@ -281,15 +338,25 @@
             <!-- Separate Tables for Other modelTypes -->
             {#each currentData.filter((item) => item.modelType !== "AssetStatusData") as item}
               {#if allowedFields[item.modelType]}
-                <div class="tableListWrap table2">
-                  <table class="tableList hdBorder">
+                <div
+                  class="tableListWrap table2"
+                  style="display: flex; justify-content:center"
+                >
+                  <table class="tableList hdBorder" style="width: 100%;">
                     <colgroup>
                       <colgroup>
                         {#if item.modelType === "AssetPatchStatus" || item.modelType === "AssetsDlls"}
-                          <col style="width: 100%;" />
+                          <!-- For these model types, make the columns auto-sized based on content -->
+                          <col style="width: 250px;" />
+                          <col style="width: 250px;" />
+                        {:else if item.modelType === "AssetProcess"}
+                          <col style="width: 90px;" />
+                          <col style="width: auto;" />
+                          <col style="width: auto;" />
+                          <col style="width: auto;" />
                         {:else}
-                          <col />
-                          <col />
+                          <col style="width: 180px;" />
+                          <col style="width: auto;" />
                         {/if}
                       </colgroup>
                     </colgroup>
@@ -299,47 +366,47 @@
                       >
                         {#if item.modelType === "AssetProcessNetwork"}
                           <th class="text-center">로컬아이피</th>
-                          <th>로컬포트</th>
-                          <th>원격아이피</th>
-                          <th>원격포트</th>
-                          <th>연결상태</th>
+                          <th class="text-center">로컬포트</th>
+                          <th class="text-center">원격아이피</th>
+                          <th class="text-center">원격포트</th>
+                          <th class="text-center">연결상태</th>
                         {:else if item.modelType === "AssetProcess"}
                           <th class="text-center">프로세스ID</th>
-                          <th>프로세스이름</th>
-                          <th>프로세스상태</th>
-                          <th>시작시간</th>
+                          <th class="text-center">프로세스이름</th>
+                          <th class="text-center">프로세스상태</th>
+                          <th class="text-center">시작시간</th>
                         {:else if item.modelType === "AssetInstalledProgram"}
                           <th class="text-center">프로그램명</th>
-                          <th>버전</th>
-                          <th>벤더</th>
-                          <th>설명</th>
-                          <th>설치일</th>
+                          <th class="text-center">버전</th>
+                          <th class="text-center">벤더</th>
+                          <th class="text-center">설명</th>
+                          <th class="text-center">설치일</th>
                         {:else if item.modelType === "AssetPatchStatus"}
-                          <th class="text-center">패치명</th>
+                          <th>패치명</th>
                         {:else if item.modelType === "AssetsDlls"}
-                          <th class="text-center">DLL이름</th>
+                          <th>DLL이름</th>
                         {/if}
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         {#if item.modelType === "AssetProcessNetwork"}
-                          <td>{item.apn_nlocal_ip}</td>
-                          <td>{item.apn_nlocal_port}</td>
-                          <td>{item.apn_nremote_ip}</td>
-                          <td>{item.apn_nremote_port}</td>
-                          <td>{item.apn_nstatus}</td>
+                          <td class="text-center">{item.apn_nlocal_ip}</td>
+                          <td class="text-center">{item.apn_nlocal_port}</td>
+                          <td class="text-center">{item.apn_nremote_ip}</td>
+                          <td class="text-center">{item.apn_nremote_port}</td>
+                          <td class="text-center">{item.apn_nstatus}</td>
                         {:else if item.modelType === "AssetProcess"}
-                          <td>{item.app_pid}</td>
-                          <td>{item.app_pname}</td>
-                          <td>{item.app_status}</td>
-                          <td>{item.app_start_time}</td>
+                          <td class="text-center">{item.app_pid}</td>
+                          <td class="text-center">{item.app_pname}</td>
+                          <td class="text-center">{item.app_status}</td>
+                          <td class="text-center">{item.app_start_time}</td>
                         {:else if item.modelType === "AssetInstalledProgram"}
-                          <td>{item.aip_pname}</td>
-                          <td>{item.aip_pversion}</td>
-                          <td>{item.aip_pvendor}</td>
-                          <td>{item.aip_pdescription}</td>
-                          <td>{item.aip_date}</td>
+                          <td class="text-center">{item.aip_pname}</td>
+                          <td class="text-center">{item.aip_pversion}</td>
+                          <td class="text-center">{item.aip_pvendor}</td>
+                          <td class="text-center">{item.aip_pdescription}</td>
+                          <td class="text-center">{item.aip_date}</td>
                         {:else if item.modelType === "AssetPatchStatus"}
                           <td>{item.aps_patch_name}</td>
                         {:else if item.modelType === "AssetsDlls"}

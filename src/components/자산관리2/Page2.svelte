@@ -528,8 +528,8 @@
                 on:change={handleFilter}
               >
                 <option value="전체" selected>전체</option>
-                <option value="1">Active</option>
-                <option value="0">Unactive</option>
+                <option value="1">활동적인</option>
+                <option value="0">비활성</option>
               </select>
             {:else}
               <GetLogHeader

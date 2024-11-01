@@ -1,8 +1,6 @@
 <script>
   export let selectedSlide;
   export let selectedCategory;
-
-  $: selectedSlide && console.log("DATAMODAL", selectedSlide);
 </script>
 
 <div class="modal">

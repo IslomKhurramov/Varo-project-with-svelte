@@ -15,11 +15,8 @@
 
       if (response.RESULT === "OK") {
         assetRegisterStatus.set(response.CODE); // Save the entire CODE object
-        console.log("status", response.CODE);
       }
-    } catch (err) {
-      console.error("Error fetching asset register status:", err);
-    }
+    } catch (err) {}
   }
   /*****************************************************************************/
   $: if (current_day) {
@@ -29,9 +26,7 @@
     registerStatus();
   });
   /**************************************************************************/
-  function check() {
-    console.log("status", $assetRegisterStatus);
-  }
+  function check() {}
 
   const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 

@@ -13,7 +13,6 @@ export const postNewPlanInformation = async (planInfo) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error posting new plan information:", error);
     throw error;
   }
 };
@@ -28,13 +27,11 @@ export const setNewPlan = async (planData) => {
         withCredentials: true,
       },
     );
-    console.log("setNewPlan: RESPONSE:", response);
     if (response.data.RESULT === "ERROR") {
       throw new Error(response.data.CODE);
     }
     return response.data;
   } catch (error) {
-    console.error("Error setting new plan:", error);
     throw error;
   }
 };
@@ -44,13 +41,11 @@ export const setPlanChange = async (data) => {
     const response = await axios.post(`${serverApi}/api/setPlanChange/`, data, {
       withCredentials: true,
     });
-    console.log("setPlanChange: RESPONSE:", response);
     if (response.data.RESULT === "ERROR") {
       throw new Error(response.data.CODE);
     }
     return response.data;
   } catch (error) {
-    console.error("Error setPlanChange:", error);
     throw error;
   }
 };
@@ -64,20 +59,17 @@ export const setNewSystemCommand = async (data) => {
         withCredentials: true,
       },
     );
-    console.log("setNewSystemCommand: RESPONSE:", response);
     if (response.data.RESULT === "ERROR") {
       throw new Error(response.data.CODE);
     }
     return response.data;
   } catch (error) {
-    console.error("Error setting new plan:", error);
     throw error;
   }
 };
 
 export const setDeletePlan = async (plan_index) => {
   try {
-    console.log("plan_index:", plan_index);
     const response = await axios.post(
       `${serverApi}/api/setDeletePlan/`,
       {
@@ -85,13 +77,11 @@ export const setDeletePlan = async (plan_index) => {
       },
       { withCredentials: true },
     );
-    console.log("setDeletePlan response:", response);
     if (response.data.RESULT === "ERROR") {
       throw new Error("Something went wrong");
     }
     return response.data;
   } catch (error) {
-    console.error("Error posting new plan information:", error);
     throw error;
   }
 };
@@ -106,11 +96,9 @@ export const getAssetGroups = async () => {
       // Check if the response is OK
       return response.data; // Return the data if successful
     } else {
-      console.error("Error fetching asset groups:", response.status);
       throw new Error("Failed to fetch asset groups");
     }
   } catch (error) {
-    console.error("Error fetching asset groups:", error);
     throw error; // Re-throw the error for the calling function to handle
   }
 };
@@ -120,17 +108,14 @@ export const getOptionsForNewPlan = async () => {
     const response = await axios.get(`${serverApi}/api/getOptionsForNewPlan/`, {
       withCredentials: true,
     });
-    console.log("getOptionsForNewPlan: ", response.data.CODE);
 
     if (response.status === 200) {
       // Check if the response is OK
       return response.data.CODE; // Return the data if successful
     } else {
-      console.error("Error fetching asset groups:", response.status);
       throw new Error("Failed to fetch asset groups");
     }
   } catch (error) {
-    console.error("Error fetching asset groups:", error);
     throw error; // Re-throw the error for the calling function to handle
   }
 };
@@ -156,7 +141,6 @@ export const getPlanCommandExcel = async (asset_group) => {
     a.click();
     a.remove();
   } catch (error) {
-    console.error("Error fetching asset groups:", error);
     throw error;
   }
 };
@@ -166,16 +150,13 @@ export const getPlanLists = async () => {
     const response = await axios.get(`${serverApi}/api/getPlanLists/`, {
       withCredentials: true,
     });
-    console.log("getPlanLists: ", response.data);
 
     if (response.status === 200) {
       return response.data.CODE;
     } else {
-      console.error("Error fetching asset groups:", response);
       throw new Error("Failed to fetch asset groups");
     }
   } catch (error) {
-    console.error("Error fetching asset groups:", error);
     throw error;
   }
 };

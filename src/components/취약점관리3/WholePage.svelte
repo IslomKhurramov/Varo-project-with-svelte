@@ -101,7 +101,6 @@
         fix_step_status: "2",
       };
     } catch (err) {
-      console.error("Error fixPlanRegister:", err);
       errorAlert(err?.message);
     }
   };
@@ -165,8 +164,6 @@
         item.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no,
     );
 
-    console.log("targetIndex:", targetIndex);
-
     // if (targetIndex !== -1) {
     //   const [targetElement] = data.splice(targetIndex, 1);
     //   data.unshift(targetElement);
@@ -190,7 +187,6 @@
     try {
       sendFixDone.asset_uuid = targetData?.ast_uuid;
       sendFixDone.ccr_index = targetData?.ccr_index;
-      console.log("=sendFixDone:", sendFixDone);
       const formData = new FormData();
 
       for (const key in sendFixDone) {
@@ -210,11 +206,8 @@
   const sampleClick = async (cfr_index, file) => {
     try {
       file = file.split("/").pop();
-      console.log("file: ", file);
       await getFixEviDownload(cfr_index, file);
-    } catch (error) {
-      console.log("Error sampleClick: ", error);
-    }
+    } catch (error) {}
   };
 
   const setFixDoneApproveHandler = async () => {
@@ -222,7 +215,6 @@
       sendSetFixDoneApprove.asset_target_uuid = targetData?.ast_uuid;
       sendSetFixDoneApprove.plan_index = targetData?.ccp_index;
       sendSetFixDoneApprove.approved_targets = [targetData?.ccr_index];
-      console.log("=sendSetFixDoneApprove:", sendSetFixDoneApprove);
 
       const result = await setFixDoneApprove(sendSetFixDoneApprove);
       await successAlert(result);
@@ -272,7 +264,6 @@
         menuItem.focus();
       }, 300);
     } else {
-      console.warn("Menu item not found:", assetId);
     }
   }
 
@@ -307,15 +298,11 @@
 
   const handleScroll = (direction) => {
     menuWrapper = document.getElementById("menuWrapper");
-    console.log("++menuWrapper:", menuWrapper);
-    console.log("++itemWidth:", itemWidth);
     if (!menuWrapper) return; // Ensure menuWrapper is initialized
     const maxScroll = menuWrapper.scrollWidth - menuWidth;
-    console.log("++maxScroll:", maxScroll);
 
     if (direction === "prev") {
       scrollAmount -= itemWidth;
-      console.log("++scrollAmount:", scrollAmount);
       if (scrollAmount < 0) scrollAmount = 0;
     } else if (direction === "next") {
       scrollAmount += itemWidth;
@@ -324,11 +311,6 @@
 
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`; // Template literal corrected
   };
-
-  $: {
-    console.log("targetData:", targetData);
-    console.log("data:", data);
-  }
 </script>
 
 <section class="topCon" bind:this={swiperContainer}>

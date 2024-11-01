@@ -27,9 +27,6 @@
 
       if (response.RESULT === "OK") {
         allAssetGroupList.set(Object.values(response.CODE));
-        console.log("CALLED GROUP", allAssetGroupList);
-
-        console.log("Filtered Assets", filteredAssets); // Log filtered assets
       }
     } catch (err) {
       throw err;
@@ -83,14 +80,11 @@
     showAssetReg = value === "add"; // Show asset registration form if "add" is selected
     showCopyReg = value === "copy"; // Show copy registration form if "copy" is selected
   }
-  $: console.log("add", showAssetReg);
-  $: console.log("copy", showCopyReg);
 
   function handleFileUpload(event) {
     const file = event.target.files[0]; // Get the uploaded file
     if (file && file.name.endsWith(".xlsx")) {
       uploadedFile = file; // Set the uploadedFile variable
-      console.log("Small file uploaded:", uploadedFile);
     } else {
       alert("Please upload an .xlsx file.");
       uploadedFile = null; // Reset uploadedFile if invalid file type
@@ -107,7 +101,6 @@
     } else {
       selectedAssets = selectedAssets.filter((uuid) => uuid !== asset.ass_uuid);
     }
-    console.log("Selected Assets UUIDs:", selectedAssets);
   }
 
   /**************************************************************/
@@ -126,7 +119,6 @@
       return; // Early return if validation fails
     }
 
-    console.log("Submitting asset data:", addingAssetForm); // Debugging log
     try {
       const response = await setAssetForNewGroup(addingAssetForm);
       if (response.success) {
@@ -144,7 +136,6 @@
         throw new Error("Failed to register asset");
       }
     } catch (error) {
-      console.error("Submission error:", error); // Log the error
       alert("Error occurred: " + error.message);
     }
   };
@@ -164,7 +155,6 @@
       selected = [...allAssets];
       selectedAssets = allAssets.map((asset) => asset.ass_uuid);
     }
-    console.log("Selected Assets UUIDs (after toggle):", selectedAssets);
   }
 
   let showCards = false;

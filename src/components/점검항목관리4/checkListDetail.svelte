@@ -58,9 +58,6 @@
   /***********************************************************************************/
   // Function to delete selected items
   async function deleteSelectedItem() {
-    console.log("Delete function called");
-    console.log("Selected Item for Deletion:", selected);
-
     if (selected.length === 0) {
       alert("삭제할 항목을 선택하세요.");
       return;
@@ -85,7 +82,6 @@
         selectedItem = null; // Reset selectedItem to null
       }
     } catch (error) {
-      console.error("Error deleting items:", error);
       alert("Error occurred while deleting items.");
     }
   }

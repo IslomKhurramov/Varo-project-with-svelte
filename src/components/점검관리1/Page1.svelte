@@ -33,16 +33,9 @@
     }
   });
 
-  $: {
-    console.log("$userData2:", $userData);
-    console.log("projectData:", projectData);
-    console.log("projectArray:", projectArray);
-  }
-
   /**********************************/
 
   const selectPage = (page, project) => {
-    console.log("+selectPage Running!!");
     currentPage = page;
     activeMenu = project.ccp_index;
     currentView = "pageView";
@@ -57,9 +50,7 @@
         await setDeletePlan(selectedProjectIndex);
         navigate(window.location?.pathname == "/" ? "/page1" : "/");
       }
-    } catch (err) {
-      console.log("ERROR deleteProject:", err);
-    }
+    } catch (err) {}
   };
 
   const AES_ENCRYPT_KEY = "oingisprettyintheworld1234567890"; //
@@ -68,10 +59,6 @@
     user_name: "KKafetOnd7IPN72asrqTp+qkTfDHOsVP3hKZcmey3Bc=",
     user_roletype_role_index: "vHx76aoV8Pd8Hed5sMj6fO+D8KoOs7d4xPclzI6FmHY=",
   };
-
-  $: {
-    console.log("==", decryptData(encryptedData?.user_name));
-  }
 </script>
 
 {#if loading}

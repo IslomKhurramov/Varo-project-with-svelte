@@ -3,7 +3,6 @@ import { serverApi } from "../../lib/config";
 
 export const getVulnsOfPlan = async (data = undefined) => {
   try {
-    console.log("getVulnsOfPlan data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfPlan/`,
       data,
@@ -12,20 +11,16 @@ export const getVulnsOfPlan = async (data = undefined) => {
       },
     );
 
-    console.log("getVulnsOfPlan RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getVulnsOfPlan:", error);
     throw error;
   }
 };
 
 export const getVulnsOfAsset = async (data) => {
   try {
-    console.log("getVulnsOfAsset data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
       data,
@@ -34,20 +29,16 @@ export const getVulnsOfAsset = async (data) => {
       },
     );
 
-    console.log("getVulnsOfAsset RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getVulnsOfAsset:", error);
     throw error;
   }
 };
 
 export const setFixPlanRegister = async (data) => {
   try {
-    console.log("setFixPlanRegister data:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixPlanRegister/`,
       data,
@@ -56,38 +47,30 @@ export const setFixPlanRegister = async (data) => {
       },
     );
 
-    console.log("setFixPlanRegister RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setFixPlanRegister:", error);
     throw error;
   }
 };
 
 export const setFixApprove = async (data) => {
   try {
-    console.log("setFixApprove data:", data);
     const response = await axios.post(`${serverApi}/api/setFixApprove/`, data, {
       withCredentials: true,
     });
-
-    console.log("setFixApprove RESPONSE:", response);
 
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setFixApprove:", error);
     throw error;
   }
 };
 
 export const setFixDoneApprove = async (data) => {
   try {
-    console.log("setFixDoneApprove data:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixDoneApprove/`,
       data,
@@ -96,13 +79,10 @@ export const setFixDoneApprove = async (data) => {
       },
     );
 
-    console.log("setFixDoneApprove RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setFixDoneApprove:", error);
     throw error;
   }
 };
@@ -113,21 +93,16 @@ export const getVulnsFixWay = async () => {
       withCredentials: true,
     });
 
-    console.log("getVulnsFixWay RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getVulnsFixWay:", error);
     throw error;
   }
 };
 
 export const getFixHistoryOfItem = async (data) => {
   try {
-    console.log("getFixHistoryOfItem data:", data);
-
     const response = await axios.post(
       `${serverApi}/api/getFixHistoryOfItem/`,
       data,
@@ -136,20 +111,16 @@ export const getFixHistoryOfItem = async (data) => {
       },
     );
 
-    console.log("getFixHistoryOfItem RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getFixHistoryOfItem:", error);
     throw error;
   }
 };
 
 export const getFixDoneLists = async (data) => {
   try {
-    console.log("getFixDoneLists data:", data);
     const response = await axios.post(
       `${serverApi}/api/getFixDoneLists/`,
       data,
@@ -158,20 +129,16 @@ export const getFixDoneLists = async (data) => {
       },
     );
 
-    console.log("getFixDoneLists RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getFixDoneLists:", error);
     throw error;
   }
 };
 
 export const setFixDoneRegister = async (data) => {
   try {
-    console.log("setFixDoneRegister data:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixDoneRegister/`,
       data,
@@ -180,13 +147,10 @@ export const setFixDoneRegister = async (data) => {
       },
     );
 
-    console.log("setFixDoneRegister RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setFixDoneRegister:", error);
     throw error;
   }
 };
@@ -213,7 +177,6 @@ export const getFixEviDownload = async (cfr_index, filename) => {
     a.remove();
     window.URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Error getFixEviDownload:", error);
     throw error;
   }
 };

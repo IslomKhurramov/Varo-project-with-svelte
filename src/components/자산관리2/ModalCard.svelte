@@ -158,7 +158,6 @@
   /*************************************************/
   $: if (Object.keys(selectedAsset).length > 0 && !targetData.targets) {
     targetData = { ...selectedAsset };
-    console.log("SELECTED asset detaisl", selectedAsset);
   }
 
   /*************************************************/
@@ -174,8 +173,6 @@
       targets: preparedTargets,
     };
 
-    console.log("payload:", JSON.stringify(payload)); // Log the payload before sending
-
     try {
       const response = await setAssetTargetRegister(payload);
 
@@ -187,7 +184,6 @@
         throw new Error(`API error: ${response.CODE}`);
       }
     } catch (err) {
-      console.error("Submission failed:", err);
       alert("An error occurred while submitting the form: " + err.message);
     }
   }
@@ -202,11 +198,6 @@
     return selectedAsset.assessment_target_system?.some(
       (target) => target[cct_target],
     );
-  }
-
-  $: {
-    console.log("targets:", targets);
-    console.log("selected asset:", selectedAsset);
   }
 </script>
 

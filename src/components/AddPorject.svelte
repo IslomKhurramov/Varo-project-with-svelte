@@ -107,7 +107,6 @@
 
       if (parseInt(selectedType) === 0)
         sendData.asset_group_index = parseInt(selectedCheckList);
-      console.log("submitNewPlan: sendData:", sendData);
 
       const formData = new FormData();
 
@@ -119,7 +118,6 @@
 
       navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
-      console.error("Error submitting new plan:", error);
       errorAlert(error?.message);
     }
   };
@@ -134,7 +132,6 @@
       assetGroup = await getAssetGroup();
     } catch (err) {
       error = err.message;
-      console.error("Error loading asset groups:", error);
     } finally {
       loading = false;
     }
@@ -143,18 +140,14 @@
   const sampleClick = async () => {
     try {
       await getPlanCommandExcel(selectedCheckList);
-    } catch (error) {
-      console.log("Error sampleClick: ", error);
-    }
+    } catch (error) {}
   };
 
   const handleFileUpload = (event) => {
     inspectionInformation = event.target.files[0];
-    console.log(inspectionInformation);
   };
 
   const changeTarget = (target, isChecked, type) => {
-    console.log("type:", type);
     if (type === "checkbox") {
       let splitData = assetInsertData.target.split(",");
 
@@ -204,22 +197,15 @@
           "YYYY-MM-DD h:mm:ss",
         );
 
-      console.log("assetInsertData:", assetInsertData);
-
       const response = await setNewSystemCommand(assetInsertData);
 
       await successAlert(response.CODE);
 
       navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
-      console.error("Error submitNewSystemCommand new plan:", error);
       errorAlert(error?.message);
     }
   };
-
-  $: {
-    console.log("assetInsertData:", assetInsertData);
-  }
 </script>
 
 <div class="contentsWrap">

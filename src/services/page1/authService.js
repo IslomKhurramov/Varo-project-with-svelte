@@ -15,8 +15,6 @@ export const login = async (email, password) => {
     );
     const data = response.data;
 
-    console.log("login: response =>", response);
-
     if (data.RESULT !== "ERROR") {
       return data;
     } else {
@@ -41,8 +39,6 @@ export const register = async (name, email, password, department) => {
       { withCredentials: true },
     );
     const data = response.data;
-
-    console.log("login: response =>", response);
 
     if (data.RESULT !== "ERROR") {
       return data;

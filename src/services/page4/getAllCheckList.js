@@ -8,7 +8,6 @@ export const getAllCheckList = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching plan info:", error);
     throw error;
   }
 };
@@ -31,23 +30,18 @@ export const setNewChecklistGroup = async (
 
     const data = response.data;
 
-    console.log("NEW checklist:response =>", response);
-
     if (data.RESULT !== "ERROR") {
       return { success: true };
     } else {
       throw new Error(data.CODE);
     }
   } catch (error) {
-    console.error("Error setNewChecklistGroup:", error);
     throw error;
   }
 };
 
 export const setDeleteChecklistGroup = async (checklist_index) => {
   try {
-    console.log(`Attempting to delete checklist with ID: ${checklist_index}`);
-
     const response = await axios.post(
       `${serverApi}/api/setDeleteChecklistGroup/`,
       {
@@ -60,15 +54,12 @@ export const setDeleteChecklistGroup = async (checklist_index) => {
 
     const data = response.data;
 
-    console.log("API delete Response:", data); // Log response for debugging
-
     if (data.RESULT !== "ERROR") {
       return { success: true };
     } else {
       throw new Error(data.CODE); // Log the error code from the backend
     }
   } catch (error) {
-    console.error("Error setDeleteChecklistGroup:", error); // Log error for debugging
     throw error;
   }
 };
@@ -91,15 +82,12 @@ export const setUpdateGroupName = async (
 
     const data = response.data;
 
-    console.log("API edit Response:", data); // Log response for debugging
-
     if (data.RESULT !== "ERROR") {
       return { success: true };
     } else {
       throw new Error(data.CODE); // Log the error code from the backend
     }
   } catch (error) {
-    console.error("Error setUpdateGroupName:", error); // Log error for debugging
     throw error;
   }
 };
@@ -126,15 +114,12 @@ export const getChecklistItemBySearch = async (
 
     const data = response.data;
 
-    console.log("API Search Response:", data); // Log response for debugging
-
     if (data.RESULT !== "ERROR") {
       return data;
     } else {
       throw new Error(data.CODE); // Log the error code from the backend
     }
   } catch (error) {
-    console.error("Error getChecklistItemBySearch:", error); // Log error for debugging
     throw error;
   }
 };
@@ -154,15 +139,12 @@ export const setDeleteChecklistItem = async (ccg_index, ccc_indexes) => {
 
     const data = response.data;
 
-    console.log("API setDeleteChecklistItem Response:", data); // Log response for debugging
-
     if (data.RESULT !== "ERROR") {
       return { success: true };
     } else {
       throw new Error(data.CODE); // Log the error code from the backend
     }
   } catch (error) {
-    console.error("Error setDeleteChecklistItem:", error); // Log error for debugging
     throw error;
   }
 };

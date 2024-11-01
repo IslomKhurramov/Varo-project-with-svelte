@@ -10,7 +10,6 @@ export function toggleNav(e) {
 }
 
 export function toggleMenu(e) {
-  console.log("toggleMenu:", e);
   const element = e.currentTarget;
   if (element.classList.contains("active")) {
     element.classList.remove("active");
@@ -22,12 +21,9 @@ export function toggleMenu(e) {
 export function toggleTooltip(event) {
   const button = event.currentTarget;
   const tooltip = button.nextElementSibling;
-  console.log(button);
-  console.log(tooltip);
 
   // 툴팁이 없는 경우 오류 방지
   if (!tooltip) {
-    console.error("Tooltip element not found.");
     return;
   }
 

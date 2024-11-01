@@ -20,7 +20,6 @@
   }
 
   function confirmSelection() {
-    console.log("Selected accounts:", selectedAccounts);
     isConfirmed = true;
 
     setTimeout(() => {

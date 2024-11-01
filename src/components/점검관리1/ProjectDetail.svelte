@@ -64,15 +64,11 @@
   onMount(async () => {
     try {
       planOptions = await getOptionsForNewPlan();
-      console.log("planOptions:", planOptions);
 
       planList = await getPlanLists();
 
       assetGroup = await getAssetGroup();
-      console.log("assetGroup:", assetGroup);
-    } catch (err) {
-      console.error("Error loading asset groups:", err);
-    }
+    } catch (err) {}
   });
 
   $: if (projectIndex) {
@@ -81,7 +77,6 @@
 
   async function updateProjectDetails() {
     try {
-      console.log("projectIndex:", projectIndex);
       projectDetails = await getPlanDetailInformation(projectIndex);
 
       updateInfo = {
@@ -128,8 +123,6 @@
 
   const updateInfoHandler = async (sendData) => {
     try {
-      console.log("sendData:", sendData);
-
       sendData.plan_start_date = moment(sendData?.plan_start_date).format(
         "YYYY-MM-DD HH:mm:ss",
       );
@@ -152,13 +145,11 @@
       await setPlanChange(formData);
       alertConfirm = false;
     } catch (error) {
-      console.error("Error updateInfoHandler:", error);
       errorAlert(error?.message);
     }
   };
 
   const calculateSecurityLevelByGroup = (target_group_securitypoint) => {
-    console.log("target_group_securitypoint:", target_group_securitypoint);
     const totalY = target_group_securitypoint?.reduce(
       (sum, item) => sum + item.y,
       0,
@@ -188,15 +179,9 @@
       showModal = false;
       modalData = null;
     } catch (err) {
-      console.error("Error changeItemResult:", err);
       alert(err?.message);
     }
   };
-
-  $: {
-    console.log("+projectDetails:", projectDetails);
-    console.log("+securityPointData:", securityPointData);
-  }
 </script>
 
 <div class="scroll-div">

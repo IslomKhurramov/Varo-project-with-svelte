@@ -162,16 +162,12 @@
       if (allChecklistArray.length > 0) {
         selectedChecklist = allChecklistArray[allChecklistArray.length - 1];
         activeMenu = selectedChecklist;
-        console.log("Refreshed data:", selectedChecklist);
       }
-    } catch (error) {
-      console.error("Error fetching checklist data:", error);
-    }
+    } catch (error) {}
   }
 
   // Ensure that the selected page scrolls into view
   const selectPage = (page, checklist) => {
-    console.log("Setting currentPage to:", page);
     selectedChecklist = checklist; // Store the selected checklist
     currentPage = page;
     activeMenu = checklist;
@@ -191,7 +187,6 @@
   /*********************************************************************************/
 
   async function deleteChecklist(checklistId) {
-    console.log("checkliust id", checklistId);
     try {
       const response = await setDeleteChecklistGroup(checklistId);
 
@@ -257,9 +252,7 @@
       } else if (!selectedChecklist) {
         alert("삭제할 체크리스트를 선택해주세요."); // Alert if no checklist is selected
       }
-    } catch (err) {
-      console.log("ERROR deleteProject:", err);
-    }
+    } catch (err) {}
   };
 
   /************************************************************************/
@@ -275,7 +268,6 @@
       // Now, filter the data by selected risk if the selectedRisk is not "위험도"
       if (selectedRisk !== "위험도") {
         filteredData = filteredData.filter((item) => {
-          console.log("Filtering by Risk:", item.ccc_item_level); // Log the risk level of each item
           return item.ccc_item_level === selectedRisk; // Filter by matching risk level
         });
       }
@@ -288,14 +280,12 @@
       showSlide = slides.length > 0;
 
       // Log the final filtered data for debugging
-      console.log("Filtered Data:", filteredData);
 
       // Initialize Swiper after updating the slides
       initializeSwiper();
     } else {
       // If no valid category or checklist data available, hide slides
       showSlide = false;
-      console.log("No valid category or no checklist data available.");
     }
   }
 
@@ -303,9 +293,7 @@
     try {
       await fetchChecklistData(); // Wait for the data to be fetched
       filterData(); // Run the filter after the data is fetched
-    } catch (error) {
-      console.error("Error fetching checklist data:", error);
-    }
+    } catch (error) {}
   });
   /************************************************************************/
   // Run filterData every time `selectedCategory` or `allChecklistArray` updates

@@ -40,23 +40,18 @@
         resultStatus = await getCCEResultUploadStatus(selectedPlan);
         resultErrors = await getUploadedResultErrors(selectedPlan);
         uploadStatus = await getResultUploadStatus(selectedPlan);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      } catch (error) {}
     })();
   }
 
   onMount(async () => {
     try {
       planList = await getPlanLists();
-    } catch (err) {
-      console.error("Error loading asset groups:", err);
-    }
+    } catch (err) {}
   });
 
   const submitNewSystemCommand = async (target, files) => {
     try {
-      console.log("files", files, typeof files);
       const formData = new FormData();
 
       formData.append("plan_index", selectedPlan);
@@ -72,7 +67,6 @@
 
       // navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
-      console.error("Error submitNewSystemCommand new plan:", error);
       errorAlert(error?.message);
     }
   };
@@ -80,19 +74,11 @@
   const getResultStatus = async () => {
     try {
       uploadStatusModalData = uploadStatus;
-    } catch (err) {
-      console.error("Error changeItemResult:", err);
-    }
+    } catch (err) {}
   };
 
   $: {
     if (projectIndex) selectedPlan = projectIndex;
-  }
-
-  $: {
-    console.log("+modalData:", modalData);
-    console.log("+modalErrorData:", modalErrorData);
-    console.log("+uploadStatusModalData:", uploadStatusModalData);
   }
 </script>
 

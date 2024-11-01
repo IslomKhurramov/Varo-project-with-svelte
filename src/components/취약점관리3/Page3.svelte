@@ -148,7 +148,6 @@
   function sortAssets() {
     loading = true;
     const isAscending = sortAscending ? 1 : -1;
-    console.log("isAscending:", isAscending);
 
     if (assetsMenuData && assetsMenuData.length > 0) {
       sorted = assetsMenuData.sort((hostA, hostB) => {
@@ -175,10 +174,6 @@
     };
     await getPlanDataSearch();
   };
-
-  $: {
-    console.log("assetsMenuData:", assetsMenuData);
-  }
 </script>
 
 {#if loading}

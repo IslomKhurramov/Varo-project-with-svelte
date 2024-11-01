@@ -10,10 +10,6 @@
   let dialogSecond;
   let dialogThird;
 
-  $: {
-    console.log("modalWidth: ", modalWidth);
-  }
-
   function scrollToTop(dialogElement) {
     if (dialogElement) {
       dialogElement.scrollTop = 0; // Reset scroll position

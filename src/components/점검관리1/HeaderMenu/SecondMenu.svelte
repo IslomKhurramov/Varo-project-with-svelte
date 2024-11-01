@@ -18,7 +18,6 @@
 
   export const changeDataHandler = async (data) => {
     try {
-      console.log("++data:", data);
       const formData = new FormData();
 
       formData.append("plan_index", data?.plan_index);
@@ -38,7 +37,6 @@
       showModal = false;
       modalData = null;
     } catch (err) {
-      console.error("Error changeItemResult:", err);
       alert(err?.message);
     }
   };
@@ -136,9 +134,7 @@
       await setResultChanged(data);
       searchDataHandler();
       change_option = "ONE";
-    } catch (err) {
-      console.error("Error changeItemResult:", err);
-    }
+    } catch (err) {}
   };
 
   const clickSecyurityPoint = async (plan_index) => {
@@ -148,7 +144,6 @@
       successAlert(response);
       searchDataHandler();
     } catch (err) {
-      console.error("Error changeItemResult:", err);
       errorAlert(err?.message);
     }
   };

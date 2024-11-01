@@ -25,6 +25,23 @@ export const login = async (email, password) => {
   }
 };
 
+export const logout = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/setLogout/`, {
+      withCredentials: true,
+    });
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const register = async (name, email, password, department) => {
   try {
     const response = await axios.post(

@@ -19,6 +19,7 @@
     decryptData,
     getUserAllMessages,
   } from "./services/login/loginService";
+  import { logout } from "./services/page1/authService";
 
   let openNotification = false;
   let activeMenu = "점검관리";
@@ -81,8 +82,11 @@
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     localStorage.removeItem("userInfo");
+    document.cookie =
+      "sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     userData.set({
       isLoggedIn: false,
       userInfo: null,

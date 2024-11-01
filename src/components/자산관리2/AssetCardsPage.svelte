@@ -272,7 +272,7 @@
                     ?.ast_security_point || 0}
                   data-offset="440"
                 >
-                  <svg width="" height="" viewBox="0 0 150 150">
+                  <svg viewBox="0 0 150 150">
                     <circle
                       cx="75"
                       cy="75"

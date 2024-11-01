@@ -506,7 +506,7 @@
         <article class="contentArea securityWrap">
           <h4 class="title border">취약점조치현황</h4>
           <div class="circle" data-percent="80" data-offset="345">
-            <svg width="" height="" viewBox="0 0 139 139">
+            <svg viewBox="0 0 139 139">
               <circle
                 cx="75"
                 cy="75"

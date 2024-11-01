@@ -107,7 +107,9 @@
   <article
     class="contentArea"
     style="overflow: auto; height: 75vh;
-    padding: 10px;"
+        padding: 10px;  scrollbar-width: none;          
+       -ms-overflow-style: none;      
+       -webkit-overflow-scrolling: touch;"
   >
     {#if showModalModalEditItem}
       <ModalEditItem

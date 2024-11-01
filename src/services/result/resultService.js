@@ -14,11 +14,10 @@ export const getCCEResultUploadStatus = async (plan_index) => {
     );
 
     if (response?.data?.RESULT == "ERROR")
-      throw new Error("Something went wrong!");
+      throw new Error(response?.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getCCEResultUploadStatus:", error);
     throw error;
   }
 };
@@ -40,7 +39,6 @@ export const getUploadedResultErrors = async (plan_index) => {
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getUploadedResultErrors:", error);
     throw error;
   }
 };
@@ -60,7 +58,6 @@ export const getViewPlanResults = async (search) => {
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getViewPlanResults:", error);
     throw error;
   }
 };
@@ -75,13 +72,10 @@ export const setUploadPlanResult = async (data) => {
       },
     );
 
-    console.log("setUploadPlanResult RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setUploadPlanResult:", error);
     throw error;
   }
 };
@@ -95,13 +89,10 @@ export const getViewPlanResultSearch = async () => {
       },
     );
 
-    console.log("getViewPlanResultsSearch RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getViewPlanResultsSearch:", error);
     throw error;
   }
 };
@@ -116,13 +107,10 @@ export const setResultChanged = async (data) => {
       },
     );
 
-    console.log("setResultChanged RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setResultChanged:", error);
     throw error;
   }
 };
@@ -137,13 +125,10 @@ export const setSpecificItemResultsChange = async (data) => {
       },
     );
 
-    console.log("setSpecificItemResultsChange RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setSpecificItemResultsChange:", error);
     throw error;
   }
 };
@@ -160,13 +145,10 @@ export const setFinalPlanSecurityPoint = async (plan_index) => {
       },
     );
 
-    console.log("setFinalPlanSecurityPoint RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error setFinalPlanSecurityPoint:", error);
     throw error;
   }
 };
@@ -183,13 +165,10 @@ export const getResultUploadStatus = async (plan_index) => {
       },
     );
 
-    console.log("getResultUploadStatus RESPONSE:", response);
-
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {
-    console.error("Error getResultUploadStatus:", error);
     throw error;
   }
 };

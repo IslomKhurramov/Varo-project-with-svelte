@@ -17,18 +17,14 @@
   onMount(async () => {
     try {
       planList = await getPlanLists();
-    } catch (err) {
-      console.error("Error loading plan list:", err);
-    }
+    } catch (err) {}
   });
 
   const getReportData = async () => {
     if (!selectedPlan) return;
     try {
       planReports = await getPlanReportLists(selectedPlan);
-    } catch (err) {
-      console.error("Error loading report data:", err);
-    }
+    } catch (err) {}
   };
 
   const setMakeFullReport = async (data) => {
@@ -37,7 +33,6 @@
 
       await successAlert(response.CODE);
     } catch (error) {
-      console.error("Error setMakeExcelWordFullReport :", error);
       errorAlert(error?.message);
     }
   };
@@ -46,7 +41,6 @@
     try {
       const response = await setPlanSummaryReportCreate(selectedPlan);
     } catch (error) {
-      console.error("Error planSummaryReportHandler :", error);
       errorAlert(error?.message);
     }
   };

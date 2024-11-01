@@ -20,15 +20,6 @@ function decryptData(encryptedString) {
     );
     return bytes.toString(CryptoJS.enc.Utf8); // Return the decrypted text
   } catch (error) {
-    console.error("Decryption error:", error);
     return null;
   }
 }
-
-// Decrypt a single value like user_index
-console.log("Decrypted user_index:", decryptData(encryptedData?.user_index));
-console.log("Decrypted user_name:", decryptData(encryptedData?.user_name));
-console.log(
-  "Decrypted user_roletype_role_index:",
-  decryptData(encryptedData?.user_roletype_role_index),
-);

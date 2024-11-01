@@ -22,8 +22,6 @@
       }, 0);
     }
   }
-
-  $: console.log("selected checklist", selectedChecklist);
 </script>
 
 <div class="modal">

@@ -17,13 +17,11 @@
 
   function itemClickHandle(vuln) {
     selectedItem = vuln;
-    console.log("Select item", selectedItem);
     showItemDetail = true;
   }
   // Reactive block to set cceHistory and DetailOfAsset
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: DetailOfAsset = $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0] : [];
-  $: console.log("CCEHISTORY", cceHistory);
   // Extract project data and vulns from cceHistory
   $: {
     if (cceHistory.length > 0) {
@@ -50,8 +48,6 @@
   // Set detail of asset
   $: if (DetailOfAsset.asset && Array.isArray(DetailOfAsset.asset)) {
     detailofAsset = DetailOfAsset.asset;
-    console.log("Detail of asset:", $assetDeatilInfo);
-    console.log("cceHistory:", cceHistory);
   }
   // Variables for filtering
   let selectedProject = "점검대상"; // Default value
@@ -95,12 +91,7 @@
   };
 
   // Check function for debugging
-  function check() {
-    console.log("selectedResult:", selectedResult);
-    console.log("filteredVulns:", filteredVulns);
-    console.log("Project Data:", projectData);
-    console.log("Target Counts:", targetCounts); // Use targetCounts here
-  }
+  function check() {}
 </script>
 
 <main>

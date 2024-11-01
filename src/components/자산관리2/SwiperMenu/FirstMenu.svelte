@@ -9,7 +9,6 @@
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
-  $: console.log("cce ", assetHistory);
   $: fieldOptions =
     currentData && currentData.length > 0 ? Object.keys(currentData[0]) : [];
 </script>

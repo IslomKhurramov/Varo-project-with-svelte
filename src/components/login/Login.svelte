@@ -29,16 +29,6 @@
 
   const handleRegister = async () => {
     try {
-      console.log("username:", username);
-      console.log("emailSignUp:", emailSignUp);
-      console.log("passwordSignUp:", passwordSignUp);
-      console.log("confirmPasswordSignUp:", confirmPasswordSignUp);
-      console.log("department:", department);
-
-      // if (!username || !emailSignUp || !passwordSignUp || !confirmPasswordSignUp || department) {
-      //   throw new Error('Please fulfill all inputs!')
-      // }
-
       if (passwordSignUp !== confirmPasswordSignUp) {
         throw new Error("Passwords don't match");
       }
@@ -49,7 +39,6 @@
         passwordSignUp,
         department,
       );
-      console.log("REGISTER:", response);
 
       await userData.set({
         isLoggedIn: true,
@@ -71,8 +60,6 @@
   const handleLogin = async () => {
     try {
       const response = await login(email, password);
-
-      console.log("handleLogin:", response);
 
       userData.set({
         isLoggedIn: true,
@@ -114,11 +101,6 @@
       find_user = "";
     }
   };
-
-  $: {
-    console.log("email:", email);
-    console.log("password:", password);
-  }
 </script>
 
 <body>

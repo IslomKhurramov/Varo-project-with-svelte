@@ -42,7 +42,6 @@
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
-    console.log("assetdetail", assetDetails);
   };
   /*************************************************************************/
   // Reactive subscription to assetDeatilInfo store
@@ -88,7 +87,6 @@
   // Only populate formData if it's uninitialized
   $: if (Object.keys(assetDetails).length > 0 && !formData.ass_uuid) {
     formData = { ...assetDetails };
-    console.log("Loaded asset details:", assetDetails);
   }
   // Function to handle form submission
   const handleSubmit = async () => {
@@ -112,13 +110,10 @@
 
       if (response) {
         assetDeatilInfo.set(Object.values(response));
-        console.log("detailasset  info", response);
       } else {
-        console.error("Failed to get asset details.");
       }
     } catch (err) {
       alert(`Error getting asset details: ${err.message}`);
-      console.error(`Error fetching asset details: ${err.message}`);
     }
   }
 
@@ -126,7 +121,6 @@
   // Handle the UUID click and fetch the asset details
 
   $: if (selectedAsset) {
-    console.log("selectedAaset", selectedAsset);
     focusOnAsset(selectedAsset.ass_uuid);
     handleAssetClick(selectedAsset.ass_uuid, selectedAsset);
   }
@@ -147,7 +141,6 @@
     assetListDetail(uuid_asset);
 
     // Log approve status for debugging purposes
-    console.log("approve status", approve_status);
   }
   onMount(() => {
     // Initialize Swiper instance only once
@@ -184,7 +177,6 @@
     const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
     if (menuItem) {
       const itemCount = document.querySelectorAll(".menu-item").length;
-      console.log("Focusing on asset:", assetId); // Debug log
 
       // Only use scrollIntoView if there are more than 4 items
       if (itemCount > 8) {
@@ -200,7 +192,6 @@
         menuItem.focus(); // Focus on the selected item after scrolling
       }, 300);
     } else {
-      console.warn("Menu item not found:", assetId); // Warn if not found
     }
   }
 
@@ -288,9 +279,7 @@
       } else {
         errorAlert("자산을 선택해주세요!");
       }
-    } catch (err) {
-      console.error(`Error fetching asset details: ${err.message}`);
-    }
+    } catch (err) {}
   }
   /**********************************************************************/
   function handleGroupChange(event) {

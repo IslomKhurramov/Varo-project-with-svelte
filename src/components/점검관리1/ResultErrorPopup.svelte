@@ -2,10 +2,6 @@
   export let modalErrorData;
 
   const tableHead = ["넘버", "target", "hostname", "ip address", "file", "etc"];
-
-  $: {
-    console.log("modalData:", modalErrorData);
-  }
 </script>
 
 <table class="tableListWrap">

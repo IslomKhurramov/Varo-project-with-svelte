@@ -106,7 +106,6 @@
 
   const fixApproveHandler = async (data) => {
     try {
-      console.log("fixApproveHandler:", data);
       const result = await setFixApprove(data);
       await successAlert(result);
 
@@ -124,9 +123,7 @@
 
   const fixApproveAssetHandler = async (data, approved) => {
     try {
-      console.log("fixApproveAssetHandler:", data);
       const approved_targets = data.map((ele) => ele.ccr_index);
-      console.log("approved_targets:", approved_targets);
       const result = await setFixApprove({
         plan_index: data[0].ccp_index,
         asset_target_uuid: selectedSendData?.asset_target_uuid,
@@ -150,7 +147,6 @@
 
   const fixDoneApproveHandler = async (data) => {
     try {
-      console.log("fixDoneApproveHandler:", data);
       const result = await setFixDoneApprove(data);
       successAlert(result);
 
@@ -170,9 +166,7 @@
 
   const fixDoneApproveAssetHandler = async (data, approved) => {
     try {
-      console.log("fixDoneApproveAssetHandler:", data);
       const approved_targets = data.map((ele) => ele.ccr_index);
-      console.log("approved_targets:", approved_targets);
       const result = await setFixDoneApprove({
         plan_index: data[0].ccp_index,
         asset_target_uuid: selectedSendData?.asset_target_uuid,
@@ -214,11 +208,6 @@
       );
     }
   }
-
-  $: {
-    console.log("search:", search);
-    console.log("theadChecked:", theadChecked);
-  }
 </script>
 
 <section class="content">
@@ -232,19 +221,24 @@
             href="javascript:void(0);"
             class={setView == "plan" ? "active" : ""}
             on:click={async () => {
-              loading = true;
-              setView = "plan";
-              selectedItems = [];
-              theadChecked = false;
+              try {
+                loading = true;
+                setView = "plan";
+                selectedItems = [];
+                theadChecked = false;
 
-              if (showProject) {
-                const data = await getVulnsOfAsset();
-                tableData = data?.vulns;
-              } else {
-                const data = await getVulnsOfAsset();
-                tableData = data?.vulns;
+                if (showProject) {
+                  const data = await getVulnsOfAsset();
+                  tableData = data?.vulns;
+                } else {
+                  const data = await getVulnsOfAsset();
+                  tableData = data?.vulns;
+                }
+                loading = false;
+              } catch (err) {
+                errorAlert(err?.message);
+                loading = false;
               }
-              loading = false;
             }}
           >
             조치계획

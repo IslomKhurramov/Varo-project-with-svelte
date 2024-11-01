@@ -75,7 +75,6 @@
         selected = [];
       }
     } catch (error) {
-      console.error("Error deleting items:", error);
       alert("Error occurred while deleting items.");
     }
   }
@@ -133,7 +132,6 @@
   const dispatch = createEventDispatcher();
 
   async function deleteProject(id) {
-    console.log("delete", id);
     try {
       const response = await setDeleteChecklistGroup(id);
 
@@ -149,14 +147,12 @@
         alert("Failed to delete the project."); // Provide user feedback
       }
     } catch (err) {
-      console.log("ERROR deleteProject:", err);
       alert("An error occurred while deleting the project."); // Provide user feedback
     }
   }
 
   function handleProjectData(data) {
     selectedChecklist = data;
-    console.log("selected", selectedChecklist);
     showDataTbale2 = true;
   }
   function closeShowModal() {

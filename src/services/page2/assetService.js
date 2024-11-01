@@ -7,10 +7,8 @@ export const getAllAssetLists = async () => {
     const response = await axios.get(`${serverApi}/api/getAllAssetLists/`, {
       withCredentials: true,
     });
-    console.log("Service", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching getAllAssetLists :", error);
     throw error;
   }
 };
@@ -29,7 +27,6 @@ export const setAssetUnActivate = async (uuid) => {
     );
 
     const data = response.data;
-    console.log("Data from unactivate", data);
 
     // If successful, return success
     if (data.RESULT !== "ERROR") {
@@ -56,7 +53,6 @@ export const setAssetActivate = async (uuid) => {
     );
 
     const data = response.data;
-    console.log("Data from setAssetActivate", data);
 
     // If successful, return success
     if (data.RESULT !== "ERROR") {
@@ -75,10 +71,8 @@ export const getAssetGroup = async () => {
     const response = await axios.get(`${serverApi}/api/getAssetGroup/`, {
       withCredentials: true,
     });
-    console.log("assetGroups:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching getAllAssetLists :", error);
     throw error;
   }
 };
@@ -97,7 +91,6 @@ export const setNewAssetGroup = async (asset_group_name) => {
     );
 
     const data = response.data;
-    console.log(" setNewAssetGroup", data);
 
     // If successful, return success
     if (data.RESULT !== "ERROR") {
@@ -248,7 +241,6 @@ export const setAssetInformationUpdate = async (assetInfo) => {
     if (response.data.RESULT === "OK") {
       return { success: true }; // Return the data from the API
     } else {
-      console.error(`API Error:`, response.data); // Log the full response for debugging
       throw new Error(
         `Error Code on setAssetInformationUpdate: ${response.data.CODE}`,
       );
@@ -290,10 +282,8 @@ export const getTargetSystemLists = async () => {
     const response = await axios.get(`${serverApi}/api/getTargetSystemLists/`, {
       withCredentials: true,
     });
-    console.log("assetGroups:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching getAllAssetLists :", error);
     throw error;
   }
 };
@@ -309,8 +299,6 @@ export const setAssetTargetRegister = async (payload) => {
       }, // Send the entire payload object
     );
 
-    console.log("API response:", response.data);
-
     if (response.data && response.data.RESULT === "OK") {
       return response.data;
     } else {
@@ -319,10 +307,6 @@ export const setAssetTargetRegister = async (payload) => {
       );
     }
   } catch (error) {
-    console.error(
-      "Error in setAssetTargetRegister:",
-      error.response ? error.response.data : error.message,
-    );
     throw new Error(`Failed to register asset target: ${error.message}`);
   }
 };
@@ -363,8 +347,6 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
       asset_lists,
     } = addingAssetForm;
 
-    console.log("api data: ", addingAssetForm);
-
     const formData = new FormData();
 
     formData.append("asset_reg_how", asset_reg_how);
@@ -380,11 +362,6 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
       .forEach((asset) => {
         formData.append("asset_lists", asset);
       });
-
-    // Log the FormData entries to verify what's being sent
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
 
     const response = await axios.post(
       `${serverApi}/api/setAssetForNewGroup/`,
@@ -402,11 +379,9 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
     if (response.data.RESULT === "OK") {
       return { success: true };
     } else {
-      console.log("API ERROR:", response.data);
       return { success: false, message: response.data.CODE };
     }
   } catch (error) {
-    console.error("API Request Error:", error);
     throw error;
   }
 };

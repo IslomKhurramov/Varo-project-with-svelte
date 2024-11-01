@@ -61,7 +61,6 @@
   });
 
   function closeSwiper() {
-    console.log("Toggling Swiper. Closing...", showSwiperComponent);
     showSwiperComponent = false;
   }
   /*************************************************************/
@@ -124,11 +123,9 @@
   }
   function handleFilter() {
     const results = filterAssets();
-    console.table(results); // Use table for better visibility in console
 
     // Update the UI accordingly (e.g., show a message if no assets match)
     if (results.length === 0) {
-      console.log("No matching assets found.");
       // Here you can also clear or update the UI to show a 'no assets found' message
     }
     activeMenu = selectedGroup;
@@ -147,7 +144,6 @@
 
     // Reapply filters to get the initial asset list
     const results = filterAssets();
-    console.table(results); // Optionally log the initial results after reset
   }
   /***********************************************************/
   const addNewGroup = async () => {
@@ -172,7 +168,6 @@
         throw new Error("Failed to save group.");
       }
     } catch (error) {
-      console.error("Error saving group:", error);
       alert("Failed to save the group. Please try again.");
     }
   };
@@ -219,10 +214,8 @@
   export function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
     currentPage = null;
-    console.log("Current View:", currentView);
   }
   $: if (showGetPlanHeader) {
-    console.log("GetLogHeader should show");
   }
   /**********************************************************************/
   export let searchFilters;
@@ -274,7 +267,6 @@
       window.URL.revokeObjectURL(url);
       selectedUUID = [];
     } catch (error) {
-      console.error("Failed to download report:", error);
       alert("An error occurred while downloading the report.");
     }
   }
@@ -326,7 +318,6 @@
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download report:", error);
       alert("An error occurred while downloading the report.");
     }
   }
@@ -370,7 +361,6 @@
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download report:", error);
       alert("An error occurred while downloading the report.");
     }
   }

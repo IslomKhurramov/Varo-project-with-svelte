@@ -77,7 +77,6 @@
         menuItem.focus();
       }, 300);
     } else {
-      console.warn("Menu item not found:", assetId);
     }
   }
 
@@ -102,7 +101,6 @@
     selectedSlide = slide;
     selectedItem = slide; // Update selectedItem as well
   }
-  $: console.log("selected checklist", selectedChecklist);
 </script>
 
 <section style="margin-top:10px; overflow: auto; height: 99%">

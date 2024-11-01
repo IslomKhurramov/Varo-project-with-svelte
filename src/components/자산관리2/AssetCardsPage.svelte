@@ -47,7 +47,6 @@
 
       if (response.RESULT === "OK") {
         allAssetList.set(Object.values(response.CODE));
-        console.log("All AssetList array data", allAssetList);
       }
     } catch (err) {
       alert(`Error getting AllAssetList ${err.message}`);
@@ -68,7 +67,6 @@
 
   onMount(() => {
     targetList();
-    console.log("allassetList", $allAssetList);
     assetList();
   });
 
@@ -163,7 +161,6 @@
     else return "#ff0000"; // Red
   }
   function handleAssetClick(asset) {
-    console.log("Asset clicked:", asset);
     selectedAsset = asset;
     showSwiperComponent = true; // This should set the showSwiperComponent to true
     // Check if the asset belongs to any group
@@ -193,9 +190,7 @@
       } else {
         errorAlert("자산을 선택해주세요!");
       }
-    } catch (err) {
-      console.error(`Error fetching asset details: ${err.message}`);
-    }
+    } catch (err) {}
   }
   /**********************************************************************/
   function handleGroupChange(event) {

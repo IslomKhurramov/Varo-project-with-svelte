@@ -45,8 +45,6 @@
     if (projectIndex && !logData) {
       search = { ...search, plan_index: projectIndex };
       searchDataHandler();
-      console.log("triger data", searchFilters);
-      console.log("logData", logData);
     }
   }
 </script>

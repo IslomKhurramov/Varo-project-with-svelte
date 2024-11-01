@@ -20,8 +20,6 @@
     getUserAllMessages,
   } from "./services/login/loginService";
 
-  console.log("$userData:", $userData);
-
   let openNotification = false;
   let activeMenu = "점검관리";
   let nofiticationData = [];
@@ -48,11 +46,17 @@
     }
   }
 
+  onMount(() => {
+    const path = new URLSearchParams(window.location.search).get("path");
+    switch (path) {
+      case "page1":
+        activeMenu = "점검관리";
+        break;
+    }
+  });
   onMount(async () => {
     checkAuth();
-    console.log("userData:", $userData.isLoggedIn);
     if (!$userData.isLoggedIn) {
-      console.log("User is not logged in.");
       navigate("/login");
     }
   });
@@ -89,9 +93,7 @@
   const getNotify = async () => {
     try {
       nofiticationData = await getUserAllMessages();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   $: {

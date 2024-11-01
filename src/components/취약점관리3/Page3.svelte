@@ -1,4 +1,5 @@
 <script>
+  import { navigate } from "svelte-routing";
   import {
     getVulnsOfAsset,
     getVulnsOfPlan,
@@ -10,6 +11,7 @@
   import { each } from "svelte/internal";
   import { get } from "svelte/store";
   import { toggleMenu } from "../../../public/assets/js/common.js";
+  import { errorAlert } from "../../shared/sweetAlert.js";
 
   let currentView = "default";
   let setView = "plan";
@@ -56,19 +58,29 @@
   }
 
   onMount(async () => {
-    loading = true;
-    plans = await getVulnsOfAsset(search);
-    tableData = plans?.vulns;
-    loading = false;
+    try {
+      loading = true;
+      plans = await getVulnsOfAsset(search);
+      tableData = plans?.vulns;
+      loading = false;
 
-    await getVulnsOfAsset(search);
+      await getVulnsOfAsset(search);
+    } catch (err) {
+      await errorAlert(err?.message);
+      loading = false;
+    }
   });
 
   const getPlanDataSearch = async () => {
-    loading = true;
-    plans = await getVulnsOfAsset(search);
-    tableData = plans?.vulns;
-    loading = false;
+    try {
+      loading = true;
+      plans = await getVulnsOfAsset(search);
+      tableData = plans?.vulns;
+      loading = false;
+    } catch (error) {
+      errorAlert(error?.message);
+      loading = false;
+    }
   };
 
   function downloadCSV(data) {
@@ -136,7 +148,6 @@
   function sortAssets() {
     loading = true;
     const isAscending = sortAscending ? 1 : -1;
-    console.log("isAscending:", isAscending);
 
     if (assetsMenuData && assetsMenuData.length > 0) {
       sorted = assetsMenuData.sort((hostA, hostB) => {
@@ -163,10 +174,6 @@
     };
     await getPlanDataSearch();
   };
-
-  $: {
-    console.log("assetsMenuData:", assetsMenuData);
-  }
 </script>
 
 {#if loading}
@@ -184,26 +191,31 @@
           href="javascript:void(0);"
           class={`btn ${showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
-            loading = true;
-            activePlan = null;
-            toggleList("project");
-            plans = await getVulnsOfAsset(search);
-            tableData = plans?.vulns;
-            search = {
-              plan_index: "",
-              asset_target_uuid: "",
-            };
-            setView = "plan";
-            selectedSendData = {
-              plan_index: "",
-              asset_target_uuid: "",
-            };
-            selectedItems = [];
-            sortAscending = true;
-            firstClick = true;
-            currentView === "default";
-            wholePage = false;
-            loading = false;
+            try {
+              loading = true;
+              activePlan = null;
+              toggleList("project");
+              plans = await getVulnsOfAsset(search);
+              tableData = plans?.vulns;
+              search = {
+                plan_index: "",
+                asset_target_uuid: "",
+              };
+              setView = "plan";
+              selectedSendData = {
+                plan_index: "",
+                asset_target_uuid: "",
+              };
+              selectedItems = [];
+              sortAscending = true;
+              firstClick = true;
+              currentView === "default";
+              wholePage = false;
+              loading = false;
+            } catch (err) {
+              errorAlert(err?.message);
+              loading = false;
+            }
           }}
         >
           프로젝트별
@@ -212,34 +224,39 @@
           type="button"
           class={`btn ${!showProject ? "btnBlue" : "btnPrimary"} `}
           on:click={async () => {
-            loading = true;
-            toggleList("asset");
-            // activeMenu = null;
-            search = {
-              plan_index: "",
-              asset_target_uuid: "",
-            };
-            setView = "plan";
-            selectedSendData = {
-              plan_index: "",
-              asset_target_uuid: "",
-            };
-            selectedItems = [];
-            activePlan = null;
+            try {
+              loading = true;
+              toggleList("asset");
+              // activeMenu = null;
+              search = {
+                plan_index: "",
+                asset_target_uuid: "",
+              };
+              setView = "plan";
+              selectedSendData = {
+                plan_index: "",
+                asset_target_uuid: "",
+              };
+              selectedItems = [];
+              activePlan = null;
 
-            if (firstClick) {
-              activeMenu = null;
-              sortAscending = false;
-              firstClick = false;
-              assets = await getVulnsOfAsset(search);
-              assetsMenuData = assets?.asset_asc;
-              tableData = assets?.vulns;
-            } else {
-              sortAssets();
+              if (firstClick) {
+                activeMenu = null;
+                sortAscending = false;
+                firstClick = false;
+                assets = await getVulnsOfAsset(search);
+                assetsMenuData = assets?.asset_asc;
+                tableData = assets?.vulns;
+              } else {
+                sortAssets();
+              }
+              currentView === "default";
+              wholePage = false;
+              loading = false;
+            } catch (err) {
+              errorAlert(err?.message);
+              loading = false;
             }
-            currentView === "default";
-            wholePage = false;
-            loading = false;
           }}
         >
           자산별

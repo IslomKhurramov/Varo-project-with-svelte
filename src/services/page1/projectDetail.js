@@ -18,7 +18,6 @@ export const getPlanDetailInformation = async (index) => {
 
     return response.data[index];
   } catch (error) {
-    console.error("Error fetching plan info:", error);
     throw error;
   }
 };

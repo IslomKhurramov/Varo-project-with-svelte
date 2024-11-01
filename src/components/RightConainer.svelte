@@ -46,7 +46,6 @@
 
   // Function to filter based on the selected criteria
   function filterProjects() {
-    console.log("selectedAgentStatus:", selectedAgentStatus);
     filteredProjects = projectArray.filter((project) => {
       return (
         (selectedStatus === "" ||
@@ -65,7 +64,6 @@
   }
 
   function doesProjectMatchOS(project, os) {
-    console.log("os:", os);
     if (os === "WINDOWS") {
       return project.asset?.WINDOWS;
     } else if (os === "UNIX") {
@@ -162,9 +160,6 @@
     } finally {
       loading = false;
     }
-  }
-  $: {
-    console.log("tabmenu:", tabMenu);
   }
 </script>
 

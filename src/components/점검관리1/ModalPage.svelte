@@ -15,7 +15,13 @@
 
 <div class="modal">
   <div
-    style="height: 930px;overflow: scroll;overflow-x: hidden;padding-bottom: 10px;"
+    style="height: 930px; 
+       overflow-y: scroll;
+       overflow-x: hidden;
+       padding-bottom: 10px;
+       scrollbar-width: none;          
+       -ms-overflow-style: none;      
+       -webkit-overflow-scrolling: touch;"
   >
     <table>
       <tr style="height: 50px; position: sticky;top: -1px;">
@@ -209,7 +215,7 @@
         >
       </tr>
     </table>
-    <div style="display: flex; justify-content: space-between">
+    <div style="display: flex; justify-content: space-between;">
       <button class="btn modify-btn" on:click={() => (showModal = false)}
         >Close</button
       >

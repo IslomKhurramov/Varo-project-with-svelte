@@ -232,19 +232,24 @@
             href="javascript:void(0);"
             class={setView == "plan" ? "active" : ""}
             on:click={async () => {
-              loading = true;
-              setView = "plan";
-              selectedItems = [];
-              theadChecked = false;
+              try {
+                loading = true;
+                setView = "plan";
+                selectedItems = [];
+                theadChecked = false;
 
-              if (showProject) {
-                const data = await getVulnsOfAsset();
-                tableData = data?.vulns;
-              } else {
-                const data = await getVulnsOfAsset();
-                tableData = data?.vulns;
+                if (showProject) {
+                  const data = await getVulnsOfAsset();
+                  tableData = data?.vulns;
+                } else {
+                  const data = await getVulnsOfAsset();
+                  tableData = data?.vulns;
+                }
+                loading = false;
+              } catch (err) {
+                errorAlert(err?.message);
+                loading = false;
               }
-              loading = false;
             }}
           >
             조치계획

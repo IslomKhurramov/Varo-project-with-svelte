@@ -1048,7 +1048,7 @@
           </div>
           <div
             class="tableListWrap"
-            style="max-height: 550px; overflow: scroll;"
+            style="max-height: 550px; overflow: scroll; overflow-x: hidden;"
           >
             <table class="tableList hdBorder">
               <colgroup>
@@ -1059,7 +1059,7 @@
                 <!-- <col /> -->
                 <col />
               </colgroup>
-              <thead>
+              <thead style="position: sticky;top: 0;">
                 <tr>
                   <th class="text-center">번호</th>
                   <th class="text-center">호스트명</th>

@@ -48,6 +48,15 @@
     }
   }
 
+  onMount(() => {
+    const path = new URLSearchParams(window.location.search).get("path");
+    console.log("=path:", path);
+    switch (path) {
+      case "page1":
+        activeMenu = "점검관리";
+        break;
+    }
+  });
   onMount(async () => {
     checkAuth();
     console.log("userData:", $userData.isLoggedIn);

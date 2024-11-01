@@ -14,7 +14,7 @@ export const getCCEResultUploadStatus = async (plan_index) => {
     );
 
     if (response?.data?.RESULT == "ERROR")
-      throw new Error("Something went wrong!");
+      throw new Error(response?.data?.CODE);
 
     return response.data?.CODE;
   } catch (error) {

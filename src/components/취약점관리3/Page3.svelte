@@ -30,6 +30,7 @@
   let sorted = false;
   let loading = true;
   let assetsMenuData = [];
+  let data = [];
 
   let search = {
     plan_index: "",
@@ -55,6 +56,9 @@
 
   function toggleAccordion(plan) {
     activePlan = activePlan === plan ? null : plan;
+
+    console.log("search:", search);
+    console.log("plan:", plan);
   }
 
   onMount(async () => {
@@ -77,6 +81,7 @@
       plans = await getVulnsOfAsset(search);
       tableData = plans?.vulns;
       loading = false;
+      activePlan = search["plan_index"];
     } catch (error) {
       errorAlert(error?.message);
       loading = false;
@@ -174,6 +179,81 @@
     };
     await getPlanDataSearch();
   };
+
+  function transformVulns(vulns, vulnerabilityStatusValue, actionStatusValue) {
+    const transformed = [];
+
+    for (const key in vulns) {
+      let currentResult = null;
+      let fixPlan = {};
+      let fixResult = {};
+
+      vulns[key].forEach((item) => {
+        if (item.result) {
+          const result = item?.result;
+          const statusMatch =
+            !vulnerabilityStatusValue ||
+            result.ccr_item_result === vulnerabilityStatusValue;
+          let actionMatch;
+          if (
+            actionStatusValue == "5" ||
+            actionStatusValue == "6" ||
+            actionStatusValue == "7"
+          ) {
+            actionMatch =
+              !actionStatusValue ||
+              result.cfr_fix_status__cvs_index == actionStatusValue;
+          } else {
+            actionMatch =
+              !actionStatusValue ||
+              result.cfi_fix_status__cvs_index == actionStatusValue;
+          }
+
+          // const agentMatch = !filters.agentStatus || result.agent === filters.agentStatus;
+
+          // If all conditions match, assign the result to currentResult
+          if (statusMatch && actionMatch) {
+            currentResult = result;
+          }
+
+          //   if (planMatch && statusMatch && actionMatch && agentMatch) {
+          //   currentResult = result;
+          // }
+        } else {
+          if (item.fix_plan) {
+            fixPlan = item.fix_plan;
+          }
+          if (item.fix_result) {
+            fixResult = item.fix_result;
+          }
+        }
+      });
+
+      if (currentResult) {
+        transformed.push({
+          ...currentResult,
+          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
+          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
+        });
+      }
+    }
+
+    return transformed;
+  }
+
+  $: {
+    if (tableData) {
+      data = transformVulns(
+        tableData,
+        vulnerabilityStatusValue,
+        actionStatusValue,
+      );
+    }
+  }
+
+  $: {
+    console.log("activePlan:", activePlan);
+  }
 </script>
 
 {#if loading}
@@ -299,7 +379,11 @@
                   style="position: relative;"
                   on:click={() => {
                     setView = "plan";
-                    search.plan_index = plan.plan_index;
+                    if (search.plan_index != plan.plan_index) {
+                      search.plan_index = plan.plan_index;
+                    } else {
+                      search.plan_index = "";
+                    }
                     getPlanDataSearch();
                     toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
@@ -429,11 +513,6 @@
               <select
                 bind:value={search["plan_index"]}
                 on:change={getPlanDataSearch}
-                on:change={(e) => {
-                  if (wholePage) {
-                    wholePage = false;
-                  }
-                }}
               >
                 <option value="" selected>프로젝트</option>
                 {#if plans && plans?.plans && plans?.plans?.length !== 0}
@@ -449,11 +528,6 @@
                 id="asset_group"
                 class="select_input"
                 bind:value={vulnerabilityStatusValue}
-                on:change={(e) => {
-                  if (wholePage) {
-                    wholePage = false;
-                  }
-                }}
               >
                 <option value="" selected>취약점현황</option>
                 <option value="양호">양호</option>
@@ -466,11 +540,6 @@
                 id="operating_system"
                 class="select_input"
                 bind:value={actionStatusValue}
-                on:change={(e) => {
-                  if (wholePage) {
-                    wholePage = false;
-                  }
-                }}
               >
                 <option value="" selected>조치상태별</option>
                 <option value="0">조치전</option>
@@ -529,8 +598,9 @@
             bind:showProject
             bind:targetData
             bind:wholeOption
-            bind:search
             bind:selectedItems
+            bind:search
+            bind:data
           />
         {/if}
 
@@ -539,8 +609,9 @@
             bind:plans
             bind:targetData
             bind:setView
-            bind:currentView
-            bind:wholePage
+            bind:vulnerabilityStatusValue
+            bind:actionStatusValue
+            bind:data
           />
         {/if}
       </article>

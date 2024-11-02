@@ -252,10 +252,6 @@
 
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`; // Template literal corrected
   };
-
-  $: {
-    console.log("data:", data);
-  }
 </script>
 
 {#if data?.length !== 0}

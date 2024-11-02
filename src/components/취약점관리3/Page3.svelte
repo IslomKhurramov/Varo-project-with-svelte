@@ -56,9 +56,6 @@
 
   function toggleAccordion(plan) {
     activePlan = activePlan === plan ? null : plan;
-
-    console.log("search:", search);
-    console.log("plan:", plan);
   }
 
   onMount(async () => {
@@ -249,10 +246,6 @@
         actionStatusValue,
       );
     }
-  }
-
-  $: {
-    console.log("activePlan:", activePlan);
   }
 </script>
 

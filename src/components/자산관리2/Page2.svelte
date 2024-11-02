@@ -579,7 +579,7 @@
             {#if showSwiperComponent}
               <button
                 class="btn btnPrimary padding_button"
-                on:click={closeSwiper}>뒤로 가기</button
+                on:click={closeSwiper}>돌아가기</button
               >
             {/if}
           </div>

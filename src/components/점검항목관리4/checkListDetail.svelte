@@ -14,7 +14,7 @@
   export let selectedRisk;
   export let selectedSlide;
   export let showModalSecond;
-  export let slides;
+  export let slides = [];
 
   let selectedItem = null;
   let selected = [];
@@ -121,7 +121,7 @@
         {swiperContainer}
         {showModalSecond}
         {selectedSlide}
-        {slides}
+        bind:slides
         {selectedItemNumber}
         {isNewlyCreatedChecklist}
         {deleteSelectedItem}

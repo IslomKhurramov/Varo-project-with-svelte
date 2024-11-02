@@ -346,8 +346,8 @@
   <article class="contentArea mt-0">
     <section
       bind:this={swiperContainer}
-      class="topCon"
-      style="position: sticky; top: 10px; z-index:99;"
+      class="topCon swiper-container"
+      style="position: sticky;  z-index:99;"
     >
       <div class="menu-container" style="position: sticky; top: 0; z-index:99;">
         <button
@@ -495,6 +495,15 @@
 </main>
 
 <style>
+  .swiper-container {
+    position: sticky;
+    top: 10px;
+    z-index: 99;
+    height: 50px;
+    background-color: white;
+    top: 0px;
+    padding: 10px;
+  }
   .modal-open-wrap {
     display: block;
     z-index: 99;

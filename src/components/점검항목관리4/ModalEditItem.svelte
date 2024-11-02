@@ -112,7 +112,7 @@
     {#if showSlide}
       <section
         bind:this={swiperContainer}
-        style="position: sticky; top: 10px; z-index:99; background-color:white;"
+        style="position: sticky;  z-index:99; background-color:white;"
         class="topCon swiper-container"
       >
         <div
@@ -278,6 +278,15 @@
 </section>
 
 <style>
+  .swiper-container {
+    position: sticky;
+    top: 10px;
+    z-index: 99;
+    height: 50px;
+    background-color: white;
+    top: 0px;
+    padding: 10px;
+  }
   * {
     font-size: 16px;
   }

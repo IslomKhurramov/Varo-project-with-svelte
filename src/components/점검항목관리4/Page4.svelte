@@ -260,32 +260,37 @@
     if (selectedCategory && selectedRisk && allChecklistArray.length > 0) {
       // First, filter by selected category
       let filteredData = allChecklistArray.flatMap((item) => {
-        // Check if the current item has the selected category and return its data, or an empty array
         const categoryData = item[selectedCategory] || [];
         return categoryData;
       });
+
+      console.log("Data after category filtering:", filteredData); // Check category-filtered data
 
       // Now, filter the data by selected risk if the selectedRisk is not "위험도"
       if (selectedRisk !== "위험도") {
         filteredData = filteredData.filter((item) => {
           return item.ccc_item_level === selectedRisk; // Filter by matching risk level
         });
+        console.log("Data after risk filtering:", filteredData); // Check risk-filtered data
       }
 
-      // Now set the filtered data to the slides and also to the store
+      // Set the filtered data to the slides and also to the store
       slides = filteredData; // Assign the filtered data to slides
       filteredChecklistData.set(filteredData); // Update the store with filtered data
 
       // Check if there is any data to display
       showSlide = slides.length > 0;
 
-      // Log the final filtered data for debugging
-
-      // Initialize Swiper after updating the slides
-      initializeSwiper();
+      // Initialize Swiper after updating the slides if there is data
+      if (showSlide) {
+        initializeSwiper();
+      }
     } else {
       // If no valid category or checklist data available, hide slides
       showSlide = false;
+      console.log(
+        "No valid category or checklist data available, hiding slides",
+      );
     }
   }
 
@@ -514,7 +519,7 @@
                 resetEditAndModalState();
               }}
             >
-              뒤로 가기
+              돌아가기
             </button>
           {:else if currentPage === CheckListDetail}
             <button
@@ -527,7 +532,7 @@
                 showEdit = false;
               }}
             >
-              뒤로 가기
+              돌아가기
             </button>
           {/if}
           {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
@@ -603,7 +608,7 @@
         {cleanSearch}
         bind:showEdit
         bind:showDataTbale2
-        {slides}
+        bind:slides
         bind:showModalModalEditItem
         {isNewlyCreatedChecklist}
         on:projectDeleted={(event) => {

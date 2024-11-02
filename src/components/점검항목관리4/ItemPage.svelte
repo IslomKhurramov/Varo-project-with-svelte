@@ -9,7 +9,7 @@
     checklistStore,
     filteredChecklistData,
   } from "../../services/page4/checklistStore";
-  import { successAlert } from "../../shared/sweetAlert";
+  import { confirmDelete, successAlert } from "../../shared/sweetAlert";
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
 
@@ -133,18 +133,23 @@
 
   async function deleteProject(id) {
     try {
-      const response = await setDeleteChecklistGroup(id);
+      const isConfirmed = await confirmDelete();
 
-      if (response.success) {
-        // Dispatch an event to notify the parent of the deletion
-        dispatch("projectDeleted", id);
-        selectedChecklist = "";
-        showDataTbale2 = false;
-        showEdit = false;
-        selected = []; // Clear selection
-        allSelected = false;
-      } else {
-        alert("Failed to delete the project."); // Provide user feedback
+      if (isConfirmed) {
+        const response = await setDeleteChecklistGroup(id);
+
+        if (response.success) {
+          // Dispatch an event to notify the parent of the deletion
+          successAlert("체크리스트가 성공적으로 삭제되었습니다!");
+          dispatch("projectDeleted", id);
+          selectedChecklist = "";
+          showDataTbale2 = false;
+          showEdit = false;
+          selected = []; // Clear selection
+          allSelected = false;
+        } else {
+          alert("Failed to delete the project."); // Provide user feedback
+        }
       }
     } catch (err) {
       alert("An error occurred while deleting the project."); // Provide user feedback
@@ -225,7 +230,7 @@
         {selectedChecklist.ccg_group}
       {/if}
     </p>
-    {#if isNewlyCreatedChecklist}
+    {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
       <div class="control-buttons">
         <div style="display: flex; align-items:center">
           <input
@@ -240,7 +245,7 @@
     {/if}
     <div class="tableListWrap table2" style="margin-bottom: 20px;">
       <table class="tableList hdBorder font-size: 16px;">
-        {#if isNewlyCreatedChecklist}
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
           <colgroup>
             <col style="width:90px;" />
             <col style="width:90px;" />
@@ -264,7 +269,7 @@
         {/if}
         <thead>
           <tr>
-            {#if isNewlyCreatedChecklist}
+            {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
               <th on:click|stopPropagation></th>
             {/if}
             <th class="text-center">남버</th>
@@ -286,7 +291,7 @@
                     showModal = true;
                   }}
                 >
-                  {#if isNewlyCreatedChecklist}
+                  {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <td on:click|stopPropagation
                       ><input
@@ -301,11 +306,19 @@
                   <td class="text-center line-height">{selectedCategory}</td>
                   <td class="text-center line-height">{item.ccc_item_group}</td>
                   <td class="text-center line-height">{item.ccc_item_no}</td>
-                  <td class="text-center line-height">{item.ccc_item_title}</td>
+                  <td class=" line-height">{item.ccc_item_title}</td>
                   <td class="text-center line-height">{item.ccc_item_level}</td>
-                  <td class="line-height">{item.ccc_item_criteria}</td>
+                  <td class="line-height"
+                    >{@html item.ccc_item_criteria.replace(/\n/g, "<br/>")}</td
+                  >
                 </tr>
               {/each}
+            {:else}
+              <tr
+                ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                  >no data available</td
+                ></tr
+              >
             {/if}
           {:else}
             <tr

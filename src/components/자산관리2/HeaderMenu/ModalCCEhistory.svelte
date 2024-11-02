@@ -102,7 +102,7 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 16px;
     margin-bottom: 20px;
   }
   .modify-btn {

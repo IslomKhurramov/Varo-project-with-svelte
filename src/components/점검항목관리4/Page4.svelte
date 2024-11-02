@@ -46,6 +46,7 @@
   let isNewlyCreatedChecklist = false;
   let showDataTbale2 = false;
   let showModalModalEditItem = false;
+  let selectedItem = null;
 
   // Create a local variable to hold the filtered checklist data
   let filteredChecklists = [];
@@ -257,42 +258,77 @@
 
   /************************************************************************/
   function filterData() {
-    if (selectedCategory && selectedRisk && allChecklistArray.length > 0) {
-      // First, filter by selected category
-      let filteredData = allChecklistArray.flatMap((item) => {
-        const categoryData = item[selectedCategory] || [];
-        return categoryData;
-      });
+    // Reset showSlide to false initially
+    showSlide = false; // Hide slides until data is ready
 
-      console.log("Data after category filtering:", filteredData); // Check category-filtered data
+    // Check if selectedChecklist and its data are valid
+    if (selectedChecklist && allChecklistArray.length > 0) {
+      // Find the checklist item corresponding to the selectedChecklist
+      const selectedChecklistData = allChecklistArray.find(
+        (item) => item.ccg_id === selectedChecklist.id,
+      );
 
-      // Now, filter the data by selected risk if the selectedRisk is not "위험도"
-      if (selectedRisk !== "위험도") {
-        filteredData = filteredData.filter((item) => {
-          return item.ccc_item_level === selectedRisk; // Filter by matching risk level
-        });
-        console.log("Data after risk filtering:", filteredData); // Check risk-filtered data
-      }
+      // If the selectedChecklistData is found and it has the selected category
+      if (selectedChecklistData && selectedChecklistData[selectedCategory]) {
+        // Extract the data for the selected category
+        let filteredData = selectedChecklistData[selectedCategory];
 
-      // Set the filtered data to the slides and also to the store
-      slides = filteredData; // Assign the filtered data to slides
-      filteredChecklistData.set(filteredData); // Update the store with filtered data
+        // Further filter by risk level if a valid risk is selected
+        if (selectedRisk && selectedRisk !== "위험도") {
+          filteredData = filteredData.filter(
+            (item) => item.ccc_item_level === selectedRisk,
+          );
+        }
 
-      // Check if there is any data to display
-      showSlide = slides.length > 0;
+        // Check if we have any filtered data
+        if (filteredData.length > 0) {
+          slides = filteredData; // Update slides with filtered data
+          selectedItem = slides[0]; // Select the first item from the filtered data
+          showSlide = true; // Show slides since we have data
+        } else {
+          slides = []; // Reset slides if no data
+          selectedItem = null; // Reset selectedItem if no data
+        }
 
-      // Initialize Swiper after updating the slides if there is data
-      if (showSlide) {
-        initializeSwiper();
+        // Log filtered results for debugging
+        console.log("Filtered Slides:", slides);
+
+        // Initialize Swiper if there are slides to show
+        if (showSlide) {
+          initializeSwiper();
+        }
+      } else {
+        // Handle case where the selected checklist has no data for the selected category
+        slides = []; // Ensure slides are empty
+        selectedItem = null; // Reset selectedItem
       }
     } else {
-      // If no valid category or checklist data available, hide slides
-      showSlide = false;
-      console.log(
-        "No valid category or checklist data available, hiding slides",
-      );
+      // Handle case where no valid checklist data is available
+      slides = []; // Ensure slides are empty
+      selectedItem = null; // Reset selectedItem
     }
   }
+
+  // Reactive statement to trigger filterData on any of the dependencies change
+  $: selectedRisk,
+    selectedCategory,
+    selectedChecklist,
+    allChecklistArray,
+    filterData();
+
+  // Reactive statement to trigger filterData on any of the dependencies change
+  $: selectedRisk,
+    selectedCategory,
+    selectedChecklist,
+    allChecklistArray,
+    filterData();
+
+  // Reactive statement to trigger filterData on any of the dependencies change
+  $: selectedRisk,
+    selectedCategory,
+    selectedChecklist,
+    allChecklistArray,
+    filterData();
 
   onMount(async () => {
     try {
@@ -302,7 +338,6 @@
   });
   /************************************************************************/
   // Run filterData every time `selectedCategory` or `allChecklistArray` updates
-  $: filterData();
 
   /************************************************************************/
   // After component updates (e.g., after DOM updates), ensure Swiper is properly initialized
@@ -321,16 +356,23 @@
   // Edit checklist function (to be defined)
   async function editChecklist(checklistId, editedName) {
     try {
+      if (!editedName) {
+        alert("Please enter a valid checklist name.");
+        return;
+      }
+
       const response = await setUpdateGroupName(checklistId, editedName);
+      console.log("Edit Checklist Response:", response);
+
       if (response.success) {
-        // Update the checklist locally
+        // Update the checklist locally without refreshing
         allChecklistArray = allChecklistArray.map((checklist) =>
           checklist.ccg_index === checklistId
             ? { ...checklist, ccg_group: editedName }
             : checklist,
         );
 
-        window.location.reload();
+        // Clear editing state
         editingChecklistId = null;
         editedChecklistName = "";
       } else {
@@ -340,6 +382,7 @@
       alert(`Error on editing checklist name: ${err.message}`);
     }
   }
+
   /*********************************************************************/
   //Search
 
@@ -383,23 +426,20 @@
 <section>
   <article class="sideMenu" style=" height: calc(100vh - 141px);">
     <div class="btnWrap">
-      <!-- svelte-ignore a11y-missing-attribute -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <a
         class="btn btnPrimary"
         on:click={() => {
+          // Ensure modal logic can handle both selectAll and selected options
           showModal = true;
-          selectAll = true;
-        }}><img src="./assets/images/icon/add.svg" />그룹추가</a
+          selectAll = true; // This flag can trigger different behaviors in your modal
+          console.log("Open modal with selectAll:", selectAll);
+        }}
       >
-      <!-- svelte-ignore a11y-missing-attribute -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <a class="btn btnRed" on:click={deleteProject}
-        ><img
-          src="./assets/images/icon/delete.svg"
-          alt="createGroup"
-        />그룹삭제</a
-      >
+        <img src="./assets/images/icon/add.svg" />그룹추가
+      </a>
+      <a class="btn btnRed" on:click={deleteProject}>
+        <img src="./assets/images/icon/delete.svg" alt="createGroup" />그룹삭제
+      </a>
     </div>
 
     {#if loading}
@@ -419,7 +459,7 @@
               href="#"
               on:click|preventDefault={() =>
                 selectPage(CheckListDetail, checkList)}
-              title={checkList.ccg_group}
+              title="{checkList.ccg_group}({checkList.ccg_checklist_year})"
             >
               <span
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
@@ -501,14 +541,19 @@
             <img src="./assets/images/reset.png" alt="search" />초기화
           </button>
 
-          <button
-            style="padding: 15px;"
-            class="btn btnPrimary"
-            on:click={() => {
-              showModal = true;
-              selectAll = false;
-            }}>복사</button
-          >
+          {#if selectedChecklist}
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                showModal = true;
+                selectAll = false; // Change to false if you want specific behavior
+                console.log("Open modal for selected checklist");
+              }}
+            >
+              복사
+            </button>
+          {/if}
           {#if showModalModalEditItem}
             <button
               style="padding: 15px;"
@@ -606,6 +651,7 @@
         {showModalSecond}
         {selectedSlide}
         {cleanSearch}
+        bind:selectedItem
         bind:showEdit
         bind:showDataTbale2
         bind:slides
@@ -637,7 +683,7 @@
               >
                 {#if selectAll}
                   {#each allChecklistArray as checklist}
-                    <option>
+                    <option value={checklist.ccg_index}>
                       {checklist.ccg_group}
                     </option>
                   {/each}

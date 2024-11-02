@@ -103,64 +103,67 @@
   }
 </script>
 
-<section style="margin-top:10px; overflow: auto; height: 99%">
-  <article
-    class="contentArea"
-    style="height: 72vh;
-    padding: 10px;"
+{#if showSlide}
+  <section
+    bind:this={swiperContainer}
+    style="position: sticky;  z-index:99; background-color:white;"
+    class="topCon swiper-container"
   >
-    {#if showSlide}
-      <section
-        bind:this={swiperContainer}
-        style="position: sticky;  z-index:99; background-color:white;"
-        class="topCon swiper-container"
+    <div
+      class="menu-container"
+      style="position: sticky;  z-index:99;  background-color:white;"
+    >
+      <button
+        class="arrow-btn"
+        id="prevBtn"
+        on:click={() => handleScroll("prev")}>◀</button
+      >
+
+      <div
+        class="menu-wrapper-container"
+        style="background-color: white; z-index:99;"
       >
         <div
-          class="menu-container"
-          style="position: sticky; top: 10px; z-index:99;  background-color:white;"
+          class="menu-wrapper"
+          id="menuWrapper"
+          style="background-color: white; z-index:99;"
+          bind:this={menuWrapper}
         >
-          <button
-            class="arrow-btn"
-            id="prevBtn"
-            on:click={() => handleScroll("prev")}>◀</button
-          >
-
-          <div
-            class="menu-wrapper-container"
-            style="background-color: white; z-index:99;"
-          >
-            <div
-              class="menu-wrapper"
-              id="menuWrapper"
-              style="background-color: white; z-index:99;"
-              bind:this={menuWrapper}
-            >
-              {#each slides as slide}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <div
-                  value={slide.ccc_item_no}
-                  name={slide}
-                  class="menu-item {activeAsset &&
-                  activeAsset.ccc_item_no === slide.ccc_item_no
-                    ? 'active'
-                    : ''}"
-                  on:click={() => handleSlideclick(slide)}
-                >
-                  {slide.ccc_item_no}
-                </div>
-              {/each}
-            </div>
-          </div>
-
-          <button
-            id="nextBtn"
-            class="arrow-btn"
-            on:click={() => handleScroll("next")}>▶</button
-          >
+          {#if slides.length > 0}
+            {#each slides as slide}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <div
+                value={slide.ccc_item_no}
+                name={slide}
+                class="menu-item {activeAsset &&
+                activeAsset.ccc_item_no === slide.ccc_item_no
+                  ? 'active'
+                  : ''}"
+                on:click={() => handleSlideclick(slide)}
+              >
+                {slide.ccc_item_no}
+              </div>
+            {/each}
+          {:else}
+            <div>데이터가 없습니다</div>
+          {/if}
         </div>
-      </section>
-    {/if}
+      </div>
 
+      <button
+        id="nextBtn"
+        class="arrow-btn"
+        on:click={() => handleScroll("next")}>▶</button
+      >
+    </div>
+  </section>
+{/if}
+<section style=" overflow: auto; height: 99%">
+  <article
+    class="contentArea"
+    style="height: 75vh;
+    "
+  >
     <div class="modal" style="margin-bottom: 20px;">
       <table style="margin-bottom: 20px;">
         <tr style="height: 50px; ">
@@ -280,7 +283,6 @@
 <style>
   .swiper-container {
     position: sticky;
-    top: 10px;
     z-index: 99;
     height: 50px;
     background-color: white;
@@ -300,10 +302,11 @@
   .modal {
     background-color: #ffffff;
     padding: 20px;
+    padding-top: 0px;
+    margin-top: 0px;
     border-radius: 10px;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
     max-width: 100%;
-    margin: 20px auto;
     font-family: Arial, sans-serif;
   }
   .menu-container .menu-item.active {
@@ -432,6 +435,21 @@
 
   .buttons {
     margin-top: 20px; /* Add space between the table and buttons */
+  }
+  .nodata {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666666; /* Subtle gray text */
+    font-size: 1.2em; /* Slightly larger font */
+    font-weight: 500;
+    padding: 20px;
+    border: 1px solid #cccccc; /* Light border */
+    border-radius: 8px;
+    background-color: #f9f9f9; /* Light background for visibility */
+    margin: 20px auto; /* Center within container */
+    width: 80%; /* Reduce width for better design */
+    text-align: center;
   }
 
   .btn {

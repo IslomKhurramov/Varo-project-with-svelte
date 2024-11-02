@@ -16,7 +16,7 @@
   export let showModalSecond;
   export let slides = [];
 
-  let selectedItem = null;
+  export let selectedItem = null;
   let selected = [];
   export let showModalModalEditItem;
   export let isNewlyCreatedChecklist;
@@ -106,14 +106,14 @@
 >
   <article
     class="contentArea"
-    style="overflow: auto; height: 75vh;
-        padding: 10px;  scrollbar-width: none;          
+    style="overflow: auto; height: 80vh;
+        top:-10px;  scrollbar-width: none;          
        -ms-overflow-style: none;      
        -webkit-overflow-scrolling: touch;"
   >
     {#if showModalModalEditItem}
       <ModalEditItem
-        {selectedItem}
+        bind:selectedItem
         {selected}
         {selectedCategory}
         {showSlide}
@@ -130,7 +130,7 @@
       <p style="padding:15px ;  font-size:16px">
         {selectedChecklist.ccg_group} 세부내용
       </p>
-      {#if isNewlyCreatedChecklist}
+      {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
         <div class="control-buttons">
           <div style="display: flex; align-items:center">
             <input
@@ -145,7 +145,7 @@
       {/if}
       <div class="tableListWrap table2">
         <table class="tableList hdBorder" style="height: 50vh;">
-          {#if isNewlyCreatedChecklist}
+          {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
             <colgroup>
               <col style="width:90px;" />
               <col style="width:90px;" />
@@ -169,7 +169,7 @@
           {/if}
           <thead>
             <tr>
-              {#if isNewlyCreatedChecklist}
+              {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
                 <th on:click|stopPropagation></th>
               {/if}
               <th class="text-center">남버</th>
@@ -192,7 +192,7 @@
                     selected = [item];
                   }}
                 >
-                  {#if isNewlyCreatedChecklist}
+                  {#if selectedChecklist.ccg_provide === 1}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <td on:click|stopPropagation
                       ><input
@@ -207,7 +207,7 @@
                   <td class="text-center line-height">{selectedCategory}</td>
                   <td class="text-center line-height">{item.ccc_item_group}</td>
                   <td class="text-center line-height">{item.ccc_item_no}</td>
-                  <td class="text-center line-height">{item.ccc_item_title}</td>
+                  <td class=" line-height">{item.ccc_item_title}</td>
                   <td class="text-center line-height">{item.ccc_item_level}</td>
                   <td>
                     <pre class="line-height">
@@ -219,7 +219,7 @@
             {:else}
               <tr
                 ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                  >점검대상 선택해 주세요</td
+                  >no data available</td
                 ></tr
               >
             {/if}
@@ -233,6 +233,21 @@
 <style>
   .line-height {
     line-height: 23px;
+  }
+  .nodata {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666666; /* Subtle gray text */
+    font-size: 1.2em; /* Slightly larger font */
+    font-weight: 500;
+    padding: 20px;
+    border: 1px solid #cccccc; /* Light border */
+    border-radius: 8px;
+    background-color: #f9f9f9; /* Light background for visibility */
+    margin: 20px auto; /* Center within container */
+    width: 80%; /* Reduce width for better design */
+    text-align: center;
   }
 
   .table2 {

@@ -13,7 +13,7 @@
   export let closeShowModal;
   export let deleteSelectedItem;
   export let selectedChecklist;
-
+  export let selected;
   let activeAsset = null;
   let scrollAmount = 0;
   let itemWidth = 146; // Each menu item width including gap
@@ -99,7 +99,9 @@
   function handleSlideclick(slide) {
     activeAsset = slide;
     selectedSlide = slide;
-    selectedItem = slide; // Update selectedItem as well
+    selectedItem = slide;
+    selected = slide;
+    console.log("selected", selected);
   }
 </script>
 

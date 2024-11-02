@@ -63,8 +63,13 @@
       return;
     }
 
-    const selectedItems = selected.map((item) => item.ccc_index); // Get the selected items for deletion
-    const mainIndex = selected[0].ccg_index_id; // Assuming first item has the main index
+    const selectedItems = (Array.isArray(selected) ? selected : [selected]).map(
+      (item) => item.ccc_index,
+    );
+    // Now you can proceed with deletion logic
+    const mainIndex = Array.isArray(selected)
+      ? selected[0]?.ccg_index_id
+      : selected.ccg_index_id;
 
     try {
       const deleteItem = await setDeleteChecklistItem(mainIndex, selectedItems);
@@ -114,7 +119,6 @@
     {#if showModalModalEditItem}
       <ModalEditItem
         bind:selectedItem
-        {selected}
         {selectedCategory}
         {showSlide}
         {selectedChecklist}
@@ -124,6 +128,7 @@
         bind:slides
         {selectedItemNumber}
         {isNewlyCreatedChecklist}
+        bind:selected
         {deleteSelectedItem}
       />
     {:else}

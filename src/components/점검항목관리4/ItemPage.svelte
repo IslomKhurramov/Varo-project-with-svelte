@@ -286,6 +286,7 @@
             {#if $filteredChecklistData.length > 0}
               {#each $filteredChecklistData as item, index}
                 <tr
+                  class="clickLine"
                   on:click={() => {
                     selectedItem = item;
                     showModal = true;
@@ -347,6 +348,10 @@
 </div>
 
 <style>
+  .clickLine:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
   .modal-open-wrap {
     display: block;
     z-index: 99;

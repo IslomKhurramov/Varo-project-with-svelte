@@ -190,7 +190,7 @@
       <article class="contentArea securityWrap">
         <h4 class="title border">보안점수</h4>
         <div class="circle" data-percent="80" data-offset="345">
-          <svg width="" height="" viewBox="0 0 139 139">
+          <svg viewBox="0 0 139 139">
             <circle
               cx="75"
               cy="75"
@@ -253,7 +253,7 @@
           data-offset="345"
           data-color="primary"
         >
-          <svg width="" height="" viewBox="0 0 139 139">
+          <svg viewBox="0 0 139 139">
             <circle
               cx="75"
               cy="75"
@@ -536,6 +536,7 @@
                   </select>
                 </div>
                 {#if updateInfo?.recheck === 1}
+                  <!-- svelte-ignore a11y-missing-attribute -->
                   <img src="./assets/images/icon/dash.svg" />
                   <div class="date">
                     <select bind:value={updateInfo["recheck_pno"]}>
@@ -584,6 +585,7 @@
                     bind:value={updateInfo["plan_start_date"]}
                   />
                 </div>
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <img src="./assets/images/icon/dash.svg" />
                 <div class="date">
                   <input
@@ -627,6 +629,7 @@
                     bind:value={updateInfo["fix_start_date"]}
                   />
                 </div>
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <img src="./assets/images/icon/dash.svg" />
                 <div class="date">
                   <input
@@ -751,7 +754,7 @@
             </div>
 
             <div class="circle" data-percent="80" data-offset="345">
-              <svg width="" height="" viewBox="0 0 139 139">
+              <svg viewBox="0 0 139 139">
                 <circle
                   cx="75"
                   cy="75"
@@ -798,6 +801,7 @@
                 />
               </svg>
               <div class="percent">
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <span><img src="./assets/images/icon/guard.svg" /></span>
               </div>
             </div>
@@ -983,6 +987,7 @@
             updateProjectDetails();
           }}
         >
+          <!-- svelte-ignore a11y-missing-attribute -->
           <img src="./assets/images/icon/close.svg" />
         </button>
       </div>
@@ -1024,6 +1029,7 @@
               showModal = false;
             }}
           >
+            <!-- svelte-ignore a11y-missing-attribute -->
             <img src="./assets/images/icon/close.svg" />
           </button>
         </div>

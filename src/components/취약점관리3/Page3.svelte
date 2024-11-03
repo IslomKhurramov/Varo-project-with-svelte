@@ -63,7 +63,7 @@
   onMount(async () => {
     try {
       loading = true;
-      console.log("search:", search);
+
       plans = await getVulnsOfAsset(search);
       tableData = plans?.vulns;
       loading = false;
@@ -71,7 +71,6 @@
       assets = await getVulnsOfAsset(search);
       tableData = assets?.vulns;
     } catch (err) {
-      console.log("onMount Error:", err);
       await errorAlert(err?.message);
       loading = false;
     }
@@ -80,22 +79,8 @@
   const getPlanDataSearch = async () => {
     try {
       loading = true;
-      if (setView == "result") {
-        const data = await getFixDoneLists(search);
-        console.log("+getFixDoneLists:", data);
-
-        tableData = Object.fromEntries(
-          Object.entries(data?.vulns).filter(([key, value]) =>
-            value.some(
-              (item) =>
-                item.result && item.result.cfi_fix_status__cvs_index === 3,
-            ),
-          ),
-        );
-      } else {
-        plans = await getVulnsOfAsset(search);
-        tableData = plans?.vulns;
-      }
+      plans = await getVulnsOfAsset(search);
+      tableData = plans?.vulns;
 
       loading = false;
       activePlan = search["plan_index"];
@@ -193,6 +178,7 @@
     search = {
       plan_index: "",
       asset_target_uuid: "",
+      step_vuln: search?.step_vuln ?? "1",
     };
     await getPlanDataSearch();
   };
@@ -269,7 +255,7 @@
   }
 
   $: {
-    console.log("+search:", search);
+    console.log("search:", search);
   }
 </script>
 
@@ -398,11 +384,13 @@
                   style="position: relative;"
                   on:click={() => {
                     setView = "plan";
+                    search.step_vuln = "1";
                     if (search.plan_index != plan.plan_index) {
                       search.plan_index = plan.plan_index;
                     } else {
                       search.plan_index = "";
                     }
+                    search.asset_target_uuid = "";
                     getPlanDataSearch();
                     toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
@@ -436,11 +424,28 @@
                                     : ""}
                                   on:click={async () => {
                                     loading = true;
-                                    setView = "plan";
-                                    assets = await getVulnsOfAsset({
+                                    switch (search?.step_vuln) {
+                                      case "1":
+                                        setView = "plan";
+                                        break;
+                                      case "2":
+                                        setView = "plan_accept";
+                                        break;
+                                      case "3":
+                                        setView = "result";
+                                        break;
+                                      case "4":
+                                        setView = "result_accept";
+                                        break;
+                                      default:
+                                        setView = "plan";
+                                    }
+                                    search = {
+                                      ...search,
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
-                                    });
+                                    };
+                                    assets = await getVulnsOfAsset(search);
                                     tableData = assets?.vulns;
                                     selectedSendData = {
                                       plan_index: plan?.plan_index,
@@ -486,12 +491,29 @@
                     style="position: relative;"
                     on:click={async () => {
                       loading = true;
-                      setView = "plan";
+                      switch (search?.step_vuln) {
+                        case "1":
+                          setView = "plan";
+                          break;
+                        case "2":
+                          setView = "plan_accept";
+                          break;
+                        case "3":
+                          setView = "result";
+                          break;
+                        case "4":
+                          setView = "result_accept";
+                          break;
+                        default:
+                          setView = "plan";
+                      }
                       selectPage(MainPageProject, asset.ast_uuid);
-                      assets = await getVulnsOfAsset({
+                      search = {
+                        ...search,
                         plan_index: "",
                         asset_target_uuid: asset.ast_uuid,
-                      });
+                      };
+                      assets = await getVulnsOfAsset(search);
                       tableData = assets?.vulns;
                       selectedSendData = {
                         plan_index: "",
@@ -631,6 +653,10 @@
             bind:vulnerabilityStatusValue
             bind:actionStatusValue
             bind:data
+            bind:wholePage
+            bind:currentView
+            bind:search
+            bind:tableData
           />
         {/if}
       </article>

@@ -26,6 +26,10 @@
   export let vulnerabilityStatusValue;
   export let actionStatusValue;
   export let data;
+  export let wholePage;
+  export let currentView;
+  export let search;
+  export let tableData;
 
   let isAgentUser = ["1", "3", "5"].includes(
     decryptData($userData?.userInfo?.user_roletype_role_index),
@@ -86,6 +90,7 @@
 
       const response = await setFixPlanRegister(sendPlanRegisterData);
 
+      await refetchData();
       successAlert(response);
 
       sendPlanRegisterData = {
@@ -99,6 +104,17 @@
         fix_user_index: "",
         fix_step_status: "2",
       };
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  const refetchData = async () => {
+    try {
+      const data = await getVulnsOfAsset(search);
+      tableData = data?.vulns;
+      currentView = "default";
+      wholePage = false;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -119,6 +135,7 @@
   const fixApproveHandler = async (data) => {
     try {
       const result = await setFixApprove(data);
+      await refetchData();
       await successAlert(result);
     } catch (err) {
       errorAlert(err?.message);
@@ -135,6 +152,7 @@
         formData.append(key, sendFixDone[key]);
       }
       const result = await setFixDoneRegister(formData);
+      await refetchData();
       await successAlert(result);
     } catch (err) {
       errorAlert(err?.message);
@@ -147,7 +165,9 @@
 
   const sampleClick = async (cfr_index, file) => {
     try {
-      file = file.split("/").pop();
+      if (file) {
+        file = file.split("/").pop();
+      }
       await getFixEviDownload(cfr_index, file);
     } catch (error) {}
   };
@@ -159,6 +179,8 @@
       sendSetFixDoneApprove.approved_targets = [targetData?.ccr_index];
 
       const result = await setFixDoneApprove(sendSetFixDoneApprove);
+
+      await refetchData();
       await successAlert(result);
       sendSetFixDoneApprove = {
         asset_target_uuid: "",
@@ -313,7 +335,7 @@
                   <col />
                 </colgroup>
                 <tbody>
-                  {#if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length === 0}
+                  {#if isAgentUser && setView == "result"}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -399,7 +421,8 @@
                         </select>
                       </td>
                     </tr>
-                  {:else if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length !== 0}
+                  {/if}
+                  {#if isAgentUser && setView == "result_accept"}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -493,7 +516,9 @@
                         />
                       </td>
                     </tr>
-                  {:else if (setView == "plan" || setView == "plan_accept") && Object.keys(targetData?.fix_plan).length !== 0}
+                  {/if}
+
+                  {#if setView == "plan_accept"}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -595,7 +620,8 @@
                         />
                       </td>
                     </tr>
-                  {:else}
+                  {/if}
+                  {#if setView == "plan"}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -692,11 +718,10 @@
                 </tbody>
               </table>
               <div class="flex justify-center btnActionWrap">
-                {#if (setView == "plan" || setView == "plan_accept") && Object.keys(targetData?.fix_plan).length !== 0}
+                {#if setView == "plan_accept"}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"
-                    onclick="modalOpen('alert')"
                     on:click={async () => {
                       sendApproveData.asset_target_uuid = targetData?.ast_uuid;
                       sendApproveData.plan_index = targetData?.ccp_index;
@@ -715,20 +740,18 @@
                   >
                     의견등록
                   </button>
-                {:else if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length === 0}
+                {:else if isAgentUser && setView == "result"}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"
-                    onclick="modalOpen('alert')"
                     on:click={setFixDoneRegisterHandler}
                   >
                     조치결과등록
                   </button>
-                {:else if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length !== 0}
+                {:else if isAgentUser && setView == "result_accept"}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"
-                    onclick="modalOpen('alert')"
                     on:click={setFixDoneApproveHandler}
                   >
                     의견등록
@@ -737,7 +760,6 @@
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"
-                    onclick="modalOpen('alert')"
                     on:click={fixPlanRegister}
                   >
                     조치계획등록

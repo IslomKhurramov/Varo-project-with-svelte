@@ -160,22 +160,20 @@
     </div>
   </section>
 {/if}
-<section style=" overflow: auto; height: 99%">
+<section style="  height: 99%">
   <article
     class="contentArea"
     style="height: 75vh;
     "
   >
-    <div class="modal" style="margin-bottom: 20px;">
-      <table style="margin-bottom: 20px;">
-        <tr style="height: 50px; ">
-          <th class="center-align" style="color: white;background: #0072fd;"
-            >구분</th
-          >
-          <td class="center-align" style="color: white;background: #0072fd;"
-            >설명</td
-          >
-        </tr>
+    <div class="modal table-container" style="margin-bottom: 20px;">
+      <table style="margin-bottom: 20px;" class="main-table">
+        <thead>
+          <tr class="sticky-row">
+            <th class="center-align sticky-cell">구분</th>
+            <td class="center-align sticky-cell">설명</td>
+          </tr>
+        </thead>
         <tbody>
           {#if selectedItem}
             <tr>
@@ -283,6 +281,29 @@
 </section>
 
 <style>
+  .table-container {
+    height: 60vh; /* Set the height of the scrollable area */
+    overflow-y: auto; /* Allow vertical scrolling in this container */
+  }
+
+  .main-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .sticky-row {
+    position: sticky;
+    top: 0; /* Stick to the top of the container */
+    z-index: 1; /* Ensure it stays on top of other elements */
+  }
+
+  .sticky-cell {
+    background-color: #0072fd; /* Header background */
+    color: white;
+    padding: 10px;
+    text-align: center;
+  }
+
   .swiper-container {
     position: sticky;
     z-index: 99;
@@ -303,12 +324,12 @@
   }
   .modal {
     background-color: #ffffff;
-    padding: 20px;
+
     padding-top: 0px;
     margin-top: 0px;
     border-radius: 10px;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-    max-width: 100%;
+    width: 100%;
     font-family: Arial, sans-serif;
   }
   .menu-container .menu-item.active {

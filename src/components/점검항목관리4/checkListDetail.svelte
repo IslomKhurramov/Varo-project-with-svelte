@@ -39,19 +39,20 @@
   }
 
   // Subscribe to filteredChecklistData store to make it reactive
-  let allSelected;
+  let allSelected = false;
   $: filteredChecklistData.subscribe((data) => {
     allSelected = data.length === selected.length;
   });
 
+  // Function to select or deselect all items
   function selectAll() {
-    $filteredChecklistData.update((data) => {
+    filteredChecklistData.update((data) => {
       if (allSelected) {
         selected = []; // Deselect all
       } else {
         selected = data.slice(); // Select all
       }
-      return data;
+      return data; // Return unchanged data
     });
   }
 
@@ -111,7 +112,7 @@
 >
   <article
     class="contentArea"
-    style="overflow: auto; height: 80vh;
+    style=" height: 80vh;
         top:-10px;  scrollbar-width: none;          
        -ms-overflow-style: none;      
        -webkit-overflow-scrolling: touch;"
@@ -132,22 +133,27 @@
         {deleteSelectedItem}
       />
     {:else}
-      <p style="padding:15px ;  font-size:16px">
-        {selectedChecklist.ccg_group} 세부내용
-      </p>
-      {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
-        <div class="control-buttons">
-          <div style="display: flex; align-items:center">
+      <div
+        style="display: flex; flex-direction:row; width:100%; justify-content:space-between"
+      >
+        <div style="display: flex; align-items:center">
+          {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
             <input
               type="checkbox"
               on:click={selectAll}
               checked={allSelected}
             /><strong> 전체선택 </strong>
-          </div>
-
-          <button on:click={deleteSelectedItem}>선택항목삭제</button>
+          {/if}
+          <p style="padding:15px ;  font-size:16px">
+            {selectedChecklist.ccg_group} 세부내용
+          </p>
         </div>
-      {/if}
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+          <button class="deleteBtn" on:click={deleteSelectedItem}
+            >선택항목삭제</button
+          >
+        {/if}
+      </div>
       <div class="tableListWrap table2">
         <table class="tableList hdBorder" style="height: 50vh;">
           {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
@@ -236,6 +242,17 @@
 </section>
 
 <style>
+  .deleteBtn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 30px;
+  }
   .line-height {
     line-height: 23px;
   }

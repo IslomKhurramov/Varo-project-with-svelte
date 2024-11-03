@@ -208,6 +208,11 @@
   //     );
   //   }
   // }
+
+  $: {
+    console.log("selectedSendData:", selectedSendData);
+    console.log("data:", data);
+  }
 </script>
 
 <section class="content">
@@ -228,10 +233,10 @@
                 theadChecked = false;
 
                 if (showProject) {
-                  const data = await getVulnsOfAsset();
+                  const data = await getVulnsOfAsset(search);
                   tableData = data?.vulns;
                 } else {
-                  const data = await getVulnsOfAsset();
+                  const data = await getVulnsOfAsset(search);
                   tableData = data?.vulns;
                 }
                 loading = false;
@@ -252,6 +257,7 @@
                 setView = "result";
                 selectedItems = [];
                 const data = await getFixDoneLists(selectedSendData);
+                console.log("+getFixDoneLists:", data);
 
                 tableData = Object.fromEntries(
                   Object.entries(data?.vulns).filter(([key, value]) =>
@@ -262,6 +268,8 @@
                     ),
                   ),
                 );
+                console.log("+tableData:", tableData);
+
                 loading = false;
               }}
             >

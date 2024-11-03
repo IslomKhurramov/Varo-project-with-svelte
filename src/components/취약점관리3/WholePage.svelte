@@ -185,8 +185,13 @@
       (slide) => slide.ccr_index === targetData.ccr_index,
     );
 
+    if (!activeAsset && data.length !== 0) {
+      activeAsset = data[0];
+      targetData = data[0];
+    }
+
     // Focus on the asset if it exists
-    if (activeAsset) {
+    if (activeAsset && targetData) {
       setTimeout(() => {
         focusOnAsset(targetData.ccr_index);
       }, 0);
@@ -254,563 +259,573 @@
   };
 </script>
 
-{#if data?.length !== 0}
-  <section class="topCon" bind:this={swiperContainer}>
-    <div class="menu-container">
-      <button
-        class="arrow-btn"
-        id="prevBtn"
-        on:click={() => handleScroll("prev")}
-      >
-        ◀
-      </button>
-      <div class="menu-wrapper-container">
-        {#if data?.length !== 0}
-          <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
-            {#each data as item, index}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                value={item.ccr_index}
-                name={item}
-                class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
-                on:click={() => {
-                  targetData = item;
-                }}
-              >
-                {item?.ccr_item_no__ccc_item_no}
-              </div>
-            {/each}
-          </div>
-        {/if}
-      </div>
-      <button
-        class="arrow-btn"
-        id="nextBtn"
-        on:click={() => handleScroll("next")}
-      >
-        ▶
-      </button>
-    </div>
-  </section>
-{/if}
-
-<section class="content" style="height: 100vh; overflow: scroll;">
-  <div style="height: 100%;">
-    <!-- 자산상세 -->
-    <div class="section" style="height: 100%;">
-      <!-- 등록 -->
-      <div class="flex detail" style="height: 100%;">
-        <section class="flex col gap-40">
-          <article class="flex col">
-            <h3 class="title border">조치계획등록</h3>
-            <table class="tableForm">
-              <colgroup>
-                <col style="width:80px;" />
-                <col />
-              </colgroup>
-              <tbody>
-                {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
-                  <tr>
-                    <th>조치방법</th>
-                    <td>
-                      <select
-                        bind:value={sendFixDone["fixed_method"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}>
-                          조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                        </option>
-                        {#if options?.length !== 0}
-                          {#each options as option}
-                            <option value={option?.cvf_index}
-                              >{option?.cvf_desc}</option
-                            >
-                          {/each}
-                        {/if}
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치일정</th>
-                    <td>
-                      <div class="dateWrap">
-                        <div class="date">
-                          <input
-                            style="font-size: 16px;"
-                            type="date"
-                            class="datepicker"
-                            placeholder="시작일시"
-                            bind:value={sendFixDone["fixed_start_date"]}
-                          />
-                        </div>
-                        <img src="./assets/images/icon/dash.svg" />
-                        <div class="date">
-                          <input
-                            style="font-size: 16px;"
-                            type="date"
-                            class="datepicker"
-                            placeholder="종료일시"
-                            bind:value={sendFixDone["fixed_end_date"]}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치내역</th>
-                    <td>
-                      <textarea
-                        rows="10"
-                        bind:value={sendFixDone["fixed_comment"]}
-                      ></textarea>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치내역</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="file"
-                        on:change={(e) => {
-                          handleFileUpload(e);
-                        }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치수행자</th>
-                    <td>
-                      <select
-                        bind:value={sendFixDone["fixed_user_index"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}> 조치담당자</option>
-                        {#if usernames?.length !== 0}
-                          {#each usernames as username}
-                            <option value={username?.user_index}
-                              >{username?.user_name}</option
-                            >
-                          {/each}
-                        {/if}
-                      </select>
-                    </td>
-                  </tr>
-                {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
-                  <tr>
-                    <th>조치방법</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        readonly
-                        value={targetData?.fix_result?.[0]
-                          ?.cfr_fix_method__cvf_desc}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치일정</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        readonly
-                        value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
-                      />
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        readonly
-                        value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치내역</th>
-                    <td>
-                      <textarea readonly>
-                        {targetData?.fix_result?.[0]?.cfr_fix_etc}
-                      </textarea>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>증적자료</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        value={targetData?.fix_result?.[0]?.cfr_evidence_file
-                          .split("/")
-                          .pop() + " ( 다운로드 )"}
-                        readonly
-                        on:click={() => {
-                          sampleClick(
-                            targetData?.fix_result?.[0]?.cfr_index,
-                            targetData?.fix_result?.[0]?.cfr_evidence_file,
-                          );
-                        }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치수행자</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        value={targetData?.fix_result?.[0]
-                          ?.user_index__user_name}
-                        readonly
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치계획승인</th>
-                    <td>
-                      <select
-                        bind:value={sendSetFixDoneApprove["approved"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}>
-                          조치계획승인 / 조치계획반려
-                        </option>
-                        <option value={"1"}> 조치계획승인</option>
-                        <option value={"0"}> 조치계획반려</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치계획의견</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        bind:value={sendSetFixDoneApprove["approved_comment"]}
-                      />
-                    </td>
-                  </tr>
-                {:else if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
-                  <tr>
-                    <th>조치방법</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        readonly
-                        value={targetData?.fix_plan?.[0]
-                          ?.cfi_fix_method__cvf_desc ?? ""}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치수준</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        readonly
-                        value={targetData?.fix_plan?.[0]?.cfi_fix_term ?? ""}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치일정</th>
-                    <td>
-                      <div class="dateWrap">
-                        <div class="date">
-                          <input
-                            style="font-size: 16px;"
-                            type="text"
-                            class="datepicker"
-                            readonly
-                            value={targetData?.fix_plan?.[0]
-                              ?.cfi_fix_startdate ?? ""}
-                          />
-                          <img src="./assets/images/icon/date.svg" />
-                        </div>
-                        <img src="./assets/images/icon/dash.svg" />
-                        <div class="date">
-                          <input
-                            style="font-size: 16px;"
-                            type="text"
-                            class="datepicker"
-                            placeholder="종료일시"
-                            readonly
-                            value={targetData?.fix_plan?.[0]?.cfi_fix_enddate ??
-                              ""}
-                          />
-                          <img src="./assets/images/icon/date.svg" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치방법</th>
-                    <td>
-                      <textarea
-                        rows="10"
-                        value={targetData?.fix_plan?.[0]?.cfi_fix_etc ?? ""}
-                        readonly
-                      ></textarea>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치담당자</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        readonly
-                        value={targetData?.fix_plan?.[0]
-                          ?.user_index__user_name ?? ""}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치계획승인</th>
-                    <td>
-                      <select
-                        bind:value={sendApproveData["approved"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}>
-                          조치계획승인 / 조치계획반려
-                        </option>
-                        <option value={"1"}> 조치계획승인</option>
-                        <option value={"0"}> 조치계획반려</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치계획의견</th>
-                    <td>
-                      <input
-                        style="font-size: 16px;"
-                        type="text"
-                        bind:value={sendApproveData["approved_comment"]}
-                      />
-                    </td>
-                  </tr>
-                {:else}
-                  <tr>
-                    <th>조치방법</th>
-                    <td>
-                      <select
-                        bind:value={sendPlanRegisterData["fix_method"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}>
-                          조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                        </option>
-                        {#if options?.length !== 0}
-                          {#each options as option}
-                            <option value={option?.cvf_index}
-                              >{option?.cvf_desc}</option
-                            >
-                          {/each}
-                        {/if}
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치수준</th>
-                    <td>
-                      <select
-                        bind:value={sendPlanRegisterData["fix_level"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}> 긴급 / 단기 / 중기 / 장기 </option>
-                        <option value="긴급">긴급</option>
-                        <option value="단기">단기</option>
-                        <option value="중기">중기</option>
-                        <option value="장기">장기</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치일정</th>
-                    <td>
-                      <div class="dateWrap">
-                        <div class="date">
-                          <input
-                            style="font-size: 16px;"
-                            type="date"
-                            class="datepicker"
-                            placeholder="시작일시"
-                            bind:value={sendPlanRegisterData["fix_start_date"]}
-                          />
-                        </div>
-                        <img src="./assets/images/icon/dash.svg" />
-                        <div class="date">
-                          <input
-                            style="font-size: 16px;"
-                            type="date"
-                            class="datepicker"
-                            placeholder="종료일시"
-                            bind:value={sendPlanRegisterData["fix_end_date"]}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치방법</th>
-                    <td>
-                      <textarea
-                        rows="10"
-                        bind:value={sendPlanRegisterData["fix_comment"]}
-                      ></textarea>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>조치담당자</th>
-                    <td>
-                      <select
-                        bind:value={sendPlanRegisterData["fix_user_index"]}
-                        style="font-size: 16px;"
-                      >
-                        <option value={""}> 조치담당자</option>
-                        {#if usernames?.length !== 0}
-                          {#each usernames as username}
-                            <option value={username?.user_index}
-                              >{username?.user_name}</option
-                            >
-                          {/each}
-                        {/if}
-                      </select>
-                    </td>
-                  </tr>
-                {/if}
-              </tbody>
-            </table>
-            <div class="flex justify-center btnActionWrap">
-              {#if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
-                <button
-                  type="button"
-                  class="btn btnBlue btnAction btnSave w220 h50"
-                  onclick="modalOpen('alert')"
-                  on:click={async () => {
-                    sendApproveData.asset_target_uuid = targetData?.ast_uuid;
-                    sendApproveData.plan_index = targetData?.ccp_index;
-                    sendApproveData.approved_targets = [targetData?.ccr_index];
-                    await fixApproveHandler(sendApproveData);
-                    sendApproveData = {
-                      asset_target_uuid: "",
-                      plan_index: "",
-                      approved: "",
-                      approved_targets: "",
-                      approved_comment: "",
-                    };
-                  }}
-                >
-                  의견등록
-                </button>
-              {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
-                <button
-                  type="button"
-                  class="btn btnBlue btnAction btnSave w220 h50"
-                  onclick="modalOpen('alert')"
-                  on:click={setFixDoneRegisterHandler}
-                >
-                  조치결과등록
-                </button>
-              {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
-                <button
-                  type="button"
-                  class="btn btnBlue btnAction btnSave w220 h50"
-                  onclick="modalOpen('alert')"
-                  on:click={setFixDoneApproveHandler}
-                >
-                  의견등록
-                </button>
-              {:else}
-                <button
-                  type="button"
-                  class="btn btnBlue btnAction btnSave w220 h50"
-                  onclick="modalOpen('alert')"
-                  on:click={fixPlanRegister}
-                >
-                  조치계획등록
-                </button>
-              {/if}
+<section class="topCon" bind:this={swiperContainer}>
+  <div class="menu-container">
+    <button
+      class="arrow-btn"
+      id="prevBtn"
+      on:click={() => handleScroll("prev")}
+    >
+      ◀
+    </button>
+    <div class="menu-wrapper-container">
+      {#if data?.length !== 0}
+        <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
+          {#each data as item, index}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              value={item.ccr_index}
+              name={item}
+              class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+              on:click={() => {
+                targetData = item;
+              }}
+            >
+              {item?.ccr_item_no__ccc_item_no}
             </div>
-          </article>
+          {/each}
+        </div>
+      {/if}
+    </div>
+    <button
+      class="arrow-btn"
+      id="nextBtn"
+      on:click={() => handleScroll("next")}
+    >
+      ▶
+    </button>
+  </div>
+</section>
 
-          {#if historyItemData?.length !== 0}
-            <article>
-              <h3 class="title border">이전조치이력</h3>
-              <div class="tableListWrap nofirstth">
-                <table class="tableList hdBorder">
-                  <colgroup>
-                    <col style="width:120px;" />
-                    <col />
-                    <col />
-                    <col style="width:120px;" />
-                  </colgroup>
-                  <thead>
+{#if data?.length !== 0}
+  <section class="content" style="height: 100vh; overflow: scroll;">
+    <div style="height: 100%;">
+      <!-- 자산상세 -->
+      <div class="section" style="height: 100%;">
+        <!-- 등록 -->
+        <div class="flex detail" style="height: 100%;">
+          <section class="flex col gap-40">
+            <article class="flex col">
+              <h3 class="title border">조치계획등록</h3>
+              <table class="tableForm">
+                <colgroup>
+                  <col style="width:80px;" />
+                  <col />
+                </colgroup>
+                <tbody>
+                  {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
                     <tr>
-                      <th class="text-center">조치방법</th>
-                      <th class="text-center">플랜</th>
-                      <th class="text-center">일정</th>
-                      <th class="text-center">조치담당자</th>
+                      <th>조치방법</th>
+                      <td>
+                        <select
+                          bind:value={sendFixDone["fixed_method"]}
+                          style="font-size: 16px;"
+                        >
+                          <option value={""}>
+                            조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                          </option>
+                          {#if options?.length !== 0}
+                            {#each options as option}
+                              <option value={option?.cvf_index}
+                                >{option?.cvf_desc}</option
+                              >
+                            {/each}
+                          {/if}
+                        </select>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {#each historyItemData as data}
-                      <tr>
-                        <td class="text-center"
-                          >{data.cfi_fix_status__cvs_desc}</td
+                    <tr>
+                      <th>조치일정</th>
+                      <td>
+                        <div class="dateWrap">
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="date"
+                              class="datepicker"
+                              placeholder="시작일시"
+                              bind:value={sendFixDone["fixed_start_date"]}
+                            />
+                          </div>
+                          <img src="./assets/images/icon/dash.svg" />
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="date"
+                              class="datepicker"
+                              placeholder="종료일시"
+                              bind:value={sendFixDone["fixed_end_date"]}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치내역</th>
+                      <td>
+                        <textarea
+                          rows="10"
+                          bind:value={sendFixDone["fixed_comment"]}
+                        ></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치내역</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="file"
+                          on:change={(e) => {
+                            handleFileUpload(e);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치수행자</th>
+                      <td>
+                        <select
+                          bind:value={sendFixDone["fixed_user_index"]}
+                          style="font-size: 16px;"
                         >
-                        <td class="text-center"
-                          >{data.ccr_index__ccp_index__ccp_title}</td
+                          <option value={""}> 조치담당자</option>
+                          {#if usernames?.length !== 0}
+                            {#each usernames as username}
+                              <option value={username?.user_index}
+                                >{username?.user_name}</option
+                              >
+                            {/each}
+                          {/if}
+                        </select>
+                      </td>
+                    </tr>
+                  {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+                    <tr>
+                      <th>조치방법</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_result?.[0]
+                            ?.cfr_fix_method__cvf_desc}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치일정</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
+                        />
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치내역</th>
+                      <td>
+                        <textarea readonly>
+                          {targetData?.fix_result?.[0]?.cfr_fix_etc}
+                        </textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>증적자료</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          value={targetData?.fix_result?.[0]?.cfr_evidence_file
+                            .split("/")
+                            .pop() + " ( 다운로드 )"}
+                          readonly
+                          on:click={() => {
+                            sampleClick(
+                              targetData?.fix_result?.[0]?.cfr_index,
+                              targetData?.fix_result?.[0]?.cfr_evidence_file,
+                            );
+                          }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치수행자</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          value={targetData?.fix_result?.[0]
+                            ?.user_index__user_name}
+                          readonly
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치계획승인</th>
+                      <td>
+                        <select
+                          bind:value={sendSetFixDoneApprove["approved"]}
+                          style="font-size: 16px;"
                         >
-                        <td class="text-center"
-                          >{data.cfi_fix_startdate} {data.cfi_fix_enddate}</td
+                          <option value={""}>
+                            조치계획승인 / 조치계획반려
+                          </option>
+                          <option value={"1"}> 조치계획승인</option>
+                          <option value={"0"}> 조치계획반려</option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치계획의견</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          bind:value={sendSetFixDoneApprove["approved_comment"]}
+                        />
+                      </td>
+                    </tr>
+                  {:else if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
+                    <tr>
+                      <th>조치방법</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_plan?.[0]
+                            ?.cfi_fix_method__cvf_desc ?? ""}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치수준</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_plan?.[0]?.cfi_fix_term ?? ""}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치일정</th>
+                      <td>
+                        <div class="dateWrap">
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="text"
+                              class="datepicker"
+                              readonly
+                              value={targetData?.fix_plan?.[0]
+                                ?.cfi_fix_startdate ?? ""}
+                            />
+                            <img src="./assets/images/icon/date.svg" />
+                          </div>
+                          <img src="./assets/images/icon/dash.svg" />
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="text"
+                              class="datepicker"
+                              placeholder="종료일시"
+                              readonly
+                              value={targetData?.fix_plan?.[0]
+                                ?.cfi_fix_enddate ?? ""}
+                            />
+                            <img src="./assets/images/icon/date.svg" />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치방법</th>
+                      <td>
+                        <textarea
+                          rows="10"
+                          value={targetData?.fix_plan?.[0]?.cfi_fix_etc ?? ""}
+                          readonly
+                        ></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치담당자</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_plan?.[0]
+                            ?.user_index__user_name ?? ""}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치계획승인</th>
+                      <td>
+                        <select
+                          bind:value={sendApproveData["approved"]}
+                          style="font-size: 16px;"
                         >
-                        <td class="text-center">{data.user_index__user_name}</td
+                          <option value={""}>
+                            조치계획승인 / 조치계획반려
+                          </option>
+                          <option value={"1"}> 조치계획승인</option>
+                          <option value={"0"}> 조치계획반려</option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치계획의견</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          bind:value={sendApproveData["approved_comment"]}
+                        />
+                      </td>
+                    </tr>
+                  {:else}
+                    <tr>
+                      <th>조치방법</th>
+                      <td>
+                        <select
+                          bind:value={sendPlanRegisterData["fix_method"]}
+                          style="font-size: 16px;"
                         >
-                      </tr>
-                    {/each}
-                  </tbody>
-                </table>
+                          <option value={""}>
+                            조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
+                          </option>
+                          {#if options?.length !== 0}
+                            {#each options as option}
+                              <option value={option?.cvf_index}
+                                >{option?.cvf_desc}</option
+                              >
+                            {/each}
+                          {/if}
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치수준</th>
+                      <td>
+                        <select
+                          bind:value={sendPlanRegisterData["fix_level"]}
+                          style="font-size: 16px;"
+                        >
+                          <option value={""}>
+                            긴급 / 단기 / 중기 / 장기
+                          </option>
+                          <option value="긴급">긴급</option>
+                          <option value="단기">단기</option>
+                          <option value="중기">중기</option>
+                          <option value="장기">장기</option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치일정</th>
+                      <td>
+                        <div class="dateWrap">
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="date"
+                              class="datepicker"
+                              placeholder="시작일시"
+                              bind:value={sendPlanRegisterData[
+                                "fix_start_date"
+                              ]}
+                            />
+                          </div>
+                          <img src="./assets/images/icon/dash.svg" />
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="date"
+                              class="datepicker"
+                              placeholder="종료일시"
+                              bind:value={sendPlanRegisterData["fix_end_date"]}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치방법</th>
+                      <td>
+                        <textarea
+                          rows="10"
+                          bind:value={sendPlanRegisterData["fix_comment"]}
+                        ></textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치담당자</th>
+                      <td>
+                        <select
+                          bind:value={sendPlanRegisterData["fix_user_index"]}
+                          style="font-size: 16px;"
+                        >
+                          <option value={""}> 조치담당자</option>
+                          {#if usernames?.length !== 0}
+                            {#each usernames as username}
+                              <option value={username?.user_index}
+                                >{username?.user_name}</option
+                              >
+                            {/each}
+                          {/if}
+                        </select>
+                      </td>
+                    </tr>
+                  {/if}
+                </tbody>
+              </table>
+              <div class="flex justify-center btnActionWrap">
+                {#if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
+                  <button
+                    type="button"
+                    class="btn btnBlue btnAction btnSave w220 h50"
+                    onclick="modalOpen('alert')"
+                    on:click={async () => {
+                      sendApproveData.asset_target_uuid = targetData?.ast_uuid;
+                      sendApproveData.plan_index = targetData?.ccp_index;
+                      sendApproveData.approved_targets = [
+                        targetData?.ccr_index,
+                      ];
+                      await fixApproveHandler(sendApproveData);
+                      sendApproveData = {
+                        asset_target_uuid: "",
+                        plan_index: "",
+                        approved: "",
+                        approved_targets: "",
+                        approved_comment: "",
+                      };
+                    }}
+                  >
+                    의견등록
+                  </button>
+                {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+                  <button
+                    type="button"
+                    class="btn btnBlue btnAction btnSave w220 h50"
+                    onclick="modalOpen('alert')"
+                    on:click={setFixDoneRegisterHandler}
+                  >
+                    조치결과등록
+                  </button>
+                {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+                  <button
+                    type="button"
+                    class="btn btnBlue btnAction btnSave w220 h50"
+                    onclick="modalOpen('alert')"
+                    on:click={setFixDoneApproveHandler}
+                  >
+                    의견등록
+                  </button>
+                {:else}
+                  <button
+                    type="button"
+                    class="btn btnBlue btnAction btnSave w220 h50"
+                    onclick="modalOpen('alert')"
+                    on:click={fixPlanRegister}
+                  >
+                    조치계획등록
+                  </button>
+                {/if}
               </div>
             </article>
-          {/if}
-        </section>
 
-        <section class="flex col">
-          <div class="bg-gray">
-            <article class="formWrap font13">
-              <div class="formControlWrap">
-                <div class="formControl align-start">
-                  <!-- svelte-ignore a11y-label-has-associated-control -->
-                  <label class="mt-12" style="font-size: 16px;"> 제목 </label>
-                  <textarea rows="2" readonly
-                    >{targetData?.ccr_item_no__ccc_item_title}
-                  </textarea>
+            {#if historyItemData?.length !== 0}
+              <article>
+                <h3 class="title border">이전조치이력</h3>
+                <div class="tableListWrap nofirstth">
+                  <table class="tableList hdBorder">
+                    <colgroup>
+                      <col style="width:120px;" />
+                      <col />
+                      <col />
+                      <col style="width:120px;" />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th class="text-center">조치방법</th>
+                        <th class="text-center">플랜</th>
+                        <th class="text-center">일정</th>
+                        <th class="text-center">조치담당자</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {#each historyItemData as data}
+                        <tr>
+                          <td class="text-center"
+                            >{data.cfi_fix_status__cvs_desc}</td
+                          >
+                          <td class="text-center"
+                            >{data.ccr_index__ccp_index__ccp_title}</td
+                          >
+                          <td class="text-center"
+                            >{data.cfi_fix_startdate} {data.cfi_fix_enddate}</td
+                          >
+                          <td class="text-center"
+                            >{data.user_index__user_name}</td
+                          >
+                        </tr>
+                      {/each}
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-              <div class="formControlWrap">
-                <div class="formControl align-start">
-                  <!-- svelte-ignore a11y-label-has-associated-control -->
-                  <label class="mt-12" style="font-size: 16px;">평가기준</label>
-                  <textarea rows="4" readonly style="font-size: 16px;"
-                    >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
-                  >
+              </article>
+            {/if}
+          </section>
+
+          <section class="flex col">
+            <div class="bg-gray">
+              <article class="formWrap font13">
+                <div class="formControlWrap">
+                  <div class="formControl align-start">
+                    <!-- svelte-ignore a11y-label-has-associated-control -->
+                    <label class="mt-12" style="font-size: 16px;"> 제목 </label>
+                    <textarea rows="2" readonly
+                      >{targetData?.ccr_item_no__ccc_item_title}
+                    </textarea>
+                  </div>
                 </div>
-              </div>
-              <div class="formControlWrap">
-                <div class="formControl align-start">
-                  <!-- svelte-ignore a11y-label-has-associated-control -->
-                  <label class="mt-12" style="font-size: 16px;">조치방법</label>
-                  <textarea rows="8" readonly style="font-size: 16px;"
-                    >{targetData?.ccr_item_no__ccc_mitigation_example}</textarea
-                  >
+                <div class="formControlWrap">
+                  <div class="formControl align-start">
+                    <!-- svelte-ignore a11y-label-has-associated-control -->
+                    <label class="mt-12" style="font-size: 16px;"
+                      >평가기준</label
+                    >
+                    <textarea rows="4" readonly style="font-size: 16px;"
+                      >{targetData?.ccr_item_no__ccc_item_criteria}</textarea
+                    >
+                  </div>
                 </div>
-              </div>
-            </article>
-            <div class="flex flex-end btnActionWrap gap-12">
-              <!-- <button
+                <div class="formControlWrap">
+                  <div class="formControl align-start">
+                    <!-- svelte-ignore a11y-label-has-associated-control -->
+                    <label class="mt-12" style="font-size: 16px;"
+                      >조치방법</label
+                    >
+                    <textarea rows="8" readonly style="font-size: 16px;"
+                      >{targetData?.ccr_item_no__ccc_mitigation_example}</textarea
+                    >
+                  </div>
+                </div>
+              </article>
+              <div class="flex flex-end btnActionWrap gap-12">
+                <!-- <button
                 type="button"
                 class="btn btnGray w140 h50 golist btnAction"
                 on:click={() => {
@@ -820,56 +835,57 @@
               >
                 목록으로
               </button> -->
-              <!-- <button
+                <!-- <button
                 type="button"
                 class="btn btnBlue btnSave w220 h50 btnAction"
                 >조치계획을 등록함</button
               > -->
-            </div>
-
-            <article>
-              <h3 class="title border">관련자산</h3>
-              <div class="tableListWrap nofirstth">
-                <table class="tableList hdBorder chasan">
-                  <colgroup>
-                    <col />
-                    <col />
-                    <col />
-                    <col />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th class="text-center">자산명</th>
-                      <th class="text-center">아이피주소</th>
-                      <th class="text-center">자산그룹</th>
-                      <th class="text-center">OS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="text-center"
-                        >{targetData?.ast_uuid__ass_uuid__ast_hostname}</td
-                      >
-                      <td class="text-center"
-                        >{targetData?.ast_uuid__ass_uuid__ast_ipaddr}</td
-                      >
-                      <td class="text-center"
-                        >{targetData?.cct_index__cct_target}</td
-                      >
-                      <td class="text-center"
-                        >{targetData?.ast_uuid__ass_uuid__ast_os}</td
-                      >
-                    </tr>
-                  </tbody>
-                </table>
               </div>
-            </article>
-          </div>
-        </section>
+
+              <article>
+                <h3 class="title border">관련자산</h3>
+                <div class="tableListWrap nofirstth">
+                  <table class="tableList hdBorder chasan">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th class="text-center">자산명</th>
+                        <th class="text-center">아이피주소</th>
+                        <th class="text-center">자산그룹</th>
+                        <th class="text-center">OS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center"
+                          >{targetData?.ast_uuid__ass_uuid__ast_hostname}</td
+                        >
+                        <td class="text-center"
+                          >{targetData?.ast_uuid__ass_uuid__ast_ipaddr}</td
+                        >
+                        <td class="text-center"
+                          >{targetData?.cct_index__cct_target}</td
+                        >
+                        <td class="text-center"
+                          >{targetData?.ast_uuid__ass_uuid__ast_os}</td
+                        >
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+{/if}
 
 <style>
   .menu-item:hover {

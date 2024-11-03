@@ -200,9 +200,11 @@
               <td class="text-center">{data.ccg_checklist_year}</td>
               <td
                 class="text-center"
-                style=" word-break: normal; white-space: pre-wrap;    
-      overflow-wrap: break-word;">{data.ccg_support_part}</td
+                style="word-break: normal; white-space: pre-wrap; overflow-wrap: break-word;"
               >
+                {data.ccg_support_part.replace(/\|/g, ",")}
+              </td>
+
               <td class="text-center">{formatDate(data.ccg_createdate)}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <td
@@ -230,15 +232,17 @@
       </table>
     </div>
     <div
-      style="display: flex; flex-direction:row; width:100%; justify-content:space-between"
+      style="display: flex; flex-direction:row; width:100%; justify-content:space-between; margin-bottom:10px"
     >
-      <div style="display: flex; align-items:center">
+      <div style="display: flex; align-items:center; ;">
         {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <input
+            class="center-align"
+            style="margin-right: 10px;"
             type="checkbox"
             on:click={selectAll}
             checked={allSelected}
-          /><strong> 전체선택 </strong>
+          /><strong style="margin-right: 10px;"> 전체선택 </strong>
         {/if}
         {#if selectedChecklist && selectedChecklist.ccg_group}
           {#if selectedChecklist && selectedChecklist.ccg_group}
@@ -252,11 +256,11 @@
         >
       {/if}
     </div>
-    <div class="tableListWrap table2" style="margin-bottom: 20px;">
+    <div class="tableListWrap table2" style="margin-bottom: 20px; height:60vh;">
       <table class="tableList hdBorder font-size: 16px;">
         {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <colgroup>
-            <col style="width:90px;" />
+            <col style="width:50px;" />
             <col style="width:90px;" />
             <col />
             <col />
@@ -281,7 +285,7 @@
             {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
               <th on:click|stopPropagation></th>
             {/if}
-            <th class="text-center">남버</th>
+            <th class="text-center">넘버</th>
             <th class="text-center">점검대상</th>
             <th class="text-center">항목그룹</th>
             <th class="text-center">식별코드</th>
@@ -326,7 +330,7 @@
             {:else}
               <tr
                 ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                  >no data available</td
+                  >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
                 ></tr
               >
             {/if}
@@ -357,6 +361,17 @@
 </div>
 
 <style>
+  .deleteBtn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 30px;
+  }
   .clickLine:hover {
     background-color: rgba(242, 242, 242, 1);
     cursor: pointer;

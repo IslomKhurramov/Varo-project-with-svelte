@@ -468,10 +468,8 @@
         <div class="modal-open-wrap">
           <dialog open on:close={() => (showModal = false)}>
             <div class="modal-content">
-              <h2>Change Group Index</h2>
-              <label for="group-select" style="margin-top: 15px;"
-                >Select Group:</label
-              >
+              <h2>이동할 자산그룹을 선택해 주세요</h2>
+
               <select
                 id="group-select"
                 style="margin-top: 15px;"
@@ -486,7 +484,7 @@
                   </option>
                 {/each}
               </select>
-              <p>Selected Group Index: {selectedGroupIndex}</p>
+
               <div class="modal-buttons">
                 <button class="primary-button" on:click={assetGroupChange}
                   >OK</button

@@ -3,7 +3,7 @@
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
 
   let currentData = [];
-  let activeData = "운영체제정보"; // Set default active data
+  let activeData = ""; // Set default active data
 
   // Other filter states
   let selectedNetworkDate = "";
@@ -12,15 +12,37 @@
   let selectedPatchDate = "";
   let selectedDllDate = "";
 
-  // Function to handle tab selection
+  // Function to select data based on menu
   const selectData = (page, menu) => {
     currentData = page.map((item) => ({
       ...item,
       modelType: determineModelType(menu),
     }));
-    activeData = menu;
-    resetFilters();
+    activeData = menu; // Update the active data menu
+    console.log("Data set for", menu, ":", currentData); // Debugging log
+    resetFilters(); // Assuming resetFilters() is defined elsewhere
   };
+
+  // Use onMount to select default data when component is mounted
+  onMount(() => {
+    // Check if assetHistory has data and select the default data
+    if (assetHistory.length > 0) {
+      selectData(assetHistory[0]?.system_info?.osinfo || [], "운영체제정보");
+    }
+  });
+  // Reactive statement to refresh data when activeData changes
+  $: if (activeData === "운영체제정보" && $assetDeatilInfo.length > 0) {
+    const initialData = $assetDeatilInfo[0].asset || [];
+    currentData = initialData.map((item) => ({
+      ...item,
+      modelType: determineModelType(activeData),
+    }));
+  }
+
+  // Or, you could trigger a function to load data again if needed
+  $: if (activeData === "운영체제정보") {
+    selectData($assetDeatilInfo[0]?.system_info?.osinfo || [], "운영체제정보");
+  }
 
   let selectedItem = null; // State for the selected item
   let isModalOpen = false; // State for modal visibility
@@ -118,11 +140,14 @@
     }
   })();
 
-  // Subscribe to the asset detail info store and set data on mount
   onMount(() => {
-    const initialData =
-      $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset : [];
-    selectData(initialData, activeData); // Load initial data for "운영체제정보"
+    console.log("Asset Detail Info:", $assetDeatilInfo);
+
+    // Fetch the initial data for the active menu
+    if ($assetDeatilInfo.length > 0) {
+      const initialData = $assetDeatilInfo[0].asset || [];
+      selectData(initialData, activeData); // Load data for '운영체제정보' immediately
+    }
   });
 
   const allowedFields = {
@@ -178,12 +203,11 @@
     AssetsDlls: ["ads_dll", "ads_hash", "ads_cdate"],
   };
 
-  // Subscribe to asset details and history for display purposes
+  $: fieldOptions =
+    currentData && currentData.length > 0 ? Object.keys(currentData[0]) : [];
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
-  $: fieldOptions =
-    currentData && currentData.length > 0 ? Object.keys(currentData[0]) : [];
 </script>
 
 <main>

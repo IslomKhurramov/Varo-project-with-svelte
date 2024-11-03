@@ -257,44 +257,91 @@
   };
 
   /************************************************************************/
-  function filterData() {
-    // If the selectedChecklistData is found and it has the selected category
-    if (selectedChecklist && selectedChecklist[selectedCategory]) {
-      // Extract the data for the selected category
-      let filteredData = selectedChecklist[selectedCategory];
+  let isCategoryManuallySelected = false; // Track if the category is manually selected
 
-      // Further filter by risk level if a valid risk is selected
+  function filterData() {
+    if (selectedChecklist) {
+      let filteredData = [];
+
+      // If a category is manually selected
+      if (isCategoryManuallySelected) {
+        // Check if the selected category has data
+        if (
+          selectedCategory &&
+          selectedChecklist[selectedCategory] &&
+          selectedChecklist[selectedCategory].length > 0
+        ) {
+          filteredData = selectedChecklist[selectedCategory];
+        } else if (selectedCategory) {
+          // If the selected category has no data
+          console.log("No data available for the selected category.");
+        }
+      } else {
+        // If no category is selected (default case), find the first available category with data
+        const categories = [
+          "UNIX",
+          "WINDOWS",
+          "PC",
+          "NETWORK",
+          "DBMS",
+          "WEB",
+          "WAS",
+          "CLOUD",
+          "SECURITY",
+        ];
+        for (let category of categories) {
+          if (
+            selectedChecklist[category] &&
+            selectedChecklist[category].length > 0
+          ) {
+            filteredData = selectedChecklist[category];
+            selectedCategory = category; // Set to the first category with data
+            console.log(
+              `Switched to ${category} as it contains available data.`,
+            );
+            break; // Exit loop once we find valid data
+          }
+        }
+      }
+
+      // Apply risk level filter if selectedRisk is valid
       if (selectedRisk && selectedRisk !== "위험도") {
         filteredData = filteredData.filter(
           (item) => item.ccc_item_level === selectedRisk,
         );
       }
 
-      // Check if we have any filtered data
-      if (filteredData.length > 0) {
-        slides = filteredData; // Update slides with filtered data
-        selectedItem = slides[0]; // Select the first item from the filtered data
-        showSlide = true; // Show slides since we have data
-      } else {
-        slides = []; // Reset slides if no data
-        selectedItem = null; // Reset selectedItem if no data
-        showSlide = false;
-      }
-
-      // Log filtered results for debugging
-      console.log("Filtered Slides:", slides);
+      // Update slides and selected item
+      slides = filteredData;
+      selectedItem = slides.length > 0 ? slides[0] : null; // Select first item if available
+      showSlide = slides.length > 0; // Show slides if there's data
 
       // Initialize Swiper if there are slides to show
       if (showSlide) {
         initializeSwiper();
       }
     } else {
-      // Handle case where the selected checklist has no data for the selected category
-      slides = []; // Ensure slides are empty
-      selectedItem = null; // Reset selectedItem
+      // Handle case where the selected checklist is not defined
+      slides = [];
+      selectedItem = null;
+      showSlide = false;
     }
   }
 
+  // Update category and mark it as a manual selection
+  function handleCategorySelection(event) {
+    selectedCategory = event.target.value;
+    isCategoryManuallySelected = true; // Mark as manually selected
+    filterData(); // Re-run the filter with updated selection
+  }
+
+  function handleChecklistSelect(checkList) {
+    return function () {
+      selectPage(CheckListDetail, checkList); // Navigate to CheckListDetail with selected checkList
+      isCategoryManuallySelected = false; // Reset the manual selection flag
+      filterData(); // Update the displayed data based on the checklist selected
+    };
+  }
   // Reactive statement to trigger filterData on any of the dependencies change
   $: selectedRisk,
     selectedCategory,
@@ -385,7 +432,7 @@
     if (editingChecklistId !== null) {
       editChecklist(editingChecklistId, editedChecklistName);
     }
-
+    selectedChecklist = "";
     // Reset all relevant states
     editingChecklistId = null;
     editedChecklistName = "";
@@ -429,8 +476,7 @@
           <li class={activeMenu === checkList ? "active" : ""}>
             <a
               href="#"
-              on:click|preventDefault={() =>
-                selectPage(CheckListDetail, checkList)}
+              on:click|preventDefault={handleChecklistSelect(checkList)}
               title="{checkList.ccg_group}({checkList.ccg_checklist_year})"
             >
               <span
@@ -476,7 +522,7 @@
             name="asset_group"
             id="asset_group"
             bind:value={selectedCategory}
-            on:change={filterData}
+            on:change={handleCategorySelection}
             style="width: 150px;"
           >
             <option value="UNIX">점검대상</option>

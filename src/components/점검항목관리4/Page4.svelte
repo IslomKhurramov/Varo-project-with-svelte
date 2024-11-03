@@ -409,7 +409,6 @@
     selectedCategory = "UNIX"; // Reset to default category
     selectedRisk = "위험도"; // Reset to default risk level
     showDataTbale2 = false; // Reset any UI flags
-    filteredChecklistData.set([]); // Reset store data to empty array
 
     filterData();
   }

@@ -190,7 +190,7 @@
       <article class="contentArea securityWrap">
         <h4 class="title border">보안점수</h4>
         <div class="circle" data-percent="80" data-offset="345">
-          <svg viewBox="0 0 139 139">
+          <svg width="100%" height="100%" viewBox="0 0 139 139">
             <circle
               cx="75"
               cy="75"
@@ -253,7 +253,7 @@
           data-offset="345"
           data-color="primary"
         >
-          <svg viewBox="0 0 139 139">
+          <svg width="100%" height="100%" viewBox="0 0 139 139">
             <circle
               cx="75"
               cy="75"
@@ -451,7 +451,7 @@
       <table class="tableForm">
         <colgroup>
           <col style="width:130px;" />
-          <col style="width:380px;" />
+          <col />
           <col style="width:70px;" />
           <col />
         </colgroup>
@@ -460,7 +460,7 @@
             <th>제목</th>
             <td colspan="3">
               <input
-                style="width: 740px;"
+                style="width: 913px;"
                 type="text"
                 placeholder="점검플랜명"
                 bind:value={updateInfo["ccp_title"]}
@@ -472,7 +472,7 @@
             <td>
               <select
                 bind:value={updateInfo["asg_index"]}
-                style="width: 740px;"
+                style="width: 913px;"
               >
                 <option value="" selected disabled>자산 그룹목록</option>
 
@@ -491,7 +491,7 @@
             <td colspan="3">
               <select
                 bind:value={updateInfo["ccp_ruleset"]}
-                style="width: 740px;"
+                style="width: 913px;"
               >
                 <option value="" selected disabled>점검항목 목록</option>
                 {#if planOptions.checklist_group}
@@ -518,7 +518,7 @@
                 placeholder="진행상태"
                 disabled
                 value={projectDetails?.ccp_b_finalized ? "완료" : "진행 중"}
-                style="width: 740px;"
+                style="width: 913px;"
               />
             </td>
           </tr>
@@ -529,7 +529,7 @@
                 <div class="date">
                   <select
                     bind:value={updateInfo["recheck"]}
-                    style={`width: ${updateInfo?.recheck === 1 ? "340" : "740"}px;`}
+                    style={`width: ${updateInfo?.recheck === 1 ? "434.5" : "913"}px;`}
                   >
                     <option value={0}> 신규점겅검 </option>
                     <option value={1}> 이행점검 </option>
@@ -539,7 +539,10 @@
                   <!-- svelte-ignore a11y-missing-attribute -->
                   <img src="./assets/images/icon/dash.svg" />
                   <div class="date">
-                    <select bind:value={updateInfo["recheck_pno"]}>
+                    <select
+                      bind:value={updateInfo["recheck_pno"]}
+                      style="width: 434.5px;height:34px;"
+                    >
                       <option value={0} disabled>이전 점검플랜명</option>
 
                       {#if planList}
@@ -560,7 +563,7 @@
             <td>
               <select
                 bind:value={updateInfo["plan_planer_info"]}
-                style="width: 740px;"
+                style="width: 913px;"
               >
                 <option value="" selected disabled>선택</option>
                 {#if planOptions.member_group}
@@ -579,6 +582,7 @@
               <div class="dateWrap">
                 <div class="date">
                   <input
+                    style="width: 434.5px;"
                     type="datetime-local"
                     class="datepicker"
                     placeholder="시작일시"
@@ -589,6 +593,7 @@
                 <img src="./assets/images/icon/dash.svg" />
                 <div class="date">
                   <input
+                    style="width: 434.5px;"
                     type="datetime-local"
                     class="datepicker"
                     placeholder="종료일시"
@@ -601,7 +606,7 @@
           <tr>
             <th>점검스케쥴</th>
             <td colspan="3">
-              <select style="width: 740px;">
+              <select style="width: 913px;">
                 <option
                   value="0"
                   selected={updateInfo?.plan_execution_type === true}
@@ -623,6 +628,7 @@
               <div class="dateWrap">
                 <div class="date">
                   <input
+                    style="width: 434.5px;"
                     type="date"
                     class="datepicker"
                     placeholder="시작일시"
@@ -633,6 +639,7 @@
                 <img src="./assets/images/icon/dash.svg" />
                 <div class="date">
                   <input
+                    style="width: 434.5px;"
                     type="date"
                     class="datepicker"
                     placeholder="종료일시"
@@ -648,7 +655,7 @@
             <td colspan="3">
               <select
                 bind:value={updateInfo["fix_conductor_info"]}
-                style="width: 740px;"
+                style="width: 913px;"
               >
                 <option value="" selected disabled>선택</option>
                 {#if planOptions.member_group}
@@ -668,7 +675,7 @@
                 <label
                   for="file-upload"
                   class="file-label"
-                  style="width: 576px; font-size: 16px; padding: 0 10px;"
+                  style="width: 750px; font-size: 16px; padding: 0 10px;"
                   >{updateInfo?.assessment_command
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
@@ -707,7 +714,7 @@
                 <label
                   for="file-upload"
                   class="file-label"
-                  style="width: 509px; visibility: hidden;"
+                  style="width: 681px; visibility: hidden;"
                   >{updateInfo?.assessment_command
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
@@ -754,7 +761,7 @@
             </div>
 
             <div class="circle" data-percent="80" data-offset="345">
-              <svg viewBox="0 0 139 139">
+              <svg width="100%" height="100%" viewBox="0 0 139 139">
                 <circle
                   cx="75"
                   cy="75"

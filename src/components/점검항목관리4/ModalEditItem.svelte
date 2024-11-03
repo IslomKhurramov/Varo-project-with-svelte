@@ -165,7 +165,10 @@
     class="contentArea"
     style="height: 75vh; padding-left: 0 !important; padding-right: 0 !important; padding-top: 0 !important;"
   >
-    <div class="modal table-container" style="margin-bottom: 20px;">
+    <div
+      class="modal table-container"
+      style="margin-bottom: 20px; height:72vh;"
+    >
       <table style="margin-bottom: 20px;" class="main-table">
         <thead>
           <tr class="sticky-row">
@@ -216,7 +219,7 @@
               <td class="line-height">
                 {@html selectedItem.ccc_item_criteria.replace(/\n/g, "<br/>")}
 
-                {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+                {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
                   <td class="new_input">
                     <div class="first_col">
                       <p>점검항목</p>
@@ -264,7 +267,7 @@
       {#if closeShowModal}
         <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
       {/if}
-      {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+      {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
         <div class="buttons">
           <div class="buttonGroup">
             <button class="btn modify-btn">수정하기</button>
@@ -283,6 +286,9 @@
   .table-container {
     height: 60vh; /* Set the height of the scrollable area */
     overflow-y: auto; /* Allow vertical scrolling in this container */
+  }
+  .tableListWrap .hdBorder td {
+    font-size: 16px;
   }
   .contentArea {
     padding-left: 0;
@@ -330,7 +336,6 @@
 
     padding-top: 0px;
     margin-top: 0px;
-    border-radius: 10px;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
     width: 100%;
     font-family: Arial, sans-serif;

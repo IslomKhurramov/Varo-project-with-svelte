@@ -258,70 +258,42 @@
 
   /************************************************************************/
   function filterData() {
-    // Reset showSlide to false initially
-    showSlide = false; // Hide slides until data is ready
+    // If the selectedChecklistData is found and it has the selected category
+    if (selectedChecklist && selectedChecklist[selectedCategory]) {
+      // Extract the data for the selected category
+      let filteredData = selectedChecklist[selectedCategory];
 
-    // Check if selectedChecklist and its data are valid
-    if (selectedChecklist && allChecklistArray.length > 0) {
-      // Find the checklist item corresponding to the selectedChecklist
-      const selectedChecklistData = allChecklistArray.find(
-        (item) => item.ccg_id === selectedChecklist.id,
-      );
+      // Further filter by risk level if a valid risk is selected
+      if (selectedRisk && selectedRisk !== "위험도") {
+        filteredData = filteredData.filter(
+          (item) => item.ccc_item_level === selectedRisk,
+        );
+      }
 
-      // If the selectedChecklistData is found and it has the selected category
-      if (selectedChecklistData && selectedChecklistData[selectedCategory]) {
-        // Extract the data for the selected category
-        let filteredData = selectedChecklistData[selectedCategory];
-
-        // Further filter by risk level if a valid risk is selected
-        if (selectedRisk && selectedRisk !== "위험도") {
-          filteredData = filteredData.filter(
-            (item) => item.ccc_item_level === selectedRisk,
-          );
-        }
-
-        // Check if we have any filtered data
-        if (filteredData.length > 0) {
-          slides = filteredData; // Update slides with filtered data
-          selectedItem = slides[0]; // Select the first item from the filtered data
-          showSlide = true; // Show slides since we have data
-        } else {
-          slides = []; // Reset slides if no data
-          selectedItem = null; // Reset selectedItem if no data
-        }
-
-        // Log filtered results for debugging
-        console.log("Filtered Slides:", slides);
-
-        // Initialize Swiper if there are slides to show
-        if (showSlide) {
-          initializeSwiper();
-        }
+      // Check if we have any filtered data
+      if (filteredData.length > 0) {
+        slides = filteredData; // Update slides with filtered data
+        selectedItem = slides[0]; // Select the first item from the filtered data
+        showSlide = true; // Show slides since we have data
       } else {
-        // Handle case where the selected checklist has no data for the selected category
-        slides = []; // Ensure slides are empty
-        selectedItem = null; // Reset selectedItem
+        slides = []; // Reset slides if no data
+        selectedItem = null; // Reset selectedItem if no data
+        showSlide = false;
+      }
+
+      // Log filtered results for debugging
+      console.log("Filtered Slides:", slides);
+
+      // Initialize Swiper if there are slides to show
+      if (showSlide) {
+        initializeSwiper();
       }
     } else {
-      // Handle case where no valid checklist data is available
+      // Handle case where the selected checklist has no data for the selected category
       slides = []; // Ensure slides are empty
       selectedItem = null; // Reset selectedItem
     }
   }
-
-  // Reactive statement to trigger filterData on any of the dependencies change
-  $: selectedRisk,
-    selectedCategory,
-    selectedChecklist,
-    allChecklistArray,
-    filterData();
-
-  // Reactive statement to trigger filterData on any of the dependencies change
-  $: selectedRisk,
-    selectedCategory,
-    selectedChecklist,
-    allChecklistArray,
-    filterData();
 
   // Reactive statement to trigger filterData on any of the dependencies change
   $: selectedRisk,
@@ -472,7 +444,7 @@
         {/each}
 
         <!-- Render newly created checklists with Edit/Delete buttons -->
-        {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <li>
             <div class="project_button">
               <div class="new_input">
@@ -580,7 +552,7 @@
               돌아가기
             </button>
           {/if}
-          {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+          {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <!-- If the checklist is in edit mode, show Save/Cancel buttons -->
             {#if editingChecklistId === selectedChecklist.ccg_index}
               <button

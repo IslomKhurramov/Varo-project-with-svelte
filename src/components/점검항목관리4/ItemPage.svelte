@@ -206,46 +206,55 @@
               <td class="text-center">{formatDate(data.ccg_createdate)}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <td
-                class="text-center"
-                style="display: flex; justify-content:center"
+                class="text-center delete-column"
+                style="display: flex; justify-content: center"
                 on:click|stopPropagation
               >
+                <!-- Show the button but make it invisible if not needed -->
                 <button
                   class="btn btnRed"
                   on:click={() => deleteProject(data.ccg_index)}
-                  ><img
+                  style="visibility: {data && data.ccg_provide === 0
+                    ? 'visible'
+                    : 'hidden'}"
+                >
+                  <img
                     src="./assets/images/icon/delete.svg"
                     alt="createGroup"
-                  />삭제</button
-                >
+                  />삭제
+                </button>
               </td>
             </tr>
           {/each}
         </tbody>
       </table>
     </div>
-
-    <p style="padding:10px ;  font-size:16px">
-      {#if selectedChecklist && selectedChecklist.ccg_group}
-        {selectedChecklist.ccg_group}
-      {/if}
-    </p>
-    {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
-      <div class="control-buttons">
-        <div style="display: flex; align-items:center">
+    <div
+      style="display: flex; flex-direction:row; width:100%; justify-content:space-between"
+    >
+      <div style="display: flex; align-items:center">
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <input
             type="checkbox"
             on:click={selectAll}
             checked={allSelected}
           /><strong> 전체선택 </strong>
-        </div>
-
-        <button on:click={deleteSelectedItem}>선택항목삭제</button>
+        {/if}
+        {#if selectedChecklist && selectedChecklist.ccg_group}
+          {#if selectedChecklist && selectedChecklist.ccg_group}
+            {selectedChecklist.ccg_group}
+          {/if}
+        {/if}
       </div>
-    {/if}
+      {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
+        <button class="deleteBtn" on:click={deleteSelectedItem}
+          >선택항목삭제</button
+        >
+      {/if}
+    </div>
     <div class="tableListWrap table2" style="margin-bottom: 20px;">
       <table class="tableList hdBorder font-size: 16px;">
-        {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <colgroup>
             <col style="width:90px;" />
             <col style="width:90px;" />
@@ -269,7 +278,7 @@
         {/if}
         <thead>
           <tr>
-            {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+            {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
               <th on:click|stopPropagation></th>
             {/if}
             <th class="text-center">남버</th>
@@ -292,7 +301,7 @@
                     showModal = true;
                   }}
                 >
-                  {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+                  {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <td on:click|stopPropagation
                       ><input
@@ -405,6 +414,7 @@
   td {
     font-size: 16px;
   }
+
   thead {
     position: sticky; /* Make the header sticky */
     top: 0; /* Stick the header to the top */

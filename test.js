@@ -23,3 +23,5 @@ function decryptData(encryptedString) {
     return null;
   }
 }
+
+console.log(decryptData("7diEXGdRCIKD5R8FsYxBPi/NMKhdZJH/UBDeWhQ+DOI="));

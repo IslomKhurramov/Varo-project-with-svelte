@@ -193,7 +193,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each allChecklistArray as data, index}
+          {#each [...allChecklistArray].sort((a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate)) as data, index}
             <tr on:click={() => handleProjectData(data)}>
               <td class="text-center">{index + 1}</td>
               <td class="text-center">{data.ccg_group}</td>
@@ -309,6 +309,7 @@
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <td on:click|stopPropagation
                       ><input
+                        class="center-align"
                         type="checkbox"
                         bind:group={selected}
                         value={item}
@@ -328,18 +329,18 @@
                 </tr>
               {/each}
             {:else}
-              <tr
-                ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                  >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
-                ></tr
-              >
+              <div class="text-center no-data-message">
+                {selectedCategory}에서 사용 가능한 데이터가 없습니다.
+              </div>
             {/if}
           {:else}
-            <tr
-              ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                >점검대상 선택해 주세요</td
-              ></tr
-            >
+            <tr>
+              <td
+                colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                class="text-center no-data-message"
+                >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+              >
+            </tr>
           {/if}
         </tbody>
       </table>
@@ -361,6 +362,16 @@
 </div>
 
 <style>
+  .no-data-message {
+    text-align: center; /* Center the text */
+    font-style: italic; /* Italicize the text for emphasis */
+    color: #777; /* Light gray color for the message */
+    padding: 20px; /* Add some padding around the text */
+    background-color: #f9f9f9; /* Light background color for contrast */
+    border: 1px solid #ddd; /* Optional: Add a border for definition */
+    border-radius: 5px; /* Slightly round the corners */
+    margin: 20px 0; /* Margin above and below the message */
+  }
   .deleteBtn {
     background-color: #007bff;
     color: white;

@@ -208,6 +208,7 @@
 
         // Reset the last created checklist ID after deletion
         lastCreatedChecklistId = null;
+        currentPage = ItemPage;
       } else {
         throw new Error("Deletion failed.");
       }

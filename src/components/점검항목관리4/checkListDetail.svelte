@@ -181,16 +181,17 @@
                     selectedItem = item;
                     selectedItemNumber = item.ccc_item_no;
                     showModalModalEditItem = true;
-                    selected = [item];
                   }}
                 >
                   {#if selectedChecklist.ccg_provide === 0}
-                    <td on:click|stopPropagation>
+                    <td>
                       <input
+                        class="center-align"
                         type="checkbox"
                         bind:group={selected}
                         value={item}
-                        name={item}
+                        name={item.ccc_item_no}
+                        on:click|stopPropagation
                       />
                     </td>
                   {/if}
@@ -207,7 +208,9 @@
               {/each}
             {:else}
               <tr>
-                <td colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                <td
+                  colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                  class="text-center no-data-message"
                   >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
                 >
               </tr>
@@ -220,6 +223,16 @@
 </section>
 
 <style>
+  .no-data-message {
+    text-align: center; /* Center the text */
+    font-style: italic; /* Italicize the text for emphasis */
+    color: #777; /* Light gray color for the message */
+    padding: 20px; /* Add some padding around the text */
+    background-color: #f9f9f9; /* Light background color for contrast */
+    border: 1px solid #ddd; /* Optional: Add a border for definition */
+    border-radius: 5px; /* Slightly round the corners */
+    margin: 20px 0; /* Margin above and below the message */
+  }
   .tableListWrap .hdBorder td {
     font-size: 16px;
   }

@@ -137,7 +137,7 @@
         style="display: flex; flex-direction:row; width:100%; justify-content:space-between"
       >
         <div style="display: flex; align-items:center">
-          {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+          {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <input
               type="checkbox"
               on:click={selectAll}
@@ -148,15 +148,15 @@
             {selectedChecklist.ccg_group} 세부내용
           </p>
         </div>
-        {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+        {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <button class="deleteBtn" on:click={deleteSelectedItem}
             >선택항목삭제</button
           >
         {/if}
       </div>
       <div class="tableListWrap table2">
-        <table class="tableList hdBorder" style="height: 50vh;">
-          {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+        <table class="tableList hdBorder" style="height: 70vh;">
+          {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <colgroup>
               <col style="width:90px;" />
               <col style="width:90px;" />
@@ -180,7 +180,7 @@
           {/if}
           <thead>
             <tr>
-              {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+              {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
                 <th on:click|stopPropagation></th>
               {/if}
               <th class="text-center">남버</th>
@@ -203,7 +203,7 @@
                     selected = [item];
                   }}
                 >
-                  {#if selectedChecklist.ccg_provide === 1}
+                  {#if selectedChecklist.ccg_provide === 0}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <td on:click|stopPropagation
                       ><input
@@ -242,6 +242,9 @@
 </section>
 
 <style>
+  .tableListWrap .hdBorder td {
+    font-size: 16px;
+  }
   .deleteBtn {
     background-color: #007bff;
     color: white;

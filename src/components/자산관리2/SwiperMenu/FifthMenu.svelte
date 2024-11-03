@@ -248,7 +248,7 @@
           id="networkDateSelect"
           bind:value={selectedNetworkDate}
         >
-          <option value="">Select a Date</option>
+          <option value="">점검날짜</option>
           {#each getUniqueDates("apn_cdate") as date}
             <option value={date}>{date}</option>
           {/each}
@@ -261,7 +261,7 @@
           id="processAppNameSelect"
           bind:value={selectedProcessAppName}
         >
-          <option value="">Filter by Date</option>
+          <option value="">점검날짜</option>
           {#each getUniqueDates("app_cdate") as date}
             <option value={date}>{date}</option>
           {/each}
@@ -274,7 +274,7 @@
           id="installedProgDateSelect"
           bind:value={selectedInstalledProgDate}
         >
-          <option value="">Select a Date</option>
+          <option value="">점검날짜</option>
           {#each getUniqueDates("aip_cdate") as date}
             <option value={date}>{date}</option>
           {/each}
@@ -287,7 +287,7 @@
           id="patchDateSelect"
           bind:value={selectedPatchDate}
         >
-          <option value="">Select a Date</option>
+          <option value="">점검날짜</option>
           {#each getUniqueDates("aps_cdate") as date}
             <option value={date}>{date}</option>
           {/each}
@@ -300,7 +300,7 @@
           id="dllDateSelect"
           bind:value={selectedDllDate}
         >
-          <option value="">Select a Date</option>
+          <option value="">점검날짜</option>
           {#each getUniqueDates("ads_cdate") as date}
             <option value={date}>{date}</option>
           {/each}
@@ -386,7 +386,7 @@
                       {#if modelType === "AssetPatchStatus" || modelType === "AssetsDlls"}
                         <col />
                       {:else if modelType === "AssetProcess"}
-                        <col style="width: 90px;" />
+                        <col style="width: auto;" />
                         <col style="width: auto;" />
                         <col style="width: auto;" />
                         <col style="width: auto;" />
@@ -479,11 +479,11 @@
               </colgroup>
               <tr style="height: 50px; position: sticky;top: -1px;">
                 <th
-                  class="center-align"
+                  class="text-center"
                   style="color: white;background: #0072fd;">구분</th
                 >
                 <td
-                  class="center-align"
+                  class="text-center"
                   style="color: white;background: #0072fd;">설명</td
                 >
               </tr>
@@ -828,6 +828,7 @@
     cursor: pointer;
   }
   thead {
+    position: sticky; /* Make the header sticky */
     top: 0; /* Stick the header to the top */
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */

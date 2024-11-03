@@ -86,7 +86,7 @@
             <td class="line-height">
               {@html selectedItem.ccc_item_criteria.replace(/\n/g, "<br/>")}
 
-              {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+              {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
                 <td class="new_input">
                   <div class="first_col">
                     <p>점검항목</p>
@@ -135,7 +135,7 @@
       {#if closeShowModal}
         <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
       {/if}
-      {#if selectedChecklist && selectedChecklist.ccg_provide === 1}
+      {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
         <div class="buttons">
           <div class="buttonGroup">
             <button class="btn modify-btn">수정하기</button>

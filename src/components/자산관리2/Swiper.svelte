@@ -382,19 +382,25 @@
     </section>
     <section class="content">
       <div>
-        <div class="section" style="margin-top: 20px;">
+        <div class="section">
           <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div class="flex justify-between submenuWrap">
-            <!-- svelte-ignore a11y-missing-attribute -->
+          <div
+            class="flex justify-between submenuWrap"
+            style="position: sticky;
+    top: 69px;
+    z-index: 99;
+    background-color: white;
+    height: 40px;
+    padding: 20px;"
+          >
             <section class="subTabWrap">
-              <!-- svelte-ignore a11y-missing-attribute -->
+              <!-- Links go here -->
               <a
                 on:click={() => selectPage(FirstMenu, "자산개요")}
                 class={activeMenu === "자산개요" ? "active" : ""}
               >
                 자산개요
               </a>
-
               <a
                 on:click={() => selectPage(FourthMenu, "CCE점검이력")}
                 class={activeMenu === "CCE점검이력" ? "active" : ""}
@@ -409,36 +415,40 @@
               </a>
             </section>
             <section class="flex btnWrap gap-4">
+              <!-- Buttons go here -->
               <button
                 class="btn w140 btnBlue"
                 on:click={() => (showModal = true)}
-                >자산그룹이동
+              >
+                자산그룹이동
               </button>
               <button
                 class="btn w140 btnBlue"
                 on:click={() => selectPage(ModalEdit, "ModalEdit")}
-                >정보수정</button
               >
+                정보수정
+              </button>
               {#if approve_status === 0}
-                <button class="btn w140 btnBlue" on:click={assetRegisterChange}
-                  >등록승인</button
-                >
-              {:else}
-                <button class="btn w140 btnBlue" on:click={assetRegisterChange}
-                  >등록해제</button
-                >
-              {/if}
-              {#if !assetDetails.ast_activate}
-                <button class="btn w140 btnBlue" on:click={activateAsset}
-                  >자산등록
+                <button class="btn w140 btnBlue" on:click={assetRegisterChange}>
+                  등록승인
                 </button>
               {:else}
-                <button class="btn w140 btnBlue" on:click={unactivate}
-                  >자산삭제</button
-                >
+                <button class="btn w140 btnBlue" on:click={assetRegisterChange}>
+                  등록해제
+                </button>
+              {/if}
+              {#if !assetDetails.ast_activate}
+                <button class="btn w140 btnBlue" on:click={activateAsset}>
+                  자산등록
+                </button>
+              {:else}
+                <button class="btn w140 btnBlue" on:click={unactivate}>
+                  자산삭제
+                </button>
               {/if}
             </section>
           </div>
+
           {#if currentPage}
             <div class="right_menu">
               <svelte:component

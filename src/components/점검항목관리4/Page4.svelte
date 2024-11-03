@@ -409,7 +409,6 @@
     selectedCategory = "UNIX"; // Reset to default category
     selectedRisk = "위험도"; // Reset to default risk level
     showDataTbale2 = false; // Reset any UI flags
-    filteredChecklistData.set([]); // Reset store data to empty array
 
     filterData();
   }
@@ -577,9 +576,9 @@
               style="padding: 15px;"
               class="btn btnPrimary"
               on:click={() => {
+                console.log("Closing modal");
                 showEdit = false;
                 showModalModalEditItem = false;
-                resetEditAndModalState();
               }}
             >
               돌아가기
@@ -589,10 +588,10 @@
               style="padding: 15px;"
               class="btn btnPrimary"
               on:click={() => {
+                console.log("Going back to ItemPage");
                 selectPage(ItemPage);
-                showDataTbale2 = false;
+
                 resetEditAndModalState();
-                showEdit = false;
               }}
             >
               돌아가기

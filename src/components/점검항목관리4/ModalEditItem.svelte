@@ -163,8 +163,7 @@
 <section style="  height: 99%">
   <article
     class="contentArea"
-    style="height: 75vh;
-    "
+    style="height: 75vh; padding-left: 0 !important; padding-right: 0 !important; padding-top: 0 !important;"
   >
     <div class="modal table-container" style="margin-bottom: 20px;">
       <table style="margin-bottom: 20px;" class="main-table">
@@ -285,7 +284,11 @@
     height: 60vh; /* Set the height of the scrollable area */
     overflow-y: auto; /* Allow vertical scrolling in this container */
   }
-
+  .contentArea {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+  }
   .main-table {
     width: 100%;
     border-collapse: collapse;

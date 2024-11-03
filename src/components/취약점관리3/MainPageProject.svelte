@@ -231,6 +231,7 @@
                 setView = "plan";
                 selectedItems = [];
                 theadChecked = false;
+                search.step_vuln = "1";
 
                 if (showProject) {
                   const data = await getVulnsOfAsset(search);
@@ -248,32 +249,90 @@
           >
             조치계획
           </a>
+          <a
+            href="javascript:void(0);"
+            class={setView == "plan_accept" ? "active" : ""}
+            on:click={async () => {
+              try {
+                loading = true;
+                setView = "plan_accept";
+                selectedItems = [];
+                theadChecked = false;
+
+                search.step_vuln = "2";
+
+                if (showProject) {
+                  const data = await getVulnsOfAsset(search);
+                  tableData = data?.vulns;
+                } else {
+                  const data = await getVulnsOfAsset(search);
+                  tableData = data?.vulns;
+                }
+                loading = false;
+              } catch (err) {
+                errorAlert(err?.message);
+                loading = false;
+              }
+            }}
+          >
+            조치계획승인
+          </a>
           {#if isAgenUser}
             <a
               href="javascript:void(0);"
               class={setView == "result" ? "active" : ""}
               on:click={async () => {
-                loading = true;
-                setView = "result";
-                selectedItems = [];
-                const data = await getFixDoneLists(selectedSendData);
-                console.log("+getFixDoneLists:", data);
+                try {
+                  loading = true;
+                  setView = "result";
+                  selectedItems = [];
+                  theadChecked = false;
 
-                tableData = Object.fromEntries(
-                  Object.entries(data?.vulns).filter(([key, value]) =>
-                    value.some(
-                      (item) =>
-                        item.result &&
-                        item.result.cfi_fix_status__cvs_index === 3,
-                    ),
-                  ),
-                );
-                console.log("+tableData:", tableData);
+                  search.step_vuln = "3";
 
-                loading = false;
+                  if (showProject) {
+                    const data = await getVulnsOfAsset(search);
+                    tableData = data?.vulns;
+                  } else {
+                    const data = await getVulnsOfAsset(search);
+                    tableData = data?.vulns;
+                  }
+                  loading = false;
+                } catch (err) {
+                  errorAlert(err?.message);
+                  loading = false;
+                }
               }}
             >
               조치결과
+            </a>
+            <a
+              href="javascript:void(0);"
+              class={setView == "result_accept" ? "active" : ""}
+              on:click={async () => {
+                try {
+                  loading = true;
+                  setView = "result_accept";
+                  selectedItems = [];
+                  theadChecked = false;
+
+                  search.step_vuln = "4";
+
+                  if (showProject) {
+                    const data = await getVulnsOfAsset(search);
+                    tableData = data?.vulns;
+                  } else {
+                    const data = await getVulnsOfAsset(search);
+                    tableData = data?.vulns;
+                  }
+                  loading = false;
+                } catch (err) {
+                  errorAlert(err?.message);
+                  loading = false;
+                }
+              }}
+            >
+              조치결과승인
             </a>
           {/if}
         </section>

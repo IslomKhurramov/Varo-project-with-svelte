@@ -36,6 +36,7 @@
   let search = {
     plan_index: "",
     asset_target_uuid: "",
+    step_vuln: "1",
   };
 
   // DATA
@@ -62,12 +63,15 @@
   onMount(async () => {
     try {
       loading = true;
+      console.log("search:", search);
       plans = await getVulnsOfAsset(search);
       tableData = plans?.vulns;
       loading = false;
 
-      await getVulnsOfAsset(search);
+      assets = await getVulnsOfAsset(search);
+      tableData = assets?.vulns;
     } catch (err) {
+      console.log("onMount Error:", err);
       await errorAlert(err?.message);
       loading = false;
     }
@@ -263,6 +267,10 @@
       );
     }
   }
+
+  $: {
+    console.log("+search:", search);
+  }
 </script>
 
 {#if loading}
@@ -289,6 +297,7 @@
               search = {
                 plan_index: "",
                 asset_target_uuid: "",
+                step_vuln: "1",
               };
               setView = "plan";
               selectedSendData = {
@@ -320,6 +329,7 @@
               search = {
                 plan_index: "",
                 asset_target_uuid: "",
+                step_vuln: "1",
               };
               setView = "plan";
               selectedSendData = {

@@ -313,7 +313,7 @@
                   <col />
                 </colgroup>
                 <tbody>
-                  {#if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+                  {#if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length === 0}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -399,7 +399,7 @@
                         </select>
                       </td>
                     </tr>
-                  {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+                  {:else if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length !== 0}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -493,7 +493,7 @@
                         />
                       </td>
                     </tr>
-                  {:else if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
+                  {:else if (setView == "plan" || setView == "plan_accept") && Object.keys(targetData?.fix_plan).length !== 0}
                     <tr>
                       <th>조치방법</th>
                       <td>
@@ -692,7 +692,7 @@
                 </tbody>
               </table>
               <div class="flex justify-center btnActionWrap">
-                {#if setView == "plan" && Object.keys(targetData?.fix_plan).length !== 0}
+                {#if (setView == "plan" || setView == "plan_accept") && Object.keys(targetData?.fix_plan).length !== 0}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"
@@ -715,7 +715,7 @@
                   >
                     의견등록
                   </button>
-                {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length === 0}
+                {:else if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length === 0}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"
@@ -724,7 +724,7 @@
                   >
                     조치결과등록
                   </button>
-                {:else if isAgentUser && setView == "result" && Object.keys(targetData?.fix_result).length !== 0}
+                {:else if isAgentUser && (setView == "result" || setView == "result_accept") && Object.keys(targetData?.fix_result).length !== 0}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"

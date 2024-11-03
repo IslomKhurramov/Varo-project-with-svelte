@@ -170,6 +170,10 @@
       style="margin-bottom: 20px; height:72vh;"
     >
       <table style="margin-bottom: 20px;" class="main-table">
+        <colgroup>
+          <col style="width:61px;" />
+          <col />
+        </colgroup>
         <thead>
           <tr class="sticky-row">
             <th class="center-align sticky-cell">구분</th>

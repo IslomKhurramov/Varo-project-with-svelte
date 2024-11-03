@@ -139,6 +139,7 @@
         <div style="display: flex; align-items:center">
           {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <input
+              class="center-align"
               type="checkbox"
               on:click={selectAll}
               checked={allSelected}
@@ -158,7 +159,7 @@
         <table class="tableList hdBorder" style="height: 70vh;">
           {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <colgroup>
-              <col style="width:90px;" />
+              <col style="width:50px;" />
               <col style="width:90px;" />
               <col />
               <col />
@@ -230,7 +231,7 @@
             {:else}
               <tr
                 ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                  >no data available</td
+                  >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
                 ></tr
               >
             {/if}

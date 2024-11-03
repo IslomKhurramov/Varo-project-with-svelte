@@ -576,9 +576,9 @@
               style="padding: 15px;"
               class="btn btnPrimary"
               on:click={() => {
+                console.log("Closing modal");
                 showEdit = false;
                 showModalModalEditItem = false;
-                resetEditAndModalState();
               }}
             >
               돌아가기
@@ -588,10 +588,10 @@
               style="padding: 15px;"
               class="btn btnPrimary"
               on:click={() => {
+                console.log("Going back to ItemPage");
                 selectPage(ItemPage);
-                showDataTbale2 = false;
+
                 resetEditAndModalState();
-                showEdit = false;
               }}
             >
               돌아가기

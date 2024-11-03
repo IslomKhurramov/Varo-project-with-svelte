@@ -6,7 +6,6 @@
   import { successAlert } from "../../shared/sweetAlert";
 
   export let selectedCategory;
-
   export let selectedChecklist;
   export let lastCreatedChecklistId;
   export let showSlide;
@@ -22,12 +21,15 @@
   export let isNewlyCreatedChecklist;
   let selectedItemNumber = null;
 
-  /**********************************************************************/
+  // Subscribe to filteredChecklistData store
+  let allSelected = false;
+  let checklistData = [];
+
   $: if (selectedChecklist) {
     // Get the checklist data for the selected category
-    let checklistData = selectedChecklist[selectedCategory] || [];
+    checklistData = selectedChecklist[selectedCategory] || [];
 
-    // If selectedRisk is not "위험도" (which means "all"), filter by ccc_item_level
+    // Filter by selectedRisk
     if (selectedRisk !== "위험도") {
       checklistData = checklistData.filter(
         (item) => item.ccc_item_level === selectedRisk,
@@ -38,25 +40,23 @@
     filteredChecklistData.set(checklistData);
   }
 
-  // Subscribe to filteredChecklistData store to make it reactive
-  let allSelected = false;
+  // Update allSelected based on the current selected state
   $: filteredChecklistData.subscribe((data) => {
-    allSelected = data.length === selected.length;
+    allSelected = data.length > 0 && data.length === selected.length;
   });
 
   // Function to select or deselect all items
   function selectAll() {
-    filteredChecklistData.update((data) => {
-      if (allSelected) {
-        selected = []; // Deselect all
-      } else {
+    if (allSelected) {
+      selected = []; // Deselect all
+    } else {
+      filteredChecklistData.update((data) => {
         selected = data.slice(); // Select all
-      }
-      return data; // Return unchanged data
-    });
+        return data; // Return unchanged data
+      });
+    }
   }
 
-  /***********************************************************************************/
   // Function to delete selected items
   async function deleteSelectedItem() {
     if (selected.length === 0) {
@@ -64,58 +64,38 @@
       return;
     }
 
-    const selectedItems = (Array.isArray(selected) ? selected : [selected]).map(
-      (item) => item.ccc_index,
-    );
-    // Now you can proceed with deletion logic
-    const mainIndex = Array.isArray(selected)
-      ? selected[0]?.ccg_index_id
-      : selected.ccg_index_id;
+    const selectedItems = selected.map((item) => item.ccc_index);
+    const mainIndex = selected[0]?.ccg_index_id;
 
     try {
       const deleteItem = await setDeleteChecklistItem(mainIndex, selectedItems);
 
       if (deleteItem.success) {
         successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`);
-
-        // Update the filteredChecklistData store
         filteredChecklistData.update((data) => {
           return data.filter((item) => !selectedItems.includes(item.ccc_index));
         });
 
-        // Clear the selected items and reset selectedItem
+        // Clear the selected items
         selected = [];
         selectedItem = null; // Reset selectedItem to null
+      } else {
+        alert("삭제에 실패했습니다.");
       }
     } catch (error) {
-      alert("Error occurred while deleting items.");
+      alert("Error occurred while deleting items: " + error.message);
     }
   }
 
-  /************************************************************************/
   // Mark the newly created checklist as new
-  $: if (
-    selectedChecklist &&
-    selectedChecklist.ccg_index === lastCreatedChecklistId
-  ) {
-    isNewlyCreatedChecklist = true;
-  } else {
-    isNewlyCreatedChecklist = false;
-  }
-
-  /******************************************************************************/
+  $: isNewlyCreatedChecklist =
+    selectedChecklist && selectedChecklist.ccg_index === lastCreatedChecklistId;
 </script>
 
-<section
-  style="margin-top: 
-10px;"
->
+<section style="margin-top: 10px;">
   <article
     class="contentArea"
-    style=" height: 80vh;
-        top:-10px;  scrollbar-width: none;          
-       -ms-overflow-style: none;      
-       -webkit-overflow-scrolling: touch;"
+    style="height: 80vh; top:-10px; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;"
   >
     {#if showModalModalEditItem}
       <ModalEditItem
@@ -145,7 +125,7 @@
               checked={allSelected}
             /><strong> 전체선택 </strong>
           {/if}
-          <p style="padding:15px ;  font-size:16px">
+          <p style="padding:15px; font-size:16px">
             {selectedChecklist.ccg_group} 세부내용
           </p>
         </div>
@@ -205,35 +185,32 @@
                   }}
                 >
                   {#if selectedChecklist.ccg_provide === 0}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <td on:click|stopPropagation
-                      ><input
+                    <td on:click|stopPropagation>
+                      <input
                         type="checkbox"
                         bind:group={selected}
                         value={item}
                         name={item}
-                      /></td
-                    >
+                      />
+                    </td>
                   {/if}
                   <td class="text-center line-height">{index + 1}</td>
                   <td class="text-center line-height">{selectedCategory}</td>
                   <td class="text-center line-height">{item.ccc_item_group}</td>
                   <td class="text-center line-height">{item.ccc_item_no}</td>
-                  <td class=" line-height">{item.ccc_item_title}</td>
+                  <td class="line-height">{item.ccc_item_title}</td>
                   <td class="text-center line-height">{item.ccc_item_level}</td>
                   <td>
-                    <pre class="line-height">
-                      {item.ccc_item_criteria}
-                    </pre>
+                    <pre class="line-height">{item.ccc_item_criteria}</pre>
                   </td>
                 </tr>
               {/each}
             {:else}
-              <tr
-                ><td colspan={isNewlyCreatedChecklist ? "8" : "7"}
+              <tr>
+                <td colspan={isNewlyCreatedChecklist ? "8" : "7"}
                   >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
-                ></tr
-              >
+                >
+              </tr>
             {/if}
           </tbody>
         </table>

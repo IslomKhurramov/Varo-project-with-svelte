@@ -23,18 +23,17 @@
 
   export let targetData;
   export let setView;
-  export let currentView;
-  export let wholePage;
+  export let vulnerabilityStatusValue;
+  export let actionStatusValue;
+  export let data;
 
   let isAgentUser = ["1", "3", "5"].includes(
     decryptData($userData?.userInfo?.user_roletype_role_index),
   );
-  // let isAgentUser = true;
 
   let usernames = [];
   let options = [];
   let historyItemData = [];
-  let assets = [];
 
   let sendPlanRegisterData = {
     asset_uuid: "",
@@ -105,39 +104,6 @@
     }
   };
 
-  function transformVulns(vulns) {
-    const transformed = [];
-
-    for (const key in vulns) {
-      let currentResult = null;
-      let fixPlan = {};
-      let fixResult = {};
-
-      vulns[key].forEach((item) => {
-        if (item.result) {
-          currentResult = item?.result;
-        } else {
-          if (item.fix_plan) {
-            fixPlan = item.fix_plan;
-          }
-          if (item.fix_result) {
-            fixResult = item.fix_result;
-          }
-        }
-      });
-
-      if (currentResult) {
-        transformed.push({
-          ...currentResult,
-          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
-          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
-        });
-      }
-    }
-
-    return transformed;
-  }
-
   $: {
     (async () => {
       if (targetData) {
@@ -148,30 +114,6 @@
         });
       }
     })();
-  }
-
-  let data = [];
-
-  const getData = async () => {
-    assets = await getVulnsOfAsset({
-      plan_index: targetData?.ccp_index,
-      asset_target_uuid: targetData?.ast_uuid,
-    });
-    data = transformVulns(assets?.vulns);
-
-    const targetIndex = data.findIndex(
-      (item) =>
-        item.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no,
-    );
-
-    // if (targetIndex !== -1) {
-    //   const [targetElement] = data.splice(targetIndex, 1);
-    //   data.unshift(targetElement);
-    // }
-  };
-
-  $: {
-    getData();
   }
 
   const fixApproveHandler = async (data) => {
@@ -240,14 +182,13 @@
 
   $: if (targetData && data && Array.isArray(data) && data.length > 0) {
     activeAsset = data?.find(
-      (slide) =>
-        slide.ccr_item_no__ccc_item_no === targetData.ccr_item_no__ccc_item_no,
+      (slide) => slide.ccr_index === targetData.ccr_index,
     );
 
     // Focus on the asset if it exists
     if (activeAsset) {
       setTimeout(() => {
-        focusOnAsset(targetData.ccr_item_no__ccc_item_no);
+        focusOnAsset(targetData.ccr_index);
       }, 0);
     }
   }
@@ -313,42 +254,45 @@
   };
 </script>
 
-<section class="topCon" bind:this={swiperContainer}>
-  <div class="menu-container">
-    <button
-      class="arrow-btn"
-      id="prevBtn"
-      on:click={() => handleScroll("prev")}
-    >
-      ◀
-    </button>
-    <div class="menu-wrapper-container">
-      {#if data?.length !== 0}
-        <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
-          {#each data as item, index}
-            <div
-              value={item.ccr_item_no__ccc_item_no}
-              name={item}
-              class={`menu-item ${item?.ccr_item_no__ccc_item_no === targetData?.ccr_item_no__ccc_item_no ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
-              on:click={() => {
-                targetData = item;
-              }}
-            >
-              {item?.ccr_item_no__ccc_item_no}
-            </div>
-          {/each}
-        </div>
-      {/if}
+{#if data?.length !== 0}
+  <section class="topCon" bind:this={swiperContainer}>
+    <div class="menu-container">
+      <button
+        class="arrow-btn"
+        id="prevBtn"
+        on:click={() => handleScroll("prev")}
+      >
+        ◀
+      </button>
+      <div class="menu-wrapper-container">
+        {#if data?.length !== 0}
+          <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
+            {#each data as item, index}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <div
+                value={item.ccr_index}
+                name={item}
+                class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+                on:click={() => {
+                  targetData = item;
+                }}
+              >
+                {item?.ccr_item_no__ccc_item_no}
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </div>
+      <button
+        class="arrow-btn"
+        id="nextBtn"
+        on:click={() => handleScroll("next")}
+      >
+        ▶
+      </button>
     </div>
-    <button
-      class="arrow-btn"
-      id="nextBtn"
-      on:click={() => handleScroll("next")}
-    >
-      ▶
-    </button>
-  </div>
-</section>
+  </section>
+{/if}
 
 <section class="content" style="height: 100vh; overflow: scroll;">
   <div style="height: 100%;">

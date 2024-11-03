@@ -20,9 +20,9 @@
   export let showProject;
   export let targetData;
   export let wholeOption;
-  export let search;
   export let selectedItems = [];
   export let loading;
+  export let search;
 
   let theadChecked = false;
   let isAgenUser = ["1", "3", "5"].includes(
@@ -30,7 +30,7 @@
   );
   // let isAgenUser = true;
 
-  let data = [];
+  export let data = [];
 
   let test = {
     0: "조치전",
@@ -199,15 +199,15 @@
     }
   }
 
-  $: {
-    if (tableData) {
-      data = transformVulns(
-        tableData,
-        vulnerabilityStatusValue,
-        actionStatusValue,
-      );
-    }
-  }
+  // $: {
+  //   if (tableData) {
+  //     data = transformVulns(
+  //       tableData,
+  //       vulnerabilityStatusValue,
+  //       actionStatusValue,
+  //     );
+  //   }
+  // }
 </script>
 
 <section class="content">
@@ -649,6 +649,7 @@
                       } else {
                         wholeOption = "result";
                       }
+                      search.plan_index = item?.ccp_index;
                     }}
                   >
                     {#if isAgenUser && selectedSendData?.plan_index}

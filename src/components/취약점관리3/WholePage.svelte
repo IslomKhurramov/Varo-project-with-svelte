@@ -432,8 +432,8 @@
                     <tr>
                       <th>조치내역</th>
                       <td>
-                        <textarea readonly>
-                          {targetData?.fix_result?.[0]?.cfr_fix_etc}
+                        <textarea readonly
+                          >{targetData?.fix_result?.[0]?.cfr_fix_etc}
                         </textarea>
                       </td>
                     </tr>

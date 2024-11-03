@@ -1,6 +1,7 @@
 <script>
   import { navigate } from "svelte-routing";
   import {
+    getFixDoneLists,
     getVulnsOfAsset,
     getVulnsOfPlan,
   } from "./../../services/vulns/vulnsService.js";
@@ -75,8 +76,23 @@
   const getPlanDataSearch = async () => {
     try {
       loading = true;
-      plans = await getVulnsOfAsset(search);
-      tableData = plans?.vulns;
+      if (setView == "result") {
+        const data = await getFixDoneLists(search);
+        console.log("+getFixDoneLists:", data);
+
+        tableData = Object.fromEntries(
+          Object.entries(data?.vulns).filter(([key, value]) =>
+            value.some(
+              (item) =>
+                item.result && item.result.cfi_fix_status__cvs_index === 3,
+            ),
+          ),
+        );
+      } else {
+        plans = await getVulnsOfAsset(search);
+        tableData = plans?.vulns;
+      }
+
       loading = false;
       activePlan = search["plan_index"];
     } catch (error) {

@@ -253,10 +253,6 @@
       );
     }
   }
-
-  $: {
-    console.log("search:", search);
-  }
 </script>
 
 {#if loading}

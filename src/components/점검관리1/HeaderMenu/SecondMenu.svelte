@@ -171,6 +171,16 @@
       searchDataHandler();
     }
   }
+  function closeShowModal() {
+    showModal = false;
+  }
+
+  // Close modal when Esc key is pressed
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      closeShowModal();
+    }
+  }
 </script>
 
 <article class="contentArea">
@@ -416,8 +426,13 @@
     />
   </Modal> -->
 
-  <div class="modal-open-wrap">
-    <dialog open on:close={() => (showModal = false)}>
+  <div
+    class="modal-open-wrap"
+    on:click={() => (showModal = false)}
+    on:keydown={handleKeyDown}
+    tabindex="0"
+  >
+    <dialog open on:close={() => (showModal = false)} on:click|stopPropagation>
       <ModalPage
         bind:showModal
         bind:modalData

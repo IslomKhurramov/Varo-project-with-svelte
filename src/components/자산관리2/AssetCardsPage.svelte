@@ -387,7 +387,15 @@
     </div>
   {/if}
 {:else}
-  <div class="car_container" style="height: calc(-236px + 100vh);">
+  <div
+    class="car_container"
+    style="height: calc(-236px + 100vh);  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-bottom: 10px;
+  scrollbar-width: none;          
+  -ms-overflow-style: none;      
+  -webkit-overflow-scrolling: touch;"
+  >
     <Swiper {selectedAsset} {filteredAssets} />
   </div>
 {/if}

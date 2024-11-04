@@ -30,11 +30,13 @@
   overflow-y: scroll;
   overflow-x: hidden;
   padding-bottom: 10px;
-  scrollbar-width: none;          
-  -ms-overflow-style: none;      
-  -webkit-overflow-scrolling: touch;"
+"
   >
     <table>
+      <colgroup>
+        <col style="width: 60px;" />
+        <col style="width:80%" />
+      </colgroup>
       <tr style="height: 50px; position: sticky;top: -1px;">
         <th class="center-align" style="color: white;background: #0072fd;"
           >구분</th

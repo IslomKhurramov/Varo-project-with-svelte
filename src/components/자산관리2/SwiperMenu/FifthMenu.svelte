@@ -208,11 +208,28 @@
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
   $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
+  function closeShowModal() {
+    isModalOpen = false;
+  }
+
+  // Close modal when Esc key is pressed
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      closeShowModal();
+    }
+  }
 </script>
 
 <main>
-  <div>
-    <div class="section" style="margin-top:20px">
+  <div style="height: 100%; position: relative;">
+    <div
+      class="section"
+      style="position: sticky;
+    top: 146px;
+    z-index: 99;
+    background-color: white;
+   "
+    >
       <!-- svelte-ignore a11y-missing-attribute -->
       <section class="subTabWrap">
         <a
@@ -266,76 +283,93 @@
     </div>
 
     <div class="flex col detail">
-      {#if activeData === "네트워크 정보"}
-        <select
-          class="date_input"
-          id="networkDateSelect"
-          bind:value={selectedNetworkDate}
+      <div class="emptycon">
+        <div
+          style="position: sticky;
+        top: 146px;
+        background-color: white;
+        height: 40px;     width: 69.7%;
+      display: flex;"
         >
-          <option value="">점검날짜</option>
-          {#each getUniqueDates("apn_cdate") as date}
-            <option value={date}>{date}</option>
-          {/each}
-        </select>
-      {/if}
+          {#if activeData === "네트워크 정보"}
+            <select
+              class="date_input"
+              id="networkDateSelect"
+              bind:value={selectedNetworkDate}
+            >
+              <option value="">점검날짜</option>
+              {#each getUniqueDates("apn_cdate") as date}
+                <option value={date}>{date}</option>
+              {/each}
+            </select>
+          {/if}
 
-      {#if activeData === "프로세스목록"}
-        <select
-          class="date_input"
-          id="processAppNameSelect"
-          bind:value={selectedProcessAppName}
-        >
-          <option value="">점검날짜</option>
-          {#each getUniqueDates("app_cdate") as date}
-            <option value={date}>{date}</option>
-          {/each}
-        </select>
-      {/if}
+          {#if activeData === "프로세스목록"}
+            <select
+              class="date_input"
+              id="processAppNameSelect"
+              bind:value={selectedProcessAppName}
+            >
+              <option value="">점검날짜</option>
+              {#each getUniqueDates("app_cdate") as date}
+                <option value={date}>{date}</option>
+              {/each}
+            </select>
+          {/if}
 
-      {#if activeData === "설치된 프로그램 목록"}
-        <select
-          class="date_input"
-          id="installedProgDateSelect"
-          bind:value={selectedInstalledProgDate}
-        >
-          <option value="">점검날짜</option>
-          {#each getUniqueDates("aip_cdate") as date}
-            <option value={date}>{date}</option>
-          {/each}
-        </select>
-      {/if}
+          {#if activeData === "설치된 프로그램 목록"}
+            <select
+              class="date_input"
+              id="installedProgDateSelect"
+              bind:value={selectedInstalledProgDate}
+            >
+              <option value="">점검날짜</option>
+              {#each getUniqueDates("aip_cdate") as date}
+                <option value={date}>{date}</option>
+              {/each}
+            </select>
+          {/if}
 
-      {#if activeData === "패치내역"}
-        <select
-          class="date_input"
-          id="patchDateSelect"
-          bind:value={selectedPatchDate}
-        >
-          <option value="">점검날짜</option>
-          {#each getUniqueDates("aps_cdate") as date}
-            <option value={date}>{date}</option>
-          {/each}
-        </select>
-      {/if}
+          {#if activeData === "패치내역"}
+            <select
+              class="date_input"
+              id="patchDateSelect"
+              bind:value={selectedPatchDate}
+            >
+              <option value="">점검날짜</option>
+              {#each getUniqueDates("aps_cdate") as date}
+                <option value={date}>{date}</option>
+              {/each}
+            </select>
+          {/if}
 
-      {#if activeData === "DLL 정보"}
-        <select
-          class="date_input"
-          id="dllDateSelect"
-          bind:value={selectedDllDate}
-        >
-          <option value="">점검날짜</option>
-          {#each getUniqueDates("ads_cdate") as date}
-            <option value={date}>{date}</option>
-          {/each}
-        </select>
-      {/if}
+          {#if activeData === "DLL 정보"}
+            <select
+              class="date_input"
+              id="dllDateSelect"
+              bind:value={selectedDllDate}
+            >
+              <option value="">점검날짜</option>
+              {#each getUniqueDates("ads_cdate") as date}
+                <option value={date}>{date}</option>
+              {/each}
+            </select>
+          {/if}
+        </div>
+      </div>
       <!-- Display filtered data -->
-      <div class="flex col detail">
+      <div
+        class="flex col detail"
+        style="position: sticky;
+      top: 146px;
+      z-index: 99;
+      background-color: white;
+      height: 55vh;"
+      >
         {#if filteredData && filteredData.length > 0}
           <div
             class="itemListWrap"
-            style="height: 70vh; overflow-y: auto; margin-top:10px;"
+            style="height: 72vh; overflow-y: auto; margin-top:10px;"
           >
             <!-- Consolidated Table for AssetStatusData Items -->
             <div class="tableListWrap nohead">
@@ -405,18 +439,27 @@
                   class="tableListWrap table2"
                   style="display: flex; justify-content: center"
                 >
-                  <table class="tableList hdBorder" style="width: 100%;">
+                  <table class="tableList hdBorder" style="width: 70%;">
                     <colgroup>
                       {#if modelType === "AssetPatchStatus" || modelType === "AssetsDlls"}
                         <col />
-                      {:else if modelType === "AssetProcess"}
-                        <col style="width: auto;" />
-                        <col style="width: auto;" />
-                        <col style="width: auto;" />
-                        <col style="width: auto;" />
+                      {:else if modelType === "AssetInstalledProgram"}
+                        <col style="width: 28%;" />
+                        <col style="width: 50px;" />
+                        <col style="width: 50px;" />
+                        <col style="width: 28%;" />
+                        <col style="width: 50px;" />
+                      {:else if modelType === "AssetProcessNetwork"}
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
                       {:else}
-                        <col style="width: 180px;" />
-                        <col style="width: auto;" />
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
+                        <col style="width: 120px;" />
                       {/if}
                     </colgroup>
                     <thead>
@@ -462,10 +505,10 @@
                             <td class="text-center">{item.app_status}</td>
                             <td class="text-center">{item.app_start_time}</td>
                           {:else if item.modelType === "AssetInstalledProgram"}
-                            <td class="text-center">{item.aip_pname}</td>
+                            <td>{item.aip_pname}</td>
                             <td class="text-center">{item.aip_pversion}</td>
                             <td class="text-center">{item.aip_pvendor}</td>
-                            <td class="text-center">{item.aip_pdescription}</td>
+                            <td>{item.aip_pdescription}</td>
                             <td class="text-center">{item.aip_date}</td>
                           {:else if item.modelType === "AssetPatchStatus"}
                             <td>{item.aps_patch_name}</td>
@@ -481,8 +524,10 @@
             {/each}
           </div>
         {:else if activeData}
-          <div class="empty_state">
-            <p>Select a filter option to display data.</p>
+          <div class="emptycon">
+            <div class="empty_state">
+              <p>점검날짜를 선택해 주세요</p>
+            </div>
           </div>
         {/if}
       </div>
@@ -490,8 +535,16 @@
   </div>
 
   {#if isModalOpen}
-    <div class="modal-open-wrap">
-      <dialog open on:close={() => (isModalOpen = false)}>
+    <div
+      class="modal-open-wrap"
+      on:click={() => (isModalOpen = false)}
+      on:keydown={handleKeyDown}
+    >
+      <dialog
+        open
+        on:close={() => (isModalOpen = false)}
+        on:click|stopPropagation
+      >
         <div class="modal-content">
           <!-- Close button -->
 
@@ -725,10 +778,24 @@
 </main>
 
 <style>
+  .emptycon {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
   .clickLine:hover {
     background-color: rgba(242, 242, 242, 1);
     cursor: pointer;
   }
+  .section {
+    position: sticky;
+    top: 0; /* Stick to the top of the viewport */
+    z-index: 10;
+    background-color: #fff;
+    padding: 10px;
+  }
+
   .modal-table th,
   .modal-table td {
     border: 1px solid #ddd;
@@ -814,6 +881,7 @@
   .date_input {
     width: 150px;
     height: 30px;
+    font-size: 16px;
   }
   .select_input {
     width: 300px;
@@ -827,7 +895,7 @@
   .tableListWrap.nohead th,
   .tableListWrap.nohead td {
     color: rgba(18, 2, 19, 1);
-    font-size: 14px;
+    font-size: 16px;
     padding: 18px 10px;
     border-top: 1px solid rgba(228, 228, 228, 1);
     border-bottom: 1px solid rgba(228, 228, 228, 1);
@@ -867,7 +935,8 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     margin-top: 20px;
-    font-size: 14px;
+    font-size: 16px;
+    width: 68%;
     color: #555;
   }
   .modal {

@@ -182,6 +182,16 @@
       alert(err?.message);
     }
   };
+  function closeShowModal() {
+    lastModal = false;
+  }
+
+  // Close modal when Esc key is pressed
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      closeShowModal();
+    }
+  }
 </script>
 
 <div class="scroll-div">
@@ -1113,8 +1123,13 @@
 <!--//Modal:자산 상세-->
 
 {#if lastModal}
-  <div class="modal-open-wrap">
-    <dialog open on:close={() => (lastModal = false)}>
+  <div
+    class="modal-open-wrap"
+    on:click={() => (lastModal = false)}
+    on:keydown={handleKeyDown}
+    tabindex="0"
+  >
+    <dialog open on:close={() => (lastModal = false)} on:click|stopPropagation>
       <ModalPageForDetail bind:showModal={lastModal} bind:modalData />
     </dialog>
   </div>

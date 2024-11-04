@@ -531,7 +531,7 @@
     width: 100%;
   }
   .contentArea {
-    min-height: 1200px;
+    height: 80vh;
   }
   .subTabWrap a {
     cursor: pointer;

@@ -716,8 +716,7 @@
                       >{test[item?.cfi_fix_status__cvs_index] ?? "조치전"}</td
                     >
                     <td class="text-center"
-                      >{item?.fix_result?.[0]?.cfr_fix_status__cvs_desc ??
-                        "조치전"}</td
+                      >{test[item?.cfr_fix_status__cvs_index] ?? "조치전"}</td
                     >
                     <td class="text-center"
                       >{item.ast_uuid__ass_uuid__ast_operator_person}</td

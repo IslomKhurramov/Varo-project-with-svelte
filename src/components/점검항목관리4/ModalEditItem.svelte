@@ -167,7 +167,7 @@
 <section style="  height: 100%">
   <article
     class="contentArea"
-    style="height: 75vh; padding-left: 0 !important; padding-right: 0 !important; padding-top: 0 !important;"
+    style="height: 65vh; padding-left: 0 !important; padding-right: 0 !important; padding-top: 0 !important;"
   >
     <div
       class="modal table-container"

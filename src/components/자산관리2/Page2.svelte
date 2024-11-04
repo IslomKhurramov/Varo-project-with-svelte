@@ -12,7 +12,7 @@
     setNewAssetGroup,
   } from "../../services/page2/assetService";
   import { onMount } from "svelte";
-  import { successAlert } from "../../shared/sweetAlert";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { checkAuth } from "../../stores/user.store";
   import GetLog from "./getLog.svelte";
   import GetLogHeader from "./getLogHeader.svelte";
@@ -50,7 +50,8 @@
         allAssetGroupList.set(Object.values(response.CODE));
       }
     } catch (err) {
-      throw err;
+      await errorAlert(err?.message);
+      loading = false;
     }
   }
   onMount(() => {

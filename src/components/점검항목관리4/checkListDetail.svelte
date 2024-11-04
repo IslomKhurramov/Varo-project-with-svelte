@@ -68,47 +68,47 @@
   }
 
   async function deleteSelectedItem() {
-    const selectedItems = $filteredChecklistData.filter((item) =>
-      selected.includes(item),
-    );
-
-    if (selectedItems.length === 0) {
-      alert("삭제할 항목을 선택하세요.");
+    // Check if there are any items selected for deletion
+    if (selected.length === 0 && !selectedItem) {
+      alert("삭제할 항목을 선택하세요."); // Alert to select an item to delete
       return;
     }
 
-    const mainIndex = selected[0].ccg_index_id;
-    const arrayIndexes = arrayOfDeletedItem();
+    // Add selectedItem to the selected array if it's not already included
+    if (
+      selectedItem &&
+      !selected.some((item) => item.ccc_index === selectedItem.ccc_index)
+    ) {
+      selected.push(selectedItem);
+    }
+
+    const selectedItems = selected.map((item) => item.ccc_index); // Get the indices of selected items for deletion
+    const mainIndex = selected[0].ccg_index_id; // Assuming the first item has the main index
 
     try {
-      const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
+      const deleteItem = await setDeleteChecklistItem(mainIndex, selectedItems);
 
       if (deleteItem.success) {
         successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`);
 
-        // Update filteredChecklistData by removing deleted items
+        // Update the filteredChecklistData store
         filteredChecklistData.update((data) =>
-          data.filter((item) => !arrayIndexes.includes(item.ccc_index)),
+          data.filter((item) => !selectedItems.includes(item.ccc_index)),
         );
 
-        // Clear the selected array
+        // Clear the selected items and reset selectedItem
         selected = [];
+        selectedItem = null; // Reset selectedItem to null
       }
     } catch (error) {
       alert("Error occurred while deleting items.");
     }
   }
+
+  $: console.log("selected", selectedItem);
   // Mark the newly created checklist as new
   $: isNewlyCreatedChecklist =
     selectedChecklist && selectedChecklist.ccg_index === lastCreatedChecklistId;
-  function handleDeletedItems(deletedIndexes) {
-    // Update your filteredChecklistData or perform any other necessary updates
-    filteredChecklistData.update((data) =>
-      data.filter((item) => !deletedIndexes.includes(item.ccc_index)),
-    );
-
-    console.log("Deleted indexes:", deletedIndexes);
-  }
 </script>
 
 <section style="margin-top: 10px;">
@@ -119,17 +119,17 @@
     {#if showModalModalEditItem}
       <ModalEditItem
         bind:selectedItem
+        {selected}
         {selectedCategory}
         {showSlide}
         {selectedChecklist}
         {swiperContainer}
         {showModalSecond}
         {selectedSlide}
-        bind:slides
+        {slides}
         {selectedItemNumber}
         {isNewlyCreatedChecklist}
-        bind:selected
-        on:itemsDeleted={(event) => handleDeletedItems(event.detail)}
+        {deleteSelectedItem}
       />
     {:else}
       <div

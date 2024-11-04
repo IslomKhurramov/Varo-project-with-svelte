@@ -339,13 +339,28 @@
               {/each}
             {:else}
               <tr>
-                <td
-                  colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                  class="text-center no-data-message"
-                  >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
-                >
+                {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
+                  <td
+                    colspan={isNewlyCreatedChecklist ? "9" : "8"}
+                    class="text-center no-data-message"
+                    >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+                  >
+                {:else}
+                  <td
+                    colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                    class="text-center no-data-message"
+                    >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+                  >
+                {/if}
               </tr>
             {/if}
+          {:else if selectedChecklist && selectedChecklist.ccg_provide === 0}
+            <tr>
+              <td
+                colspan={isNewlyCreatedChecklist ? "9" : "8"}
+                class="text-center no-data-message">차산그룹을 선택해주세요.</td
+              >
+            </tr>
           {:else}
             <tr>
               <td

@@ -10,6 +10,8 @@
     filteredChecklistData,
   } from "../../services/page4/checklistStore";
   import { confirmDelete, successAlert } from "../../shared/sweetAlert";
+  import { onMount, onDestroy } from "svelte";
+
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
 
@@ -162,6 +164,13 @@
   }
   function closeShowModal() {
     showModal = false;
+  }
+
+  // Close modal when Esc key is pressed
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      closeShowModal();
+    }
   }
 </script>
 
@@ -329,16 +338,19 @@
                 </tr>
               {/each}
             {:else}
-              <div class="text-center no-data-message">
-                {selectedCategory}에서 사용 가능한 데이터가 없습니다.
-              </div>
+              <tr>
+                <td
+                  colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                  class="text-center no-data-message"
+                  >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+                >
+              </tr>
             {/if}
           {:else}
             <tr>
               <td
                 colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                class="text-center no-data-message"
-                >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+                class="text-center no-data-message">차산그룹을 선택해주세요.</td
               >
             </tr>
           {/if}
@@ -347,8 +359,19 @@
     </div>
 
     {#if showModal}
-      <div class="modal-open-wrap">
-        <dialog open on:close={() => (showModal = false)}>
+      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+      <div
+        class="modal-open-wrap"
+        on:click={() => (showModal = false)}
+        on:keydown={handleKeyDown}
+        tabindex="0"
+      >
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <dialog
+          open
+          on:close={() => (showModal = false)}
+          on:click|stopPropagation
+        >
           <ModalPopUpDetail
             {selectedItem}
             {selectedCategory}
@@ -397,7 +420,9 @@
     right: 0;
     background-color: rgba(167, 167, 167, 0.6);
   }
-
+  .tableListWrap .hdBorder td {
+    font-size: 16px;
+  }
   * {
     font-size: 16px;
   }

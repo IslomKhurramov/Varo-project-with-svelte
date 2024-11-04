@@ -90,8 +90,15 @@
     return Object.entries(targetCounts);
   };
 
-  // Check function for debugging
-  function check() {}
+  function closeShowModal() {
+    showItemDetail = false;
+  }
+  // Close modal when Esc key is pressed
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      closeShowModal();
+    }
+  }
 </script>
 
 <main>
@@ -109,7 +116,7 @@
         </colgroup>
         <thead>
           <tr>
-            <th on:click={check} class="text-center">넘버</th>
+            <th class="text-center">넘버</th>
             <th class="text-center">프로젝트명</th>
             <th class="text-center">점검항목</th>
             <th class="text-center">생성일</th>
@@ -347,8 +354,16 @@
     </div>
   </div>
   {#if showItemDetail}
-    <div class="modal-open-wrap">
-      <dialog open on:close={() => (showItemDetail = false)}>
+    <div
+      class="modal-open-wrap"
+      on:click={() => (showItemDetail = false)}
+      on:keydown={handleKeyDown}
+    >
+      <dialog
+        open
+        on:close={() => (showItemDetail = false)}
+        on:click|stopPropagation
+      >
         <ModalCcEhistory {selectedItem} bind:showItemDetail />
       </dialog>
     </div>

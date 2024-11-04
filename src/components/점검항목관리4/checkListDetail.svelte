@@ -223,16 +223,6 @@
 </section>
 
 <style>
-  .no-data-message {
-    text-align: center; /* Center the text */
-    font-style: italic; /* Italicize the text for emphasis */
-    color: #777; /* Light gray color for the message */
-    padding: 20px; /* Add some padding around the text */
-    background-color: #f9f9f9; /* Light background color for contrast */
-    border: 1px solid #ddd; /* Optional: Add a border for definition */
-    border-radius: 5px; /* Slightly round the corners */
-    margin: 20px 0; /* Margin above and below the message */
-  }
   .tableListWrap .hdBorder td {
     font-size: 16px;
   }

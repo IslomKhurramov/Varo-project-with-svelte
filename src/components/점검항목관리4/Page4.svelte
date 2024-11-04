@@ -612,7 +612,7 @@
                   resetEditAndModalState();
                 }}
               >
-                Save
+                구하다
               </button>
               <button
                 style="padding: 15px;"
@@ -622,7 +622,7 @@
                   resetEditAndModalState();
                 }}
               >
-                Cancel
+                취소
               </button>
             {:else}
               <!-- Show Edit/Delete buttons in normal mode -->
@@ -637,14 +637,14 @@
                   showEdit = true;
                 }}
               >
-                Edit
+                그룹명변경
               </button>
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary delete btnRed"
                 on:click={() => deleteChecklist(selectedChecklist.ccg_index)}
               >
-                Delete
+                점검그룹삭제
               </button>
             {/if}
           {/if}

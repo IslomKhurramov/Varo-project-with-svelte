@@ -160,14 +160,14 @@
     </div>
   </section>
 {/if}
-<section style="  height: 99%">
+<section style="  height: 100%">
   <article
     class="contentArea"
     style="height: 75vh; padding-left: 0 !important; padding-right: 0 !important; padding-top: 0 !important;"
   >
     <div
       class="modal table-container"
-      style="margin-bottom: 20px; height:72vh;"
+      style="margin-bottom: 20px; height:65vh;"
     >
       <table style="margin-bottom: 20px;" class="main-table">
         <colgroup>
@@ -271,18 +271,18 @@
       {#if closeShowModal}
         <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
       {/if}
-      {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
-        <div class="buttons">
-          <div class="buttonGroup">
-            <button class="btn modify-btn">수정하기</button>
-            <button on:click={deleteSelectedItem} class="btn delete-btn"
-              >삭제하기</button
-            >
-            <button class="btn close-btn">창닫기</button>
-          </div>
-        </div>
-      {/if}
     </div>
+    {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
+      <div class="buttons">
+        <div class="buttonGroup">
+          <button class="btn modify-btn">수정하기</button>
+          <button on:click={deleteSelectedItem} class="btn delete-btn"
+            >삭제하기</button
+          >
+          <button class="btn close-btn">창닫기</button>
+        </div>
+      </div>
+    {/if}
   </article>
 </section>
 

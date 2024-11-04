@@ -55,8 +55,6 @@ export async function errorAlert(message) {
   });
 
   if (willRedirect && message.includes("로그인")) {
-    console.log("willRedirect:", willRedirect);
-    console.log("message:", message);
     localStorage.removeItem("userInfo");
     document.cookie =
       "sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";

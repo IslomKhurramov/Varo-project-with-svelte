@@ -113,11 +113,9 @@
       const maxY = projectDetails.target_securitypoint?.length * 100;
       totalPercentage = (totalY / maxY) * 100;
 
-      // assets info data fetch
       assetsInfo = await getCCEResultUploadStatus(projectIndex);
     } catch (err) {
       await errorAlert(err?.message);
-      navigate(window.location?.pathname == "/" ? "/page1" : "/");
     }
   }
 

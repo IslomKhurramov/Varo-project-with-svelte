@@ -1,9 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import {
-    getFixDoneLists,
     getVulnsOfAsset,
-    getVulnsOfPlan,
     setFixApprove,
     setFixDoneApprove,
   } from "../../services/vulns/vulnsService";
@@ -109,13 +107,8 @@
       const result = await setFixApprove(data);
       await successAlert(result);
 
-      if (showProject) {
-        const plans = await getVulnsOfAsset(selectedSendData);
-        tableData = plans?.vulns;
-      } else {
-        const assets = await getVulnsOfAsset(selectedSendData);
-        tableData = assets?.vulns;
-      }
+      const assets = await getVulnsOfAsset(search);
+      tableData = assets?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -133,13 +126,8 @@
       });
       await successAlert(result);
 
-      if (showProject) {
-        const plans = await getVulnsOfAsset(selectedSendData);
-        tableData = plans?.vulns;
-      } else {
-        const assets = await getVulnsOfAsset(selectedSendData);
-        tableData = assets?.vulns;
-      }
+      const assets = await getVulnsOfAsset(search);
+      tableData = assets?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -150,15 +138,8 @@
       const result = await setFixDoneApprove(data);
       successAlert(result);
 
-      const list = await getFixDoneLists(selectedSendData);
-      tableData = Object.fromEntries(
-        Object.entries(list?.vulns).filter(([key, value]) =>
-          value.some(
-            (item) =>
-              item.result && item.result.cfi_fix_status__cvs_index === 3,
-          ),
-        ),
-      );
+      const list = await getVulnsOfAsset(search);
+      tableData = list?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -176,15 +157,8 @@
       });
       successAlert(result);
 
-      const list = await getFixDoneLists(selectedSendData);
-      tableData = Object.fromEntries(
-        Object.entries(list?.vulns).filter(([key, value]) =>
-          value.some(
-            (item) =>
-              item.result && item.result.cfi_fix_status__cvs_index === 3,
-          ),
-        ),
-      );
+      const list = await getVulnsOfAsset(search);
+      tableData = list?.vulns;
     } catch (err) {
       errorAlert(err?.message);
     }
@@ -198,16 +172,6 @@
       selectedItems = selectedItems.filter((i) => i !== item);
     }
   }
-
-  // $: {
-  //   if (tableData) {
-  //     data = transformVulns(
-  //       tableData,
-  //       vulnerabilityStatusValue,
-  //       actionStatusValue,
-  //     );
-  //   }
-  // }
 </script>
 
 <section class="content">
@@ -226,14 +190,10 @@
                 setView = "plan";
                 selectedItems = [];
                 theadChecked = false;
+                search.step_vuln = "1";
 
-                if (showProject) {
-                  const data = await getVulnsOfAsset();
-                  tableData = data?.vulns;
-                } else {
-                  const data = await getVulnsOfAsset();
-                  tableData = data?.vulns;
-                }
+                const data = await getVulnsOfAsset(search);
+                tableData = data?.vulns;
                 loading = false;
               } catch (err) {
                 errorAlert(err?.message);
@@ -243,34 +203,80 @@
           >
             조치계획
           </a>
+          <a
+            href="javascript:void(0);"
+            class={setView == "plan_accept" ? "active" : ""}
+            on:click={async () => {
+              try {
+                loading = true;
+                setView = "plan_accept";
+                selectedItems = [];
+                theadChecked = false;
+
+                search.step_vuln = "2";
+
+                const data = await getVulnsOfAsset(search);
+                tableData = data?.vulns;
+                loading = false;
+              } catch (err) {
+                errorAlert(err?.message);
+                loading = false;
+              }
+            }}
+          >
+            조치계획승인
+          </a>
           {#if isAgenUser}
             <a
               href="javascript:void(0);"
               class={setView == "result" ? "active" : ""}
               on:click={async () => {
-                loading = true;
-                setView = "result";
-                selectedItems = [];
-                const data = await getFixDoneLists(selectedSendData);
+                try {
+                  loading = true;
+                  setView = "result";
+                  selectedItems = [];
+                  theadChecked = false;
 
-                tableData = Object.fromEntries(
-                  Object.entries(data?.vulns).filter(([key, value]) =>
-                    value.some(
-                      (item) =>
-                        item.result &&
-                        item.result.cfi_fix_status__cvs_index === 3,
-                    ),
-                  ),
-                );
-                loading = false;
+                  search.step_vuln = "3";
+
+                  const data = await getVulnsOfAsset(search);
+                  tableData = data?.vulns;
+                  loading = false;
+                } catch (err) {
+                  errorAlert(err?.message);
+                  loading = false;
+                }
               }}
             >
               조치결과
             </a>
+            <a
+              href="javascript:void(0);"
+              class={setView == "result_accept" ? "active" : ""}
+              on:click={async () => {
+                try {
+                  loading = true;
+                  setView = "result_accept";
+                  selectedItems = [];
+                  theadChecked = false;
+
+                  search.step_vuln = "4";
+
+                  const data = await getVulnsOfAsset(search);
+                  tableData = data?.vulns;
+                  loading = false;
+                } catch (err) {
+                  errorAlert(err?.message);
+                  loading = false;
+                }
+              }}
+            >
+              조치결과승인
+            </a>
           {/if}
         </section>
         {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
-          {#if setView == "plan"}
+          {#if setView == "plan" || setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -347,7 +353,7 @@
             </section>
           {/if}
 
-          {#if setView == "result"}
+          {#if setView == "result" || setView == "result_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -425,7 +431,7 @@
         {/if}
 
         {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && data?.length !== 0}
-          {#if setView == "plan"}
+          {#if setView == "plan" || setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -486,7 +492,7 @@
             </section>
           {/if}
 
-          {#if setView == "result"}
+          {#if setView == "result" || setView == "result_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button

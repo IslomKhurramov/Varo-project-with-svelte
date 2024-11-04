@@ -21,32 +21,26 @@
   let menuWrapper;
   let swiperInstance;
 
-  $: if (selectedItem && slides && Array.isArray(slides) && slides.length > 0) {
+  $: if (selectedItem && Array.isArray(slides) && slides.length > 0) {
     activeAsset = slides.find(
       (slide) => slide.ccc_item_no === selectedItem.ccc_item_no,
     );
     selectedSlide = activeAsset;
 
-    // Focus on the asset if it exists
+    // Focus on the selected asset
     if (activeAsset) {
-      setTimeout(() => {
-        focusOnAsset(activeAsset.ccc_item_no);
-      }, 0);
+      setTimeout(() => focusOnAsset(activeAsset.ccc_item_no), 0);
     }
   }
 
   onMount(() => {
-    // Ensure swiperContainer is bound
     if (swiperContainer) {
       swiperInstance = new Swiper(swiperContainer, {
         modules: [Navigation, Pagination],
-        loop: false, // Avoid layout issues caused by looping
-        slidesPerView: 4, // Adjust this value to suit your design
-        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
+        loop: false,
+        slidesPerView: 4,
+        spaceBetween: 10,
+        pagination: { el: ".swiper-pagination", clickable: true },
         navigation: {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
@@ -54,7 +48,6 @@
       });
     }
 
-    // Initialize menu wrapper for scrolling
     menuWrapper = document.getElementById("menuWrapper");
 
     return () => {
@@ -64,7 +57,6 @@
     };
   });
 
-  // Function to scroll and focus on the asset
   function focusOnAsset(assetId) {
     const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
     if (menuItem) {
@@ -73,10 +65,7 @@
         block: "nearest",
         inline: "center",
       });
-      setTimeout(() => {
-        menuItem.focus();
-      }, 300);
-    } else {
+      setTimeout(() => menuItem.focus(), 300);
     }
   }
 

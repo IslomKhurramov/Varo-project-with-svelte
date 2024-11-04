@@ -42,7 +42,8 @@
 
   // Update allSelected based on the current selected state
   $: filteredChecklistData.subscribe((data) => {
-    allSelected = data.length > 0 && data.length === selected.length;
+    allSelected =
+      Array.isArray(data) && data.length > 0 && data.length === selected.length;
   });
 
   // Function to select or deselect all items

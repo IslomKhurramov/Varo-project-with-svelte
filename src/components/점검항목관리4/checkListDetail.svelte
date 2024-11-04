@@ -40,57 +40,75 @@
     filteredChecklistData.set(checklistData);
   }
 
-  // Update allSelected based on the current selected state
   $: filteredChecklistData.subscribe((data) => {
-    allSelected =
-      Array.isArray(data) && data.length > 0 && data.length === selected.length;
+    allSelected = data.length > 0 && selected.length === data.length;
   });
 
   // Function to select or deselect all items
   function selectAll() {
-    if (allSelected) {
-      selected = []; // Deselect all
-    } else {
-      filteredChecklistData.update((data) => {
+    filteredChecklistData.update((data) => {
+      if (allSelected) {
+        selected = []; // Deselect all
+      } else {
         selected = data.slice(); // Select all
-        return data; // Return unchanged data
-      });
+      }
+      return data; // Return unchanged data
+    });
+  }
+  function arrayOfDeletedItem() {
+    // Create an array containing the indices of selected items
+    const deletedItems = selected.map((item) => item.ccc_index);
+
+    // If selectedItem is defined and has ccc_index, add it to the array
+    if (selectedItem && selectedItem.ccc_index) {
+      deletedItems.push(selectedItem.ccc_index);
     }
+
+    return deletedItems;
   }
 
-  // Function to delete selected items
   async function deleteSelectedItem() {
-    if (selected.length === 0) {
+    const selectedItems = $filteredChecklistData.filter((item) =>
+      selected.includes(item),
+    );
+
+    if (selectedItems.length === 0) {
       alert("삭제할 항목을 선택하세요.");
       return;
     }
 
-    const selectedItems = selected.map((item) => item.ccc_index);
-    const mainIndex = selected[0]?.ccg_index_id;
+    const mainIndex = selected[0].ccg_index_id;
+    const arrayIndexes = arrayOfDeletedItem();
 
     try {
-      const deleteItem = await setDeleteChecklistItem(mainIndex, selectedItems);
+      const deleteItem = await setDeleteChecklistItem(mainIndex, arrayIndexes);
 
       if (deleteItem.success) {
         successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`);
-        filteredChecklistData.update((data) => {
-          return data.filter((item) => !selectedItems.includes(item.ccc_index));
-        });
 
-        // Clear the selected items
+        // Update filteredChecklistData by removing deleted items
+        filteredChecklistData.update((data) =>
+          data.filter((item) => !arrayIndexes.includes(item.ccc_index)),
+        );
+
+        // Clear the selected array
         selected = [];
-        selectedItem = null; // Reset selectedItem to null
-      } else {
-        alert("삭제에 실패했습니다.");
       }
     } catch (error) {
-      alert("Error occurred while deleting items: " + error.message);
+      alert("Error occurred while deleting items.");
     }
   }
-
   // Mark the newly created checklist as new
   $: isNewlyCreatedChecklist =
     selectedChecklist && selectedChecklist.ccg_index === lastCreatedChecklistId;
+  function handleDeletedItems(deletedIndexes) {
+    // Update your filteredChecklistData or perform any other necessary updates
+    filteredChecklistData.update((data) =>
+      data.filter((item) => !deletedIndexes.includes(item.ccc_index)),
+    );
+
+    console.log("Deleted indexes:", deletedIndexes);
+  }
 </script>
 
 <section style="margin-top: 10px;">
@@ -111,7 +129,7 @@
         {selectedItemNumber}
         {isNewlyCreatedChecklist}
         bind:selected
-        {deleteSelectedItem}
+        on:itemsDeleted={(event) => handleDeletedItems(event.detail)}
       />
     {:else}
       <div
@@ -190,8 +208,8 @@
                         class="center-align"
                         type="checkbox"
                         bind:group={selected}
-                        value={item.ccc_item_no}
-                        name={item.ccc_item_no}
+                        value={item}
+                        name={item}
                         on:click|stopPropagation
                       />
                     </td>

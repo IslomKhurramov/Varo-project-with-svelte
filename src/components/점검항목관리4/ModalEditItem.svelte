@@ -15,10 +15,9 @@
   export let selectedChecklist;
   export let selected;
   let localSelected = []; // Local state for selected items in child component
-
-  $: if (selected && Array.isArray(selected)) {
-    localSelected = [...selected]; // Copy parent state if necessary
-  }
+  import { createEventDispatcher } from "svelte";
+  import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
+  import { successAlert } from "../../shared/sweetAlert";
 
   let activeAsset = null;
   let scrollAmount = 0;
@@ -96,16 +95,53 @@
     selectedSlide = slide;
     selectedItem = slide;
 
-    // Use a local state for managing selected items
-    if (!localSelected.some((s) => s.ccc_item_no === slide.ccc_item_no)) {
+    const exists = localSelected.some(
+      (s) => s.ccc_item_no === slide.ccc_item_no,
+    );
+    if (!exists) {
       localSelected.push(slide); // Add if not already selected
     } else {
       localSelected = localSelected.filter(
         (s) => s.ccc_item_no !== slide.ccc_item_no,
       ); // Remove if already selected
     }
+    console.log("Local selected items:", localSelected);
+  }
+  const dispatch = createEventDispatcher(); // To dispatch events to the parent
 
-    console.log("Selected items:", localSelected);
+  $: if (selected && Array.isArray(selected)) {
+    localSelected = [...selected]; // Sync with parent selected state
+  }
+
+  // Standalone deletion function
+  async function deleteItems() {
+    if (localSelected.length === 0) {
+      alert("삭제할 항목을 선택하세요."); // "Please select an item to delete."
+      return;
+    }
+
+    const mainIndex = localSelected[0].ccg_index_id; // Get the main index from the first selected item
+    const arrayIndexes = localSelected.map((item) => item.ccc_index); // Create an array of indexes
+
+    try {
+      const deleteResponse = await setDeleteChecklistItem(
+        mainIndex,
+        arrayIndexes,
+      ); // Call the delete function
+
+      if (deleteResponse.success) {
+        successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`); // "The selected item has been successfully deleted!"
+
+        // Clear local selection after deletion
+        localSelected = [];
+
+        // Dispatch an event to inform parent component
+        dispatch("itemsDeleted", arrayIndexes); // Emit which items were deleted if needed
+      }
+    } catch (error) {
+      alert("Error occurred while deleting items.");
+      console.error("Deletion error:", error);
+    }
   }
 </script>
 
@@ -280,8 +316,7 @@
       <div class="buttons">
         <div class="buttonGroup">
           <button class="btn modify-btn">수정하기</button>
-          <button on:click={deleteSelectedItem} class="btn delete-btn"
-            >삭제하기</button
+          <button on:click={deleteItems} class="btn delete-btn">삭제하기</button
           >
           <button class="btn close-btn">창닫기</button>
         </div>

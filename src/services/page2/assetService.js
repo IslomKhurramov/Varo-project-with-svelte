@@ -9,7 +9,8 @@ export const getAllAssetLists = async () => {
     });
     return response.data;
   } catch (error) {
-    throw error;
+    await errorAlert(err?.message);
+    loading = false;
   }
 };
 
@@ -73,7 +74,8 @@ export const getAssetGroup = async () => {
     });
     return response.data;
   } catch (error) {
-    throw error;
+    await errorAlert(err?.message);
+    loading = false;
   }
 };
 

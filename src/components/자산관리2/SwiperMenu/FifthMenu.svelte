@@ -451,14 +451,14 @@
                         <col style="width: 50px;" />
                       {:else if modelType === "AssetProcessNetwork"}
                         <col style="width: 120px;" />
+                        <col style="width: 50px;" />
                         <col style="width: 120px;" />
-                        <col style="width: 120px;" />
-                        <col style="width: 120px;" />
+                        <col style="width: 50px;" />
                         <col style="width: 120px;" />
                       {:else}
+                        <col style="width: 32px;" />
                         <col style="width: 120px;" />
-                        <col style="width: 120px;" />
-                        <col style="width: 120px;" />
+                        <col style="width: 40px;" />
                         <col style="width: 120px;" />
                       {/if}
                     </colgroup>

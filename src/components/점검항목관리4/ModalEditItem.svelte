@@ -14,6 +14,12 @@
   export let deleteSelectedItem;
   export let selectedChecklist;
   export let selected;
+  let localSelected = []; // Local state for selected items in child component
+
+  $: if (selected && Array.isArray(selected)) {
+    localSelected = [...selected]; // Copy parent state if necessary
+  }
+
   let activeAsset = null;
   let scrollAmount = 0;
   let itemWidth = 146; // Each menu item width including gap
@@ -89,8 +95,17 @@
     activeAsset = slide;
     selectedSlide = slide;
     selectedItem = slide;
-    selected = slide;
-    console.log("selected", selected);
+
+    // Use a local state for managing selected items
+    if (!localSelected.some((s) => s.ccc_item_no === slide.ccc_item_no)) {
+      localSelected.push(slide); // Add if not already selected
+    } else {
+      localSelected = localSelected.filter(
+        (s) => s.ccc_item_no !== slide.ccc_item_no,
+      ); // Remove if already selected
+    }
+
+    console.log("Selected items:", localSelected);
   }
 </script>
 

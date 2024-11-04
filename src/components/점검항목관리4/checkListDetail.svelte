@@ -162,7 +162,7 @@
           {/if}
           <thead>
             <tr>
-              {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
+              {#if selectedChecklist && selectedChecklist?.ccg_provide === 0}
                 <th on:click|stopPropagation></th>
               {/if}
               <th class="text-center">남버</th>
@@ -184,13 +184,13 @@
                     showModalModalEditItem = true;
                   }}
                 >
-                  {#if selectedChecklist.ccg_provide === 0}
+                  {#if selectedChecklist && selectedChecklist?.ccg_provide === 0}
                     <td>
                       <input
                         class="center-align"
                         type="checkbox"
                         bind:group={selected}
-                        value={item}
+                        value={item.ccc_item_no}
                         name={item.ccc_item_no}
                         on:click|stopPropagation
                       />

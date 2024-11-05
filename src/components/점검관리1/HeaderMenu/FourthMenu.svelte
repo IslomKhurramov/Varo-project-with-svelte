@@ -7,6 +7,7 @@
   import moment from "moment";
   import { onMount } from "svelte";
   import Tooltip from "../../../shared/Tooltip.svelte";
+  import { errorAlert } from "../../../shared/sweetAlert";
 
   export let projectIndex;
 
@@ -22,8 +23,12 @@
   };
 
   onMount(async () => {
-    searchFilters = await getPlanFilter();
-    await searchDataHandler();
+    try {
+      searchFilters = await getPlanFilter();
+      await searchDataHandler();
+    } catch (err) {
+      await errorAlert(err?.message);
+    }
   });
 
   const searchDataHandler = async () => {

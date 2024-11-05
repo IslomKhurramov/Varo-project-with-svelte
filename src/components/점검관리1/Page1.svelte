@@ -7,7 +7,11 @@
   import { setDeletePlan } from "../../services/page1/newInspection";
   import { userData } from "../../stores/user.store";
   import Tooltip from "../../shared/Tooltip.svelte";
-  import { confirmDelete, confirmSureDelete } from "../../shared/sweetAlert";
+  import {
+    confirmDelete,
+    confirmSureDelete,
+    errorAlert,
+  } from "../../shared/sweetAlert";
   import { navigate } from "svelte-routing";
   import { decryptData } from "../../services/login/loginService";
 
@@ -28,6 +32,7 @@
       projectArray = Object.values(projectData); // Convert object to array
     } catch (err) {
       error = err.message;
+      await errorAlert(error);
     } finally {
       loading = false;
     }
@@ -51,13 +56,6 @@
         navigate(window.location?.pathname == "/" ? "/page1" : "/");
       }
     } catch (err) {}
-  };
-
-  const AES_ENCRYPT_KEY = "oingisprettyintheworld1234567890"; //
-  const encryptedData = {
-    user_index: "OGl8W+WbOo/BLQ6lD+LxAkLsFjitF8i4Qb28MYMtiN0=",
-    user_name: "KKafetOnd7IPN72asrqTp+qkTfDHOsVP3hKZcmey3Bc=",
-    user_roletype_role_index: "vHx76aoV8Pd8Hed5sMj6fO+D8KoOs7d4xPclzI6FmHY=",
   };
 </script>
 

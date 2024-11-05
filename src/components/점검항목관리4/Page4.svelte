@@ -642,7 +642,7 @@
               <button
                 style="padding: 15px;"
                 class="btn btnPrimary delete btnRed"
-                on:click={() => deleteChecklist(selectedChecklist.ccg_index)}
+                on:click={deleteProject}
               >
                 점검그룹삭제
               </button>

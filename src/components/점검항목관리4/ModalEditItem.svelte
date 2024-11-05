@@ -13,12 +13,6 @@
   export let closeShowModal;
   export let deleteSelectedItem;
   export let selectedChecklist;
-  export let selected;
-  let localSelected = []; // Local state for selected items in child component
-
-  $: if (selected && Array.isArray(selected)) {
-    localSelected = [...selected]; // Copy parent state if necessary
-  }
 
   let activeAsset = null;
   let scrollAmount = 0;
@@ -27,26 +21,32 @@
   let menuWrapper;
   let swiperInstance;
 
-  $: if (selectedItem && Array.isArray(slides) && slides.length > 0) {
+  $: if (selectedItem && slides && Array.isArray(slides) && slides.length > 0) {
     activeAsset = slides.find(
       (slide) => slide.ccc_item_no === selectedItem.ccc_item_no,
     );
     selectedSlide = activeAsset;
 
-    // Focus on the selected asset
+    // Focus on the asset if it exists
     if (activeAsset) {
-      setTimeout(() => focusOnAsset(activeAsset.ccc_item_no), 0);
+      setTimeout(() => {
+        focusOnAsset(activeAsset.ccc_item_no);
+      }, 0);
     }
   }
 
   onMount(() => {
+    // Ensure swiperContainer is bound
     if (swiperContainer) {
       swiperInstance = new Swiper(swiperContainer, {
         modules: [Navigation, Pagination],
-        loop: false,
-        slidesPerView: 4,
-        spaceBetween: 10,
-        pagination: { el: ".swiper-pagination", clickable: true },
+        loop: false, // Avoid layout issues caused by looping
+        slidesPerView: 4, // Adjust this value to suit your design
+        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
         navigation: {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
@@ -54,6 +54,7 @@
       });
     }
 
+    // Initialize menu wrapper for scrolling
     menuWrapper = document.getElementById("menuWrapper");
 
     return () => {
@@ -63,6 +64,7 @@
     };
   });
 
+  // Function to scroll and focus on the asset
   function focusOnAsset(assetId) {
     const menuItem = document.querySelector(`.menu-item[value="${assetId}"]`);
     if (menuItem) {
@@ -71,7 +73,10 @@
         block: "nearest",
         inline: "center",
       });
-      setTimeout(() => menuItem.focus(), 300);
+      setTimeout(() => {
+        menuItem.focus();
+      }, 300);
+    } else {
     }
   }
 
@@ -90,22 +95,11 @@
 
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
-
+  $: console.log("SELECTED FROM CHILD", selectedItem);
   function handleSlideclick(slide) {
     activeAsset = slide;
     selectedSlide = slide;
-    selectedItem = slide;
-
-    // Use a local state for managing selected items
-    if (!localSelected.some((s) => s.ccc_item_no === slide.ccc_item_no)) {
-      localSelected.push(slide); // Add if not already selected
-    } else {
-      localSelected = localSelected.filter(
-        (s) => s.ccc_item_no !== slide.ccc_item_no,
-      ); // Remove if already selected
-    }
-
-    console.log("Selected items:", localSelected);
+    selectedItem = slide; // Update selectedItem as well
   }
 </script>
 

@@ -458,6 +458,7 @@
                 {formData}
                 {assetDetails}
                 {closeModalEdit}
+                {activeAsset}
               />
             </div>
           {/if}
@@ -531,7 +532,7 @@
     width: 100%;
   }
   .contentArea {
-    height: 80vh;
+    height: 78vh;
   }
   .subTabWrap a {
     cursor: pointer;

@@ -4,7 +4,7 @@
 
   let currentData = [];
   let activeData = ""; // Set default active data
-
+  export let activeAsset;
   // Other filter states
   let selectedNetworkDate = "";
   let selectedProcessAppName = "";
@@ -30,6 +30,7 @@
       selectData(assetHistory[0]?.system_info?.osinfo || [], "운영체제정보");
     }
   });
+
   // Reactive statement to refresh data when activeData changes
   $: if (activeData === "운영체제정보" && $assetDeatilInfo.length > 0) {
     const initialData = $assetDeatilInfo[0].asset || [];
@@ -221,7 +222,7 @@
 </script>
 
 <main>
-  <div style="height: 100%; position: relative;">
+  <div style="height: 97%; position: relative;">
     <div
       class="section"
       style="position: sticky;
@@ -364,7 +365,7 @@
       top: 146px;
       z-index: 99;
       background-color: white;
-      height: 55vh;"
+      height: 51vh;"
       >
         {#if filteredData && filteredData.length > 0}
           <div

@@ -185,37 +185,6 @@
     });
   };
 
-  /*********************************************************************************/
-
-  async function deleteChecklist(checklistId) {
-    try {
-      const response = await setDeleteChecklistGroup(checklistId);
-
-      if (response.success) {
-        alert("Checklist deleted successfully!");
-
-        // Update local state without re-fetching
-        allChecklistArray = allChecklistArray.filter(
-          (checklist) => checklist.ccg_index !== checklistId,
-        );
-        createdChecklists = createdChecklists.filter(
-          (checklist) => checklist.ccg_index !== checklistId,
-        );
-        showDataTbale2 = false;
-        filteredChecklistData.set([]); // Reset store data to empty array
-        selectedChecklist = "";
-        filterData();
-
-        // Reset the last created checklist ID after deletion
-        lastCreatedChecklistId = null;
-        currentPage = ItemPage;
-      } else {
-        throw new Error("Deletion failed.");
-      }
-    } catch (err) {
-      alert(`Failed to delete checklist group: ${err.message}`);
-    }
-  }
   /**************************************************************************************/
   const deleteProject = async () => {
     try {
@@ -259,6 +228,26 @@
 
   /************************************************************************/
   let isCategoryManuallySelected = false; // Track if the category is manually selected
+  async function handleCategorySelection(event) {
+    selectedCategory = event.target.value;
+    isCategoryManuallySelected = true;
+    await tick(); // Wait for `selectedCategory` to update fully
+    filterData(); // Run the filter function immediately after
+  }
+
+  function handleChecklistSelect(checkList) {
+    return function () {
+      selectPage(CheckListDetail, checkList);
+      isCategoryManuallySelected = false;
+      filterData();
+    };
+  }
+  // Reactive statement to trigger filterData on any of the dependencies change
+  $: selectedRisk,
+    selectedCategory,
+    selectedChecklist,
+    allChecklistArray,
+    filterData();
 
   function filterData() {
     if (selectedChecklist) {
@@ -329,27 +318,6 @@
     }
   }
 
-  // Update category and mark it as a manual selection
-  function handleCategorySelection(event) {
-    selectedCategory = event.target.value;
-    isCategoryManuallySelected = true; // Mark as manually selected
-    filterData(); // Re-run the filter with updated selection
-  }
-
-  function handleChecklistSelect(checkList) {
-    return function () {
-      selectPage(CheckListDetail, checkList); // Navigate to CheckListDetail with selected checkList
-      isCategoryManuallySelected = false; // Reset the manual selection flag
-      filterData(); // Update the displayed data based on the checklist selected
-    };
-  }
-  // Reactive statement to trigger filterData on any of the dependencies change
-  $: selectedRisk,
-    selectedCategory,
-    selectedChecklist,
-    allChecklistArray,
-    filterData();
-
   onMount(async () => {
     try {
       await fetchChecklistData(); // Wait for the data to be fetched
@@ -370,6 +338,8 @@
   $: {
     if (selectedChecklist) {
       selectedChecklistForCopyId = selectedChecklist.ccg_index;
+    } else if (generalCopy) {
+      selectedChecklistForCopyId = anotherChecklistId.ccg_index;
     }
   }
   /***********************************************************/
@@ -439,21 +409,18 @@
     showModalModalEditItem = false;
     showEdit = false; // Reset showEdit state as well
   }
-  let selectAll = false;
+  let generalCopy = false;
+  let anotherChecklistId = null;
+  function generalcopy() {
+    generalCopy = true;
+    showModal = true;
+  }
 </script>
 
 <section>
   <article class="sideMenu" style=" height: calc(100vh - 141px);">
     <div class="btnWrap">
-      <a
-        class="btn btnPrimary"
-        on:click={() => {
-          // Ensure modal logic can handle both selectAll and selected options
-          showModal = true;
-          selectAll = true; // This flag can trigger different behaviors in your modal
-          console.log("Open modal with selectAll:", selectAll);
-        }}
-      >
+      <a class="btn btnPrimary" on:click={generalcopy}>
         <img src="./assets/images/icon/add.svg" />그룹추가
       </a>
       <a class="btn btnRed" on:click={deleteProject}>
@@ -565,7 +532,7 @@
               class="btn btnPrimary"
               on:click={() => {
                 showModal = true;
-                selectAll = false; // Change to false if you want specific behavior
+                generalCopy = false; // Change to false if you want specific behavior
                 console.log("Open modal for selected checklist");
               }}
             >
@@ -693,26 +660,31 @@
             <h3>새로운 진단 그룹 생성</h3>
             <div class="first_line">
               <label for="source-group">복사 대상:</label>
-
-              <select
-                class="first_line_input"
-                bind:value={selectedChecklistForCopyId}
-                id="source-group"
-              >
-                {#if selectAll}
+              {#if generalCopy}
+                <select
+                  class="first_line_input"
+                  bind:value={anotherChecklistId}
+                  id="source-group"
+                >
                   {#each allChecklistArray as checklist}
                     <option value={checklist.ccg_index}>
                       {checklist.ccg_group}
                     </option>
                   {/each}
-                {:else}
+                </select>
+              {:else}
+                <select
+                  class="first_line_input"
+                  bind:value={selectedChecklistForCopyId}
+                  id="source-group"
+                >
                   {#each allChecklistArray as checklist}
                     <option value={checklist.ccg_index}>
                       {checklist.ccg_group}
                     </option>
                   {/each}
-                {/if}
-              </select>
+                </select>
+              {/if}
             </div>
             <div class="second_line">
               <label for="new-group">신규 그룹명:</label>

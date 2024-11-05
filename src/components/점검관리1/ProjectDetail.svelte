@@ -68,7 +68,9 @@
       planList = await getPlanLists();
 
       assetGroup = await getAssetGroup();
-    } catch (err) {}
+    } catch (err) {
+      await errorAlert(err?.message);
+    }
   });
 
   $: if (projectIndex) {
@@ -323,7 +325,7 @@
                 -webkit-overflow-scrolling: touch;"
         >
           <ul class="progressbarWrap result">
-            {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "UNIX")[0]?.["y"]}
+            {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele?.label === "UNIX")[0]?.["y"]}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <li
                 on:click={() => {

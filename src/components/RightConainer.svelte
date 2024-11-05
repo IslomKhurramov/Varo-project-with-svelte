@@ -11,6 +11,7 @@
   import { toggleTooltip } from "../../public/assets/js/common.js";
   import { navigate } from "svelte-routing";
   import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
+  import { errorAlert } from "../shared/sweetAlert";
 
   export let selectPageMain;
   export let activeMenu;
@@ -39,6 +40,7 @@
       filteredProjects = projectArray;
     } catch (err) {
       error = err.message;
+      errorAlert(err?.message);
     } finally {
       loading = false;
     }
@@ -400,26 +402,26 @@
                       </td>
                       <td>
                         {project?.asg_index__asg_title} (총
-                        {parseInt(project?.asset["UNIX"] ?? 0) +
-                          parseInt(project?.asset["WINDOWS"] ?? 0) +
-                          parseInt(project?.asset["NETWORK"] ?? 0) +
-                          parseInt(project?.asset["WEB"] ?? 0) +
-                          parseInt(project?.asset["DBMS"] ?? 0)}대)
+                        {parseInt(project?.asset?.["UNIX"] ?? 0) +
+                          parseInt(project?.asset?.["WINDOWS"] ?? 0) +
+                          parseInt(project?.asset?.["NETWORK"] ?? 0) +
+                          parseInt(project?.asset?.["WEB"] ?? 0) +
+                          parseInt(project?.asset?.["DBMS"] ?? 0)}대)
                         <div class="tableSummary">
-                          ({project?.asset["UNIX"]
-                            ? `유닉스: ${project?.asset["UNIX"]}대, `
+                          ({project?.asset?.["UNIX"]
+                            ? `유닉스: ${project?.asset?.["UNIX"]}대, `
                             : ""}
-                          {project?.asset["WINDOWS"]
-                            ? `윈도우: ${project?.asset["WINDOWS"]}대, `
+                          {project?.asset?.["WINDOWS"]
+                            ? `윈도우: ${project?.asset?.["WINDOWS"]}대, `
                             : ""}
-                          {project?.asset["NETWORK"]
-                            ? `NETWORK: ${project?.asset["NETWORK"]}대, `
+                          {project?.asset?.["NETWORK"]
+                            ? `NETWORK: ${project?.asset?.["NETWORK"]}대, `
                             : ""}
-                          {project?.asset["WEB"]
-                            ? `WEB: ${project?.asset["WEB"]}대, `
+                          {project?.asset?.["WEB"]
+                            ? `WEB: ${project?.asset?.["WEB"]}대, `
                             : ""}
-                          {project?.asset["DBMS"]
-                            ? `DBMS: ${project?.asset["DBMS"]}대`
+                          {project?.asset?.["DBMS"]
+                            ? `DBMS: ${project?.asset?.["DBMS"]}대`
                             : ""}
                           )
                         </div>

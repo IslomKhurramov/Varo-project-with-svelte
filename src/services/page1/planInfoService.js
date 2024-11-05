@@ -7,6 +7,8 @@ export const getAllPlanLists = async () => {
       withCredentials: true,
     });
 
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
     const data = Object.values(response.data).sort(
       (a, b) => b.ccp_index - a.ccp_index,
     );

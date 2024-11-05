@@ -315,7 +315,13 @@
             >
           </div>
         </div>
-        <div>
+        <div
+          style="overflow: scroll;
+                height: 182px;
+                scrollbar-width: none;          
+                -ms-overflow-style: none;      
+                -webkit-overflow-scrolling: touch;"
+        >
           <ul class="progressbarWrap result">
             {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "UNIX")[0]?.["y"]}
               <!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -20,6 +20,7 @@
     order_user: "",
     search_start_date: "",
     search_end_date: "",
+    his_type: "plan",
   };
 
   onMount(async () => {

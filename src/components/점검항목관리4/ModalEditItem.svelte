@@ -16,8 +16,8 @@
 
   let activeAsset = null;
   let scrollAmount = 0;
-  let itemWidth = 146; // Each menu item width including gap
-  let menuWidth = 100; // Total width of the menu
+  let itemWidth = 146;
+  let menuWidth = 100;
   let menuWrapper;
   let swiperInstance;
 
@@ -99,7 +99,7 @@
   function handleSlideclick(slide) {
     activeAsset = slide;
     selectedSlide = slide;
-    selectedItem = slide; // Update selectedItem as well
+    selectedItem = slide;
   }
 </script>
 

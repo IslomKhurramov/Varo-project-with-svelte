@@ -55,17 +55,6 @@
       return data; // Return unchanged data
     });
   }
-  function arrayOfDeletedItem() {
-    // Create an array containing the indices of selected items
-    const deletedItems = selected.map((item) => item.ccc_index);
-
-    // If selectedItem is defined and has ccc_index, add it to the array
-    if (selectedItem && selectedItem.ccc_index) {
-      deletedItems.push(selectedItem.ccc_index);
-    }
-
-    return deletedItems;
-  }
 
   async function deleteSelectedItem() {
     // Check if there are any items selected for deletion

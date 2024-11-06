@@ -20,6 +20,7 @@
     getUserAllMessages,
   } from "./services/login/loginService";
   import { logout } from "./services/page1/authService";
+  import Page7 from "./components/취약점추적7/Page7.svelte";
 
   let openNotification = false;
   let activeMenu = "점검관리";
@@ -41,6 +42,9 @@
         break;
       case "/page6":
         activeMenu = "환경설정";
+        break;
+      case "/page7":
+        activeMenu = "취약점추적";
         break;
       default:
         activeMenu = "점검관리";
@@ -167,6 +171,7 @@
         <Route path="/page4" component={Page4} />
         <Route path="/page5" component={Page5} />
         <Route path="/page6" component={Page6} />
+        <Route path="/page7" component={Page7} />
       </div>
     </div>
   </body>

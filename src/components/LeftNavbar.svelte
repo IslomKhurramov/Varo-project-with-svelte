@@ -5,6 +5,7 @@
   import Page4 from "./점검항목관리4/Page4.svelte";
   import Page5 from "./대시보드5/Page5.svelte";
   import Page6 from "./환경설정6/Page6.svelte";
+  import Page7 from "./취약점추적7/Page7.svelte";
 
   let currentPage = null;
   let activeMenu = null;
@@ -71,6 +72,14 @@
       >
         <i class="fa fa-trash-o" aria-hidden="true"></i>
         환경설정
+      </a>
+      <a
+        href="javascript:void(0)"
+        on:click={() => selectPage(Page7, "취약점추적")}
+        class={activeMenu === "취약점추적" ? "active" : ""}
+      >
+        <i class="fa fa-trash-o" aria-hidden="true"></i>
+        취약점추적
       </a>
     </aside>
   </div>

@@ -289,7 +289,7 @@
           style="position: sticky;
         top: 146px;
         background-color: white;
-        height: 40px;     width: 69.7%;
+        height: 40px;     width: 100%;
       display: flex;"
         >
           {#if activeData === "네트워크 정보"}
@@ -440,7 +440,7 @@
                   class="tableListWrap table2"
                   style="display: flex; justify-content: center"
                 >
-                  <table class="tableList hdBorder" style="width: 70%;">
+                  <table class="tableList hdBorder" style="width: 100%;">
                     <colgroup>
                       {#if modelType === "AssetPatchStatus" || modelType === "AssetsDlls"}
                         <col />
@@ -937,7 +937,7 @@
     border-radius: 8px;
     margin-top: 20px;
     font-size: 16px;
-    width: 68%;
+    width: 100%;
     color: #555;
   }
   .modal {

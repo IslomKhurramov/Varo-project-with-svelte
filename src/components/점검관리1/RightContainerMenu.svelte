@@ -6,6 +6,7 @@
   import FifthMenu from "./HeaderMenu/FifthMenu.svelte";
   import ProjectDetail from "./ProjectDetail.svelte";
   import { navigate } from "svelte-routing";
+  import SixthMenu from "./HeaderMenu/SixthMenu.svelte";
 
   export let projectIndex;
   let currentPage = null;
@@ -53,6 +54,14 @@
           on:click={() => selectPage(FourthMenu, "이력관리")}
         >
           이력관리
+        </a>
+      </li>
+      <li class={tabMenu == "점검프로그램다운로드" && "active"}>
+        <a
+          href="javascript:void(0);"
+          on:click={() => selectPage(SixthMenu, "점검프로그램다운로드")}
+        >
+          점검프로그램다운로드
         </a>
       </li>
       <li>

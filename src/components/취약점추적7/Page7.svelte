@@ -1,14 +1,17 @@
 <script>
   import Asset from "./Asset.svelte";
-  import Project from "./Project.svelte";
+  import ProjectAll from "./ProjectAll.svelte";
   import Third from "./Third.svelte";
+  import Project from "./Project.svelte";
+  import AssetAll from "./AssetAll.svelte";
+  import ThirdAll from "./ThirdAll.svelte";
 
-  let currentPage = null;
+  let currentPage = ProjectAll;
   let showProject = true;
   let showAsset = false;
   let showThird = false;
   let activeView = "project"; // Track which section is currently active
-  let activeMenu = "전체";
+  let activeMenu = null;
 
   function selectPage(pageComponent, menuName) {
     currentPage = pageComponent;
@@ -16,12 +19,19 @@
   }
 
   function toggleView(view) {
-    showProject = view === "project";
-    showAsset = view === "asset";
-    showThird = view === "third";
+    showProject = view;
+    showAsset = view;
+    showThird = view;
     activeView = view;
     activeMenu = "전체";
-    currentPage = null; // Clear the current page on view change
+
+    if (view === "project") {
+      currentPage = ProjectAll;
+    } else if (view === "asset") {
+      currentPage = AssetAll;
+    } else if (view === "third") {
+      currentPage = ThirdAll; // Assuming this represents Third's 전체 view
+    }
   }
 
   let plan = [];
@@ -37,6 +47,7 @@
     asset.push({
       number: (i + 1).toString(),
       assetName: "asset",
+
       version: "1.0.0",
     });
   }
@@ -45,6 +56,27 @@
     third.push({
       number: (i + 1).toString(),
       thirdName: "third",
+      WINDOWS: [
+        {
+          ccc_index: 2471,
+          ccc_item_no: "W-01",
+          ccc_item_title: "Administrator 계정 이름 변경 또는 보안성 강화",
+        },
+      ],
+      UNIX: [
+        {
+          ccc_index: 2471,
+          ccc_item_no: "W-01",
+          ccc_item_title: "Administrator 계정 이름 변경 또는 보안성 강화",
+        },
+      ],
+      LINUX: [
+        {
+          ccc_index: 2471,
+          ccc_item_no: "L-01",
+          ccc_item_title: "Administrator 계정 이름 변경 또는 보안성 강화",
+        },
+      ],
       version: "1.0.0",
     });
   }
@@ -93,96 +125,111 @@
             style="cursor: pointer;"
             class={`menuItem ${activeMenu === "전체" ? "active" : ""} `}
           >
-            <div class="menu" style="position: relative;">
+            <div
+              on:click={() => selectPage(ProjectAll, "전체")}
+              class="menu"
+              style="position: relative;"
+            >
               <span
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                 >전체</span
               > <span class="arrowIcon"></span>
             </div>
           </li>
-          <li
-            style="cursor: pointer;"
-            class={`menuItem ${activeMenu === "plan" ? "active" : ""} `}
-          >
-            <div
-              on:click={() => selectPage(Project, "plan")}
-              class="menu"
-              style="position: relative;"
-              title="plan"
+          {#each plan as plan}
+            <li
+              style="cursor: pointer;"
+              class={`menuItem ${activeMenu === plan ? "active" : ""}`}
             >
-              <span
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                >plan</span
-              > <span class="arrowIcon"></span>
-            </div>
-          </li>
+              <div
+                on:click={() => selectPage(Project, plan)}
+                class="menu"
+                style="position: relative;"
+                title="plan"
+              >
+                <span
+                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  >{plan.planName}({plan.number})</span
+                > <span class="arrowIcon"></span>
+              </div>
+            </li>
+          {/each}
         {:else if activeView === "asset"}
           <li
             style="cursor: pointer;"
             class={`menuItem ${activeMenu === "전체" ? "active" : ""} `}
           >
-            <div class="menu" style="position: relative;">
+            <div
+              on:click={() => selectPage(AssetAll, "전체")}
+              class="menu"
+              style="position: relative;"
+            >
               <span
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                 >전체</span
               > <span class="arrowIcon"></span>
             </div>
           </li>
-          <li
-            style="cursor: pointer;"
-            class={`menuItem ${activeMenu === "asset" ? "active" : ""} `}
-          >
-            <div
-              on:click={() => selectPage(Asset, "asset")}
-              class="menu"
-              style="position: relative;"
-              title="asset"
+          {#each asset as asset}
+            <li
+              style="cursor: pointer;"
+              class={`menuItem ${activeMenu === asset ? "active" : ""} `}
             >
-              <span
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                >asset</span
-              > <span class="arrowIcon"></span>
-            </div>
-          </li>
+              <div
+                on:click={() => selectPage(Asset, asset)}
+                class="menu"
+                style="position: relative;"
+                title="asset"
+              >
+                <span
+                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  >{asset.assetName}({asset.number})</span
+                > <span class="arrowIcon"></span>
+              </div>
+            </li>
+          {/each}
         {:else if activeView === "third"}
           <li
             style="cursor: pointer;"
             class={`menuItem ${activeMenu === "전체" ? "active" : ""} `}
           >
-            <div class="menu" style="position: relative;">
+            <div
+              on:click={() => selectPage(ThirdAll, "전체")}
+              class="menu"
+              style="position: relative;"
+            >
               <span
                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                 >전체</span
               > <span class="arrowIcon"></span>
             </div>
           </li>
-          <li
-            style="cursor: pointer;"
-            class={`menuItem ${activeMenu === "third" ? "active" : ""} `}
-          >
-            <div
-              on:click={() => selectPage(Third, "third")}
-              class="menu"
-              style="position: relative;"
-              title="third"
+          {#each third as third}
+            <li
+              style="cursor: pointer;"
+              class={`menuItem ${activeMenu === third ? "active" : ""} `}
             >
-              <span
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                >third</span
-              > <span class="arrowIcon"></span>
-            </div>
-          </li>
+              <div
+                on:click={() => selectPage(Third, third)}
+                class="menu"
+                style="position: relative;"
+                title="third"
+              >
+                <span
+                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  >{third.thirdName}
+                </span> <span class="arrowIcon"></span>
+              </div>
+            </li>
+          {/each}
         {/if}
       </ul>
     </article>
     <!--//SUBMENU-->
 
     <div class={`contentsWrap assetview `} style={"width: calc(100% - 280px);"}>
-      <article
-        class="contentArea flex col"
-        style="height: calc(100vh - 153px);"
-      >
-        <section class="topCon">
+      <article class="contentArea mt-0">
+        <section class="topCon" style="margin-bottom: 0px;">
           <section class="filterWrap">
             <div>
               <select>
@@ -211,24 +258,36 @@
                 <option value="" selected>담당자별</option>
                 <option value="담당자별">담당자별</option>
               </select>
+              {#if showProject}
+                <select
+                  name="operating_system"
+                  id="operating_system"
+                  class="select_input"
+                >
+                  <option value="" selected>플랜명</option>
+                  <option value="플랜명">플랜명</option>
+                </select>
+              {/if}
               <button type="button" class="btn btnPrimary">
                 <img src="./assets/images/reset.png" alt="search" />
                 초기화
               </button>
-              <button type="button" class="btn btnPrimary">
-                <img
-                  src="./assets/images/icon/download.svg"
-                  class="excel-img"
-                /> 엑셀 다운로드
-              </button>
 
               <button type="button" class="btn btnPrimary"> 엑셀저장 </button>
+              {#if showProject}
+                <button type="button" class="btn btnPrimary"> 비교 </button>
+              {/if}
             </div>
           </section>
         </section>
+      </article>
 
+      <article
+        class="contentArea body"
+        style={"margin-top: 10px; height: calc(100vh - 141px);"}
+      >
         {#if currentPage}
-          <svelte:component this={currentPage} />
+          <svelte:component this={currentPage} {asset} {third} />
         {/if}
       </article>
     </div>
@@ -236,6 +295,9 @@
 </div>
 
 <style>
+  .body {
+    margin-top: 10px;
+  }
   * {
     font-size: 16px;
   }

@@ -172,6 +172,16 @@
       closeShowModal();
     }
   }
+
+  onMount(() => {
+    // Listen for keydown event when the modal is open
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      // Remove the event listener when the component is destroyed
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
 </script>
 
 <div class="contentArea" style="height: calc(-236px + 100vh); overflow-y:auto;">

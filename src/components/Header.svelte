@@ -26,6 +26,9 @@
       case "/page6":
         activeMenu = "환경설정";
         break;
+      case "/page7":
+        activeMenu = "취약점추적";
+        break;
       default:
         activeMenu = "점검관리";
     }
@@ -303,6 +306,7 @@
           </a>
         </Link>
       </li>
+
       <li class={`menu ${activeMenu === "점검항목관리" ? "active" : ""}`}>
         <Link to="/page4" on:click={() => (activeMenu = "점검항목관리")}>
           <a href="javascript:void(0);" class="menuItme">
@@ -359,6 +363,61 @@
               </svg>
             </div>
             <span>점검항목관리</span>
+          </a>
+        </Link>
+      </li>
+      <li class={`menu setting ${activeMenu === "취약점추적" ? "active" : ""}`}>
+        <Link to="/page7" on:click={() => (activeMenu = "취약점추적")}>
+          <a href="javascript:void(0);" class="menuItme page7">
+            <div class="iconMenu stroke">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+              >
+                <!-- Target Icon for Tracking -->
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="#9197B3"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="5"
+                  stroke="#9197B3"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="2"
+                  stroke="#9197B3"
+                  stroke-width="2"
+                />
+                <line
+                  x1="12"
+                  y1="0"
+                  x2="12"
+                  y2="24"
+                  stroke="#9197B3"
+                  stroke-width="2"
+                />
+                <line
+                  x1="0"
+                  y1="12"
+                  x2="24"
+                  y2="12"
+                  stroke="#9197B3"
+                  stroke-width="2"
+                />
+              </svg>
+            </div>
+            <span>취약점추적</span>
           </a>
         </Link>
       </li>
@@ -550,3 +609,9 @@
     </ul>
   </nav>
 </header>
+
+<style>
+  .menu .iconMenu svg {
+    display: flex;
+  }
+</style>

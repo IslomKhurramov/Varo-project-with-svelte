@@ -1,0 +1,776 @@
+<script>
+  let showModalProject = false;
+  let selectedData = [];
+
+  function modalData(data) {
+    showModalProject = true;
+    selectedData = data;
+  }
+
+  function getStrokeColor(score) {
+    if (score > 60)
+      return "#0067ff"; // Blue
+    else if (score > 30)
+      return "#00ff00"; // Green
+    else return "#ff0000"; // Red
+  }
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      showModalProject = false;
+    }
+  }
+  let filteredAssets = [
+    {
+      ast_security_point: 85,
+      ast_uuid__ast_target__cct_target: "Web Server",
+      asg_index__asg_title: "Finance Servers",
+      ast_os: "Windows Server 2019",
+      ast_hostname: "2024.04.04",
+      ast_ipaddr: "2000대",
+      ast_agent_installed: true,
+      ccc_item_group: "Security Checks",
+      ccc_item_no: "Vuln-001",
+      ccc_item_title: "SQL Injection",
+      ccc_item_level: "High",
+      ccc_item_result: "Passed",
+      ccc_item_action: "N/A",
+      ccc_item_status: "Resolved",
+      ccc_item_department: "IT",
+      ccc_item_owner: "John Doe",
+    },
+    {
+      ast_security_point: 12,
+      ast_uuid__ast_target__cct_target: "Web Server",
+      asg_index__asg_title: "Finance Servers",
+      ast_os: "Windows Server 2019",
+      ast_hostname: "2024.04.04",
+      ast_ipaddr: "2000대",
+      ast_agent_installed: true,
+      ccc_item_group: "Security Checks",
+      ccc_item_no: "Vuln-002",
+      ccc_item_title: "Cross-Site Scripting (XSS)",
+      ccc_item_level: "Critical",
+      ccc_item_result: "Failed",
+      ccc_item_action: "Fix ASAP",
+      ccc_item_status: "Pending",
+      ccc_item_department: "Security",
+      ccc_item_owner: "Jane Smith",
+    },
+    {
+      ast_security_point: 85,
+      ast_uuid__ast_target__cct_target: "Web Server",
+      asg_index__asg_title: "Finance Servers",
+      ast_os: "Windows Server 2019",
+      ast_hostname: "2024.04.04",
+      ast_ipaddr: "2000대",
+      ast_agent_installed: true,
+      ccc_item_group: "Security Checks",
+      ccc_item_no: "Vuln-001",
+      ccc_item_title: "SQL Injection",
+      ccc_item_level: "High",
+      ccc_item_result: "Passed",
+      ccc_item_action: "N/A",
+      ccc_item_status: "Resolved",
+      ccc_item_department: "IT",
+      ccc_item_owner: "John Doe",
+    },
+    {
+      ast_security_point: 12,
+      ast_uuid__ast_target__cct_target: "Web Server",
+      asg_index__asg_title: "Finance Servers",
+      ast_os: "Windows Server 2019",
+      ast_hostname: "2024.04.04",
+      ast_ipaddr: "2000대",
+      ast_agent_installed: true,
+      ccc_item_group: "Security Checks",
+      ccc_item_no: "Vuln-002",
+      ccc_item_title: "Cross-Site Scripting (XSS)",
+      ccc_item_level: "Critical",
+      ccc_item_result: "Failed",
+      ccc_item_action: "Fix ASAP",
+      ccc_item_status: "Pending",
+      ccc_item_department: "Security",
+      ccc_item_owner: "Jane Smith",
+    },
+    {
+      ast_security_point: 85,
+      ast_uuid__ast_target__cct_target: "Web Server",
+      asg_index__asg_title: "Finance Servers",
+      ast_os: "Windows Server 2019",
+      ast_hostname: "2024.04.04",
+      ast_ipaddr: "2000대",
+      ast_agent_installed: true,
+      ccc_item_group: "Security Checks",
+      ccc_item_no: "Vuln-001",
+      ccc_item_title: "SQL Injection",
+      ccc_item_level: "High",
+      ccc_item_result: "Passed",
+      ccc_item_action: "N/A",
+      ccc_item_status: "Resolved",
+      ccc_item_department: "IT",
+      ccc_item_owner: "John Doe",
+    },
+  ];
+  $: recentAssets = filteredAssets.slice(-5);
+
+  let selectedAsset = filteredAssets[0];
+
+  // Function to handle clicking on a card
+  function selectCard(asset) {
+    selectedAsset = asset;
+  }
+
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    // Listen for keydown event when the modal is open
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      // Remove the event listener when the component is destroyed
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+</script>
+
+<div>
+  <p class="header_title">점검플랜 : 프로젝트3과 관련된 취약점 추적</p>
+  <div class="graphCardWrap col3" style="width:100%;">
+    {#each recentAssets as asset, index}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div class="iconCard" on:click={() => selectCard(asset)}>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <article class="graphCard hoverCard" style="height: 270px;">
+          <div class="contents">
+            <div class="graph">
+              <div>
+                <div
+                  class="circle"
+                  data-percent={asset.ast_security_point || 0}
+                  data-offset="440"
+                >
+                  <svg viewBox="0 0 150 150">
+                    <circle
+                      cx="75"
+                      cy="75"
+                      r="70"
+                      stroke="#fff"
+                      stroke-width="10"
+                      fill="none"
+                    />
+                    <circle
+                      class="progress"
+                      cx="75"
+                      cy="75"
+                      r="70"
+                      stroke={getStrokeColor(asset.ast_security_point || 0)}
+                      stroke-width="10"
+                      fill="none"
+                      stroke-dasharray="440"
+                      stroke-dashoffset={440 -
+                        (440 * (asset.ast_security_point || 0)) / 100}
+                      stroke-linecap="round"
+                      transform="rotate(-90 75 75)"
+                    />
+                  </svg>
+                  <div class="percent">
+                    <span
+                      class="number"
+                      style="font-size:32px; color: {getStrokeColor(
+                        asset.ast_security_point || 0,
+                      )};"
+                    >
+                      {asset.ast_security_point > 0
+                        ? asset.ast_security_point
+                        : 0}건
+                    </span>
+                  </div>
+                </div>
+                <h4 class="name">
+                  <div class="title1">취약</div>
+                </h4>
+              </div>
+            </div>
+            <div class="text flex col justify-between">
+              <ul>
+                <li>
+                  <span>프로젝트명 : </span>{asset.ast_os || "Unknown OS"}
+                </li>
+                <li>
+                  <span>점검일시 : </span>{asset.ast_hostname ||
+                    "Unknown Hostname"}
+                </li>
+                <li>
+                  <span>관련시스템 : </span>{asset.ast_ipaddr || "Unknown IP"}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- Only show the icon if index is less than 5 -->
+        {#if index < 4}
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <img src="images/icons/arrowhead.png" class="icon" />
+        {/if}
+      </div>
+    {/each}
+  </div>
+
+  {#if selectedAsset}
+    <div
+      class="tableListWrap table2"
+      style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
+    >
+      <table class="tableList hdBorder font-size: 16px;">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th class="text-center">순번</th>
+            <th class="text-center">자산명</th>
+            <th class="text-center">점검항목</th>
+            <th class="text-center">취약점명</th>
+            <th class="text-center">위험도</th>
+            <th class="text-center">점검결과</th>
+            <th class="text-center">조치현황</th>
+            <th class="text-center">조치분류상태 </th>
+            <th class="text-center">운영부서 </th>
+            <th class="text-center">운영담당자</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr on:click={modalData(selectedAsset)} class="clickLine">
+            <td class="text-center line-height">1</td>
+            <td class="text-center line-height"
+              >{selectedAsset.asg_index__asg_title}</td
+            >
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_group}</td
+            >
+            <td class="text-center line-height">{selectedAsset.ccc_item_no}</td>
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_title}</td
+            >
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_level}</td
+            >
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_result}</td
+            >
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_action}</td
+            >
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_status}</td
+            >
+            <td class="text-center line-height"
+              >{selectedAsset.ccc_item_department}</td
+            >
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  {/if}
+
+  {#if showModalProject}
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+    <div
+      class="modal-open-wrap"
+      on:click={() => (showModalProject = false)}
+      on:keydown={handleKeyDown}
+      tabindex="0"
+    >
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <dialog
+        open
+        on:close={() => (showModalProject = false)}
+        on:click|stopPropagation
+      >
+        <p class="header_title">[자산명] [U-01] 점검항목 타이틀</p>
+        <table>
+          <colgroup>
+            <col style="width: 120px;" />
+            <col />
+          </colgroup>
+          <tr>
+            <th class="text-center">점검플랜</th>
+            <td>
+              <div class="graphCardWrap">
+                {#each recentAssets as asset, index}
+                  <div class="iconCard">
+                    <article class="graphCard">
+                      <div class="contents2">
+                        <div class="text2">
+                          <ul>
+                            <li>
+                              <span>프로젝트명 : </span>{asset.ast_os ||
+                                "Unknown OS"}
+                            </li>
+                            <li>
+                              <span>점검일시 : </span>{asset.ast_hostname ||
+                                "Unknown Hostname"}
+                            </li>
+                            <li>
+                              <span>관련시스템 : </span>{asset.ast_ipaddr ||
+                                "Unknown IP"}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </article>
+                    {#if index < 4}
+                      <img src="images/icons/arrowhead.png" class="arrowIcon" />
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-center">점검이력</th>
+            <td>
+              <div class="graphCardWrap">
+                {#each recentAssets as asset}
+                  <div class="iconCard">
+                    <article class="graphCard">
+                      <div class="contents2">
+                        <div class="text2">
+                          <ul>
+                            <li>
+                              <span>프로젝트명 : </span>{asset.ast_os ||
+                                "Unknown OS"}
+                            </li>
+                            <li>
+                              <span>점검일시 : </span>{asset.ast_hostname ||
+                                "Unknown Hostname"}
+                            </li>
+                            <li>
+                              <span>관련시스템 : </span>{asset.ast_ipaddr ||
+                                "Unknown IP"}
+                            </li>
+                            <li><span>점검현황 : </span></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                {/each}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-center">조치이력</th>
+            <td>
+              <div class="graphCardWrap">
+                {#each recentAssets as asset}
+                  <div class="iconCard">
+                    <article class="graphCard">
+                      <div class="contents2">
+                        <div class="text2">
+                          <ul>
+                            <li>
+                              <span>프로젝트명 : </span>{asset.ast_os ||
+                                "Unknown OS"}
+                            </li>
+                            <li>
+                              <span>점검일시 : </span>{asset.ast_hostname ||
+                                "Unknown Hostname"}
+                            </li>
+                            <li>
+                              <span>관련시스템 : </span>{asset.ast_ipaddr ||
+                                "Unknown IP"}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                {/each}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-center">조치내역</th>
+            <td>
+              <div class="graphCardWrap">
+                {#each recentAssets as asset}
+                  <div class="iconCard">
+                    <article class="graphCard">
+                      <div class="contents2">
+                        <div class="text2">
+                          <ul>
+                            <li>
+                              <span>프로젝트명 : </span>{asset.ast_os ||
+                                "Unknown OS"}
+                            </li>
+                            <li>
+                              <span>점검일시 : </span>{asset.ast_hostname ||
+                                "Unknown Hostname"}
+                            </li>
+                            <li>
+                              <span>관련시스템 : </span>{asset.ast_ipaddr ||
+                                "Unknown IP"}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                {/each}
+              </div>
+            </td>
+          </tr>
+        </table>
+        <div style="display: flex; width:100%; justify-content:center">
+          <button
+            class="btn modify-btn"
+            on:click={() => (showModalProject = false)}>창닫기</button
+          >
+        </div>
+      </dialog>
+    </div>
+  {/if}
+</div>
+
+<style>
+  .modify-btn {
+    background-color: #4caf50; /* Green background for modify button */
+    color: white; /* White text */
+  }
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
+  dialog {
+    position: fixed;
+    /* height: 600px; */
+    /* overflow-y: auto;
+    overflow-x: hidden; */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: svelte-s7onsa-fadeIn 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Modal backdrop */
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+  /* General Layout Styles */
+  .graphCardWrap.col3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+    padding: 20px;
+    height: 100%;
+    align-items: center;
+  }
+
+  /* Card and Hover Styles */
+  .hoverCard {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(145deg, #ffffff, #f1f3f4);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.3s ease;
+    width: 280px;
+  }
+  .hoverCard:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+  }
+  .clickLine:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
+  .contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .contents2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  /* Text and Title Styles */
+  .text {
+    padding: 20px;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+  }
+  .text2 {
+    padding: 0px;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+  }
+  .name {
+    text-align: center;
+    margin-top: 10px;
+  }
+  .title1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  /* Icon Styles */
+  .iconCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  dialog .iconCard {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+  }
+  .icon {
+    width: 45px;
+    height: 45px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .iconCard:hover .icon {
+    opacity: 1;
+  }
+  .header_title {
+    font-size: 16px;
+    display: block;
+    border-bottom: 3px solid transparent;
+    color: #626677;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 15px 10px;
+  }
+  /* Responsive Styles */
+  @media (max-width: 1200px) {
+    .graphCardWrap.col3 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 992px) {
+    .graphCardWrap.col3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .text {
+      font-size: 15px;
+    }
+    .icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .graphCardWrap.col3 {
+      grid-template-columns: 1fr;
+    }
+    .hoverCard {
+      max-width: 100%;
+    }
+    .text {
+      font-size: 14px;
+      padding: 15px;
+    }
+    .icon {
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .text {
+      font-size: 13px;
+      padding: 10px;
+    }
+    .hoverCard {
+      width: 100%;
+    }
+    .icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .table2 {
+    width: 100%;
+    font-size: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  th,
+  td {
+    font-size: 16px;
+  }
+
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
+  /**************************************************************/
+  /* Apply styles to table inside the modal */
+  .modal-open-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+
+    overflow: hidden;
+  }
+  .modal-open-wrap .header_title {
+    font-size: 16px;
+    display: block;
+    border-bottom: 3px solid transparent;
+    color: #626677;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 0px 10px;
+  }
+  .modal-open-wrap th,
+  .modal-open-wrap td {
+    padding: 15px;
+    text-align: left;
+  }
+
+  .modal-open-wrap th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+  }
+
+  .modal-open-wrap td {
+    color: #333;
+  }
+
+  .modal-open-wrap td div {
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-open-wrap .graphCardWrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .modal-open-wrap .iconCard {
+    position: relative;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    overflow: visible;
+  }
+
+  .modal-open-wrap .iconCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-open-wrap .graphCard {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-open-wrap .text2 ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .modal-open-wrap .text2 li {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .modal-open-wrap .text2 span {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .modal-open-wrap .arrowIcon {
+    position: absolute;
+    right: -20px; /* Adjust the right position to move the arrow outside */
+    top: 50%; /* Center the arrow vertically */
+
+    width: 18px;
+    height: 18px;
+
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+  }
+
+  .modal-open-wrap .iconCard:hover .arrowIcon {
+    opacity: 1;
+  }
+
+  .modal-open-wrap .arrowIcon img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .modal-open-wrap table {
+      width: 100%;
+      margin: 0;
+    }
+
+    .modal-open-wrap .graphCardWrap {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .modal-open-wrap .graphCardWrap {
+      grid-template-columns: 1fr;
+    }
+
+    .modal-open-wrap th,
+    .modal-open-wrap td {
+      padding: 10px;
+    }
+  }
+</style>

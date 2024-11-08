@@ -62,7 +62,7 @@
     {#each recentAssets as asset, index}
       <div class="iconCard">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <article class="graphCard hoverCard" style="height: 500px;">
+        <article class="graphCard hoverCard" style="min-height: 500px;">
           <div class="contents">
             <div class="graph">
               <div>
@@ -209,7 +209,7 @@
     margin-top: 10px;
   }
   .title1 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #333;
     margin-bottom: 5px;

@@ -5,6 +5,9 @@
   import Project from "./Project.svelte";
   import AssetAll from "./AssetAll.svelte";
   import ThirdAll from "./ThirdAll.svelte";
+  import ComparisonPage from "./ComparisonPage.svelte";
+  import AssetComparison from "./AssetComparison.svelte";
+  import ThirdComparison from "./ThirdComparison.svelte";
 
   let currentPage = ProjectAll;
   let showProject = true;
@@ -125,6 +128,7 @@
             style="cursor: pointer;"
             class={`menuItem ${activeMenu === "전체" ? "active" : ""} `}
           >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
               on:click={() => selectPage(ProjectAll, "전체")}
               class="menu"
@@ -141,6 +145,7 @@
               style="cursor: pointer;"
               class={`menuItem ${activeMenu === plan ? "active" : ""}`}
             >
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 on:click={() => selectPage(Project, plan)}
                 class="menu"
@@ -159,6 +164,7 @@
             style="cursor: pointer;"
             class={`menuItem ${activeMenu === "전체" ? "active" : ""} `}
           >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
               on:click={() => selectPage(AssetAll, "전체")}
               class="menu"
@@ -175,6 +181,7 @@
               style="cursor: pointer;"
               class={`menuItem ${activeMenu === asset ? "active" : ""} `}
             >
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 on:click={() => selectPage(Asset, asset)}
                 class="menu"
@@ -193,6 +200,7 @@
             style="cursor: pointer;"
             class={`menuItem ${activeMenu === "전체" ? "active" : ""} `}
           >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
               on:click={() => selectPage(ThirdAll, "전체")}
               class="menu"
@@ -209,6 +217,7 @@
               style="cursor: pointer;"
               class={`menuItem ${activeMenu === third ? "active" : ""} `}
             >
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 on:click={() => selectPage(Third, third)}
                 class="menu"
@@ -258,24 +267,40 @@
                 <option value="" selected>담당자별</option>
                 <option value="담당자별">담당자별</option>
               </select>
-              {#if showProject}
-                <select
-                  name="operating_system"
-                  id="operating_system"
-                  class="select_input"
-                >
-                  <option value="" selected>플랜명</option>
-                  <option value="플랜명">플랜명</option>
-                </select>
-              {/if}
+
               <button type="button" class="btn btnPrimary">
                 <img src="./assets/images/reset.png" alt="search" />
                 초기화
               </button>
 
               <button type="button" class="btn btnPrimary"> 엑셀저장 </button>
-              {#if showProject}
-                <button type="button" class="btn btnPrimary"> 비교 </button>
+              {#if activeView === "project"}
+                <!-- For project comparison -->
+                <button
+                  on:click={() => selectPage(ComparisonPage, "비교")}
+                  type="button"
+                  class="btn btnPrimary"
+                >
+                  비교
+                </button>
+              {:else if activeView === "asset"}
+                <!-- For asset comparison -->
+                <button
+                  on:click={() => selectPage(AssetComparison, "비교")}
+                  type="button"
+                  class="btn btnPrimary"
+                >
+                  비교
+                </button>
+              {:else if activeView === "third"}
+                <!-- Optional: For third category comparison -->
+                <button
+                  on:click={() => selectPage(ThirdComparison, "비교")}
+                  type="button"
+                  class="btn btnPrimary"
+                >
+                  비교
+                </button>
               {/if}
             </div>
           </section>

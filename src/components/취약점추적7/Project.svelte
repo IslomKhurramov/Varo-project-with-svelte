@@ -140,7 +140,7 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div class="iconCard" on:click={() => selectCard(asset)}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <article class="graphCard hoverCard" style="height: 270px;">
+        <article class="graphCard hoverCard" style="min-height: 270px;">
           <div class="contents">
             <div class="graph">
               <div>
@@ -468,7 +468,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70%;
+    width: 1600px;
     border: none;
     border-radius: 10px;
     background-color: white;
@@ -545,7 +545,7 @@
     margin-top: 10px;
   }
   .title1 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #333;
     margin-bottom: 5px;

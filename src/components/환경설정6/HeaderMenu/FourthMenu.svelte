@@ -1,4 +1,7 @@
 <script>
+  import FourthMenuDetail from "../FourthMenuDetail.svelte";
+  import FourthMenu from "../Page6.svelte";
+
   let dataArray = [
     {
       hostname: "Host1",
@@ -40,34 +43,20 @@
       itemStatus: "Status5",
       itemResult: "양호",
     },
-    {
-      hostname: "Host3",
-      itemNo: "Item003",
-      itemTitle: "Title3",
-      itemCriteria: "Criteria3",
-      itemStatus: "Status3",
-      itemResult: "예외처리",
-    },
-    {
-      hostname: "Host4",
-      itemNo: "Item004",
-      itemTitle: "Title4",
-      itemCriteria: "Criteria4",
-      itemStatus: "Status4",
-      itemResult: "해당없음",
-    },
-    {
-      hostname: "Host5",
-      itemNo: "Item005",
-      itemTitle: "Title5",
-      itemCriteria: "Criteria5",
-      itemStatus: "Status5",
-      itemResult: "양호",
-    },
   ];
+
+  export let selectPageMain;
+  let projectData = {};
+  let projectArray = [];
+  let filteredProjects = [];
+  let loading = true;
+  let error = null;
+  let currentPage = null;
+  let projectIndex = null;
+  let tabMenu = null;
 </script>
 
-<section class="tableWrap" style="height: calc(-5vh + 100vh);">
+<section class="tableWrap" style="height: calc(-100px + 100vh);">
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
@@ -92,7 +81,13 @@
       </thead>
       <tbody>
         {#each dataArray as data, index}
-          <tr>
+          <tr
+            on:click={() => {
+              currentPage = FourthMenuDetail;
+              projectIndex = data.ccp_index;
+              selectPageMain(FourthMenuDetail, data);
+            }}
+          >
             <td class="text-center" style="font-size: 16px;">{index + 1}</td>
             <td style="font-size: 16px;" class="cursor-pointer text-center">
               {data.hostname}
@@ -122,10 +117,8 @@
             <td
               style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
             >
-              <div class="buttonContainer">
-                <button type="button" class="btn btnBlue btnSave">
-                  비밀번호초기화
-                </button>
+              <div>
+                <span class="badge badgePrimary"> 비밀번호초기화 </span>
               </div>
             </td>
           </tr>
@@ -144,42 +137,11 @@
     background-color: #fff;
   }
 
-  .modal-open-wrap {
-    display: block;
-    z-index: 99;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(167, 167, 167, 0.6);
-  }
-
   thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
-    z-index: 10; /* Ensure the header is above the scrolling content */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
-  }
-  dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 1103px;
-    border: none;
-    border-radius: 10px;
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    animation: svelte-s7onsa-fadeIn 0.3s ease;
-    z-index: 100;
-  }
-
-  /* Modal backdrop */
-  dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-    animation: fadeInBackdrop 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
   tr:hover {
@@ -187,6 +149,7 @@
     background-color: #f4f4f4;
     transition-duration: 0.3s;
   }
+
   .line-height {
     line-height: 23px;
   }

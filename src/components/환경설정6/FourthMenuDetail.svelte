@@ -11,17 +11,15 @@
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
 
   export let projectIndex;
-  let currentPage = null;
-  export let tabMenu = null;
-  export let setView;
+  let currentPage = FourtMenuInformation;
+  let tabMenu = "사용자관리";
+  let setView = "plan";
 
-  // Sahifani tanlash va tabni yangilash funksiyasi
   const selectPage = (page, menu) => {
     currentPage = page;
     tabMenu = menu;
   };
 
-  // Orqaga qaytish funksiyasi
   function goBack() {
     navigate("/page6");
     currentPage = null;
@@ -93,9 +91,10 @@
       </li>
     </ul>
   </nav>
+
   <section
     class="subTabWrap"
-    style="height: 50px; background-color: #fff; margin-top: 8px"
+    style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px;"
   >
     <a
       href="javascript:void(0);"
@@ -118,12 +117,13 @@
           selectPage(FourtMenuPassword);
         } catch (err) {}
       }}
+      style="margin-left: 10px;"
     >
       비밀번호변경
     </a>
   </section>
 
-  {#if tabMenu !== "no"}
+  {#if currentPage}
     <svelte:component this={currentPage} bind:projectIndex />
   {/if}
 </div>

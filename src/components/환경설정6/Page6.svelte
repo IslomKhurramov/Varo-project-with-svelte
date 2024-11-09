@@ -7,18 +7,21 @@
   import SixthMenu from "./HeaderMenu/SixthMenu.svelte";
   import SeventhMenu from "./HeaderMenu/SeventhMenu.svelte";
 
-  export let projectIndex;
-  let currentPage = null;
-  export let tabMenu = null;
+  let currentView = "default";
+  let currentPage = FirstMenu;
+  let activeMenu = null;
+  let selectedProjectIndex = null;
+  let tabMenu = "시스템기본설정";
 
   const selectPage = (page, menu) => {
     currentPage = page;
     tabMenu = menu;
+    currentView = "page";
   };
 </script>
 
 <div
-  style="overflow: scroll; height: 100vh; width: 100%; "
+  style="overflow: scroll; height: 100vh; width: 100%;"
   class={`contentsWrap1 ${tabMenu == "시스템기본설정" && "resultView"} ${tabMenu == "공지사항" && "resultView"} ${tabMenu == "자료실" && "resultView"} ${tabMenu == "사용자관리" && "logWrap"}`}
 >
   <nav class="tabMenu">
@@ -81,8 +84,12 @@
       </li>
     </ul>
   </nav>
-  {#if tabMenu !== "no"}
-    <svelte:component this={currentPage} bind:projectIndex />
+
+  <!-- Switch between default view and selected page component -->
+  {#if currentView === "default"}
+    <FirstMenu selectPageMain={selectPage} bind:activeMenu />
+  {:else if currentPage}
+    <svelte:component this={currentPage} bind:tabMenu />
   {/if}
 </div>
 

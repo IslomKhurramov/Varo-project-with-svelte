@@ -175,7 +175,7 @@
 
   /* Improved Header Style */
   .header_title {
-    font-size: 18px;
+    font-size: 16px;
     display: block;
     border-bottom: 1px solid #929397;
     color: #626677;
@@ -244,7 +244,7 @@
     margin-top: 10px;
   }
   .title1 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #333;
     margin-bottom: 5px;

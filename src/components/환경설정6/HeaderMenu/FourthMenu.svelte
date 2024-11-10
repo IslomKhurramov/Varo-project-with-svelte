@@ -1,6 +1,5 @@
 <script>
-  import FourthMenuDetail from "../FourthMenuDetail.svelte";
-  import FourthMenu from "../Page6.svelte";
+  import { navigate } from "svelte-routing";
 
   let dataArray = [
     {
@@ -45,15 +44,10 @@
     },
   ];
 
-  export let selectPageMain;
-  let projectData = {};
-  let projectArray = [];
-  let filteredProjects = [];
-  let loading = true;
-  let error = null;
-  let currentPage = null;
-  let projectIndex = null;
-  let tabMenu = null;
+  function goToDetail(itemNo) {
+    // Sahifani itemNo parametri bilan ochish
+    navigate(`/page6/${itemNo}`);
+  }
 </script>
 
 <section class="tableWrap" style="height: calc(-100px + 100vh);">
@@ -80,49 +74,48 @@
         </tr>
       </thead>
       <tbody>
-        {#each dataArray as data, index}
-          <tr
-            on:click={() => {
-              currentPage = FourthMenuDetail;
-              projectIndex = data.ccp_index;
-              selectPageMain(FourthMenuDetail, data);
-            }}
-          >
-            <td class="text-center" style="font-size: 16px;">{index + 1}</td>
-            <td style="font-size: 16px;" class="cursor-pointer text-center">
-              {data.hostname}
-            </td>
-            <td style="font-size: 16px;" class="text-center line-height">
-              {data.itemTitle}
-            </td>
-            <td
-              class="text-center cursor-pointer line-height"
-              style="font-size: 16px;"
+        {#if dataArray && dataArray?.length !== 0}
+          {#each dataArray as data, index}
+            <tr
+              on:click={() => goToDetail(data.itemNo)}
+              style="cursor: pointer;"
             >
-              <div class="line-height">
-                {data.itemCriteria}
-              </div>
-            </td>
-            <td
-              style="overflow: hidden; font-size: 16px;"
-              class="text-center line-height"
-            >
-              {data.itemStatus}
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
-            </td>
-            <td
-              style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
-            >
-              <div>
-                <span class="badge badgePrimary"> 비밀번호초기화 </span>
-              </div>
-            </td>
-          </tr>
-        {/each}
+              <td class="text-center" style="font-size: 16px;">{index + 1}</td>
+              <td style="font-size: 16px;" class="cursor-pointer text-center">
+                {data.hostname}
+              </td>
+              <td style="font-size: 16px;" class="text-center line-height">
+                {data.itemTitle}
+              </td>
+              <td
+                class="text-center cursor-pointer line-height"
+                style="font-size: 16px;"
+              >
+                <div class="line-height">
+                  {data.itemCriteria}
+                </div>
+              </td>
+              <td
+                style="overflow: hidden; font-size: 16px;"
+                class="text-center line-height"
+              >
+                {data.itemStatus}
+              </td>
+              <td class="text-center" style="font-size: 16px;">
+                <span class="">
+                  {data.itemResult}
+                </span>
+              </td>
+              <td
+                style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
+              >
+                <div>
+                  <span class="badge badgePrimary"> 비밀번호초기화 </span>
+                </div>
+              </td>
+            </tr>
+          {/each}
+        {/if}
       </tbody>
     </table>
   </div>

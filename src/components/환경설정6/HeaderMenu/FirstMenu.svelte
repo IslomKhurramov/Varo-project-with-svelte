@@ -39,7 +39,7 @@
 </script>
 
 <main class="table-container">
-  <div class="table-container_1">
+  <div class="table-container_1 contentArea">
     <div class="formControlWrap">
       <div class="formControl">
         <label>서버</label>
@@ -62,6 +62,7 @@
           type="number"
           bind:value={agentConnectInterval}
           placeholder="에이전트연결주기"
+          readonly
         />
       </div>
     </div>
@@ -70,25 +71,16 @@
         <label>위험도</label>
         <div class="riskLevelGroup">
           <div class="riskLevelItem">
-            <button
-              class={riskLevel === "상" ? "active" : ""}
-              on:click={() => (riskLevel = "상")}>상</button
-            >
-            <input type="number" placeholder="3" />
+            <button class={riskLevel === "상" ? "active" : ""}>상</button>
+            <input type="number" placeholder="3" readonly />
           </div>
           <div class="riskLevelItem">
-            <button
-              class={riskLevel === "중" ? "active" : ""}
-              on:click={() => (riskLevel = "중")}>중</button
-            >
-            <input type="number" placeholder="2" />
+            <button class={riskLevel === "중" ? "active" : ""}>중</button>
+            <input type="number" placeholder="2" readonly />
           </div>
           <div class="riskLevelItem">
-            <button
-              class={riskLevel === "하" ? "active" : ""}
-              on:click={() => (riskLevel = "하")}>하</button
-            >
-            <input type="number" placeholder="1" />
+            <button class={riskLevel === "하" ? "active" : ""}>하</button>
+            <input type="number" placeholder="1" readonly />
           </div>
         </div>
       </div>
@@ -172,6 +164,7 @@
     padding: 20px;
     margin: 10px 0;
     width: 100%;
+    height: calc(100vh - 134px);
   }
 
   .table-container_1 {

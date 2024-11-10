@@ -1,132 +1,125 @@
 <script>
-  let tasks = [
-    {
-      id: 1,
-      command: "CCE 일반점검",
-      date: "",
-      executor: "",
-      schedule: "",
-      interval: "",
-      times: "",
-      result: "",
-      rating: "",
-      extra: "",
-    },
-    {
-      id: 2,
-      command: "CCE 긴급점검",
-      date: "",
-      executor: "",
-      schedule: "",
-      interval: "",
-      times: "",
-      result: "",
-      rating: "",
-      extra: "",
-    },
-    {
-      id: 3,
-      command: "에이전트 점 보수집",
-      date: "",
-      executor: "",
-      schedule: "",
-      interval: "",
-      times: "",
-      result: "",
-      rating: "",
-      extra: "",
-    },
-    // Add more tasks here
-  ];
+  let textareaContent = `{"id": "2gy3g4gy334ggyfdf7f76df7787f"}`;
+  const sampleClick = async () => {
+    try {
+      await getPlanCommandExcel(selectedCheckList);
+    } catch (error) {}
+  };
 
-  let selectedTaskId = null;
+  const handleFileUpload = (event) => {
+    inspectionInformation = event.target.files[0];
+  };
 
-  function selectTask(taskId) {
-    selectedTaskId = taskId;
-  }
+  const submitNewSystemCommand = async () => {
+    try {
+      if (assetInsertData.start_date)
+        assetInsertData.start_date = moment(assetInsertData.start_date).format(
+          "YYYY-MM-DD h:mm:ss",
+        );
+      if (assetInsertData.end_date)
+        assetInsertData.end_date = moment(assetInsertData.end_date).format(
+          "YYYY-MM-DD h:mm:ss",
+        );
+
+      const response = await setNewSystemCommand(assetInsertData);
+
+      await successAlert(response.CODE);
+
+      navigate(window.location?.pathname == "/" ? "/page6" : "/");
+    } catch (error) {
+      errorAlert(error?.message);
+    }
+  };
 </script>
 
-<main>
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>순번</th>
-          <th>명령대상</th>
-          <th>일시</th>
-          <th>수행자</th>
-          <th>스케줄링</th>
-          <th>반복주기</th>
-          <th>수행횟수</th>
-          <th>수행결과</th>
-          <th>등급</th>
-          <th>...</th>
-          <th>...</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each tasks as task (task.id)}
-          <tr
-            class:selected={task.id === selectedTaskId}
-            on:click={() => selectTask(task.id)}
+<section class="container">
+  <article class="contentArea">
+    <div class="formControl noLabel">
+      <textarea bind:value={textareaContent} rows="10" style="resize: none;"
+      ></textarea>
+    </div>
+    <div class="formControlWrap">
+      <div class="formControl">
+        <div class="upload-section">
+          <label for="file-upload" class="file-label">
+            <span style="font-size: 14px;"> 라이센스 업데이트</span>
+            <img src="./assets/images/icon/download.svg" style="" />
+          </label>
+          <input
+            type="file"
+            id="file-upload"
+            accept=".xls,.xlsx"
+            class="file-input"
+            on:change={(event) => handleFileUpload(event)}
+          />
+          <button id="upload-btn" class="upload-btn btn btnPrimary">
+            라이선스 파일 등록 (File Upload)
+          </button>
+          <button
+            type="button"
+            class="btn btnBlue btnSave"
+            on:click={submitNewSystemCommand}
           >
-            <td>{task.id}</td>
-            <td>{task.command}</td>
-            <td>{task.date}</td>
-            <td>{task.executor}</td>
-            <td>{task.schedule}</td>
-            <td>{task.interval}</td>
-            <td>{task.times}</td>
-            <td>{task.result}</td>
-            <td>{task.rating}</td>
-            <td>{task.extra}</td>
-            <td>{task.extra}</td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-  </div>
-</main>
+            저장하기
+          </button>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
 
 <style>
-  .table-container {
-    margin: 50px auto;
+  * {
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  .contentArea {
+    flex: 1;
     padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    max-width: 1200px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    max-height: 500px;
-    overflow-x: hidden;
     overflow-y: auto;
   }
 
-  table {
+  textarea {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-
-  th,
-  td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
+    height: 200px;
+    padding: 10px;
+    font-size: 18px;
     border: 1px solid #ccc;
+    color: #333;
+    resize: none;
   }
 
-  th {
-    background-color: #005fa3;
-    color: white;
+  .formControlWrap {
+    padding: 20px;
   }
 
-  tr:hover {
-    background-color: #e2e2e2;
+  .upload-section {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
 
-  .selected {
-    background-color: #ffeb3b;
-    font-weight: bold;
+  .file-label {
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    line-height: 1.5;
+    justify-content: space-between;
+    width: 180px; /* Kenglikni kengaytirdik */
+  }
+
+  .btn {
+    padding: 8px 16px;
   }
 </style>

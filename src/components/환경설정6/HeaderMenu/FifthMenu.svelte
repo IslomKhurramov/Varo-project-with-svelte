@@ -58,4 +58,12 @@
 </section>
 
 <style>
+  .tableWrap {
+    height: calc(100vh - 100px);
+    overflow: hidden;
+  }
+
+  .tableListWrap {
+    overflow: hidden;
+  }
 </style>

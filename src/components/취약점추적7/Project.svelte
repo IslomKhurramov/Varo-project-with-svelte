@@ -2,9 +2,36 @@
   import { Swiper, SwiperSlide } from "swiper/svelte";
   import SwiperCore, { Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.css";
+  import {
+    allTraceByPlan,
+    traceByPlan,
+  } from "../../services/page7/trace.store";
+  import { onMount } from "svelte";
+  import { getTraceByPlan } from "../../services/page7/service";
 
   let showModalProject = false;
-  let selectedData = [];
+  let plan_id = "";
+
+  // Function to handle clicking on a card
+  function selectCard(asset) {
+    selectedAsset = asset.ccp_index;
+  }
+
+  /*******************GETTRACEBYPLAN********************************/
+  async function planDataById(selectedAsset) {
+    plan_id = selectedAsset.ccp_index;
+    try {
+      const response = await getTraceByPlan(plan_id);
+
+      if (response) {
+        traceByPlan.set(response.CODE);
+      } else {
+      }
+      console.log("data clicked", $traceByPlan);
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+    }
+  }
 
   function modalData(data) {
     showModalProject = true;
@@ -127,13 +154,6 @@
 
   let selectedAsset = filteredAssets[0];
 
-  // Function to handle clicking on a card
-  function selectCard(asset) {
-    selectedAsset = asset;
-  }
-
-  import { onMount } from "svelte";
-
   onMount(() => {
     // Listen for keydown event when the modal is open
     window.addEventListener("keydown", handleKeyDown);
@@ -148,9 +168,9 @@
 <div>
   <p class="header_title">점검플랜 : 프로젝트3과 관련된 취약점 추적</p>
   <div class="graphCardWrap col3" style="width:100%;">
-    {#each recentAssets as asset, index}
+    {#each $allTraceByPlan as asset, index}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div class="iconCard" on:click={() => selectCard(asset)}>
+      <div class="iconCard" on:click={() => planDataById(asset)}>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article class="graphCard hoverCard" style="min-height: 270px;">
           <div class="contents">
@@ -158,7 +178,8 @@
               <div>
                 <div
                   class="circle"
-                  data-percent={asset.ast_security_point || 0}
+                  data-percent={asset.vulnerability_summary
+                    .vulnerability_count || 0}
                   data-offset="440"
                 >
                   <svg viewBox="0 0 150 150">
@@ -175,7 +196,9 @@
                       cx="75"
                       cy="75"
                       r="70"
-                      stroke={getStrokeColor(asset.ast_security_point || 0)}
+                      stroke={getStrokeColor(
+                        asset.vulnerability_summary.vulnerability_count || 0,
+                      )}
                       stroke-width="10"
                       fill="none"
                       stroke-dasharray="440"
@@ -189,11 +212,11 @@
                     <span
                       class="number"
                       style="font-size:32px; color: {getStrokeColor(
-                        asset.ast_security_point || 0,
+                        asset.vulnerability_summary.vulnerability_count || 0,
                       )};"
                     >
-                      {asset.ast_security_point > 0
-                        ? asset.ast_security_point
+                      {asset.vulnerability_summary.vulnerability_count > 0
+                        ? asset.vulnerability_summary.vulnerability_count
                         : 0}건
                     </span>
                   </div>
@@ -206,14 +229,23 @@
             <div class="text flex col justify-between">
               <ul>
                 <li>
-                  <span>프로젝트명 : </span>{asset.ast_os || "Unknown OS"}
+                  <span>프로젝트명 : </span>{asset.ccp_title || "Unknown OS"}
                 </li>
                 <li>
-                  <span>점검일시 : </span>{asset.ast_hostname ||
-                    "Unknown Hostname"}
+                  <span>점검일시 : </span>
+                  {asset.plan_start_date
+                    ? new Date(asset.plan_start_date).toLocaleString("ko-KR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "Unknown"}
                 </li>
                 <li>
-                  <span>관련시스템 : </span>{asset.ast_ipaddr || "Unknown IP"}
+                  <span>관련시스템 : </span>{asset.asg_index__asg_title ||
+                    "Unknown IP"}
                 </li>
               </ul>
             </div>
@@ -229,72 +261,60 @@
     {/each}
   </div>
 
-  {#if selectedAsset}
-    <div
-      class="tableListWrap table2"
-      style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
-    >
-      <table class="tableList hdBorder font-size: 16px;">
-        <colgroup>
-          <col style="width:90px;" />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-        </colgroup>
+  {#if $traceByPlan.vulns && $traceByPlan.vulns.length > 0}
+    {#each $traceByPlan.vulns as vuln, index}
+      <div
+        class="tableListWrap table2"
+        style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
+      >
+        <table class="tableList hdBorder font-size: 16px;">
+          <colgroup>
+            <col style="width:90px;" />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+          </colgroup>
 
-        <thead>
-          <tr>
-            <th class="text-center">순번</th>
-            <th class="text-center">자산명</th>
-            <th class="text-center">점검항목</th>
-            <th class="text-center">취약점명</th>
-            <th class="text-center">위험도</th>
-            <th class="text-center">점검결과</th>
-            <th class="text-center">조치현황</th>
-            <th class="text-center">조치분류상태 </th>
-            <th class="text-center">운영부서 </th>
-            <th class="text-center">운영담당자</th>
-          </tr>
-        </thead>
+          <thead>
+            <tr>
+              <th class="text-center">순번</th>
+              <th class="text-center">자산명</th>
+              <th class="text-center">점검항목</th>
+              <th class="text-center">취약점명</th>
+              <th class="text-center">위험도</th>
+              <th class="text-center">점검결과</th>
+              <th class="text-center">조치현황</th>
+              <th class="text-center">조치분류상태 </th>
+              <th class="text-center">운영부서 </th>
+              <th class="text-center">운영담당자</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr on:click={modalData(selectedAsset)} class="clickLine">
-            <td class="text-center line-height">1</td>
-            <td class="text-center line-height"
-              >{selectedAsset.asg_index__asg_title}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_group}</td
-            >
-            <td class="text-center line-height">{selectedAsset.ccc_item_no}</td>
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_title}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_level}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_result}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_action}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_status}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_department}</td
-            >
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          <tbody>
+            <tr on:click={modalData(vuln)} class="clickLine">
+              <td class="text-center">{index + 1}</td>
+              <td class="text-center"
+                >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
+              >
+              <td class="text-center">{vuln.ccr_item_no__ccc_item_title}</td>
+              <td class="text-center">{vuln.ccr_item_no__ccc_check_content}</td>
+              <td class="text-center">{vuln.ccr_item_no__ccc_item_level}</td>
+              <td class="text-center">{vuln.ccr_item_result}</td>
+              <td class="text-center">{vuln.ccr_item_status}</td>
+              <td class="text-center">/* Derived classification state *</td>
+              <td class="text-center">Missing Data</td>
+              <td class="text-center">Missing Data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    {/each}
   {/if}
 
   {#if showModalProject}
@@ -550,7 +570,7 @@
     transition:
       transform 0.2s ease,
       box-shadow 0.3s ease;
-    width: 280px;
+    width: 320px;
   }
   .hoverCard:hover {
     cursor: pointer;

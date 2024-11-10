@@ -8,8 +8,14 @@
   import ComparisonPage from "./ComparisonPage.svelte";
   import AssetComparison from "./AssetComparison.svelte";
   import ThirdComparison from "./ThirdComparison.svelte";
-  import { leftTrackData } from "../../services/page7/trace.store";
-  import { getLeftTrackData } from "../../services/page7/service";
+  import {
+    allTraceByPlan,
+    leftTrackData,
+  } from "../../services/page7/trace.store";
+  import {
+    getAllTraceByPlan,
+    getLeftTrackData,
+  } from "../../services/page7/service";
   import { onMount } from "svelte";
   let currentPage = ProjectAll;
   let showProject = true;
@@ -41,6 +47,7 @@
   /*****************LEFTDATA**************************************/
   onMount(() => {
     getLeftDatas();
+    planData();
   });
 
   async function getLeftDatas() {
@@ -57,7 +64,7 @@
   }
 
   /*************************************************************************************/
-  $: console.log("leftDarta", $leftTrackData);
+
   import { writable } from "svelte/store";
 
   // Track the expanded state for each `third`
@@ -71,6 +78,21 @@
     }));
   }
   /**********************************************************************/
+  /****************PLANDATA**********************************************/
+  async function planData() {
+    try {
+      const response = await getAllTraceByPlan();
+      console.log("response", response);
+      if (response.RESULT === "OK") {
+        allTraceByPlan.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      await errorAlert(err?.message);
+      loading = false;
+    }
+  }
+  $: console.log("leftDarta", $allTraceByPlan);
+  /*************************************************************************/
   let plan = [];
   for (let i = 0; i < 20; i++) {
     plan.push({
@@ -256,7 +278,7 @@
             {#each $leftTrackData[2] as third (third.cct_target)}
               <li
                 style="cursor: pointer;"
-                class={`menuItem ${activeMenu === third ? "active" : ""}`}
+                class={`menuItem  ${$expandedItems[third] ? "active" : ""}`}
               >
                 <!-- Toggle visibility by clicking on the target -->
                 <!-- svelte-ignore a11y-click-events-have-key-events -->

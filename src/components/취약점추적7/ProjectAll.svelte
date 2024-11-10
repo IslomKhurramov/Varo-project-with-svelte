@@ -1,4 +1,5 @@
 <script>
+  import { allTraceByPlan } from "../../services/page7/trace.store";
   function getStrokeColor(score) {
     if (score > 60)
       return "#0067ff"; // Blue
@@ -59,7 +60,7 @@
 
 <div>
   <div class="graphCardWrap col3" style="width:100%;">
-    {#each recentAssets as asset, index}
+    {#each $allTraceByPlan as asset, index}
       <div class="iconCard">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article class="graphCard hoverCard" style="min-height: 500px;">
@@ -68,8 +69,8 @@
               <div>
                 <div
                   class="circle"
-                  data-percent={asset.asset_point_history?.[0]
-                    ?.ast_security_point || 0}
+                  data-percent={asset.vulnerability_summary
+                    .vulnerability_count || 0}
                   data-offset="440"
                 >
                   <svg viewBox="0 0 150 150">
@@ -86,12 +87,17 @@
                       cx="75"
                       cy="75"
                       r="70"
-                      stroke={getStrokeColor(asset.ast_security_point || 0)}
+                      stroke={getStrokeColor(
+                        asset.vulnerability_summary.vulnerability_count || 0,
+                      )}
                       stroke-width="10"
                       fill="none"
                       stroke-dasharray="440"
                       stroke-dashoffset={440 -
-                        (440 * (asset.ast_security_point || 0)) / 100}
+                        (440 *
+                          (asset.vulnerability_summary.vulnerability_count ||
+                            0)) /
+                          100}
                       stroke-linecap="round"
                       transform="rotate(-90 75 75)"
                     />
@@ -100,11 +106,11 @@
                     <span
                       class="number"
                       style="font-size:32px; color: {getStrokeColor(
-                        asset.ast_security_point || 0,
+                        asset.vulnerability_summary.vulnerability_count || 0,
                       )};"
                     >
-                      {asset.ast_security_point > 0
-                        ? asset.ast_security_point
+                      {asset.vulnerability_summary.vulnerability_count > 0
+                        ? asset.vulnerability_summary.vulnerability_count
                         : 0}건
                     </span>
                   </div>
@@ -114,38 +120,74 @@
                 </h4>
               </div>
             </div>
+
             <div class="text flex col justify-between">
               <ul>
                 <li>
-                  <span>프로젝트명 : </span>{asset.ast_os || "Unknown OS"}
+                  <span>프로젝트명 : </span>{asset.ccp_title || "Unknown OS"}
                 </li>
                 <li>
-                  <span>점검일시 : </span>{asset.ast_hostname ||
-                    "Unknown Hostname"}
+                  <span>점검일시 : </span>
+                  {asset.plan_start_date
+                    ? new Date(asset.plan_start_date).toLocaleString("ko-KR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "Unknown"}
                 </li>
                 <li>
-                  <span>관련시스템 : </span>{asset.ast_ipaddr || "Unknown IP"}
+                  <span>관련시스템 : </span>{asset.asg_index__asg_title ||
+                    "Unknown IP"}
                 </li>
+
                 <li style="margin-top:15px;"><span>[취약점 요약]</span></li>
                 <li>
-                  <span
-                    >최다자산 :
-                  </span>{asset.ast_uuid__ast_target__cct_target || "No Target"}
+                  <span>최다자산 : </span>{asset.vulnerability_summary
+                    .most_vulnerable_asset || "No Target"}
                 </li>
                 <li>
-                  <span>최다항목 : </span>{asset.ast_agent_installed
-                    ? "설치됨"
-                    : "설치 안됨"}
+                  <span>최다항목 : </span>{asset.vulnerability_summary
+                    .most_common_item || "No Item"}
                 </li>
                 <li>
-                  <span>취약점수 : </span>{asset.ast_hostname ||
-                    "Unknown Hostname"}
+                  <span>취약점수 : </span>{asset.vulnerability_summary
+                    .vulnerability_count || "0"}
                 </li>
                 <li>
-                  <span>조치개수 : </span>{asset.ast_ipaddr || "Unknown IP"}
+                  <span>조치개수 : </span>{asset.vulnerability_summary
+                    .fixed_count || "0"}
                 </li>
+
+                <!-- Additional Info Section -->
                 <li style="margin-top:15px;">
                   <span>[그외 출력가능 정보 ]</span>
+                </li>
+                <li>
+                  <span>점검 계획 시작일 : </span>
+                  {asset.plan_start_date
+                    ? new Date(asset.plan_start_date).toLocaleString("ko-KR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "Unknown"}
+                </li>
+                <li>
+                  <span>점검 계획 종료일 : </span>
+                  {asset.fix_end_date
+                    ? new Date(asset.fix_end_date).toLocaleString("ko-KR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "Unknown"}
                 </li>
               </ul>
             </div>
@@ -183,7 +225,7 @@
     transition:
       transform 0.2s ease,
       box-shadow 0.3s ease;
-    width: 280px;
+    width: 320px;
   }
   .hoverCard:hover {
     cursor: pointer;

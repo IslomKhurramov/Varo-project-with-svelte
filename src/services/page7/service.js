@@ -25,3 +25,54 @@ export const getAllTraceByPlan = async () => {
     loading = false;
   }
 };
+export const getTraceByPlan = async (plan_id) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/getTraceByPlan/`,
+      {
+        plan_id: plan_id,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+export const compareByPlan = async (first_id, second_id) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/compareTraceByPlan/`,
+      {
+        first: first_id,
+        second: second_id,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};

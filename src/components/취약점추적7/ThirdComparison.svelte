@@ -867,7 +867,7 @@
     transition:
       transform 0.2s ease,
       box-shadow 0.3s ease;
-    width: 280px;
+    width: 320px;
   }
   .graphCard {
     display: flex;

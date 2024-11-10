@@ -2,8 +2,30 @@
   import { Swiper, SwiperSlide } from "swiper/svelte";
   import SwiperCore, { Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.css";
+  import {
+    allTraceByPlan,
+    comparisonPlan,
+  } from "../../services/page7/trace.store";
+
+  let firstProjectId = "";
+  let secondProjectId = "";
   let showModalProjectComparison = false;
   let selectedData = [];
+
+  async function comparePlan() {
+    try {
+      const response = await compareByPlan(firstProjectId, secondProjectId);
+
+      if (response) {
+        comparisonPlan.set(response.CODE);
+      } else {
+      }
+      console.log("data clicked", $comparisonPlan.first_plan);
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+    }
+  }
+
   SwiperCore.use([Navigation, Pagination]);
   let swiperData = [];
   for (let i = 0; i < 20; i++) {
@@ -83,6 +105,7 @@
   let selectedAsset = filteredAssets[0];
   let recentAssets = filteredAssets.slice(-5);
   import { onMount } from "svelte";
+  import { compareByPlan } from "../../services/page7/service";
 
   onMount(() => {
     // Listen for keydown event when the modal is open
@@ -98,62 +121,73 @@
 <p class="header_title2">점검플랜별 취약점 결과</p>
 <section>
   <div class="firstContainer">
-    <select name="operating_system" id="operating_system" class="select_input">
+    <select
+      bind:value={firstProjectId}
+      name="operating_system"
+      id="operating_system"
+      class="select_input"
+    >
       <option value="" selected>플랜명</option>
-      <option value="플랜명">플랜명</option>
+      <option value="8">8</option>
+      {#each $allTraceByPlan as plan}
+        <option value={plan.ccp_index}>{plan.ccp_title}</option>
+      {/each}
     </select>
-    <div class="diagram_container">
-      <div class="right_diag">
-        <div
-          class="circle"
-          style="width: 150px;"
-          data-percent={filteredAssets[0].asset_point_history?.[0]
-            ?.ast_security_point || 0}
-          data-offset="440"
-        >
-          <svg viewBox="0 0 150 150">
-            <!-- Background Circle -->
-            <circle
-              cx="75"
-              cy="75"
-              r="70"
-              stroke="#fff"
-              stroke-width="10"
-              fill="none"
-            />
-            <!-- Progress Circle -->
-            <circle
-              class="progress"
-              cx="75"
-              cy="75"
-              r="70"
-              stroke={getStrokeColor(filteredAssets[0].ast_security_point || 0)}
-              stroke-width="10"
-              fill="none"
-              stroke-dasharray="440"
-              stroke-dashoffset={440 -
-                (440 * (filteredAssets[0].ast_security_point || 0)) / 100}
-              stroke-linecap="round"
-              transform="rotate(-90 75 75)"
-            />
-          </svg>
-          <!-- Percentage Label -->
-          <div class="percent">
-            <span
-              class="number"
-              style="font-size: 32px; color: {getStrokeColor(
-                filteredAssets[0].ast_security_point || 0,
-              )};"
-            >
-              {filteredAssets[0].ast_security_point > 0
-                ? filteredAssets[0].ast_security_point
-                : 0}%
-            </span>
+    {#if $comparisonPlan.first_plan}
+      <div class="diagram_container">
+        <div class="right_diag">
+          <div
+            class="circle"
+            style="width: 150px;"
+            data-percent={$comparisonPlan.first_plan.ccp_security_point || 0}
+            data-offset="440"
+          >
+            <svg viewBox="0 0 150 150">
+              <!-- Background Circle -->
+              <circle
+                cx="75"
+                cy="75"
+                r="70"
+                stroke="#fff"
+                stroke-width="10"
+                fill="none"
+              />
+              <!-- Progress Circle -->
+              <circle
+                class="progress"
+                cx="75"
+                cy="75"
+                r="70"
+                stroke={getStrokeColor(
+                  $comparisonPlan.first_plan.ccp_security_point || 0,
+                )}
+                stroke-width="10"
+                fill="none"
+                stroke-dasharray="440"
+                stroke-dashoffset={440 -
+                  (440 * ($comparisonPlan.first_plan.ccp_security_point || 0)) /
+                    100}
+                stroke-linecap="round"
+                transform="rotate(-90 75 75)"
+              />
+            </svg>
+            <!-- Percentage Label -->
+            <div class="percent">
+              <span
+                class="number"
+                style="font-size: 32px; color: {getStrokeColor(
+                  $comparisonPlan.first_plan.ccp_security_point || 0,
+                )};"
+              >
+                {$comparisonPlan.first_plan.ccp_security_point > 0
+                  ? $comparisonPlan.first_plan.ccp_security_point
+                  : 0}%
+              </span>
+            </div>
           </div>
+          <p>전체보안수준</p>
         </div>
-        <p>전체보안수준</p>
-      </div>
-      {#if filteredAssets && filteredAssets.length > 0}
+
         <div class="iconCard">
           <article class="graphCard hoverCard">
             <div class="contents">
@@ -161,41 +195,44 @@
               <div class="text flex col justify-between">
                 <ul>
                   <li>
-                    <span>취약 : </span>{filteredAssets[0].ast_security_point ||
+                    <span>취약 : </span>{$comparisonPlan.first_plan
+                      .vulnerability_summary.vulnerability_count ||
                       "Unknown OS"}건
                   </li>
                   <li>
-                    <span>프로젝트명 : </span>{filteredAssets[0].ast_os ||
-                      "Unknown OS"}
+                    <span>프로젝트명 : </span>{$comparisonPlan.first_plan
+                      .ccp_title || "Unknown OS"}
                   </li>
                   <li>
-                    <span>점검일시 : </span>{filteredAssets[0].ast_hostname ||
-                      "Unknown Hostname"}
+                    <span>점검일시 : </span>{$comparisonPlan.first_plan
+                      .ccp_cdate || "Unknown Hostname"}
                   </li>
                   <li>
-                    <span>관련시스템 : </span>{filteredAssets[0].ast_ipaddr ||
-                      "Unknown IP"}
+                    <span>관련시스템 : </span>{$comparisonPlan.first_plan
+                      .asg_index || "Unknown IP"}건
                   </li>
                   <li style="margin-top: 15px;">
                     <span>[취약점 요약]</span>
                   </li>
                   <li>
-                    <span>최다자산 : </span>{filteredAssets[0]
-                      .ast_uuid__ast_target__cct_target || "No Target"}
+                    <span>최다자산 : </span>{$comparisonPlan.first_plan
+                      .vulnerability_summary.most_vulnerable_asset ||
+                      "No Target"}
                   </li>
                   <li>
-                    <span>최다항목 : </span>{filteredAssets[0]
-                      .ast_agent_installed
-                      ? "설치됨"
-                      : "설치 안됨"}
+                    <span>최다항목 : </span>{$comparisonPlan.first_plan
+                      .vulnerability_summary.most_common_item
+                      .item_code}({$comparisonPlan.first_plan
+                      .vulnerability_summary.most_common_item.target_type})
                   </li>
                   <li>
-                    <span>취약점수 : </span>{filteredAssets[0].ast_hostname ||
+                    <span>취약점수 : </span>{$comparisonPlan.first_plan
+                      .vulnerability_summary.vulnerability_count ||
                       "Unknown Hostname"}
                   </li>
                   <li>
-                    <span>조치개수 : </span>{filteredAssets[0].ast_ipaddr ||
-                      "Unknown IP"}
+                    <span>조치개수 : </span>{$comparisonPlan.first_plan
+                      .vulnerability_summary.fixed_count || "Unknown IP"}
                   </li>
                 </ul>
                 <ul>
@@ -207,70 +244,82 @@
             </div>
           </article>
         </div>
-      {:else}
-        <div class="no-assets">
-          <p>자산을 찾을 수 없습니다.</p>
-        </div>
-      {/if}
-    </div>
+      </div>
+    {:else}
+      <div class="no-data-message">
+        <p>비교할 첫 번째 프로젝트를 선택하세요</p>
+      </div>
+    {/if}
   </div>
   <div class="firstContainer">
-    <select name="operating_system" id="operating_system" class="select_input">
+    <select
+      bind:value={secondProjectId}
+      name="operating_system"
+      id="operating_system"
+      class="select_input"
+    >
       <option value="" selected>플랜명</option>
-      <option value="플랜명">플랜명</option>
+      <option value="7">7</option>
+      {#each $allTraceByPlan as plan}
+        <option value={plan.ccp_index}>{plan.ccp_title}</option>
+      {/each}
     </select>
-    <div class="diagram_container">
-      <div class="right_diag">
-        <div
-          class="circle"
-          style="width: 150px;"
-          data-percent={filteredAssets[0].asset_point_history?.[0]
-            ?.ast_security_point || 0}
-          data-offset="440"
-        >
-          <svg viewBox="0 0 150 150">
-            <!-- Background Circle -->
-            <circle
-              cx="75"
-              cy="75"
-              r="70"
-              stroke="#fff"
-              stroke-width="10"
-              fill="none"
-            />
-            <!-- Progress Circle -->
-            <circle
-              class="progress"
-              cx="75"
-              cy="75"
-              r="70"
-              stroke={getStrokeColor(filteredAssets[0].ast_security_point || 0)}
-              stroke-width="10"
-              fill="none"
-              stroke-dasharray="440"
-              stroke-dashoffset={440 -
-                (440 * (filteredAssets[0].ast_security_point || 0)) / 100}
-              stroke-linecap="round"
-              transform="rotate(-90 75 75)"
-            />
-          </svg>
-          <!-- Percentage Label -->
-          <div class="percent">
-            <span
-              class="number"
-              style="font-size: 32px; color: {getStrokeColor(
-                filteredAssets[0].ast_security_point || 0,
-              )};"
-            >
-              {filteredAssets[0].ast_security_point > 0
-                ? filteredAssets[0].ast_security_point
-                : 0}%
-            </span>
+    {#if $comparisonPlan.second_plan}
+      <div class="diagram_container">
+        <div class="right_diag">
+          <div
+            class="circle"
+            style="width: 150px;"
+            data-percent={$comparisonPlan.second_plan.ccp_security_point || 0}
+            data-offset="440"
+          >
+            <svg viewBox="0 0 150 150">
+              <!-- Background Circle -->
+              <circle
+                cx="75"
+                cy="75"
+                r="70"
+                stroke="#fff"
+                stroke-width="10"
+                fill="none"
+              />
+              <!-- Progress Circle -->
+              <circle
+                class="progress"
+                cx="75"
+                cy="75"
+                r="70"
+                stroke={getStrokeColor(
+                  $comparisonPlan.second_plan.ccp_security_point || 0,
+                )}
+                stroke-width="10"
+                fill="none"
+                stroke-dasharray="440"
+                stroke-dashoffset={440 -
+                  (440 *
+                    ($comparisonPlan.second_plan.ccp_security_point || 0)) /
+                    100}
+                stroke-linecap="round"
+                transform="rotate(-90 75 75)"
+              />
+            </svg>
+            <!-- Percentage Label -->
+            <div class="percent">
+              <span
+                class="number"
+                style="font-size: 32px; color: {getStrokeColor(
+                  $comparisonPlan.second_plan.ccp_security_point || 0,
+                )};"
+              >
+                {$comparisonPlan.second_plan.ccp_security_point > 0
+                  ? $comparisonPlan.second_plan.ccp_security_point
+                  : 0}%
+              </span>
+            </div>
           </div>
+          <p>전체보안수준</p>
         </div>
-        <p>전체보안수준</p>
-      </div>
-      {#if filteredAssets && filteredAssets.length > 0}
+
         <div class="iconCard">
           <article class="graphCard hoverCard">
             <div class="contents">
@@ -278,41 +327,44 @@
               <div class="text flex col justify-between">
                 <ul>
                   <li>
-                    <span>취약 : </span>{filteredAssets[0].ast_security_point ||
+                    <span>취약 : </span>{$comparisonPlan.second_plan
+                      .vulnerability_summary.vulnerability_count ||
                       "Unknown OS"}건
                   </li>
                   <li>
-                    <span>프로젝트명 : </span>{filteredAssets[0].ast_os ||
-                      "Unknown OS"}
+                    <span>프로젝트명 : </span>{$comparisonPlan.second_plan
+                      .ccp_title || "Unknown OS"}
                   </li>
                   <li>
-                    <span>점검일시 : </span>{filteredAssets[0].ast_hostname ||
-                      "Unknown Hostname"}
+                    <span>점검일시 : </span>{$comparisonPlan.second_plan
+                      .ccp_cdate || "Unknown Hostname"}
                   </li>
                   <li>
-                    <span>관련시스템 : </span>{filteredAssets[0].ast_ipaddr ||
-                      "Unknown IP"}
+                    <span>관련시스템 : </span>{$comparisonPlan.second_plan
+                      .asg_index || "Unknown IP"}건
                   </li>
                   <li style="margin-top: 15px;">
                     <span>[취약점 요약]</span>
                   </li>
                   <li>
-                    <span>최다자산 : </span>{filteredAssets[0]
-                      .ast_uuid__ast_target__cct_target || "No Target"}
+                    <span>최다자산 : </span>{$comparisonPlan.second_plan
+                      .vulnerability_summary.most_vulnerable_asset ||
+                      "No Target"}
                   </li>
                   <li>
-                    <span>최다항목 : </span>{filteredAssets[0]
-                      .ast_agent_installed
-                      ? "설치됨"
-                      : "설치 안됨"}
+                    <span>최다항목 : </span>{$comparisonPlan.first_plan
+                      .vulnerability_summary.most_common_item
+                      .item_code}({$comparisonPlan.first_plan
+                      .vulnerability_summary.most_common_item.target_type})
                   </li>
                   <li>
-                    <span>취약점수 : </span>{filteredAssets[0].ast_hostname ||
+                    <span>취약점수 : </span>{$comparisonPlan.second_plan
+                      .vulnerability_summary.vulnerability_count ||
                       "Unknown Hostname"}
                   </li>
                   <li>
-                    <span>조치개수 : </span>{filteredAssets[0].ast_ipaddr ||
-                      "Unknown IP"}
+                    <span>조치개수 : </span>{$comparisonPlan.second_plan
+                      .vulnerability_summary.fixed_count || "Unknown IP"}
                   </li>
                 </ul>
                 <ul>
@@ -324,26 +376,29 @@
             </div>
           </article>
         </div>
-      {:else}
-        <div class="no-assets">
-          <p>자산을 찾을 수 없습니다.</p>
-        </div>
-      {/if}
-    </div>
+      </div>
+    {:else}
+      <div class="no-data-message">
+        <p>비교할 두 번째 프로젝트를 선택하세요</p>
+      </div>
+    {/if}
   </div>
 </section>
+
+<button class="btn modify-btn" on:click={comparePlan}>비교</button>
+
 <section class="table_section">
   <div
     class="tableListWrap table2"
-    style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
+    style="margin-bottom: 20px; margin-top:20px; margin; height:45vh; overflow-y:auto;"
   >
     <table class="tableList hdBorder font-size: 16px;">
       <colgroup>
-        <col style="width:90px;" />
-        <col />
-        <col />
-        <col />
-        <col />
+        <col style="width:55px;" />
+        <col style="width:100px;" />
+        <col style="width:160px;" />
+        <col style="width:79px;" />
+        <col style="width:86px;" />
         <col />
       </colgroup>
 
@@ -358,35 +413,43 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr on:click={modalDataOpen} class="clickLine">
-          <td class="text-center line-height">1</td>
-          <td class="text-center line-height"
-            >{selectedAsset.asg_index__asg_title}</td
-          >
-          <td class="text-center line-height"
-            >{selectedAsset.ast_uuid__ast_target__cct_target}</td
-          >
-          <td class="text-center line-height"
-            >{selectedAsset.asg_index__asg_title}</td
-          >
-          <td class="text-center line-height">{selectedAsset.ast_os}</td>
-          <td class="text-center line-height">{selectedAsset.ast_ipaddr}</td>
-        </tr>
-      </tbody>
+      {#if $comparisonPlan.first_plan}
+        {#each $comparisonPlan.first_plan.vulns as vuln, index}
+          <tbody>
+            <tr on:click={modalDataOpen} class="clickLine">
+              <td class="text-center line-height">{index + 1}</td>
+              <td class="text-center line-height"
+                >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_title}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_level}</td
+              >
+              <td class="text-center line-height">{vuln.ccr_item_result}</td>
+              <td class="text-center">
+                <div class="status-container line-height">
+                  {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
+                </div></td
+              >
+            </tr>
+          </tbody>
+        {/each}
+      {/if}
     </table>
   </div>
   <div
     class="tableListWrap table2"
-    style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
+    style="margin-bottom: 20px; margin-top:20px; margin; height:45vh; overflow-y:auto;"
   >
     <table class="tableList hdBorder font-size: 16px;">
       <colgroup>
-        <col style="width:90px;" />
-        <col />
-        <col />
-        <col />
-        <col />
+        <col style="width:55px;" />
+        <col style="width:100px;" />
+        <col style="width:160px;" />
+        <col style="width:79px;" />
+        <col style="width:86px;" />
         <col />
       </colgroup>
 
@@ -401,25 +464,34 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr on:click={modalDataOpen} class="clickLine">
-          <td class="text-center line-height">1</td>
-          <td class="text-center line-height"
-            >{selectedAsset.asg_index__asg_title}</td
-          >
-          <td class="text-center line-height"
-            >{selectedAsset.ast_uuid__ast_target__cct_target}</td
-          >
-          <td class="text-center line-height"
-            >{selectedAsset.asg_index__asg_title}</td
-          >
-          <td class="text-center line-height">{selectedAsset.ast_os}</td>
-          <td class="text-center line-height">{selectedAsset.ast_ipaddr}</td>
-        </tr>
-      </tbody>
+      {#if $comparisonPlan.second_plan}
+        {#each $comparisonPlan.second_plan.vulns as vuln, index}
+          <tbody>
+            <tr on:click={modalDataOpen} class="clickLine">
+              <td class="text-center line-height">{index + 1}</td>
+              <td class="text-center line-height"
+                >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_title}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_level}</td
+              >
+              <td class="text-center line-height">{vuln.ccr_item_result}</td>
+              <td class="text-center">
+                <div class="status-container line-height">
+                  {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        {/each}
+      {/if}
     </table>
   </div>
 </section>
+
 {#if showModalProjectComparison}
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <div
@@ -615,6 +687,40 @@
 {/if}
 
 <style>
+  .status-container {
+    max-height: 120px; /* Set the maximum height for the content */
+    overflow-y: auto;
+    overflow-x: hidden; /* Allow scrolling only if content exceeds the height */
+    padding: 0;
+    margin: 0;
+  }
+  .line-height {
+    line-height: 23px;
+  }
+  .max-height {
+    max-height: 70px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .modify-btn {
+    margin-top: 10px;
+    background-color: #4caf50; /* Green background for modify button */
+    color: white; /* White text */
+  }
+
+  .modify-btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+  }
+  .no-data-message {
+    text-align: center; /* Center the text */
+    font-style: italic; /* Italicize the text for emphasis */
+    color: #777; /* Light gray color for the message */
+    padding: 20px; /* Add some padding around the text */
+    background-color: #f9f9f9; /* Light background color for contrast */
+    border: 1px solid #ddd; /* Optional: Add a border for definition */
+    border-radius: 5px; /* Slightly round the corners */
+  }
   /******************MODAL*********************/
   .modify-btn {
     background-color: #4caf50; /* Green background for modify button */
@@ -858,7 +964,7 @@
     display: flex;
     flex-direction: column;
 
-    width: 47%;
+    width: 49%;
     /* background: rgba(242, 242, 242, 1); */
   }
 
@@ -873,7 +979,7 @@
     transition:
       transform 0.2s ease,
       box-shadow 0.3s ease;
-    width: 280px;
+    width: 320px;
   }
   .graphCard {
     display: flex;
@@ -921,7 +1027,7 @@
   }
   /******************************************TABLE*/
   .table2 {
-    width: 47%;
+    width: 49%;
     font-size: 16px;
     overflow-y: auto;
     overflow-x: hidden;

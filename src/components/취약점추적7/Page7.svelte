@@ -8,7 +8,9 @@
   import ComparisonPage from "./ComparisonPage.svelte";
   import AssetComparison from "./AssetComparison.svelte";
   import ThirdComparison from "./ThirdComparison.svelte";
-
+  import { leftTrackData } from "../../services/page7/trace.store";
+  import { getLeftTrackData } from "../../services/page7/service";
+  import { onMount } from "svelte";
   let currentPage = ProjectAll;
   let showProject = true;
   let showAsset = false;
@@ -36,7 +38,39 @@
       currentPage = ThirdAll; // Assuming this represents Third's 전체 view
     }
   }
+  /*****************LEFTDATA**************************************/
+  onMount(() => {
+    getLeftDatas();
+  });
 
+  async function getLeftDatas() {
+    try {
+      const response = await getLeftTrackData();
+      console.log("response", response);
+      if (response.RESULT === "OK") {
+        leftTrackData.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      await errorAlert(err?.message);
+      loading = false;
+    }
+  }
+
+  /*************************************************************************************/
+  $: console.log("leftDarta", $leftTrackData);
+  import { writable } from "svelte/store";
+
+  // Track the expanded state for each `third`
+  let expandedItems = writable({});
+
+  function toggleExpand(thirdId) {
+    activeMenu = thirdId;
+    expandedItems.update((state) => ({
+      ...state,
+      [thirdId]: !state[thirdId],
+    }));
+  }
+  /**********************************************************************/
   let plan = [];
   for (let i = 0; i < 20; i++) {
     plan.push({
@@ -140,25 +174,28 @@
               > <span class="arrowIcon"></span>
             </div>
           </li>
-          {#each plan as plan}
-            <li
-              style="cursor: pointer;"
-              class={`menuItem ${activeMenu === plan ? "active" : ""}`}
-            >
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                on:click={() => selectPage(Project, plan)}
-                class="menu"
-                style="position: relative;"
-                title="plan"
+          {#if $leftTrackData.length > 0}
+            {#each $leftTrackData[0] as plan}
+              <li
+                style="cursor: pointer;"
+                class={`menuItem ${activeMenu === plan ? "active" : ""}`}
               >
-                <span
-                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                  >{plan.planName}({plan.number})</span
-                > <span class="arrowIcon"></span>
-              </div>
-            </li>
-          {/each}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div
+                  on:click={() => selectPage(Project, plan)}
+                  class="menu"
+                  style="position: relative;"
+                  title={plan.ccp_title}
+                >
+                  <span
+                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                    >{plan.ccp_title}</span
+                  >
+                  <span class="arrowIcon"></span>
+                </div>
+              </li>
+            {/each}
+          {/if}
         {:else if activeView === "asset"}
           <li
             style="cursor: pointer;"
@@ -176,25 +213,28 @@
               > <span class="arrowIcon"></span>
             </div>
           </li>
-          {#each asset as asset}
-            <li
-              style="cursor: pointer;"
-              class={`menuItem ${activeMenu === asset ? "active" : ""} `}
-            >
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                on:click={() => selectPage(Asset, asset)}
-                class="menu"
-                style="position: relative;"
-                title="asset"
+          {#if $leftTrackData.length > 0}
+            {#each $leftTrackData[1] as asset}
+              <li
+                style="cursor: pointer;"
+                class={`menuItem ${activeMenu === asset ? "active" : ""}`}
               >
-                <span
-                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                  >{asset.assetName}({asset.number})</span
-                > <span class="arrowIcon"></span>
-              </div>
-            </li>
-          {/each}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div
+                  on:click={() => selectPage(Project, asset)}
+                  class="menu"
+                  style="position: relative;"
+                  title={asset.asg_title}
+                >
+                  <span
+                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                    >{asset.asg_title}({asset.asg_count})</span
+                  >
+                  <span class="arrowIcon"></span>
+                </div>
+              </li>
+            {/each}
+          {/if}
         {:else if activeView === "third"}
           <li
             style="cursor: pointer;"
@@ -212,25 +252,53 @@
               > <span class="arrowIcon"></span>
             </div>
           </li>
-          {#each third as third}
-            <li
-              style="cursor: pointer;"
-              class={`menuItem ${activeMenu === third ? "active" : ""} `}
-            >
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                on:click={() => selectPage(Third, third)}
-                class="menu"
-                style="position: relative;"
-                title="third"
+          {#if $leftTrackData.length > 0}
+            {#each $leftTrackData[2] as third (third.cct_target)}
+              <li
+                style="cursor: pointer;"
+                class={`menuItem ${activeMenu === third ? "active" : ""}`}
               >
-                <span
-                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                  >{third.thirdName}
-                </span> <span class="arrowIcon"></span>
-              </div>
-            </li>
-          {/each}
+                <!-- Toggle visibility by clicking on the target -->
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div
+                  class="menu"
+                  style="position: relative; cursor: pointer;"
+                  on:click={() => toggleExpand(third.cct_target)}
+                >
+                  <span
+                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  >
+                    {third.cct_target}
+                  </span>
+                  <span class="arrowIcon"></span>
+                </div>
+
+                <!-- Nested items, toggled based on expanded state -->
+                {#if $expandedItems[third.cct_target]}
+                  {#each third.targets_data as target}
+                    <li
+                      style="cursor: pointer;"
+                      class={`menuItem ${activeMenu === target ? "active2" : ""}`}
+                    >
+                      <!-- svelte-ignore a11y-click-events-have-key-events -->
+                      <div
+                        on:click={() => selectPage(Project, target)}
+                        class="menu2"
+                        style="position: relative;"
+                        title={target.ccc_item_no}
+                      >
+                        <span
+                          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                        >
+                          |- {target.ccc_item_no}
+                        </span>
+                      </div>
+                    </li>
+                  {/each}
+                {/if}
+              </li>
+            {/each}
+          {/if}
         {/if}
       </ul>
     </article>
@@ -337,7 +405,28 @@
     transition: none; /* Removes any rotation transition */
     margin-top: 0px;
   }
-
+  #wrap .container .sideMenu .prMenuListToggle li.menuItem.active2 .menu2 {
+    /* background-color: #0067ff; */
+    color: #0067ff;
+  }
+  #wrap .container .sideMenu .prMenuListToggle li.menuItem .menu2:hover,
+  #wrap .container .sideMenu .prMenuListToggle li.menuItem.active2 .menu2 {
+    background-color: #fff;
+    color: #0067ff;
+  }
+  .menu2 {
+    padding: 5px;
+    padding-left: 25px;
+    font-weight: 400;
+    color: #9197b3;
+  }
+  .arrow-down {
+    transform: rotate(-134deg);
+    position: relative;
+    margin-left: auto;
+    transition: none; /* Removes any rotation transition */
+    margin-top: 0px;
+  }
   .loading-overlay {
     position: fixed;
     top: 0;

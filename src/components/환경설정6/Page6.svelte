@@ -21,10 +21,10 @@
 </script>
 
 <div
-  style="overflow: scroll; height: 100vh; width: 100%;"
+  style="height: 100vh; padding-left: 10px; padding-right: 10px;"
   class={`contentsWrap1 ${tabMenu == "시스템기본설정" && "resultView"} ${tabMenu == "공지사항" && "resultView"} ${tabMenu == "자료실" && "resultView"} ${tabMenu == "사용자관리" && "logWrap"}`}
 >
-  <nav class="tabMenu">
+  <article class="tabMenu contentArea" style="padding: 0;">
     <ul>
       <li class={tabMenu == "시스템기본설정" && "active"}>
         <a
@@ -83,7 +83,7 @@
         </a>
       </li>
     </ul>
-  </nav>
+  </article>
 
   <!-- Switch between default view and selected page component -->
   {#if currentView === "default"}
@@ -97,6 +97,7 @@
   * {
     font-size: 16px;
   }
+
   .btn:hover {
     color: #fff;
     background-color: #0067ff;

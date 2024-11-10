@@ -244,7 +244,7 @@
     margin-top: 10px;
   }
   .title1 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: #333;
     margin-bottom: 5px;

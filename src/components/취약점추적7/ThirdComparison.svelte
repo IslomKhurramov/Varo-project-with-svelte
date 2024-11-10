@@ -1,4 +1,7 @@
 <script>
+  import { Swiper, SwiperSlide } from "swiper/svelte";
+  import SwiperCore, { Navigation, Pagination } from "swiper";
+  import "swiper/swiper-bundle.css";
   let showModalProjectComparison = false;
   let selectedData = [];
 
@@ -7,7 +10,15 @@
     selectedData = data;
     console.log("clicked");
   }
-
+  SwiperCore.use([Navigation, Pagination]);
+  let swiperData = [];
+  for (let i = 0; i < 20; i++) {
+    swiperData.push({
+      number: (i + 1).toString(),
+      planName: "plan",
+      version: "1.0.0",
+    });
+  }
   function handleKeyDown(event) {
     if (event.key === "Escape") {
       showModalProjectComparison = false;
@@ -417,140 +428,174 @@
       on:click|stopPropagation
     >
       <p class="header_title">[자산명] [U-01] 점검항목 타이틀</p>
-      <table>
-        <colgroup>
-          <col style="width: 120px;" />
-          <col />
-        </colgroup>
-        <tr>
-          <th class="text-center">점검플랜</th>
-          <td>
-            <div class="graphCardWrap">
-              {#each recentAssets as asset, index}
-                <div class="iconCard">
-                  <article class="graphCard">
-                    <div class="contents2">
-                      <div class="text2">
-                        <ul>
-                          <li>
-                            <span>프로젝트명 : </span>{asset.ast_os ||
-                              "Unknown OS"}
-                          </li>
-                          <li>
-                            <span>점검일시 : </span>{asset.ast_hostname ||
-                              "Unknown Hostname"}
-                          </li>
-                          <li>
-                            <span>관련시스템 : </span>{asset.ast_ipaddr ||
-                              "Unknown IP"}
-                          </li>
-                        </ul>
-                      </div>
+      <Swiper
+        slidesPerView={1}
+        spaceBetween={10}
+        navigation={{
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        }}
+        on:swiper={(swiper) => console.log(swiper)}
+      >
+        {#each swiperData as swiper}
+          <SwiperSlide>
+            <div>
+              {swiper.number}
+              <table>
+                <colgroup>
+                  <col style="width: 120px;" />
+                  <col />
+                </colgroup>
+                <tr>
+                  <th class="text-center">점검플랜</th>
+                  <td>
+                    <div class="graphCardWrap">
+                      {#each recentAssets as asset, index}
+                        <div class="iconCard">
+                          <article class="graphCard">
+                            <div class="contents2">
+                              <div class="text2">
+                                <ul>
+                                  <li>
+                                    <span>프로젝트명 : </span>{asset.ast_os ||
+                                      "Unknown OS"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >점검일시 :
+                                    </span>{asset.ast_hostname ||
+                                      "Unknown Hostname"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >관련시스템 :
+                                    </span>{asset.ast_ipaddr || "Unknown IP"}
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </article>
+                          {#if index < 4}
+                            <img
+                              src="images/icons/arrowhead.png"
+                              class="arrowIcon"
+                            />
+                          {/if}
+                        </div>
+                      {/each}
                     </div>
-                  </article>
-                  {#if index < 4}
-                    <img src="images/icons/arrowhead.png" class="arrowIcon" />
-                  {/if}
-                </div>
-              {/each}
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th class="text-center">점검이력</th>
-          <td>
-            <div class="graphCardWrap">
-              {#each recentAssets as asset}
-                <div class="iconCard">
-                  <article class="graphCard">
-                    <div class="contents2">
-                      <div class="text2">
-                        <ul>
-                          <li>
-                            <span>프로젝트명 : </span>{asset.ast_os ||
-                              "Unknown OS"}
-                          </li>
-                          <li>
-                            <span>점검일시 : </span>{asset.ast_hostname ||
-                              "Unknown Hostname"}
-                          </li>
-                          <li>
-                            <span>관련시스템 : </span>{asset.ast_ipaddr ||
-                              "Unknown IP"}
-                          </li>
-                          <li><span>점검현황 : </span></li>
-                        </ul>
-                      </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th class="text-center">점검이력</th>
+                  <td>
+                    <div class="graphCardWrap">
+                      {#each recentAssets as asset}
+                        <div class="iconCard">
+                          <article class="graphCard">
+                            <div class="contents2">
+                              <div class="text2">
+                                <ul>
+                                  <li>
+                                    <span>프로젝트명 : </span>{asset.ast_os ||
+                                      "Unknown OS"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >점검일시 :
+                                    </span>{asset.ast_hostname ||
+                                      "Unknown Hostname"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >관련시스템 :
+                                    </span>{asset.ast_ipaddr || "Unknown IP"}
+                                  </li>
+                                  <li><span>점검현황 : </span></li>
+                                </ul>
+                              </div>
+                            </div>
+                          </article>
+                        </div>
+                      {/each}
                     </div>
-                  </article>
-                </div>
-              {/each}
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th class="text-center">조치이력</th>
-          <td>
-            <div class="graphCardWrap">
-              {#each recentAssets as asset}
-                <div class="iconCard">
-                  <article class="graphCard">
-                    <div class="contents2">
-                      <div class="text2">
-                        <ul>
-                          <li>
-                            <span>프로젝트명 : </span>{asset.ast_os ||
-                              "Unknown OS"}
-                          </li>
-                          <li>
-                            <span>점검일시 : </span>{asset.ast_hostname ||
-                              "Unknown Hostname"}
-                          </li>
-                          <li>
-                            <span>관련시스템 : </span>{asset.ast_ipaddr ||
-                              "Unknown IP"}
-                          </li>
-                        </ul>
-                      </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th class="text-center">조치이력</th>
+                  <td>
+                    <div class="graphCardWrap">
+                      {#each recentAssets as asset}
+                        <div class="iconCard">
+                          <article class="graphCard">
+                            <div class="contents2">
+                              <div class="text2">
+                                <ul>
+                                  <li>
+                                    <span>프로젝트명 : </span>{asset.ast_os ||
+                                      "Unknown OS"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >점검일시 :
+                                    </span>{asset.ast_hostname ||
+                                      "Unknown Hostname"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >관련시스템 :
+                                    </span>{asset.ast_ipaddr || "Unknown IP"}
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </article>
+                        </div>
+                      {/each}
                     </div>
-                  </article>
-                </div>
-              {/each}
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th class="text-center">조치내역</th>
-          <td>
-            <div class="graphCardWrap">
-              {#each recentAssets as asset}
-                <div class="iconCard">
-                  <article class="graphCard">
-                    <div class="contents2">
-                      <div class="text2">
-                        <ul>
-                          <li>
-                            <span>프로젝트명 : </span>{asset.ast_os ||
-                              "Unknown OS"}
-                          </li>
-                          <li>
-                            <span>점검일시 : </span>{asset.ast_hostname ||
-                              "Unknown Hostname"}
-                          </li>
-                          <li>
-                            <span>관련시스템 : </span>{asset.ast_ipaddr ||
-                              "Unknown IP"}
-                          </li>
-                        </ul>
-                      </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th class="text-center">조치내역</th>
+                  <td>
+                    <div class="graphCardWrap">
+                      {#each recentAssets as asset}
+                        <div class="iconCard">
+                          <article class="graphCard">
+                            <div class="contents2">
+                              <div class="text2">
+                                <ul>
+                                  <li>
+                                    <span>프로젝트명 : </span>{asset.ast_os ||
+                                      "Unknown OS"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >점검일시 :
+                                    </span>{asset.ast_hostname ||
+                                      "Unknown Hostname"}
+                                  </li>
+                                  <li>
+                                    <span
+                                      >관련시스템 :
+                                    </span>{asset.ast_ipaddr || "Unknown IP"}
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </article>
+                        </div>
+                      {/each}
                     </div>
-                  </article>
-                </div>
-              {/each}
+                  </td>
+                </tr>
+              </table>
             </div>
-          </td>
-        </tr>
-      </table>
+          </SwiperSlide>
+        {/each}
+      </Swiper>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
       <div style="display: flex; width:100%; justify-content:center">
         <button
           class="btn modify-btn"
@@ -627,10 +672,10 @@
     padding: 0 15px 10px;
   }
   .modal-open-wrap table {
-    width: 100%;
+    width: 98%;
     border-collapse: collapse;
-
     overflow: hidden;
+    margin-left: 26px;
   }
   .modal-open-wrap .header_title {
     font-size: 16px;
@@ -639,7 +684,7 @@
     color: #626677;
     font-size: 16px;
     font-weight: 500;
-    padding: 0 0px 10px;
+    padding: 0 25px 10px;
   }
   .modal-open-wrap th,
   .modal-open-wrap td {
@@ -891,5 +936,28 @@
     top: 0; /* Stick the header to the top */
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+  }
+  .swiper-button-next,
+  .swiper-button-prev {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    width: 30px;
+    height: 30px;
+    color: #0033ff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transform: translateY(-50%);
+  }
+
+  .swiper-button-prev {
+    left: 10px;
+  }
+
+  .swiper-button-next {
+    right: 10px;
   }
 </style>

@@ -1,4 +1,5 @@
 <script>
+  import { allTraceByAsset } from "../../services/page7/trace.store";
   function getStrokeColor(score) {
     if (score > 60)
       return "#0067ff"; // Blue
@@ -58,114 +59,104 @@
 </script>
 
 <div class="containerAsset">
-  {#each asset as asset}
-    <p class="header_title">{asset.assetName}({asset.number})</p>
+  {#each $allTraceByAsset as asset}
+    <p class="header_title">{asset.asg_title}</p>
     <div class="graphCardWrap col3" style="width:100%;">
-      {#each recentAssets as asset, index}
-        <div class="iconCard">
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <article class="graphCard hoverCard" style="height: 500px;">
-            <div class="contents">
-              <div class="graph">
-                <div>
-                  <div
-                    class="circle"
-                    data-percent={asset.asset_point_history?.[0]
-                      ?.ast_security_point || 0}
-                    data-offset="440"
-                  >
-                    <svg viewBox="0 0 150 150">
-                      <circle
-                        cx="75"
-                        cy="75"
-                        r="70"
-                        stroke="#fff"
-                        stroke-width="10"
-                        fill="none"
-                      />
-                      <circle
-                        class="progress"
-                        cx="75"
-                        cy="75"
-                        r="70"
-                        stroke={getStrokeColor(asset.ast_security_point || 0)}
-                        stroke-width="10"
-                        fill="none"
-                        stroke-dasharray="440"
-                        stroke-dashoffset={440 -
-                          (440 * (asset.ast_security_point || 0)) / 100}
-                        stroke-linecap="round"
-                        transform="rotate(-90 75 75)"
-                      />
-                    </svg>
-                    <div class="percent">
-                      <span
-                        class="number"
-                        style="font-size:32px; color: {getStrokeColor(
-                          asset.ast_security_point || 0,
-                        )};"
-                      >
-                        {asset.ast_security_point > 0
-                          ? asset.ast_security_point
-                          : 0}건
-                      </span>
+      {#if asset.plans && Array.isArray(asset.plans) && asset.plans.length > 0}
+        {#each asset.plans as plan, index (plan.ccp_index)}
+          <div class="iconCard">
+            <article class="graphCard hoverCard" style="height: 500px;">
+              <div class="contents">
+                <div class="graph">
+                  <div>
+                    <div
+                      class="circle"
+                      data-percent={plan.vuln_count || 0}
+                      data-offset="440"
+                    >
+                      <svg viewBox="0 0 150 150">
+                        <circle
+                          cx="75"
+                          cy="75"
+                          r="70"
+                          stroke="#fff"
+                          stroke-width="10"
+                          fill="none"
+                        />
+                        <circle
+                          class="progress"
+                          cx="75"
+                          cy="75"
+                          r="70"
+                          stroke={getStrokeColor(plan.vuln_count || 0)}
+                          stroke-width="10"
+                          fill="none"
+                          stroke-dasharray="440"
+                          stroke-dashoffset={440 -
+                            (440 * (plan.vuln_count || 0)) / 100}
+                          stroke-linecap="round"
+                          transform="rotate(-90 75 75)"
+                        />
+                      </svg>
+                      <div class="percent">
+                        <span
+                          class="number"
+                          style="font-size:32px; color: {getStrokeColor(
+                            plan.vuln_count || 0,
+                          )};"
+                        >
+                          {plan.vuln_count > 0 ? plan.vuln_count : 0}건
+                        </span>
+                      </div>
                     </div>
+                    <h4 class="name">
+                      <div class="title1">취약</div>
+                    </h4>
                   </div>
-                  <h4 class="name">
-                    <div class="title1">취약</div>
-                  </h4>
+                </div>
+                <div class="text flex col justify-between">
+                  <ul>
+                    <li>
+                      <span>프로젝트명 : </span>{plan.ccp_title ||
+                        "Unknown Project"}
+                    </li>
+                    <li>
+                      <span>점검일시 : </span>{plan.ccp_cdate || "Unknown Date"}
+                    </li>
+                    <li>
+                      <span>관련시스템 : </span>
+                      {plan.most_common_item?.cct_index__cct_target ||
+                        "Unknown System"}
+                    </li>
+                    <li>
+                      <span>최다자산 : </span>
+                      {plan.most_vulnerable_asset
+                        ?.ast_uuid__ass_uuid__ast_hostname || "No Asset"}
+                    </li>
+                    <li><span>취약점수 : </span>{plan.vuln_count || 0}건</li>
+                    <li><span>조치개수 : </span>{plan.count || 0}건</li>
+                  </ul>
                 </div>
               </div>
-              <div class="text flex col justify-between">
-                <ul>
-                  <li>
-                    <span>프로젝트명 : </span>{asset.ast_os || "Unknown OS"}
-                  </li>
-                  <li>
-                    <span>점검일시 : </span>{asset.ast_hostname ||
-                      "Unknown Hostname"}
-                  </li>
-                  <li>
-                    <span>관련시스템 : </span>{asset.ast_ipaddr || "Unknown IP"}
-                  </li>
-                  <li style="margin-top:15px;"><span>[취약점 요약]</span></li>
-                  <li>
-                    <span
-                      >최다자산 :
-                    </span>{asset.ast_uuid__ast_target__cct_target ||
-                      "No Target"}
-                  </li>
-                  <li>
-                    <span>최다항목 : </span>{asset.ast_agent_installed
-                      ? "설치됨"
-                      : "설치 안됨"}
-                  </li>
-                  <li>
-                    <span>취약점수 : </span>{asset.ast_hostname ||
-                      "Unknown Hostname"}
-                  </li>
-                  <li>
-                    <span>조치개수 : </span>{asset.ast_ipaddr || "Unknown IP"}
-                  </li>
-                  <li style="margin-top:15px;">
-                    <span>[그외 출력가능 정보 ]</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </article>
-
-          <!-- Only show the icon if index is less than 5 -->
-          {#if index < 4}
-            <img src="images/icons/arrowhead.png" class="icon" />
-          {/if}
+            </article>
+          </div>
+        {/each}
+      {:else}
+        <div class="no-data-message">
+          <p>사용 가능한 데이터가 없습니다</p>
         </div>
-      {/each}
+      {/if}
     </div>
   {/each}
 </div>
 
 <style>
+  .no-data-message {
+    text-align: center; /* Center the text */
+    font-style: italic; /* Italicize the text for emphasis */
+    color: #777; /* Light gray color for the message */
+    padding: 20px; /* Add some padding around the text */
+  }
   .containerAsset {
     height: 77vh;
     overflow-y: auto;
@@ -201,7 +192,7 @@
   /* General Layout Styles */
   .graphCardWrap.col3 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     position: relative;
     padding: 20px;
     align-items: center;

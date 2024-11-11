@@ -11,17 +11,12 @@
 
   let showModalProject = false;
   let plan_id = "";
-
-  // Function to handle clicking on a card
-  function selectCard(asset) {
-    selectedAsset = asset.ccp_index;
-  }
-
+  let sample_id = "8";
   /*******************GETTRACEBYPLAN********************************/
   async function planDataById(selectedAsset) {
     plan_id = selectedAsset.ccp_index;
     try {
-      const response = await getTraceByPlan(plan_id);
+      const response = await getTraceByPlan(sample_id);
 
       if (response) {
         traceByPlan.set(response.CODE);
@@ -260,62 +255,77 @@
       </div>
     {/each}
   </div>
+  <p on:click={() => planDataById(sample_id)}>sample data</p>
 
-  {#if $traceByPlan.vulns && $traceByPlan.vulns.length > 0}
-    {#each $traceByPlan.vulns as vuln, index}
-      <div
-        class="tableListWrap table2"
-        style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
-      >
-        <table class="tableList hdBorder font-size: 16px;">
-          <colgroup>
-            <col style="width:90px;" />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
-            <col />
-          </colgroup>
+  <div
+    class="tableListWrap table2"
+    style="margin-bottom: 20px; padding-bottom:10px; margin-top:20px; height:43vh; overflow-y:auto;"
+  >
+    <table class="tableList hdBorder font-size: 16px;">
+      <colgroup>
+        <col style="width:60px;" />
+        <col style="width: 130px;" />
+        <col style="width: 130px;" />
+        <col style="width: 20%;" />
+        <col style="width: 90px;" />
+        <col style="width: 145px;" />
+        <col style="width: 30%;" />
+        <col />
+        <col />
+        <col />
+      </colgroup>
 
-          <thead>
-            <tr>
-              <th class="text-center">순번</th>
-              <th class="text-center">자산명</th>
-              <th class="text-center">점검항목</th>
-              <th class="text-center">취약점명</th>
-              <th class="text-center">위험도</th>
-              <th class="text-center">점검결과</th>
-              <th class="text-center">조치현황</th>
-              <th class="text-center">조치분류상태 </th>
-              <th class="text-center">운영부서 </th>
-              <th class="text-center">운영담당자</th>
-            </tr>
-          </thead>
-
+      <thead>
+        <tr>
+          <th class="text-center">순번</th>
+          <th class="text-center">자산명</th>
+          <th class="text-center">점검항목</th>
+          <th class="text-center">취약점명</th>
+          <th class="text-center">위험도</th>
+          <th class="text-center">점검결과</th>
+          <th class="text-center">조치현황</th>
+          <th class="text-center">조치분류상태 </th>
+          <th class="text-center">운영부서 </th>
+          <th class="text-center">운영담당자</th>
+        </tr>
+      </thead>
+      {#if $traceByPlan.vulns && $traceByPlan.vulns.length > 0}
+        {#each $traceByPlan.vulns as vuln, index}
           <tbody>
             <tr on:click={modalData(vuln)} class="clickLine">
               <td class="text-center">{index + 1}</td>
-              <td class="text-center"
+              <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
               >
-              <td class="text-center">{vuln.ccr_item_no__ccc_item_title}</td>
-              <td class="text-center">{vuln.ccr_item_no__ccc_check_content}</td>
-              <td class="text-center">{vuln.ccr_item_no__ccc_item_level}</td>
-              <td class="text-center">{vuln.ccr_item_result}</td>
-              <td class="text-center">{vuln.ccr_item_status}</td>
-              <td class="text-center">/* Derived classification state *</td>
-              <td class="text-center">Missing Data</td>
-              <td class="text-center">Missing Data</td>
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_title}</td
+              >
+              <td class="text-center line-height"
+                >{@html vuln.ccr_item_no__ccc_check_content.replace(
+                  /\n/g,
+                  "<br/>",
+                )}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_level}</td
+              >
+              <td class="text-center line-height">{vuln.ccr_item_result}</td>
+              <td class="text-center line-height">
+                <div class="status-container line-height">
+                  {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
+                </div>
+              </td>
+              <td class="text-center line-height"
+                >/* Derived classification state *</td
+              >
+              <td class="text-center line-height">Missing Data</td>
+              <td class="text-center line-height">Missing Data</td>
             </tr>
           </tbody>
-        </table>
-      </div>
-    {/each}
-  {/if}
+        {/each}
+      {/if}
+    </table>
+  </div>
 
   {#if showModalProject}
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -512,6 +522,16 @@
 </div>
 
 <style>
+  .status-container {
+    max-height: 120px; /* Set the maximum height for the content */
+    overflow-y: auto;
+    overflow-x: hidden; /* Allow scrolling only if content exceeds the height */
+    padding: 0;
+    margin: 0;
+  }
+  .line-height {
+    line-height: 23px;
+  }
   .modify-btn {
     background-color: #4caf50; /* Green background for modify button */
     color: white; /* White text */

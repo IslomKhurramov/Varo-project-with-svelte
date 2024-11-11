@@ -441,7 +441,7 @@
   </div>
   <div
     class="tableListWrap table2"
-    style="margin-bottom: 20px; margin-top:20px; margin; height:45vh; overflow-y:auto;"
+    style="margin-bottom: 20px; margin-top:20px; margin; height:43vh; overflow-y:auto;"
   >
     <table class="tableList hdBorder font-size: 16px;">
       <colgroup>
@@ -832,7 +832,7 @@
 
   .modal-open-wrap .graphCardWrap {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
   }
 

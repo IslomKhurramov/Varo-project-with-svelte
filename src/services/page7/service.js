@@ -76,3 +76,40 @@ export const compareByPlan = async (first_id, second_id) => {
     throw error;
   }
 };
+/********************ASSET*********************************** */
+export const getAllTraceByAsset = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getAllTraceByAsset/`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    await errorAlert(err?.message);
+    loading = false;
+  }
+};
+export const getTraceByAsset = async (asset_id) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/getTraceByAsset/`,
+      {
+        asg_index: asset_id,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};

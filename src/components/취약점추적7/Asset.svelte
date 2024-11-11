@@ -1,10 +1,15 @@
 <script>
+  import { allTraceByAsset } from "../../services/page7/trace.store";
   import { Swiper, SwiperSlide } from "swiper/svelte";
   import SwiperCore, { Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.css";
+  import { selectedPlan } from "../../services/page7/trace.store";
+  import { selectedAssetTableData } from "../../services/page7/trace.store";
+
+  $: console.log("Vulns data:", $selectedAssetTableData[0]?.vulns);
   let showModalProject = false;
   let selectedData = [];
-  let menuWrapper;
+
   function modalData(data) {
     showModalProject = true;
     selectedData = data;
@@ -124,8 +129,6 @@
   ];
   $: recentAssets = filteredAssets.slice(-5);
 
-  let selectedAsset = filteredAssets[0];
-
   // Function to handle clicking on a card
   function selectCard(asset) {
     selectedAsset = asset;
@@ -147,101 +150,102 @@
 <div>
   <p class="header_title">자산 : 자산3와 관련된 취약점 추적</p>
   <div class="graphCardWrap col3" style="width:100%;">
-    {#each recentAssets as asset, index}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div class="iconCard" on:click={() => selectCard(asset)}>
+    {#if $selectedPlan.length > 0}
+      {#each $selectedPlan as plan, index}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <article class="graphCard hoverCard" style="min-height: 270px;">
-          <div class="contents">
-            <div class="graph">
-              <div>
-                <div
-                  class="circle"
-                  data-percent={asset.ast_security_point || 0}
-                  data-offset="440"
-                >
-                  <svg viewBox="0 0 150 150">
-                    <circle
-                      cx="75"
-                      cy="75"
-                      r="70"
-                      stroke="#fff"
-                      stroke-width="10"
-                      fill="none"
-                    />
-                    <circle
-                      class="progress"
-                      cx="75"
-                      cy="75"
-                      r="70"
-                      stroke={getStrokeColor(asset.ast_security_point || 0)}
-                      stroke-width="10"
-                      fill="none"
-                      stroke-dasharray="440"
-                      stroke-dashoffset={440 -
-                        (440 * (asset.ast_security_point || 0)) / 100}
-                      stroke-linecap="round"
-                      transform="rotate(-90 75 75)"
-                    />
-                  </svg>
-                  <div class="percent">
-                    <span
-                      class="number"
-                      style="font-size:32px; color: {getStrokeColor(
-                        asset.ast_security_point || 0,
-                      )};"
-                    >
-                      {asset.ast_security_point > 0
-                        ? asset.ast_security_point
-                        : 0}건
-                    </span>
+        <div class="iconCard" on:click={() => selectCard(plan)}>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <article class="graphCard hoverCard" style="min-height: 270px;">
+            <div class="contents">
+              <div class="graph">
+                <div>
+                  <div
+                    class="circle"
+                    data-percent={plan.vuln_count || 0}
+                    data-offset="440"
+                  >
+                    <svg viewBox="0 0 150 150">
+                      <circle
+                        cx="75"
+                        cy="75"
+                        r="70"
+                        stroke="#fff"
+                        stroke-width="10"
+                        fill="none"
+                      />
+                      <circle
+                        class="progress"
+                        cx="75"
+                        cy="75"
+                        r="70"
+                        stroke={getStrokeColor(plan.vuln_count || 0)}
+                        stroke-width="10"
+                        fill="none"
+                        stroke-dasharray="440"
+                        stroke-dashoffset={440 -
+                          (440 * (plan.vuln_count || 0)) / 100}
+                        stroke-linecap="round"
+                        transform="rotate(-90 75 75)"
+                      />
+                    </svg>
+                    <div class="percent">
+                      <span
+                        class="number"
+                        style="font-size:32px; color: {getStrokeColor(
+                          plan.vuln_count || 0,
+                        )};"
+                      >
+                        {plan.vuln_count > 0 ? plan.vuln_count : 0}건
+                      </span>
+                    </div>
                   </div>
+                  <h4 class="name">
+                    <div class="title1">취약</div>
+                  </h4>
                 </div>
-                <h4 class="name">
-                  <div class="title1">취약</div>
-                </h4>
+              </div>
+              <div class="text flex col justify-between">
+                <ul>
+                  <li>
+                    <span>프로젝트명 : </span>{plan.ccp_title || "Unknown OS"}
+                  </li>
+                  <li>
+                    <span>점검일시 : </span>{plan.ccp_cdate ||
+                      "Unknown Hostname"}
+                  </li>
+                  <li>
+                    <span>관련시스템 : </span>{plan.most_common_item
+                      ?.cct_index__cct_target || "Unknown IP"}
+                  </li>
+                </ul>
               </div>
             </div>
-            <div class="text flex col justify-between">
-              <ul>
-                <li>
-                  <span>프로젝트명 : </span>{asset.ast_os || "Unknown OS"}
-                </li>
-                <li>
-                  <span>점검일시 : </span>{asset.ast_hostname ||
-                    "Unknown Hostname"}
-                </li>
-                <li>
-                  <span>관련시스템 : </span>{asset.ast_ipaddr || "Unknown IP"}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </article>
+          </article>
 
-        <!-- Only show the icon if index is less than 5 -->
-        {#if index < 4}
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <img src="images/icons/arrowhead.png" class="icon" />
-        {/if}
-      </div>
-    {/each}
+          <!-- Only show the icon if index is less than 5 -->
+          {#if index < 4}
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <img src="images/icons/arrowhead.png" class="icon" />
+          {/if}
+        </div>
+      {/each}
+    {/if}
   </div>
 
-  {#if selectedAsset}
-    <div
-      class="tableListWrap table2"
-      style="margin-bottom: 20px; margin-top:20px; margin height:50vh;"
-    >
+  <div
+    class="tableListWrap table2"
+    style="margin-bottom: 20px; padding-bottom:10px; margin-top:20px; height:43vh; overflow-y:auto;"
+  >
+    {#if $selectedAssetTableData[0]?.vulns.length > 0}
       <table class="tableList hdBorder font-size: 16px;">
         <colgroup>
-          <col style="width:90px;" />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
+          <col style="width:60px;" />
+          <col style="width: 150px;" />
+          <col style="width: 180px;" />
+          <col style="width: 20%;" />
+          <col style="width: 90px;" />
+          <col style="width: 145px;" />
+          <col style="width: 30%;" />
           <col />
           <col />
           <col />
@@ -262,39 +266,46 @@
           </tr>
         </thead>
 
-        <tbody>
-          <tr on:click={modalData(selectedAsset)} class="clickLine">
-            <td class="text-center line-height">1</td>
-            <td class="text-center line-height"
-              >{selectedAsset.asg_index__asg_title}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_group}</td
-            >
-            <td class="text-center line-height">{selectedAsset.ccc_item_no}</td>
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_title}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_level}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_result}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_action}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_status}</td
-            >
-            <td class="text-center line-height"
-              >{selectedAsset.ccc_item_department}</td
-            >
-          </tr>
-        </tbody>
+        {#each $selectedAssetTableData[0]?.vulns as vuln, index}
+          <tbody>
+            <tr class="clickLine">
+              <td class="text-center">{index + 1}</td>
+              <td class="text-center line-height"
+                >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_title}</td
+              >
+              <td class="text-center line-height"
+                >{@html vuln.ccr_item_no__ccc_check_content.replace(
+                  /\n/g,
+                  "<br/>",
+                )}</td
+              >
+              <td class="text-center line-height"
+                >{vuln.ccr_item_no__ccc_item_level}</td
+              >
+              <td class="text-center line-height">{vuln.ccr_item_result}</td>
+              <td class="text-center line-height">
+                <div class="status-container line-height">
+                  {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
+                </div>
+              </td>
+              <td class="text-center line-height"
+                >/* Derived classification state *</td
+              >
+              <td class="text-center line-height">Missing Data</td>
+              <td class="text-center line-height">Missing Data</td>
+            </tr>
+          </tbody>
+        {/each}
       </table>
-    </div>
-  {/if}
+    {:else}
+      <div class="no-data-message">
+        <p>비교할 두 번째 프로젝트를 선택하세요</p>
+      </div>
+    {/if}
+  </div>
 
   {#if showModalProject}
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -491,6 +502,25 @@
 </div>
 
 <style>
+  .no-data-message {
+    text-align: center; /* Center the text */
+    font-style: italic; /* Italicize the text for emphasis */
+    color: #777; /* Light gray color for the message */
+    padding: 20px; /* Add some padding around the text */
+    background-color: #f9f9f9; /* Light background color for contrast */
+    border: 1px solid #ddd; /* Optional: Add a border for definition */
+    border-radius: 5px; /* Slightly round the corners */
+  }
+  .status-container {
+    max-height: 120px; /* Set the maximum height for the content */
+    overflow-y: auto;
+    overflow-x: hidden; /* Allow scrolling only if content exceeds the height */
+    padding: 0;
+    margin: 0;
+  }
+  .line-height {
+    line-height: 23px;
+  }
   .modify-btn {
     background-color: #4caf50; /* Green background for modify button */
     color: white; /* White text */
@@ -531,7 +561,7 @@
   /* General Layout Styles */
   .graphCardWrap.col3 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
 
     padding: 20px;
     height: 100%;

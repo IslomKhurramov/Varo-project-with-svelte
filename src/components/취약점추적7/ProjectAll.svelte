@@ -150,7 +150,8 @@
                 </li>
                 <li>
                   <span>최다항목 : </span>{asset.vulnerability_summary
-                    .most_common_item || "No Item"}
+                    .most_common_item?.item_code || "No Item"}({asset
+                    .vulnerability_summary.most_common_item?.target_type})
                 </li>
                 <li>
                   <span>취약점수 : </span>{asset.vulnerability_summary

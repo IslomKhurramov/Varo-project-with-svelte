@@ -9,24 +9,40 @@
   import AssetComparison from "./AssetComparison.svelte";
   import ThirdComparison from "./ThirdComparison.svelte";
   import {
+    allTraceByAsset,
     allTraceByPlan,
     leftTrackData,
+    selectedAssetTableData,
+    selectedPlan,
   } from "../../services/page7/trace.store";
   import {
+    getAllTraceByAsset,
     getAllTraceByPlan,
     getLeftTrackData,
+    getTraceByAsset,
   } from "../../services/page7/service";
   import { onMount } from "svelte";
+  import { writable } from "svelte/store";
+
+  // Create a writable store for selectedPlans
+
   let currentPage = ProjectAll;
   let showProject = true;
   let showAsset = false;
   let showThird = false;
   let activeView = "project"; // Track which section is currently active
   let activeMenu = null;
+  let selectedAsset = "";
 
   function selectPage(pageComponent, menuName) {
     currentPage = pageComponent;
     activeMenu = menuName; // Set the active menu to reflect the selection
+  }
+  function selectAsset(asset) {
+    // Set selectedAsset based on the asset's asg_index
+    selectedAsset = asset.asg_index;
+    console.log("selectedAsset:", selectedAsset);
+    tableDataOfAsset(selectedAsset);
   }
 
   function toggleView(view) {
@@ -48,6 +64,7 @@
   onMount(() => {
     getLeftDatas();
     planData();
+    assetData();
   });
 
   async function getLeftDatas() {
@@ -64,8 +81,6 @@
   }
 
   /*************************************************************************************/
-
-  import { writable } from "svelte/store";
 
   // Track the expanded state for each `third`
   let expandedItems = writable({});
@@ -91,8 +106,54 @@
       loading = false;
     }
   }
-  $: console.log("leftDarta", $allTraceByPlan);
+
   /*************************************************************************/
+  /*****************ASSETDATA**********************************************/
+  async function assetData() {
+    try {
+      const response = await getAllTraceByAsset();
+      console.log("response", response);
+      if (response.RESULT === "OK") {
+        allTraceByAsset.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      await errorAlert(err?.message);
+      loading = false;
+    }
+  }
+  $: console.log("allTraceByAsset", $allTraceByAsset);
+  /************************************************************************/
+  // Reactive statement to filter plans based on selectedAsset
+  $: {
+    if (selectedAsset) {
+      const asset = $allTraceByAsset.find(
+        (asset) => asset.asg_index === selectedAsset,
+      );
+      if (asset && asset.plans && Array.isArray(asset.plans)) {
+        // Correct way to update the store
+        selectedPlan.set(asset.plans);
+      } else {
+        selectedPlan.set([]); // If no plans are found, reset the store
+      }
+    }
+  }
+  $: console.log("parent", $selectedPlan);
+  /***********************************************************************/
+  /****************ASSETTABLEDATA*****************************************/
+  async function tableDataOfAsset(selectedAsset) {
+    console.log("selectedAsset:", selectedAsset);
+    try {
+      const response = await getTraceByAsset(selectedAsset);
+
+      if (response) {
+        selectedAssetTableData.set(response.CODE);
+      } else {
+      }
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+    }
+  }
+
   let plan = [];
   for (let i = 0; i < 20; i++) {
     plan.push({
@@ -243,7 +304,10 @@
               >
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div
-                  on:click={() => selectPage(Project, asset)}
+                  on:click={() => {
+                    selectPage(Asset, asset); // Select page and menu
+                    selectAsset(asset); // Set selected asset
+                  }}
                   class="menu"
                   style="position: relative;"
                   title={asset.asg_title}
@@ -402,7 +466,12 @@
         style={"margin-top: 10px; height: calc(100vh - 141px);"}
       >
         {#if currentPage}
-          <svelte:component this={currentPage} {asset} {third} />
+          <svelte:component
+            this={currentPage}
+            {asset}
+            {third}
+            {selectedAsset}
+          />
         {/if}
       </article>
     </div>

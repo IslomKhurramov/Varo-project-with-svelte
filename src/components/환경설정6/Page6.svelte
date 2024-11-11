@@ -1,11 +1,11 @@
 <script>
   import FirstMenu from "./HeaderMenu/FirstMenu.svelte";
-  import SeconMenu from "./HeaderMenu/SecondMenu.svelte";
   import ThirdMenu from "./HeaderMenu/ThirdMenu.svelte";
   import FourthMenu from "./HeaderMenu/FourthMenu.svelte";
   import FifthMenu from "./HeaderMenu/FifthMenu.svelte";
   import SixthMenu from "./HeaderMenu/SixthMenu.svelte";
   import SeventhMenu from "./HeaderMenu/SeventhMenu.svelte";
+  import SecondMenu from "./HeaderMenu/SecondMenu.svelte";
 
   let currentView = "default";
   let currentPage = FirstMenu;
@@ -37,7 +37,7 @@
       <li class={tabMenu == "공지사항" && "active"}>
         <a
           href="javascript:void(0);"
-          on:click={() => selectPage(SeconMenu, "공지사항")}
+          on:click={() => selectPage(SecondMenu, "공지사항")}
         >
           공지사항
         </a>

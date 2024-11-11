@@ -1,187 +1,141 @@
 <script>
-  import { Pagination, PaginationItem } from "flowbite-svelte";
+  import { onMount } from "svelte";
+  import moment from "moment";
+  import { getAllArticles } from "../../../services/page6/serviceArticle";
+  import { errorAlert } from "../../../shared/sweetAlert";
 
-  let dataArray = [
-    {
-      hostname: "Host1",
-      itemNo: "Item001",
-      itemTitle: "Title1",
-      itemCriteria: "Criteria1",
-      itemStatus: "Status1",
-      itemResult: "양호",
-    },
-    {
-      hostname: "Host2",
-      itemNo: "Item002",
-      itemTitle: "Title2",
-      itemCriteria: "Criteria2",
-      itemStatus: "Status2",
-      itemResult: "취약",
-    },
-    {
-      hostname: "Host3",
-      itemNo: "Item003",
-      itemTitle: "Title3",
-      itemCriteria: "Criteria3",
-      itemStatus: "Status3",
-      itemResult: "예외처리",
-    },
-    {
-      hostname: "Host4",
-      itemNo: "Item004",
-      itemTitle: "Title4",
-      itemCriteria: "Criteria4",
-      itemStatus: "Status4",
-      itemResult: "해당없음",
-    },
-    {
-      hostname: "Host5",
-      itemNo: "Item005",
-      itemTitle: "Title5",
-      itemCriteria: "Criteria5",
-      itemStatus: "Status5",
-      itemResult: "양호",
-    },
-    {
-      hostname: "Host3",
-      itemNo: "Item003",
-      itemTitle: "Title3",
-      itemCriteria: "Criteria3",
-      itemStatus: "Status3",
-      itemResult: "예외처리",
-    },
-    {
-      hostname: "Host4",
-      itemNo: "Item004",
-      itemTitle: "Title4",
-      itemCriteria: "Criteria4",
-      itemStatus: "Status4",
-      itemResult: "해당없음",
-    },
-    {
-      hostname: "Host5",
-      itemNo: "Item005",
-      itemTitle: "Title5",
-      itemCriteria: "Criteria5",
-      itemStatus: "Status5",
-      itemResult: "양호",
-    },
-  ];
-
-  let itemsPerPage = 5;
+  let projectArray = [];
+  let error = null;
+  let itemsPerPage = 7;
   let currentPage = 1;
-  let totalItems = dataArray.length;
-  let totalPages = Math.ceil(totalItems / itemsPerPage);
+  let totalPages = 1;
+  let displayedPages = [];
 
-  $: paginatedData = dataArray.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
-  let maxPageNumbers = 5;
-
-  $: pages = [];
-  $: {
-    let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
-    let endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
-
-    if (endPage - startPage + 1 < maxPageNumbers) {
-      startPage = Math.max(1, endPage - maxPageNumbers + 1);
-    }
-
-    pages = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+  async function getAllArticlesData(
+    page = 1,
+    limit = itemsPerPage,
+    category = "DATAROOM",
+  ) {
+    try {
+      const response = await getAllArticles({ page, limit, category });
+      if (response.RESULT === "OK") {
+        projectArray = response.CODE.articles;
+        totalPages = response.CODE.pagination.total_pages;
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
     }
   }
+
+  onMount(() => {
+    getAllArticlesData(currentPage);
+  });
 
   function goToPage(page) {
     if (page >= 1 && page <= totalPages) {
       currentPage = page;
+      getAllArticlesData(currentPage);
+    }
+  }
+
+  $: {
+    const maxPagesToShow = 5;
+    displayedPages = [];
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) displayedPages.push(i);
+    } else {
+      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+      if (endPage - startPage + 1 < maxPagesToShow) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        displayedPages.push(i);
+      }
     }
   }
 </script>
 
-<section class="tableWrap" style="height: calc(-94px + 100vh);">
-  <div class="tableListWrap">
-    <table class="tableList hdBorder">
-      <colgroup>
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="text-center" style="font-size: 16px;">넘버</th>
-          <th class="text-center" style="font-size: 16px;">제목</th>
-          <th class="text-center" style="font-size: 16px;">작성자</th>
-          <th class="text-center" style="font-size: 16px;">작성일</th>
-          <th class="text-center" style="font-size: 16px;">첨부파일</th>
-          <th class="text-center" style="font-size: 16px;">조회수</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each dataArray as data, index}
+<div>
+  <section class="tableWrap">
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+        </colgroup>
+        <thead>
           <tr>
-            <td class="text-center" style="font-size: 16px;">{index + 1}</td>
-            <td style="font-size: 16px;" class="cursor-pointer text-center">
-              {data.hostname}
-            </td>
-            <td style="font-size: 16px;" class="text-center line-height">
-              {data.itemTitle}
-            </td>
-            <td
-              class="text-center cursor-pointer line-height"
-              style="font-size: 16px;"
-            >
-              <div class="line-height">
-                {data.itemCriteria}
-              </div>
-            </td>
-            <td
-              style="overflow: hidden; font-size: 16px;"
-              class="text-center line-height"
-            >
-              {data.itemStatus}
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
-            </td>
+            <th class="text-center" style="font-size: 16px;">넘버</th>
+            <th class="text-center" style="font-size: 16px;">제목</th>
+            <th class="text-center" style="font-size: 16px;">작성자</th>
+            <th class="text-center" style="font-size: 16px;">작성일</th>
+            <th class="text-center" style="font-size: 16px;">첨부파일</th>
+            <th class="text-center" style="font-size: 16px;">조회수</th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
+        </thead>
+        <tbody>
+          {#each projectArray as data, index}
+            <tr>
+              <td class="text-center" style="font-size: 16px;">
+                {index + 1 + (currentPage - 1) * itemsPerPage}
+              </td>
+              <td class="text-center" style="font-size: 16px;">{data.title}</td>
+              <td class="text-center" style="font-size: 16px;">
+                {data.writer__user_name}</td
+              >
+              <td class="text-center" style="font-size: 16px;">
+                {moment(data.created_at).format("YYYY.MM.DD")}
+              </td>
+              <td class="text-center" style="font-size: 16px;">
+                <a href={`/${data.file_path}`} target="_blank"
+                  >{data.original_filename}</a
+                >
+              </td>
+              <td class="text-center" style="font-size: 16px;">
+                {data.view_count}</td
+              >
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-      {#each pages as page}
-        <button
-          class:selected={currentPage === page}
-          on:click={() => goToPage(page)}
-        >
-          {page}
-        </button>
-      {/each}
+  <!-- Always fixed pagination at the bottom -->
+  <nav class="pagination">
+    <button
+      on:click={() => goToPage(currentPage - 1)}
+      disabled={currentPage === 1}
+    >
+      &lsaquo;
+    </button>
 
+    {#each displayedPages as page}
       <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        class:selected={currentPage === page}
+        on:click={() => goToPage(page)}
       >
-        &rsaquo;
+        {page}
       </button>
-    </nav>
-  </div>
-</section>
+    {/each}
+
+    <button
+      on:click={() => goToPage(currentPage + 1)}
+      disabled={currentPage === totalPages}
+    >
+      &rsaquo;
+    </button>
+  </nav>
+</div>
 
 <style>
   * {
@@ -190,46 +144,21 @@
 
   .tableWrap {
     background-color: #fff;
-    height: 90vh;
+    height: 85vh;
     border-radius: 5px;
   }
 
-  .modal-open-wrap {
-    display: block;
-    z-index: 99;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(167, 167, 167, 0.6);
+  .tableListWrap {
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: 50px;
   }
 
   thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
-    z-index: 10; /* Ensure the header is above the scrolling content */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
-  }
-  dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 1103px;
-    border: none;
-    border-radius: 10px;
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    animation: svelte-s7onsa-fadeIn 0.3s ease;
-    z-index: 100;
-  }
-
-  /* Modal backdrop */
-  dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-    animation: fadeInBackdrop 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
   tr:hover {
@@ -237,15 +166,17 @@
     background-color: #f4f4f4;
     transition-duration: 0.3s;
   }
-  .line-height {
-    line-height: 23px;
-  }
 
   .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 150px;
+    margin-top: 20px;
+    position: sticky;
+    bottom: 100px;
+    padding: 10px 0;
+    background-color: #fff;
+    /* box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); */
   }
 
   .pagination button {

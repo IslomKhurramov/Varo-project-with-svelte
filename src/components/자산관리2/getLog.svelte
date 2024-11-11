@@ -39,7 +39,7 @@
               <td class="text-center">{data?.his_orig_data}</td>
               <td class="text-center">{data?.his_order_user}</td>
               <td class="text-center"
-                >{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td
+                >{(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td
               >
               <td class="text-center">
                 <Tooltip text={data?.his_full_data}>비고</Tooltip>

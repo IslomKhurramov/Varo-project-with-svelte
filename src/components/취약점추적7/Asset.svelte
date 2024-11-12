@@ -155,7 +155,7 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="iconCard" on:click={() => selectCard(plan)}>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <article class="graphCard hoverCard" style="min-height: 270px;">
+          <article class="graphCard hoverCard" style="min-height: 338px;">
             <div class="contents">
               <div class="graph">
                 <div>

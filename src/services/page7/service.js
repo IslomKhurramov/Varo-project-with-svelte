@@ -113,3 +113,95 @@ export const getTraceByAsset = async (asset_id) => {
     throw error;
   }
 };
+
+export const compareTraceByAsset = async (first_id, second_id) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/compareTraceByAsset/`,
+      {
+        first: first_id,
+        second: second_id,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+/******************************************************************************* */
+export const getAllTraceByTarget = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getAllTraceByTarget/`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    await errorAlert(err?.message);
+    loading = false;
+  }
+};
+export const traceByTarget = async (first_id_target, second_id_target) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/getTraceByTarget/`,
+      {
+        cct_index: first_id_target,
+        ccc_index: second_id_target,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+export const compareTraceByTarget = async (first_target, second_target) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/compareTraceByTarget/`,
+      {
+        first: first_target,
+        second: second_target,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};

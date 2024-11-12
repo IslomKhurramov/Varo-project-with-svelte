@@ -11,15 +11,21 @@
   import {
     allTraceByAsset,
     allTraceByPlan,
+    allTraceByThird,
     leftTrackData,
     selectedAssetTableData,
     selectedPlan,
+    traceByPlan,
+    traceByThird,
   } from "../../services/page7/trace.store";
   import {
     getAllTraceByAsset,
     getAllTraceByPlan,
+    getAllTraceByTarget,
     getLeftTrackData,
     getTraceByAsset,
+    getTraceByPlan,
+    traceByTarget,
   } from "../../services/page7/service";
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
@@ -33,6 +39,9 @@
   let activeView = "project"; // Track which section is currently active
   let activeMenu = null;
   let selectedAsset = "";
+  let plan_id = "";
+  let trace_cct_index = "";
+  let trace_ccc_index = "";
 
   function selectPage(pageComponent, menuName) {
     currentPage = pageComponent;
@@ -43,6 +52,20 @@
     selectedAsset = asset.asg_index;
     console.log("selectedAsset:", selectedAsset);
     tableDataOfAsset(selectedAsset);
+  }
+  function selectPlan(plan) {
+    plan_id = plan;
+    planDataById(plan_id);
+    console.log("plan id", plan_id);
+  }
+
+  function selectTarget(target_id1) {
+    trace_cct_index = target_id1;
+  }
+  function selectTarget2(target_id2) {
+    trace_ccc_index = target_id2;
+    console.log("ides", trace_ccc_index, trace_cct_index);
+    targetData(trace_cct_index, trace_ccc_index);
   }
 
   function toggleView(view) {
@@ -65,6 +88,7 @@
     getLeftDatas();
     planData();
     assetData();
+    thirdData();
   });
 
   async function getLeftDatas() {
@@ -104,6 +128,20 @@
     } catch (err) {
       await errorAlert(err?.message);
       loading = false;
+    }
+  }
+
+  async function planDataById(plan_id) {
+    try {
+      const response = await getTraceByPlan(plan_id);
+
+      if (response) {
+        traceByPlan.set(response.CODE);
+      } else {
+      }
+      console.log("traceByPlan", $traceByPlan);
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
     }
   }
 
@@ -153,53 +191,34 @@
       alert(`Error getting asset details: ${err.message}`);
     }
   }
+  /*****************************************************************************/
+  /********************THIRDDATA*******************************************/
+  async function thirdData() {
+    try {
+      const response = await getAllTraceByTarget();
+      console.log("response", response);
+      if (response.RESULT === "OK") {
+        allTraceByThird.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      await errorAlert(err?.message);
+      loading = false;
+    }
+  }
 
-  let plan = [];
-  for (let i = 0; i < 20; i++) {
-    plan.push({
-      number: (i + 1).toString(),
-      planName: "plan",
-      version: "1.0.0",
-    });
-  }
-  let asset = [];
-  for (let i = 0; i < 20; i++) {
-    asset.push({
-      number: (i + 1).toString(),
-      assetName: "asset",
+  async function targetData(trace_cct_index, trace_ccc_index) {
+    try {
+      const response = await traceByTarget(trace_cct_index, trace_ccc_index);
 
-      version: "1.0.0",
-    });
+      if (response) {
+        traceByThird.set(response.CODE);
+      } else {
+      }
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+    }
   }
-  let third = [];
-  for (let i = 0; i < 20; i++) {
-    third.push({
-      number: (i + 1).toString(),
-      thirdName: "third",
-      WINDOWS: [
-        {
-          ccc_index: 2471,
-          ccc_item_no: "W-01",
-          ccc_item_title: "Administrator 계정 이름 변경 또는 보안성 강화",
-        },
-      ],
-      UNIX: [
-        {
-          ccc_index: 2471,
-          ccc_item_no: "W-01",
-          ccc_item_title: "Administrator 계정 이름 변경 또는 보안성 강화",
-        },
-      ],
-      LINUX: [
-        {
-          ccc_index: 2471,
-          ccc_item_no: "L-01",
-          ccc_item_title: "Administrator 계정 이름 변경 또는 보안성 강화",
-        },
-      ],
-      version: "1.0.0",
-    });
-  }
+  $: console.log("third", $traceByThird);
 </script>
 
 <!-- {#if loading}
@@ -265,7 +284,10 @@
               >
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div
-                  on:click={() => selectPage(Project, plan)}
+                  on:click={() => {
+                    selectPage(Project, plan); // Select page and menu
+                    selectPlan(plan.ccp_index); // Set selected asset
+                  }}
                   class="menu"
                   style="position: relative;"
                   title={plan.ccp_title}
@@ -349,7 +371,10 @@
                 <div
                   class="menu"
                   style="position: relative; cursor: pointer;"
-                  on:click={() => toggleExpand(third.cct_target)}
+                  on:click={() => {
+                    toggleExpand(third.cct_target); // Select page and menu
+                    selectTarget(third.cct_index); // Set selected asset
+                  }}
                 >
                   <span
                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
@@ -368,7 +393,10 @@
                     >
                       <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <div
-                        on:click={() => selectPage(Project, target)}
+                        on:click={() => {
+                          selectPage(Third, target); // Select page and menu
+                          selectTarget2(target.ccc_index); // Set selected asset
+                        }}
                         class="menu2"
                         style="position: relative;"
                         title={target.ccc_item_no}
@@ -468,9 +496,9 @@
         {#if currentPage}
           <svelte:component
             this={currentPage}
-            {asset}
-            {third}
             {selectedAsset}
+            {trace_ccc_index}
+            {trace_cct_index}
           />
         {/if}
       </article>

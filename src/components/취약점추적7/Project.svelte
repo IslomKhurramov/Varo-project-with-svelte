@@ -10,23 +10,9 @@
   import { getTraceByPlan } from "../../services/page7/service";
 
   let showModalProject = false;
-  let plan_id = "";
+
   let sample_id = "8";
   /*******************GETTRACEBYPLAN********************************/
-  async function planDataById(selectedAsset) {
-    plan_id = selectedAsset.ccp_index;
-    try {
-      const response = await getTraceByPlan(sample_id);
-
-      if (response) {
-        traceByPlan.set(response.CODE);
-      } else {
-      }
-      console.log("data clicked", $traceByPlan);
-    } catch (err) {
-      alert(`Error getting asset details: ${err.message}`);
-    }
-  }
 
   function modalData(data) {
     showModalProject = true;
@@ -165,9 +151,9 @@
   <div class="graphCardWrap col3" style="width:100%;">
     {#each $allTraceByPlan as asset, index}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div class="iconCard" on:click={() => planDataById(asset)}>
+      <div class="iconCard">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <article class="graphCard hoverCard" style="min-height: 270px;">
+        <article class="graphCard hoverCard" style="min-height: 338px;">
           <div class="contents">
             <div class="graph">
               <div>
@@ -255,7 +241,6 @@
       </div>
     {/each}
   </div>
-  <p on:click={() => planDataById(sample_id)}>sample data</p>
 
   <div
     class="tableListWrap table2"

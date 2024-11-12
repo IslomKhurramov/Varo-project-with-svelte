@@ -63,7 +63,7 @@
     {#each $allTraceByPlan as asset, index}
       <div class="iconCard">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <article class="graphCard hoverCard" style="min-height: 500px;">
+        <article class="graphCard hoverCard" style="min-height: 628px;">
           <div class="contents">
             <div class="graph">
               <div>

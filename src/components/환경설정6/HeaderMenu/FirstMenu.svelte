@@ -1,50 +1,92 @@
 <script>
-  let serverIP = "192.168.0.10";
-  let port = 443;
+  import { onMount } from "svelte";
+  import {
+    getSystemBasicSetup,
+    setSystemBasicSetup,
+  } from "../../../services/page6/serviceArticle";
+  import { errorAlert, successAlert } from "../../../shared/sweetAlert";
+  import { navigate } from "svelte-routing";
+
+  let serverIP = "000.000.0.00";
+  let port = Number();
   let clientName = "타이거씨엔에스";
-  let clientLogo = "이미지파일첨부";
-  let agentConnectInterval = 60;
-  let otherField = 60;
+  let agentConnectInterval = Number();
   let ReportGenerationCriteria = 1000;
   let NumberPageLists = 20;
   let riskLevel = "중";
   let mailServerOption = "";
   let remoteMailServer = {
     ip: "",
-    port: "",
+    port: Number(),
     id: "",
     password: "",
   };
 
-  const submitNewSystemCommand = async () => {
+  let error = null;
+
+  ////////////// Hendle service API call ////////////////
+  async function getSystemBasicSetupData() {
     try {
-      if (assetInsertData.start_date)
-        assetInsertData.start_date = moment(assetInsertData.start_date).format(
-          "YYYY-MM-DD h:mm:ss",
-        );
-      if (assetInsertData.end_date)
-        assetInsertData.end_date = moment(assetInsertData.end_date).format(
-          "YYYY-MM-DD h:mm:ss",
-        );
+      const projectData = await getSystemBasicSetup();
+      console.log("API Response:", projectData);
 
-      const response = await setNewSystemCommand(assetInsertData);
+      if (projectData?.RESULT === "OK") {
+        const data = projectData.CODE[0];
+        serverIP = data.server_ipaddr || serverIP;
+        port = parseInt(data.server_port) || port;
+        agentConnectInterval =
+          parseInt(data.connection_interval) || agentConnectInterval;
 
-      await successAlert(response.CODE);
-
-      navigate(window.location?.pathname == "/page6" ? "/page6" : "/page6");
-    } catch (error) {
-      errorAlert(error?.message);
+        remoteMailServer.ip = data.mailserver_ip || remoteMailServer.ip;
+        remoteMailServer.port =
+          parseInt(data.mailserver_port) || remoteMailServer.port;
+        remoteMailServer.id = data.mailserver_id || remoteMailServer.id;
+        remoteMailServer.password =
+          data.mailserver_pw || remoteMailServer.password;
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
     }
-  };
+  }
+
+  async function setSystemBasicSetupData() {
+    try {
+      const response = await setSystemBasicSetup({
+        server_ipaddr: serverIP,
+        server_port: port,
+        connection_interval: agentConnectInterval,
+        mailserver_ip: remoteMailServer.ip,
+        mailserver_port: remoteMailServer.port,
+        mailserver_id: remoteMailServer.id,
+        mailserver_pw: remoteMailServer.password,
+      });
+      if (response.RESULT === "OK") {
+        await successAlert(response.CODE);
+      }
+      navigate(window.location?.pathname == "/page6" ? "/page6" : "/page6");
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
+    }
+  }
+
+  onMount(() => {
+    getSystemBasicSetupData();
+  });
 </script>
 
-<main class="table-container">
+<main class="table-container" style="border-radius: 10px;">
   <div class="table-container_1 contentArea">
     <div class="formControlWrap">
       <div class="formControl">
         <label>서버</label>
         <div class="inputGroup">
-          <input type="text" bind:value={serverIP} placeholder="IP" />
+          <input
+            type="text"
+            bind:value={serverIP}
+            placeholder={`000.000.0.00`}
+          />
           <input type="number" bind:value={port} placeholder="PORT" />
         </div>
       </div>
@@ -62,7 +104,6 @@
           type="number"
           bind:value={agentConnectInterval}
           placeholder="에이전트연결주기"
-          readonly
         />
       </div>
     </div>
@@ -149,7 +190,7 @@
         <button
           type="button"
           class="btn btnBlue btnSave"
-          on:click={submitNewSystemCommand}
+          on:click={setSystemBasicSetupData}
         >
           저장하기
         </button>
@@ -169,7 +210,7 @@
 
   .table-container_1 {
     margin: 20px 0;
-    border-radius: 5px;
+    border-radius: 10px;
     width: 70%;
   }
 

@@ -15,7 +15,7 @@
   <div class="tableListWrap">
     <section
       class="subTabWrap"
-      style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px;"
+      style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px; border-radius: 10px"
     >
       <a
         href="javascript:void(0);"

@@ -23,15 +23,15 @@
   function goBack() {
     navigate("/page6");
     currentPage = null;
-    tabMenu = null;
+    tabMenu = "사용자관리";
   }
 </script>
 
 <div
-  style="overflow: scroll; height: 100vh; width: 100%; "
+  style="height: 100vh; width: 100%; padding-left: 10px; padding-right: 10px;"
   class={`contentsWrap1 ${tabMenu == "시스템기본설정" && "resultView"} ${tabMenu == "공지사항" && "resultView"} ${tabMenu == "자료실" && "resultView"} ${tabMenu == "사용자관리" && "logWrap"}`}
 >
-  <nav class="tabMenu">
+  <nav class="tabMenu contentArea" style="padding: 0; border-radius: 5px">
     <ul>
       <li class={tabMenu == "시스템기본설정" && "active"}>
         <a
@@ -94,7 +94,7 @@
 
   <section
     class="subTabWrap"
-    style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px;"
+    style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px; border-radius: 10px"
   >
     <a
       href="javascript:void(0);"
@@ -136,5 +136,14 @@
   .btn:hover {
     color: #fff;
     background-color: #0067ff;
+  }
+
+  .tableWrap {
+    height: calc(100vh - 100px);
+    overflow: hidden;
+  }
+
+  .tableListWrap {
+    overflow: hidden;
   }
 </style>

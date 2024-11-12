@@ -3,7 +3,7 @@
   let port = 443;
 </script>
 
-<main class="table-container" style="margin: 0;">
+<main class="table-container" style="margin: 0; border-radius: 10px">
   <div class="table-container_1">
     <div class="formControlWrap">
       <div class="formControl">
@@ -50,7 +50,7 @@
 
   .table-container_1 {
     margin: 20px 0;
-    border-radius: 5px;
+    border-radius: 10px;
     width: 70%;
   }
 

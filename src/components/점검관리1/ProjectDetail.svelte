@@ -184,6 +184,8 @@
   };
   function closeShowModal() {
     lastModal = false;
+    alertConfirm = false;
+    showModal = false;
   }
 
   // Close modal when Esc key is pressed

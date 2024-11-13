@@ -98,18 +98,6 @@
   >
     <a
       href="javascript:void(0);"
-      class={setView == "plan" ? "active" : ""}
-      on:click={async () => {
-        try {
-          setView = "plan";
-          selectPage(FourtMenuInformation);
-        } catch (err) {}
-      }}
-    >
-      정보변경
-    </a>
-    <a
-      href="javascript:void(0);"
       class={setView == "plan_accept" ? "active" : ""}
       on:click={async () => {
         try {
@@ -118,6 +106,18 @@
         } catch (err) {}
       }}
       style="margin-left: 10px;"
+    >
+      정보변경
+    </a>
+    <a
+      href="javascript:void(0);"
+      class={setView == "plan" ? "active" : ""}
+      on:click={async () => {
+        try {
+          setView = "plan";
+          selectPage(FourtMenuInformation);
+        } catch (err) {}
+      }}
     >
       비밀번호변경
     </a>

@@ -24,12 +24,9 @@
 
   let error = null;
 
-  ////////////// Hendle service API call ////////////////
   async function getSystemBasicSetupData() {
     try {
       const projectData = await getSystemBasicSetup();
-      console.log("API Response:", projectData);
-
       if (projectData?.RESULT === "OK") {
         const data = projectData.CODE[0];
         serverIP = data.server_ipaddr || serverIP;
@@ -82,19 +79,19 @@
       <div class="formControl">
         <label>서버</label>
         <div class="inputGroup">
-          <input
-            type="text"
-            bind:value={serverIP}
-            placeholder={`000.000.0.00`}
-          />
-          <input type="number" bind:value={port} placeholder="PORT" />
+          <div class="inputWithLabel">
+            <span>IP</span>
+            <input
+              type="text"
+              bind:value={serverIP}
+              placeholder="000.000.0.00"
+            />
+          </div>
+          <div class="inputWithLabel">
+            <span>PORT</span>
+            <input type="number" bind:value={port} placeholder="PORT" />
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>고객사명</label>
-        <input type="text" bind:value={clientName} placeholder="고객사명" />
       </div>
     </div>
     <div class="formControlWrap">
@@ -111,17 +108,17 @@
       <div class="formControl">
         <label>위험도</label>
         <div class="riskLevelGroup">
+          <span>상</span>
           <div class="riskLevelItem">
-            <button class={riskLevel === "상" ? "active" : ""}>상</button>
-            <input type="number" placeholder="3" readonly />
+            <input type="number" placeholder="3" disabled />
           </div>
+          <spam>중</spam>
           <div class="riskLevelItem">
-            <button class={riskLevel === "중" ? "active" : ""}>중</button>
-            <input type="number" placeholder="2" readonly />
+            <input type="number" placeholder="2" disabled />
           </div>
+          <span>하</span>
           <div class="riskLevelItem">
-            <button class={riskLevel === "하" ? "active" : ""}>하</button>
-            <input type="number" placeholder="1" readonly />
+            <input type="number" placeholder="1" disabled />
           </div>
         </div>
       </div>
@@ -131,21 +128,14 @@
       <div class="formControl">
         <label>메일서버설정</label>
         <div class="mailServerGroup">
-          <!-- Birinchi input tepada -->
-          <div class="mailServerTop">
-            <input
-              type="text"
-              bind:value={mailServerOption}
-              placeholder="원격메일 서버 사용 (구글, 네이버, 고객사)"
-            />
-          </div>
-          <!-- Ikkita input yonma-yon pastda -->
           <div class="mailServerBottom">
+            <span>메일서버주소</span>
             <input
               type="text"
               bind:value={remoteMailServer.ip}
               placeholder="아이피"
             />
+            <span>메일서버포트</span>
             <input
               type="text"
               bind:value={remoteMailServer.port}
@@ -153,11 +143,13 @@
             />
           </div>
           <div class="mailServerBottom">
+            <span>아이디</span>
             <input
               type="text"
               bind:value={remoteMailServer.id}
               placeholder="아이디"
             />
+            <span>패스워드</span>
             <input
               type="password"
               bind:value={remoteMailServer.password}
@@ -166,27 +158,8 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>보고서생성기준</label>
-        <input
-          type="number"
-          bind:value={ReportGenerationCriteria}
-          placeholder="otherField"
-        />
-      </div>
-    </div>
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>페이지목록개수</label>
-        <input
-          type="number"
-          bind:value={NumberPageLists}
-          placeholder="otherField"
-        />
-      </div>
-      <div class="buttonContainer">
+      <div class="buttonContainer formControl">
+        <label></label>
         <button
           type="button"
           class="btn btnBlue btnSave"
@@ -204,14 +177,15 @@
     background-color: #ffffff;
     padding: 20px;
     margin: 10px 0;
-    width: 100%;
+    /* width: 100%; */
     height: calc(100vh - 134px);
   }
 
   .table-container_1 {
     margin: 20px 0;
     border-radius: 10px;
-    width: 70%;
+    padding-right: 20px;
+    /* width: 100%; */
   }
 
   .formControlWrap {
@@ -220,105 +194,64 @@
 
   .formControl {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
   }
 
   .formControl label {
     width: 150px;
     margin-right: 20px;
     font-weight: bold;
-    margin-top: 10px;
   }
 
   .formControl input {
-    width: 70%;
-    flex: 1;
+    width: 30%;
     padding: 8px;
     border: 1px solid #cccccc;
     border-radius: 5px;
     transition: background-color 0.3s ease;
   }
 
-  .formControl input:focus {
-    border-color: #0067ff;
-    outline: none;
+  .riskLevelGroup {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+    margin-left: 20px;
+  }
+
+  .formControl .riskLevelGroup input {
+    width: 50%;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
   }
 
   .inputGroup {
     display: flex;
+  }
+
+  .inputWithLabel {
+    display: flex;
+    flex-direction: row;
     flex: 1;
     gap: 10px;
+    align-items: center;
+  }
+  .inputWithLabel input {
+    width: 80%;
   }
 
-  .inputGroup input {
-    flex: 1;
-  }
-
-  .riskLevelGroup {
-    display: flex;
-    flex: 1;
-    gap: 10px;
-  }
-
-  .riskLevelItem {
-    display: flex;
-    flex: 1;
-  }
-
-  .riskLevelItem button,
-  .riskLevelItem input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    text-align: center;
-  }
-
-  .riskLevelItem button {
-    background-color: #ecf0f1;
-    color: #34495e;
-    cursor: pointer;
-    font-weight: 600;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-  }
-
-  .riskLevelItem button.active {
-    background-color: #0067ff;
-    color: #fff;
-  }
-
-  .riskLevelItem input {
-    margin-left: 10px;
-  }
-
-  .riskLevelItem button,
-  .riskLevelItem input {
-    height: 40px;
-  }
-
-  .mailServerGroup {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-
-  .mailServerTop {
-    margin-bottom: 10px;
-  }
-
-  .mailServerTop input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
+  .inputWithLabel span {
+    /* font-weight: bold; */
+    font-size: 14px;
   }
 
   .mailServerBottom {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    align-items: center;
   }
 
   .mailServerBottom input {
@@ -328,10 +261,17 @@
     border-radius: 5px;
   }
 
+  .mailServerBottom span {
+    width: 100px;
+    /* font-weight: bold; */
+    font-size: 14px;
+  }
+
   .buttonContainer {
     text-align: center;
-    margin-top: 40px;
-    margin-left: 30px;
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
   }
 
   .btnSave {

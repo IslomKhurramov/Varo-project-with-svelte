@@ -54,7 +54,7 @@
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
-        <col style="width:14%;" />
+        <col style="width:3%;" />
         <col style="width:14%;" />
         <col style="width:14%;" />
         <col style="width:14%;" />

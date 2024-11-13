@@ -119,7 +119,7 @@
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
-        <col style="width:14%;" />
+        <col style="width:5%;" />
         <col style="width:14%;" />
         <col style="width:14%;" />
         <col style="width:14%;" />
@@ -205,32 +205,32 @@
         {/each}
       </tbody>
     </table>
-
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
-
-      {#each pages as page}
-        <button
-          class:selected={currentPage === page}
-          on:click={() => goToPage(page)}
-        >
-          {page}
-        </button>
-      {/each}
-
-      <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        &rsaquo;
-      </button>
-    </nav>
   </div>
+
+  <nav class="pagination">
+    <button
+      on:click={() => goToPage(currentPage - 1)}
+      disabled={currentPage === 1}
+    >
+      &lsaquo;
+    </button>
+
+    {#each pages as page}
+      <button
+        class:selected={currentPage === page}
+        on:click={() => goToPage(page)}
+      >
+        {page}
+      </button>
+    {/each}
+
+    <button
+      on:click={() => goToPage(currentPage + 1)}
+      disabled={currentPage === totalPages}
+    >
+      &rsaquo;
+    </button>
+  </nav>
 </section>
 
 <style>
@@ -243,8 +243,8 @@
   }
 
   thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
+    position: sticky;
+    top: 0;
     z-index: 10; /* Ensure the header is above the scrolling content */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
@@ -252,7 +252,7 @@
   .pagination {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
     margin-top: 150px;
   }
 

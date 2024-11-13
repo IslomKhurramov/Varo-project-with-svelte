@@ -133,7 +133,7 @@
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
-        <col style="width:14%;" />
+        <col style="width:5%;" />
         <col style="width:14%;" />
         <col style="width:14%;" />
         <col style="width:14%;" />

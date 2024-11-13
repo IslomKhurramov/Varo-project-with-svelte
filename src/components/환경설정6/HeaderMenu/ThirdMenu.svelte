@@ -6,7 +6,7 @@
 
   let projectArray = [];
   let error = null;
-  let itemsPerPage = 7;
+  let itemsPerPage = 15;
   let currentPage = 1;
   let totalPages = 1;
   let displayedPages = [];
@@ -65,12 +65,12 @@
     <div class="tableListWrap">
       <table class="tableList hdBorder">
         <colgroup>
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
+          <col style="width:3%;" />
+          <col style="width:30%;" />
+          <col style="width:10%;" />
+          <col style="width:6%;" />
+          <col style="width:10%;" />
+          <col style="width:5%;" />
         </colgroup>
         <thead>
           <tr>
@@ -108,33 +108,32 @@
         </tbody>
       </table>
     </div>
-  </section>
-
-  <!-- Always fixed pagination at the bottom -->
-  <nav class="pagination">
-    <button
-      on:click={() => goToPage(currentPage - 1)}
-      disabled={currentPage === 1}
-    >
-      &lsaquo;
-    </button>
-
-    {#each displayedPages as page}
+    <!-- Always fixed pagination at the bottom -->
+    <nav class="pagination">
       <button
-        class:selected={currentPage === page}
-        on:click={() => goToPage(page)}
+        on:click={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
       >
-        {page}
+        &lsaquo;
       </button>
-    {/each}
 
-    <button
-      on:click={() => goToPage(currentPage + 1)}
-      disabled={currentPage === totalPages}
-    >
-      &rsaquo;
-    </button>
-  </nav>
+      {#each displayedPages as page}
+        <button
+          class:selected={currentPage === page}
+          on:click={() => goToPage(page)}
+        >
+          {page}
+        </button>
+      {/each}
+
+      <button
+        on:click={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
+  </section>
 </div>
 
 <style>
@@ -170,10 +169,8 @@
   .pagination {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
     margin-top: 20px;
-    position: sticky;
-    bottom: 100px;
     padding: 10px 0;
     background-color: #fff;
     /* box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); */

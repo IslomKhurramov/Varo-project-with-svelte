@@ -1,299 +1,233 @@
 <script>
-  import { scaleLinear, scaleBand } from "d3-scale";
-  import { quantize, interpolatePlasma, pie, arc } from "d3";
+  import { dashboardData } from "./../../services/dashboard/dashboard.js";
+  import moment from "moment";
+  import { onMount } from "svelte";
 
-  let piedata = [
-    { ages: "<18", count: 727432 },
-    { ages: "18-24", count: 341435 },
-    { ages: "25-34", count: 444509 },
-    { ages: "35-44", count: 426967 },
-    { ages: "45-54", count: 480565 },
-    { ages: "55-64", count: 515347 },
-    { ages: "≥65", count: 629032 },
-  ];
+  let data = null;
+  let loading = true;
 
-  const pieWidth = 300;
-  const pieHeight = pieWidth;
-  const fontSize = 10;
-  const strokeWidth = 1;
-  const strokeLinejoin = "round";
-  const outerRadius = Math.min(pieWidth, pieHeight) * 0.5 - 15;
-  const innerRadius = 30;
-  const labelRadius = (innerRadius + outerRadius) / 2;
-
-  // Generate colors
-  let colors = quantize(
-    (t) => interpolatePlasma(t * 0.7 + 0.3),
-    piedata.length,
-  );
-
-  // Create pie layout
-  const wedges = pie().value((d) => d.count)(piedata);
-
-  // Create arc generators
-  const arcPath = arc().innerRadius(innerRadius).outerRadius(outerRadius);
-  const arcLabel = arc().innerRadius(labelRadius).outerRadius(labelRadius);
-
-  // Define four separate datasets
-  const data1 = [
-    { month: "Jan", measures: 15 },
-    { month: "Feb", measures: 10 },
-    { month: "Mar", measures: 20 },
-  ];
-
-  const data2 = [
-    { project: "Project A", status: 70 },
-    { project: "Project B", status: 50 },
-    { project: "Project C", status: 90 },
-  ];
-
-  const data3 = [
-    { asset: "Asset 1", securityLevel: 85 },
-    { asset: "Asset 2", securityLevel: 78 },
-    { asset: "Asset 3", securityLevel: 92 },
-  ];
-
-  const data4 = [
-    { asset: "Asset A", registration: 100 },
-    { asset: "Asset B", registration: 80 },
-    { asset: "Asset C", registration: 90 },
-  ];
-
-  const padding = { top: 30, right: 10, bottom: 20, left: 50 };
-
-  let width = 250;
-  let height = 200;
-
-  $: scales = [
-    {
-      xScale: scaleBand()
-        .domain(data1.map((d) => d.month))
-        .range([padding.left, width - padding.right])
-        .padding(0.1),
-      yScale: scaleLinear()
-        .domain([0, Math.max(...data1.map((d) => d.measures))])
-        .range([height - padding.bottom, padding.top]),
-    },
-    {
-      xScale: scaleBand()
-        .domain(data2.map((d) => d.project))
-        .range([padding.left, width - padding.right])
-        .padding(0.1),
-      yScale: scaleLinear()
-        .domain([0, 100])
-        .range([height - padding.bottom, padding.top]),
-    },
-    {
-      xScale: scaleBand()
-        .domain(data3.map((d) => d.asset))
-        .range([padding.left, width - padding.right])
-        .padding(0.1),
-      yScale: scaleLinear()
-        .domain([0, 100])
-        .range([height - padding.bottom, padding.top]),
-    },
-    {
-      xScale: scaleBand()
-        .domain(data4.map((d) => d.asset))
-        .range([padding.left, width - padding.right])
-        .padding(0.1),
-      yScale: scaleLinear()
-        .domain([0, 100])
-        .range([height - padding.bottom, padding.top]),
-    },
-  ];
+  onMount(async () => {
+    try {
+      loading = true;
+      data = await dashboardData();
+      loading = false;
+    } catch (err) {
+      alert(err?.message);
+      loading = false;
+    }
+  });
 </script>
 
-<section
-  class="dashboard"
-  style="overflow: scroll;
+{#if loading}
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+{:else}
+  <section
+    class="dashboard"
+    style="overflow: scroll;
     height: calc(100vh - 120px);"
->
-  <div class="contentsWrap w100">
-    <ul class="countWrap flex">
-      <li>
-        <div class="count">10개</div>
-        <span>등록된프로젝트</span>
-      </li>
-      <li>
-        <div class="count">10개</div>
-        <span>완료된프로젝트</span>
-      </li>
-      <li>
-        <div class="count">10개</div>
-        <span>등록된자산</span>
-      </li>
-      <li>
-        <div class="count">10개</div>
-        <span>자동등록</span>
-      </li>
-      <li>
-        <div class="count">10개</div>
-        <span>수동등록</span>
-      </li>
-    </ul>
+  >
+    <div class="contentsWrap w100">
+      <ul class="countWrap flex">
+        <li>
+          <div class="count">{data?.projects?.total ?? 0}개</div>
+          <span>등록된프로젝트</span>
+        </li>
+        <li>
+          <div class="count">{data?.projects?.completed ?? 0}개</div>
+          <span>완료된프로젝트</span>
+        </li>
+        <li>
+          <div class="count">{data?.assets?.total ?? 0}개</div>
+          <span>등록된자산</span>
+        </li>
+        <li>
+          <div class="count">{data?.assets?.automatic ?? 0}개</div>
+          <span>자동등록</span>
+        </li>
+        <li>
+          <div class="count">{data?.assets?.manual ?? 0}개</div>
+          <span>수동등록</span>
+        </li>
+      </ul>
 
-    <section class="rowContents col3">
-      <article class="contentArea">
-        <h4 class="title border">공지사항</h4>
-        <div class="tableListWrap nofirstth">
-          <table class="tableList hdBorder">
-            <colgroup>
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </article>
-
-      <article class="contentArea">
-        <h4 class="title border">조치사항 알림</h4>
-        <div class="tableListWrap nofirstth">
-          <table class="tableList hdBorder">
-            <colgroup>
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </article>
-
-      <article class="contentArea">
-        <h4 class="title border">자료실</h4>
-        <div class="tableListWrap nofirstth">
-          <table class="tableList hdBorder">
-            <colgroup>
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </article>
-    </section>
-
-    <section class="rowContents">
-      <div class="graphWrap">
-        <article class="contentArea securityWrap">
-          <h4 class="title border">취약점조치현황</h4>
-          <div class="circle" data-percent="80" data-offset="345">
-            <svg width="100%" height="100%" viewBox="0 0 139 139">
-              <circle
-                cx="75"
-                cy="75"
-                r="55"
-                stroke="#F2F2F2"
-                stroke-width="18"
-                fill="none"
-              />
-              <circle
-                class="progress"
-                cx="75"
-                cy="75"
-                r="55"
-                stroke="#0067ff"
-                stroke-width="18"
-                fill="none"
-                stroke-dasharray="345"
-                stroke-linecap="round"
-                transform="rotate(-90 75 75)"
-              />
-            </svg>
-            <div class="percent">
-              <span>80%</span>
-            </div>
+      <section class="rowContents col3">
+        <article class="contentArea">
+          <h4 class="title border">공지사항</h4>
+          <div class="tableListWrap nofirstth">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">제목</th>
+                  <th class="text-center">작성자</th>
+                  <th class="text-center">조회수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each data?.board?.notices.length !== 0 && data?.board?.notices as article}
+                  <tr>
+                    <td class="text-center">{article?.title ?? "-"}</td>
+                    <td class="text-center"
+                      >{article?.writer__user_name ?? "-"}</td
+                    >
+                    <td class="text-center">{article?.view_count ?? 0}</td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
           </div>
         </article>
+
         <article class="contentArea">
+          <h4 class="title border">조치사항 알림</h4>
+          <div class="tableListWrap nofirstth">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">항목</th>
+                  <th class="text-center">결과</th>
+                  <th class="text-center">담당자</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#if data?.vulnerability_fix_notifications?.length !== 0}
+                  {#each data?.vulnerability_fix_notifications as notify}
+                    <tr>
+                      <td class="text-center"
+                        >{notify?.ccr_index__ccr_item_no ?? "-"}</td
+                      >
+                      <td class="text-center"
+                        >{notify?.cfi_fix_status ?? "-"}</td
+                      >
+                      <td class="text-center"
+                        >{notify?.user_index__user_name ?? 0}</td
+                      >
+                    </tr>
+                  {/each}
+                {/if}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="contentArea">
+          <h4 class="title border">자료실</h4>
+          <div class="tableListWrap nofirstth">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">제목</th>
+                  <th class="text-center">작성자</th>
+                  <th class="text-center">조회수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each data?.board?.dataroom?.length !== 0 && data?.board?.dataroom as article}
+                  <tr>
+                    <td class="text-center">{article?.title ?? "-"}</td>
+                    <td class="text-center"
+                      >{article?.writer__user_name ?? "-"}</td
+                    >
+                    <td class="text-center">{article?.view_count ?? 0}</td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="rowContents">
+        <div class="graphWrap">
+          <article class="contentArea securityWrap">
+            <h4 class="title border">전체보안수준</h4>
+            <div
+              class="circle"
+              data-percent={data?.security_metrics?.overall_security_rate ?? 0}
+              data-offset="345"
+            >
+              <svg width="100%" height="100%" viewBox="0 0 139 139">
+                <circle
+                  cx="75"
+                  cy="75"
+                  r="55"
+                  stroke="#F2F2F2"
+                  stroke-width="18"
+                  fill="none"
+                />
+                <circle
+                  class="progress"
+                  cx="75"
+                  cy="75"
+                  r="55"
+                  stroke="#0067ff"
+                  stroke-width="18"
+                  fill="none"
+                  stroke-dasharray="345"
+                  stroke-linecap="round"
+                  transform="rotate(-90 75 75)"
+                />
+              </svg>
+              <div class="percent">
+                <span
+                  >{data?.security_metrics?.overall_security_rate ?? 0}%</span
+                >
+              </div>
+            </div>
+          </article>
+          <article class="contentArea securityWrap">
+            <h4 class="title border">취약점조치현황</h4>
+            <div
+              class="circle"
+              data-percent={data?.security_metrics?.vulnerability_fix_rate ?? 0}
+              data-offset="345"
+            >
+              <svg width="100%" height="100%" viewBox="0 0 139 139">
+                <circle
+                  cx="75"
+                  cy="75"
+                  r="55"
+                  stroke="#F2F2F2"
+                  stroke-width="18"
+                  fill="none"
+                />
+                <circle
+                  class="progress"
+                  cx="75"
+                  cy="75"
+                  r="55"
+                  stroke="#0067ff"
+                  stroke-width="18"
+                  fill="none"
+                  stroke-dasharray="345"
+                  stroke-linecap="round"
+                  transform="rotate(-90 75 75)"
+                />
+              </svg>
+              <div class="percent">
+                <span
+                  >{data?.security_metrics?.vulnerability_fix_rate ?? 0}%</span
+                >
+              </div>
+            </div>
+          </article>
+          <!-- <article class="contentArea">
           <h4 class="title border">결과 등록 현황</h4>
           <div class="barGraphWrap h220 bottom">
             <div class="bar-graph">
@@ -310,224 +244,155 @@
               <div class="bar" data-label="text" style="height: 100%;"></div>
             </div>
           </div>
-        </article>
-      </div>
-
-      <article class="contentArea">
-        <div class="flex head title border justify-between">
-          <h4>대시보드</h4>
-          <ul class="flex barColorGuide">
-            <li class="green">월별취약점조치건수</li>
-            <li class="blue">전체자산 보안수준</li>
-            <li class="yellow">자산등록현황</li>
-          </ul>
+        </article> -->
         </div>
-        <div class="barGraphWrap various bottom">
-          <div class="bar-graph">
-            <div class="flex bar-segment">
-              <div class="bar">
-                <div
-                  class="bar-con green"
-                  data-label="-"
-                  style="height: 30%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con blue"
-                  data-label="-"
-                  style="height: 60%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con yellow"
-                  data-label="-"
-                  style="height: 40%;"
-                ></div>
-              </div>
-            </div>
-            <div class="flex bar-segment">
-              <div class="bar">
-                <div
-                  class="bar-con green"
-                  data-label="-"
-                  style="height: 30%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con blue"
-                  data-label="-"
-                  style="height: 60%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con yellow"
-                  data-label="-"
-                  style="height: 40%;"
-                ></div>
-              </div>
-            </div>
-            <div class="flex bar-segment">
-              <div class="bar">
-                <div
-                  class="bar-con green"
-                  data-label="-"
-                  style="height: 30%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con blue"
-                  data-label="-"
-                  style="height: 60%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con yellow"
-                  data-label="-"
-                  style="height: 40%;"
-                ></div>
-              </div>
-            </div>
-            <div class="flex bar-segment">
-              <div class="bar">
-                <div
-                  class="bar-con green"
-                  data-label="-"
-                  style="height: 30%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con blue"
-                  data-label="-"
-                  style="height: 60%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con yellow"
-                  data-label="-"
-                  style="height: 40%;"
-                ></div>
-              </div>
-            </div>
-            <div class="flex bar-segment">
-              <div class="bar">
-                <div
-                  class="bar-con green"
-                  data-label="-"
-                  style="height: 30%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con blue"
-                  data-label="-"
-                  style="height: 60%;"
-                ></div>
-              </div>
-              <div class="bar">
-                <div
-                  class="bar-con yellow"
-                  data-label="-"
-                  style="height: 40%;"
-                ></div>
-              </div>
+
+        <article class="contentArea">
+          <div class="flex head title border justify-between">
+            <h4>대시보드</h4>
+            <ul class="flex barColorGuide">
+              <li class="green">월별취약점조치건수</li>
+              <li class="blue">전체자산 보안수준</li>
+              <li class="yellow">자산등록현황</li>
+            </ul>
+          </div>
+          <div class="barGraphWrap various bottom">
+            <div class="bar-graph">
+              {#each data?.monthly_stats as stats}
+                <div class="flex bar-segment">
+                  <div class="bar">
+                    <div
+                      class="bar-con green"
+                      data-label={moment(stats?.month).format("YY") ?? "-"}
+                      style="height: {stats?.vulnerability_fixes ?? '-'}%;"
+                    ></div>
+                  </div>
+                  <div class="bar">
+                    <div
+                      class="bar-con blue"
+                      data-label="-"
+                      style="height: {stats?.asset_security_levels?.all ??
+                        '-'}%;"
+                    ></div>
+                  </div>
+                  <div class="bar">
+                    <div
+                      class="bar-con yellow"
+                      data-label={moment(stats?.month).format("MM") ?? "-"}
+                      style="height: {stats?.asset_registration?.all ?? '-'}%;"
+                    ></div>
+                  </div>
+                </div>
+              {/each}
             </div>
           </div>
-        </div>
-      </article>
-    </section>
+        </article>
+      </section>
 
-    <section class="rowContents col2">
-      <article class="contentArea">
-        <h4 class="title border">취약점보유자산 Top5</h4>
-        <div class="tableListWrap nofirstth">
-          <table class="tableList hdBorder">
-            <colgroup>
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </article>
+      <section class="rowContents col2">
+        <article class="contentArea">
+          <h4 class="title border">취약점보유자산 Top5</h4>
+          <div class="tableListWrap nofirstth">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">자산</th>
+                  <th class="text-center">아이피주소</th>
+                  <th class="text-center">취약점수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each data.top_vulnerable_assets as assets}
+                  <tr>
+                    <td class="text-center"
+                      >{assets?.ast_uuid__ass_uuid__ast_hostname ?? "-"}</td
+                    >
+                    <td class="text-center"
+                      >{assets?.ast_uuid__ass_uuid__ast_ipaddr ?? "-"}</td
+                    >
+                    <td class="text-center"
+                      >{assets?.total_vulnerabilities ?? "-"}</td
+                    >
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </article>
 
-      <article class="contentArea">
-        <h4 class="title border">취약점 Top5</h4>
-        <div class="tableListWrap nofirstth">
-          <table class="tableList hdBorder">
-            <colgroup>
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-                <th class="text-center">타이틀명</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-              <tr>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-                <td class="text-center">-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </article>
-    </section>
-  </div>
-</section>
+        <article class="contentArea">
+          <h4 class="title border">취약점 Top5</h4>
+          <div class="tableListWrap nofirstth">
+            <table class="tableList hdBorder">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-center">제목</th>
+                  <th class="text-center">위험도</th>
+                  <th class="text-center">취약점수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each data.top_vulnerabilities as assets}
+                  <tr>
+                    <td
+                      >[{assets.ccc_item_no}] {assets?.ccc_item_title ??
+                        "-"}</td
+                    >
+                    <td class="text-center">{assets?.ccc_item_level ?? "-"}</td>
+                    <td class="text-center"
+                      >{assets?.total_vulnerabilities ?? "-"}</td
+                    >
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </div>
+  </section>
+{/if}
+
+<style>
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(167, 167, 167, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it sits above other content */
+  }
+
+  .loading-spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>

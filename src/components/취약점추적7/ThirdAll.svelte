@@ -65,14 +65,13 @@
       {#if asset.plans && Array.isArray(asset.plans) && asset.plans.length > 0}
         {#each asset.plans as plan, index}
           <div class="iconCard">
-            <article class="graphCard hoverCard" style="height: 500px;">
+            <article class="graphCard hoverCard" style="height: 400px;">
               <div class="contents">
                 <div class="graph">
                   <div>
                     <div
                       class="circle"
-                      data-percent={plan.vulnerability_summary
-                        .total_vulnerabilities || 0}
+                      data-percent={plan.total_vulnerabilities || 0}
                       data-offset="440"
                     >
                       <svg viewBox="0 0 150 150">
@@ -90,14 +89,13 @@
                           cy="75"
                           r="70"
                           stroke={getStrokeColor(
-                            plan.vulnerability_summary.total_vulnerabilities ||
-                              0,
+                            plan.total_vulnerabilities || 0,
                           )}
                           stroke-width="10"
                           fill="none"
                           stroke-dasharray="440"
                           stroke-dashoffset={440 -
-                            (440 * (plan.vulnerability_summary || 0)) / 100}
+                            (440 * (plan.total_vulnerabilities || 0)) / 100}
                           stroke-linecap="round"
                           transform="rotate(-90 75 75)"
                         />
@@ -106,12 +104,11 @@
                         <span
                           class="number"
                           style="font-size:32px; color: {getStrokeColor(
-                            plan.vulnerability_summary.total_vulnerabilities ||
-                              0,
+                            plan.total_vulnerabilities || 0,
                           )};"
                         >
-                          {plan.vulnerability_summary.total_vulnerabilities > 0
-                            ? plan.vulnerability_summary.total_vulnerabilities
+                          {plan.total_vulnerabilities > 0
+                            ? plan.total_vulnerabilities
                             : 0}건
                         </span>
                       </div>
@@ -128,16 +125,25 @@
                         "Unknown Project"}
                     </li>
                     <li>
-                      <span>점검일시 : </span>{plan.ccp_cdate || "Unknown Date"}
+                      <span>점검일시 : </span>
+                      {plan.ccp_cdate
+                        ? new Date(plan.ccp_cdate).toLocaleString("ko-KR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "Unknown"}
                     </li>
                     <li>
                       <span>관련시스템 : </span>
-                      {plan.most_common_item?.target || "Unknown System"}
+                      {plan.system_count || "Unknown System"}대
                     </li>
                     <li>
                       <span>최다자산 : </span>
-                      {plan.vulnerability_summary?.most_vulnerable_host ||
-                        "No Asset"}
+                      {plan.most_vulnerable_asset
+                        ?.ast_uuid__ass_uuid__ast_hostname || "No Asset"}
                     </li>
                     <li>
                       <span>취약점수 : </span>{plan.vulnerability_summary
@@ -145,7 +151,7 @@
                     </li>
                     <li>
                       <span>조치개수 : </span>{plan.vulnerability_summary
-                        .vulnerability_summary || 0}건
+                        .fixed_count || 0}건
                     </li>
                   </ul>
                 </div>

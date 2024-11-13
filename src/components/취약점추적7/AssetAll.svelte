@@ -65,7 +65,7 @@
       {#if asset.plans && Array.isArray(asset.plans) && asset.plans.length > 0}
         {#each asset.plans as plan, index (plan.ccp_index)}
           <div class="iconCard">
-            <article class="graphCard hoverCard" style="height: 500px;">
+            <article class="graphCard hoverCard" style="height: 400px;">
               <div class="contents">
                 <div class="graph">
                   <div>
@@ -121,12 +121,20 @@
                         "Unknown Project"}
                     </li>
                     <li>
-                      <span>점검일시 : </span>{plan.ccp_cdate || "Unknown Date"}
+                      <span>점검일시 : </span>
+                      {plan.ccp_cdate
+                        ? new Date(plan.ccp_cdate).toLocaleString("ko-KR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "Unknown"}
                     </li>
                     <li>
                       <span>관련시스템 : </span>
-                      {plan.most_common_item?.cct_index__cct_target ||
-                        "Unknown System"}
+                      {plan.system_count || "Unknown System"}대
                     </li>
                     <li>
                       <span>최다자산 : </span>

@@ -24,3 +24,5 @@ export const comparedVulnsTarget1 = writable([]);
 export const comparedVulnsTarget2 = writable([]);
 export const selectedDataTarget1 = writable([]);
 export const selectedDataTarget2 = writable([]);
+/*************************************************** */
+export const ModalData = writable([]);

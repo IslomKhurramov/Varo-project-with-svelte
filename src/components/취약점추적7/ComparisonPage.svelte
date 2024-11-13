@@ -226,12 +226,22 @@
                       .ccp_title || "Unknown OS"}
                   </li>
                   <li>
-                    <span>점검일시 : </span>{$comparisonPlan.first_plan
-                      .ccp_cdate || "Unknown Hostname"}
+                    <span>점검일시 : </span>
+                    {$comparisonPlan.first_plan.ccp_cdate
+                      ? new Date(
+                          $comparisonPlan.first_plan.ccp_cdate,
+                        ).toLocaleString("ko-KR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Unknown"}
                   </li>
                   <li>
                     <span>관련시스템 : </span>{$comparisonPlan.first_plan
-                      .asg_index || "Unknown IP"}건
+                      .system_count || "Unknown IP"}대
                   </li>
                   <li style="margin-top: 15px;">
                     <span>[취약점 요약]</span>
@@ -251,7 +261,7 @@
                   {:else}
                     <li>
                       <span>최다항목 : </span>
-                      <p>no data</p>
+                      no data
                     </li>
                   {/if}
                   <li>
@@ -260,7 +270,7 @@
                       "Unknown Hostname"}
                   </li>
                   <li>
-                    <span>조치개수 : </span>{$comparisonPlan.first_plan
+                    <span>조치개수 : </span>{$comparisonPlan.second_plan
                       .vulnerability_summary.fixed_count || "Unknown IP"}
                   </li>
                 </ul>
@@ -365,12 +375,22 @@
                       .ccp_title || "Unknown OS"}
                   </li>
                   <li>
-                    <span>점검일시 : </span>{$comparisonPlan.second_plan
-                      .ccp_cdate || "Unknown Hostname"}
+                    <span>점검일시 : </span>
+                    {$comparisonPlan.second_plan.ccp_cdate
+                      ? new Date(
+                          $comparisonPlan.second_plan.ccp_cdate,
+                        ).toLocaleString("ko-KR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Unknown"}
                   </li>
                   <li>
                     <span>관련시스템 : </span>{$comparisonPlan.second_plan
-                      .asg_index || "Unknown IP"}건
+                      .system_count || "Unknown IP"}건
                   </li>
                   <li style="margin-top: 15px;">
                     <span>[취약점 요약]</span>
@@ -390,7 +410,7 @@
                   {:else}
                     <li>
                       <span>최다항목 : </span>
-                      <p>no data</p>
+                      no data
                     </li>
                   {/if}
                   <li>
@@ -839,7 +859,7 @@
     color: #626677;
     font-size: 16px;
     font-weight: 500;
-    padding: 0 15px 10px;
+    padding: 0 25px 10px;
   }
   .header_title2 {
     font-size: 16px;

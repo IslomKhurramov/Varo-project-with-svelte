@@ -215,10 +215,11 @@
       } else {
       }
     } catch (err) {
-      alert(`Error getting asset details: ${err.message}`);
+      throw err;
     }
   }
   $: console.log("third", $traceByThird);
+  /********************MODAL DATA*******************************/
 </script>
 
 <!-- {#if loading}

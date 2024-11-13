@@ -205,3 +205,31 @@ export const compareTraceByTarget = async (first_target, second_target) => {
     throw error;
   }
 };
+/****************************************************************************** */
+export const modalDataService = async (asset_name, chklist, target) => {
+  try {
+    // Send request to server to unactivate the asset
+    const response = await axios.post(
+      `${serverApi}/api/getTopTrace/`,
+      {
+        asset_name: asset_name,
+        chklist: chklist,
+        target: target,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    // If successful, return success
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(`Error Code: ${data.CODE}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};

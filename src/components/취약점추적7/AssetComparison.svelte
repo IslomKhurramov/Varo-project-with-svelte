@@ -2,12 +2,17 @@
   import { Swiper, SwiperSlide } from "swiper/svelte";
   import SwiperCore, { Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.css";
-  import { compareTraceByAsset } from "../../services/page7/service";
+  import {
+    compareTraceByAsset,
+    modalDataService,
+  } from "../../services/page7/service";
   import {
     allTraceByAsset,
     comparedTableData1,
     comparedTableData2,
     comparisonAsset,
+    leftTrackData,
+    ModalData,
     selectedData1,
     selectedData2,
   } from "../../services/page7/trace.store";
@@ -20,6 +25,18 @@
   let menuWrapper;
   let firstTargetId = "";
   let secondTargetId = "";
+  let asset_name = "";
+  let chklist = "";
+  let target = "";
+
+  function modalData(data) {
+    showModalProjectComparison = true;
+    asset_name = data.ast_uuid__ass_uuid__ast_hostname;
+    chklist = data.ccr_item_no__ccc_item_no;
+    target = data.cct_index__cct_target;
+    console.log("modal<", asset_name, chklist, target);
+    modalDataFunction(asset_name, chklist, target);
+  }
 
   function selectData1(data1) {
     selectedData1.set(data1);
@@ -62,11 +79,20 @@
   }
 
   /******************************************************************/
-  function modalDataOpen(data) {
-    showModalProjectComparison = true;
-    selectedData = data;
-    console.log("clicked");
+
+  async function modalDataFunction(asset_name, chklist, target) {
+    try {
+      const response = await modalDataService(asset_name, chklist, target);
+      if (response) {
+        ModalData.set(response.CODE);
+      } else {
+      }
+      console.log("traceByPlan", $ModalData);
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+    }
   }
+
   SwiperCore.use([Navigation, Pagination]);
   let swiperData = [];
   for (let i = 0; i < 20; i++) {
@@ -163,7 +189,7 @@
       class="select_input"
     >
       <option value="" selected>점검항목</option>
-      {#each $allTraceByAsset as asset}
+      {#each $leftTrackData[1] as asset (asset.asg_title)}
         <option value={asset.asg_index}>{asset.asg_title}</option>
       {/each}
     </select>
@@ -444,7 +470,7 @@
       {#if $comparedTableData1}
         {#each $comparedTableData1 as vuln, index}
           <tbody>
-            <tr on:click={modalDataOpen} class="clickLine">
+            <tr on:click={modalData(vuln)} class="clickLine">
               <td class="text-center line-height">{index + 1}</td>
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
@@ -499,7 +525,7 @@
       {#if $comparedTableData2}
         {#each $comparedTableData2 as vuln, index}
           <tbody>
-            <tr on:click={modalDataOpen} class="clickLine">
+            <tr on:click={modalData(vuln)} class="clickLine">
               <td class="text-center line-height">{index + 1}</td>
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
@@ -552,155 +578,175 @@
         }}
         on:swiper={(swiper) => console.log(swiper)}
       >
-        {#each swiperData as swiper}
+        {#each $ModalData as modal, index}
           <SwiperSlide>
             <div>
-              {swiper.number}
               <table>
                 <colgroup>
                   <col style="width: 120px;" />
                   <col />
                 </colgroup>
+
+                <!-- 점검플랜 -->
                 <tr>
                   <th class="text-center">점검플랜</th>
                   <td>
                     <div class="graphCardWrap">
-                      {#each recentAssets as asset, index}
-                        <div class="iconCard">
-                          <article class="graphCard">
-                            <div class="contents2">
-                              <div class="text2">
-                                <ul>
-                                  <li>
-                                    <span>프로젝트명 : </span>{asset.ast_os ||
-                                      "Unknown OS"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >점검일시 :
-                                    </span>{asset.ast_hostname ||
-                                      "Unknown Hostname"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >관련시스템 :
-                                    </span>{asset.ast_ipaddr || "Unknown IP"}
-                                  </li>
-                                </ul>
-                              </div>
+                      <div class="iconCard">
+                        <article class="graphCard">
+                          <div class="contents2">
+                            <div class="text2">
+                              <ul>
+                                <li>
+                                  <span>프로젝트명 : </span>{modal.plan
+                                    .ccp_index__ccp_title || "Unknown Project"}
+                                </li>
+                                <li>
+                                  <span>점검일시 : </span>{modal.plan
+                                    .ccp_index__ccp_cdate
+                                    ? new Date(
+                                        modal.plan.ccp_index__ccp_cdate,
+                                      ).toLocaleString()
+                                    : "Unknown Date"}
+                                </li>
+                                <li>
+                                  <span>관련시스템 : </span>{modal.plan
+                                    .system_count || "No Systems"}
+                                </li>
+                              </ul>
                             </div>
-                          </article>
-                          {#if index < 4}
-                            <img
-                              src="images/icons/arrowhead.png"
-                              class="arrowIcon"
-                            />
-                          {/if}
-                        </div>
-                      {/each}
+                          </div>
+                        </article>
+                      </div>
                     </div>
                   </td>
                 </tr>
+
+                <!-- 점검이력 -->
                 <tr>
                   <th class="text-center">점검이력</th>
                   <td>
                     <div class="graphCardWrap">
-                      {#each recentAssets as asset}
-                        <div class="iconCard">
-                          <article class="graphCard">
-                            <div class="contents2">
-                              <div class="text2">
-                                <ul>
-                                  <li>
-                                    <span>프로젝트명 : </span>{asset.ast_os ||
-                                      "Unknown OS"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >점검일시 :
-                                    </span>{asset.ast_hostname ||
-                                      "Unknown Hostname"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >관련시스템 :
-                                    </span>{asset.ast_ipaddr || "Unknown IP"}
-                                  </li>
-                                  <li><span>점검현황 : </span></li>
-                                </ul>
+                      {#if modal.result.length > 0}
+                        {#each modal.result as res}
+                          <div class="iconCard">
+                            <article class="graphCard">
+                              <div class="contents2">
+                                <div class="text2">
+                                  <ul>
+                                    <li>
+                                      <span
+                                        >프로젝트명 :
+                                      </span>{res.ccr_item_result ||
+                                        "Unknown Result"}
+                                    </li>
+                                    <li>
+                                      <span>점검일시 : </span>{new Date(
+                                        res.ccr_cdate,
+                                      ).toLocaleString() || "Unknown Date"}
+                                    </li>
+                                    <li>
+                                      <span
+                                        >결과상세 :
+                                      </span>{@html res.ccr_item_status.replace(
+                                        /\n/g,
+                                        "<br/>",
+                                      ) || "No Details"}
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
-                            </div>
-                          </article>
+                            </article>
+                          </div>
+                        {/each}
+                      {:else}
+                        <div class="graphCardWrap">
+                          <div class="iconCard">no data</div>
                         </div>
-                      {/each}
+                      {/if}
                     </div>
                   </td>
                 </tr>
+
+                <!-- 조치이력 -->
                 <tr>
                   <th class="text-center">조치이력</th>
                   <td>
                     <div class="graphCardWrap">
-                      {#each recentAssets as asset}
-                        <div class="iconCard">
-                          <article class="graphCard">
-                            <div class="contents2">
-                              <div class="text2">
-                                <ul>
-                                  <li>
-                                    <span>프로젝트명 : </span>{asset.ast_os ||
-                                      "Unknown OS"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >점검일시 :
-                                    </span>{asset.ast_hostname ||
-                                      "Unknown Hostname"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >관련시스템 :
-                                    </span>{asset.ast_ipaddr || "Unknown IP"}
-                                  </li>
-                                </ul>
+                      {#if modal.fix_plan.length > 0}
+                        {#each modal.fix_plan as action}
+                          <div class="iconCard">
+                            <article class="graphCard">
+                              <div class="contents2">
+                                <div class="text2">
+                                  <ul>
+                                    <li>
+                                      <span
+                                        >조치명 :
+                                      </span>{action.action_name ||
+                                        "Unknown Action"}
+                                    </li>
+                                    <li>
+                                      <span>조치일시 : </span>{new Date(
+                                        action.action_date,
+                                      ).toLocaleString() || "Unknown Date"}
+                                    </li>
+                                    <li>
+                                      <span>결과 : </span>{action.result ||
+                                        "No Result"}
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
-                            </div>
-                          </article>
+                            </article>
+                          </div>
+                        {/each}
+                      {:else}
+                        <div class="graphCardWrap">
+                          <div class="iconCard">no data</div>
                         </div>
-                      {/each}
+                      {/if}
                     </div>
                   </td>
                 </tr>
+                <!-- 조치내역 -->
                 <tr>
                   <th class="text-center">조치내역</th>
                   <td>
                     <div class="graphCardWrap">
-                      {#each recentAssets as asset}
-                        <div class="iconCard">
-                          <article class="graphCard">
-                            <div class="contents2">
-                              <div class="text2">
-                                <ul>
-                                  <li>
-                                    <span>프로젝트명 : </span>{asset.ast_os ||
-                                      "Unknown OS"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >점검일시 :
-                                    </span>{asset.ast_hostname ||
-                                      "Unknown Hostname"}
-                                  </li>
-                                  <li>
-                                    <span
-                                      >관련시스템 :
-                                    </span>{asset.ast_ipaddr || "Unknown IP"}
-                                  </li>
-                                </ul>
+                      {#if modal.fix_result.length > 0}
+                        {#each modal.fix_result as detail}
+                          <div class="iconCard">
+                            <article class="graphCard">
+                              <div class="contents2">
+                                <div class="text2">
+                                  <ul>
+                                    <li>
+                                      <span>조치명 : </span>{detail.fix_name ||
+                                        "Unknown Fix"}
+                                    </li>
+                                    <li>
+                                      <span>조치일시 : </span>{new Date(
+                                        detail.fix_date,
+                                      ).toLocaleString() || "Unknown Date"}
+                                    </li>
+                                    <li>
+                                      <span
+                                        >상세내용 :
+                                      </span>{detail.fix_description ||
+                                        "No Description"}
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
-                            </div>
-                          </article>
+                            </article>
+                          </div>
+                        {/each}
+                      {:else}
+                        <div class="graphCardWrap">
+                          <div class="iconCard">no data</div>
                         </div>
-                      {/each}
+                      {/if}
                     </div>
                   </td>
                 </tr>
@@ -821,46 +867,46 @@
     font-weight: 500;
     padding: 0 15px 10px;
   }
+  /*****************************************************************************/
+  /* Apply styles to table inside the modal */
+  /* General Table Settings */
   .modal-open-wrap table {
     width: 98%;
     border-collapse: collapse;
     overflow: hidden;
     margin-left: 26px;
+    table-layout: fixed; /* Fix column widths */
   }
-  .modal-open-wrap .header_title {
-    font-size: 16px;
-    display: block;
-    border-bottom: 3px solid transparent;
-    color: #626677;
-    font-size: 16px;
-    font-weight: 500;
-    padding: 0 25px 10px;
-  }
+
   .modal-open-wrap th,
   .modal-open-wrap td {
     padding: 15px;
     text-align: left;
+    vertical-align: top;
   }
 
   .modal-open-wrap th {
     background-color: #007bff;
     color: white;
     font-weight: 600;
+    white-space: nowrap; /* Prevent text wrapping for headers */
   }
 
   .modal-open-wrap td {
     color: #333;
+    word-wrap: break-word; /* Ensure long text breaks */
+    white-space: normal; /* Allow multiline wrapping */
+    overflow: hidden; /* Prevent content overflow */
+    text-overflow: ellipsis; /* Display ellipsis for truncated text */
   }
 
-  .modal-open-wrap td div {
-    display: flex;
-    justify-content: center;
-  }
-
+  /* Cards with Scrollable Content */
   .modal-open-wrap .graphCardWrap {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
+    min-height: 150px; /* Minimum card height */
+    max-height: 200px; /* Maximum card height to contain text */
   }
 
   .modal-open-wrap .iconCard {
@@ -868,32 +914,36 @@
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: white;
-    overflow: hidden;
-    transition: transform 0.3s ease-in-out;
-    cursor: pointer;
-    overflow: visible;
-  }
 
-  .modal-open-wrap .iconCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  }
-
-  .modal-open-wrap .graphCard {
-    padding: 15px;
+    text-align: left;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    max-height: 200px; /* Limit height */
+    overflow: hidden;
   }
 
+  .modal-open-wrap .iconCard .contents2 {
+    flex-grow: 1;
+
+    word-wrap: break-word; /* Break long words */
+    white-space: normal; /* Allow multiline text */
+  }
+
+  /* Text Wrapping and Scrolling for Lists */
   .modal-open-wrap .text2 ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+    max-height: 120px; /* Limit list height */
+    overflow-y: auto; /* Add scroll for long lists */
   }
 
   .modal-open-wrap .text2 li {
     margin-bottom: 8px;
-    font-size: 16px;
-    color: #555;
+    font-size: 16px; /* Adjust font size for better fit */
+    line-height: 1.4; /* Adjust line height for readability */
+    word-wrap: break-word; /* Break long words */
   }
 
   .modal-open-wrap .text2 span {
@@ -901,15 +951,14 @@
     color: #333;
   }
 
+  /* Arrow Icon */
   .modal-open-wrap .arrowIcon {
     position: absolute;
-    right: -20px; /* Adjust the right position to move the arrow outside */
-    top: 50%; /* Center the arrow vertically */
-
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 18px;
     height: 18px;
-
-    transition: opacity 0.3s ease;
     z-index: 9999;
   }
 
@@ -917,9 +966,12 @@
     opacity: 1;
   }
 
-  .modal-open-wrap .arrowIcon img {
-    width: 100%;
-    height: auto;
+  /* For Tables: Scroll for Overflowing Content */
+  .modal-open-wrap td div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 200px; /* Restrict height for better layout */
   }
 
   /* Responsiveness */
@@ -930,7 +982,14 @@
     }
 
     .modal-open-wrap .graphCardWrap {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .modal-open-wrap th,
+    .modal-open-wrap td {
+      padding: 10px;
+      font-size: 14px;
     }
   }
 
@@ -941,9 +1000,11 @@
 
     .modal-open-wrap th,
     .modal-open-wrap td {
-      padding: 10px;
+      padding: 8px;
+      font-size: 12px;
     }
   }
+
   .header_title2 {
     font-size: 16px;
     display: block;

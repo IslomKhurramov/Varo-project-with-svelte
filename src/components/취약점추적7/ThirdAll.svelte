@@ -71,7 +71,8 @@
                   <div>
                     <div
                       class="circle"
-                      data-percent={plan.total_vulnerabilities || 0}
+                      data-percent={plan.vulnerability_summary
+                        .total_vulnerabilities || 0}
                       data-offset="440"
                     >
                       <svg viewBox="0 0 150 150">
@@ -89,13 +90,17 @@
                           cy="75"
                           r="70"
                           stroke={getStrokeColor(
-                            plan.total_vulnerabilities || 0,
+                            plan.vulnerability_summary.total_vulnerabilities ||
+                              0,
                           )}
                           stroke-width="10"
                           fill="none"
                           stroke-dasharray="440"
                           stroke-dashoffset={440 -
-                            (440 * (plan.total_vulnerabilities || 0)) / 100}
+                            (440 *
+                              (plan.vulnerability_summary
+                                .total_vulnerabilities || 0)) /
+                              100}
                           stroke-linecap="round"
                           transform="rotate(-90 75 75)"
                         />
@@ -107,8 +112,8 @@
                             plan.total_vulnerabilities || 0,
                           )};"
                         >
-                          {plan.total_vulnerabilities > 0
-                            ? plan.total_vulnerabilities
+                          {plan.vulnerability_summary.total_vulnerabilities > 0
+                            ? plan.vulnerability_summary.total_vulnerabilities
                             : 0}건
                         </span>
                       </div>
@@ -142,8 +147,8 @@
                     </li>
                     <li>
                       <span>최다자산 : </span>
-                      {plan.most_vulnerable_asset
-                        ?.ast_uuid__ass_uuid__ast_hostname || "No Asset"}
+                      {plan.vulnerability_summary?.most_vulnerable_host ||
+                        "No Asset"}
                     </li>
                     <li>
                       <span>취약점수 : </span>{plan.vulnerability_summary

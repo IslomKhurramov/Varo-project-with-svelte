@@ -308,7 +308,7 @@
                                   </li>
                                   <li>
                                     <span>관련시스템 : </span>{modal.plan
-                                      .system_count || "No Systems"}
+                                      .system_count || "No Systems"}건
                                   </li>
                                 </ul>
                               </div>

@@ -117,55 +117,7 @@
 
   $: console.log("first data", $comparedPlanData1);
   $: console.log("second data", $comparedPlanData2);
-  let filteredAssets = [
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 12,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 1500,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 900,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-  ];
-  let selectedAsset = filteredAssets[0];
-  let recentAssets = filteredAssets.slice(-5);
+
   import { onMount } from "svelte";
 
   onMount(() => {
@@ -199,7 +151,7 @@
           <div
             class="circle"
             style="width: 150px;"
-            data-percent={$selectedData1?.vuln_count || 0}
+            data-percent={$comparisonAsset.first?.security_level.score || 0}
             data-offset="440"
           >
             <svg viewBox="0 0 150 150">
@@ -218,12 +170,15 @@
                 cx="75"
                 cy="75"
                 r="70"
-                stroke={getStrokeColor($selectedData1?.vuln_count || 0)}
+                stroke={getStrokeColor(
+                  $comparisonAsset.first?.security_level.score || 0,
+                )}
                 stroke-width="10"
                 fill="none"
                 stroke-dasharray="440"
                 stroke-dashoffset={440 -
-                  (440 * ($selectedData1?.vuln_count || 0)) / 100}
+                  (440 * ($comparisonAsset.first?.security_level.score || 0)) /
+                    100}
                 stroke-linecap="round"
                 transform="rotate(-90 75 75)"
               />
@@ -233,11 +188,11 @@
               <span
                 class="number"
                 style="font-size: 32px; color: {getStrokeColor(
-                  $selectedData1?.vuln_count || 0,
+                  $comparisonAsset.first?.security_level.score || 0,
                 )};"
               >
-                {$selectedData1?.vuln_count > 0
-                  ? $selectedData1?.vuln_count
+                {$comparisonAsset.first?.security_level > 0
+                  ? $comparisonAsset.first?.security_level.score
                   : 0}%
               </span>
             </div>
@@ -252,29 +207,29 @@
               <div class="text flex col justify-between">
                 <ul>
                   <li>
-                    <span>취약 : </span>{$selectedData1?.vuln_count ||
-                      "Unknown OS"}건
+                    <span>취약 : </span>{$comparisonAsset.first
+                      ?.most_vulnerable_asset.vuln_count || "Unknown OS"}건
                   </li>
                   <li>
-                    <span>관련시스템 : </span>{$selectedData1.most_common_item
-                      ?.cct_index__cct_target || "Unknown OS"}
+                    <span>관련시스템 : </span>{$comparisonAsset.first
+                      .system_count || "Unknown OS"}대
                   </li>
                   <li style="margin-top: 20px;">
                     <span>[취약점 요약] </span>
                   </li>
                   <li>
-                    <span>최다자산 : </span>{$selectedData1
-                      .most_vulnerable_asset
-                      ?.ast_uuid__ass_uuid__ast_hostname || "Unknown IP"}
+                    <span>최다자산 : </span>{$comparisonAsset.first
+                      .most_vulnerable_asset?.hostname || "Unknown IP"}
                   </li>
                   <li>
-                    <span>최다항목 : </span>{$selectedData1?.most_common_item
-                      ?.cct_index__cct_target || "No Target"}
+                    <span>최다항목 : </span>{$comparisonAsset.first
+                      ?.most_common_item?.item_code ||
+                      "No Target"}({$comparisonAsset.first?.most_common_item
+                      ?.target_type || "No Target"})
                   </li>
                   <li>
-                    <span>취약점수 : </span>{$selectedData1?.vuln_count
-                      ? "설치됨"
-                      : "설치 안됨"}
+                    <span>취약점수 : </span>{$selectedData1?.vuln_count ||
+                      "no data"}
                   </li>
                   <li>
                     <span>조치개수 : </span>{$selectedData1?.fix_plan_cnt ||
@@ -327,7 +282,7 @@
           <div
             class="circle"
             style="width: 150px;"
-            data-percent={$selectedData2?.vuln_count || 0}
+            data-percent={$comparisonAsset.second?.security_level.score || 0}
             data-offset="440"
           >
             <svg viewBox="0 0 150 150">
@@ -346,12 +301,15 @@
                 cx="75"
                 cy="75"
                 r="70"
-                stroke={getStrokeColor($selectedData2?.vuln_count || 0)}
+                stroke={getStrokeColor(
+                  $comparisonAsset.second?.security_level.score || 0,
+                )}
                 stroke-width="10"
                 fill="none"
                 stroke-dasharray="440"
                 stroke-dashoffset={440 -
-                  (440 * ($selectedData2?.vuln_count || 0)) / 100}
+                  (440 * ($comparisonAsset.second?.security_level.score || 0)) /
+                    100}
                 stroke-linecap="round"
                 transform="rotate(-90 75 75)"
               />
@@ -361,11 +319,11 @@
               <span
                 class="number"
                 style="font-size: 32px; color: {getStrokeColor(
-                  $selectedData2?.vuln_count || 0,
+                  $comparisonAsset.second?.security_level.score || 0,
                 )};"
               >
-                {$selectedData2?.vuln_count > 0
-                  ? $selectedData2?.vuln_count
+                {$comparisonAsset.second?.security_level > 0
+                  ? $comparisonAsset.second?.security_level.score
                   : 0}%
               </span>
             </div>
@@ -380,29 +338,29 @@
               <div class="text flex col justify-between">
                 <ul>
                   <li>
-                    <span>취약 : </span>{$selectedData2?.vuln_count ||
-                      "Unknown OS"}건
+                    <span>취약 : </span>{$comparisonAsset.second
+                      ?.most_vulnerable_asset.vuln_count || "Unknown OS"}건
                   </li>
                   <li>
-                    <span>관련시스템 : </span>{$selectedData2.most_common_item
-                      ?.cct_index__cct_target || "Unknown OS"}
+                    <span>관련시스템 : </span>{$comparisonAsset.second
+                      .system_count || "Unknown OS"}대
                   </li>
                   <li style="margin-top: 20px;">
-                    <span>[취약점 요약] <span> </span></span>
+                    <span>[취약점 요약] </span>
                   </li>
                   <li>
-                    <span>최다자산 : </span>{$selectedData2
-                      .most_vulnerable_asset
-                      ?.ast_uuid__ass_uuid__ast_hostname || "Unknown IP"}
+                    <span>최다자산 : </span>{$comparisonAsset.second
+                      .most_vulnerable_asset?.hostname || "Unknown IP"}
                   </li>
                   <li>
-                    <span>최다항목 : </span>{$selectedData2?.most_common_item
-                      ?.cct_index__cct_target || "No Target"}
+                    <span>최다항목 : </span>{$comparisonAsset.second
+                      ?.most_common_item?.item_code ||
+                      "No Target"}({$comparisonAsset.second?.most_common_item
+                      ?.target_type || "No Target"})
                   </li>
                   <li>
-                    <span>취약점수 : </span>{$selectedData2?.vuln_count
-                      ? "설치됨"
-                      : "설치 안됨"}
+                    <span>취약점수 : </span>{$selectedData2?.vuln_count ||
+                      "no data"}
                   </li>
                   <li>
                     <span>조치개수 : </span>{$selectedData2?.fix_plan_cnt ||

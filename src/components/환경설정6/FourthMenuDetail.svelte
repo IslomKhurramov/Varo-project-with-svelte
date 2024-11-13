@@ -28,7 +28,7 @@
 </script>
 
 <div
-  style="height: 100vh; width: 100%; padding-left: 10px; padding-right: 10px;"
+  style="height: 100vh; width: 100%;"
   class={`contentsWrap1 ${tabMenu == "시스템기본설정" && "resultView"} ${tabMenu == "공지사항" && "resultView"} ${tabMenu == "자료실" && "resultView"} ${tabMenu == "사용자관리" && "logWrap"}`}
 >
   <nav class="tabMenu contentArea" style="padding: 0; border-radius: 5px">
@@ -94,7 +94,7 @@
 
   <section
     class="subTabWrap"
-    style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px; border-radius: 10px"
+    style="height: 50px; background-color: #fff; margin-top: 8px; border-radius: 10px"
   >
     <a
       href="javascript:void(0);"
@@ -107,7 +107,7 @@
       }}
       style="margin-left: 10px;"
     >
-      정보변경
+       정보변경
     </a>
     <a
       href="javascript:void(0);"
@@ -119,7 +119,7 @@
         } catch (err) {}
       }}
     >
-      비밀번호변경
+    비밀번호변경
     </a>
   </section>
 

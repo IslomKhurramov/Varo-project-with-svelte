@@ -1,6 +1,4 @@
 <script>
-  let serverIP = "192.168.0.10";
-  let port = 443;
 </script>
 
 <main class="table-container" style="margin: 0; border-radius: 10px">
@@ -51,7 +49,7 @@
   .table-container_1 {
     margin: 20px 0;
     border-radius: 10px;
-    width: 70%;
+    width: 50%;
   }
 
   .formControlWrap {
@@ -73,7 +71,7 @@
   }
 
   .formControl input {
-    width: 70%;
+    width: 50%;
     flex: 1;
     padding: 8px;
     border: 1px solid #cccccc;

@@ -1,92 +1,143 @@
 <script>
-  import SecondMenu from "./HeaderMenu/SecondMenu.svelte";
+  // Accept props from the parent component
+  export let selectedData;
+  export let getArticleDetailData;
 
-  let username = "";
-  let text = "";
-  let selectedData = null;
+  import {
+    updateArticle,
+    deleteArticle,
+  } from "../../services/page6/serviceArticle";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
+  import { createEventDispatcher } from "svelte";
+
+  let title = "";
   let content = "";
+  let writer_name = "";
+  let file = null;
+  let error = null;
 
-  function handleEdit() {
-    // Handle edit logic here
-    console.log("Edit button clicked");
+  const dispatch = createEventDispatcher();
+
+  // Initialize variables when selectedData changes
+  $: if (selectedData && !title && !content && !writer_name) {
+    title = selectedData.title || "";
+    content = selectedData.content || "";
+    writer_name = selectedData.writer_name || "";
   }
 
-  function handleDelete() {
-    // Handle delete logic here
-    console.log("Delete button clicked");
+  async function handleEdit() {
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("writer_name", writer_name);
+      formData.append("art_index", selectedData.art_index);
+      if (file) formData.append("file", file);
+
+      const response = await updateArticle(formData);
+      if (response.RESULT === "OK") {
+        await successAlert("게시물이 성공적으로 수정되었습니다.");
+        await getArticleDetailData(selectedData.art_index);
+        dispatch("close");
+      }
+    } catch (err) {
+      error = err.message;
+      console.log("Error details:", err.response ? err.response.data : err);
+      await errorAlert(error);
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      const response = await deleteArticle({
+        art_index: selectedData.art_index,
+      });
+      if (response.RESULT === "OK") {
+        await successAlert(response.CODE);
+        dispatch("close");
+      }
+    } catch (err) {
+      error = err.message;
+      console.log("Error details:", err.response ? err.response.data : err);
+      await errorAlert(error);
+    }
   }
 
   function handleList() {
-    selectedData = {};
+    dispatch("close");
   }
 </script>
 
-{#if selectedData}
-  <SecondMenu {selectedData} on:close={() => (selectedData = null)} />
-{:else}
-  <main class="tableWrap">
-    <div class="table-container_1">
-      <div class="formControlWrap">
-        <div class="formControl">
-          <label>제목</label>
-          <div class="inputGroup">
-            <input bind:value={username} type="text" placeholder="제목" />
-          </div>
+<main class="tableWrap">
+  <div class="table-container_1">
+    <div class="formControlWrap">
+      <div class="formControl">
+        <label>제목</label>
+        <div class="inputGroup">
+          <input bind:value={title} type="text" placeholder="제목" />
         </div>
-        <div class="formControl">
-          <label>작성자</label>
-          <div class="inputGroup">
-            <input
-              bind:value={text}
-              type="text"
-              id="text"
-              placeholder="작성자"
-            />
-          </div>
+      </div>
+      <div class="formControl">
+        <label>내용</label>
+        <div class="inputGroup">
+          <textarea bind:value={content} class="form-control" placeholder="내용"
+          ></textarea>
         </div>
-        <div class="formControl">
-          <label for="text">내용</label>
-          <div class="inputGroup">
-            <textarea
-              bind:value={content}
-              class="form-control"
-              id="content"
-              rows="5"
-              placeholder="내용"
-            ></textarea>
-          </div>
+      </div>
+      <div class="formControl">
+        <label>파일</label>
+        <div class="inputGroup">
+          {#if selectedData.file_path}
+            <a href={`/${selectedData.file_path}`} target="_blank">
+              {selectedData.original_filename}
+            </a>
+            <div class="inputGroup_1">
+              <input
+                style="border: none;"
+                type="file"
+                on:change={(e) => (file = e.target.files[0])}
+              />
+            </div>
+          {:else}
+            <div class="inputGroup_1">
+              <input
+                style="border: none;"
+                type="file"
+                on:change={(e) => (file = e.target.files[0])}
+              />
+            </div>
+          {/if}
         </div>
-        <div class="formControl">
-          <label></label>
-          <div class="inputGroup">
-            <div class="buttons">
-              <div class="buttonGroup">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  on:click={handleEdit}>수정</button
-                >
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  on:click={handleDelete}>삭제</button
-                >
-                <button
-                  type="button"
-                  class="btn btn-green"
-                  on:click={handleDelete}>만들기</button
-                >
-                <button type="button" class="btn btn-info" on:click={handleList}
-                  >목록</button
-                >
-              </div>
+      </div>
+      <div class="formControl">
+        <label></label>
+        <div class="inputGroup">
+          <div class="buttons">
+            <div class="buttonGroup">
+              <button
+                type="button"
+                class="btn btn-primary"
+                on:click={handleEdit}
+              >
+                수정
+              </button>
+              <button
+                type="button"
+                class="btn btn-warning"
+                on:click={handleDelete}
+              >
+                삭제
+              </button>
+              <button type="button" class="btn btn-green" on:click={handleList}>
+                목록
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </main>
-{/if}
+  </div>
+</main>
 
 <style>
   .tableWrap {
@@ -108,6 +159,10 @@
     display: flex;
     flex-direction: column;
     row-gap: 13px;
+  }
+
+  .formControlWrap textarea {
+    width: 0;
   }
 
   .formControl label {
@@ -133,25 +188,22 @@
     align-items: center;
   }
 
+  .inputGroup_1 {
+    margin-top: 10px;
+  }
+
   .buttonGroup {
     display: flex;
     flex-direction: row;
     gap: 10px;
   }
 
-  .inputGroup input {
-    flex: 1;
-  }
-
+  .inputGroup input,
   .inputGroup textarea {
     flex: 1;
   }
 
-  .formControl input:focus {
-    border-color: #0067ff;
-    outline: none;
-  }
-
+  .formControl input:focus,
   .formControl textarea:focus {
     border-color: #0067ff;
     outline: none;

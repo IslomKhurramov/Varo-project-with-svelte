@@ -81,3 +81,99 @@ export const getAllArticles = async ({ page, limit, category }) => {
     throw error;
   }
 };
+
+export const getArticleDetail = async (art_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getArticleDetail/`,
+      {
+        art_index: art_index,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createArticle = async ({ title, content, category, file }) => {
+  try {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("category", category);
+    if (file) formData.append("file", file); // Add file if it exists
+
+    const response = await axios.post(
+      `${serverApi}/api/createArticle/`,
+      formData,
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateArticle = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/updateArticle/`,
+      formData,
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteArticle = async ({ art_index }) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/deleteArticle/`,
+      { art_index },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};

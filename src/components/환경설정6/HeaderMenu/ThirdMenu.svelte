@@ -1,7 +1,10 @@
 <script>
   import { onMount } from "svelte";
   import moment from "moment";
-  import { getAllArticles } from "../../../services/page6/serviceArticle";
+  import {
+    getAllArticles,
+    getArticleDetail,
+  } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
 
@@ -23,6 +26,19 @@
       if (response.RESULT === "OK") {
         projectArray = response.CODE.articles;
         totalPages = response.CODE.pagination.total_pages;
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
+    }
+  }
+
+  async function getArticleDetailData(art_index) {
+    try {
+      const response = await getArticleDetail(art_index);
+      if (response.RESULT === "OK") {
+        selectedData = response.CODE;
+        console.log("Article Details:", selectedData);
       }
     } catch (err) {
       error = err.message;
@@ -63,7 +79,14 @@
 </script>
 
 {#if selectedData}
-  <SecondMenuDetails {selectedData} on:close={() => (selectedData = null)} />
+  <SecondMenuDetails
+    {selectedData}
+    {getArticleDetailData}
+    on:close={() => {
+      selectedData = null;
+      getAllArticlesData(currentPage);
+    }}
+  />
 {:else}
   <div>
     <section class="tableWrap">
@@ -79,7 +102,7 @@
           </colgroup>
           <thead>
             <tr>
-              <th class="text-center" style="font-size: 16px;">넘버</th>
+              <th class="text-center" style="font-size: 16px;">번호</th>
               <th class="text-center" style="font-size: 16px;">제목</th>
               <th class="text-center" style="font-size: 16px;">작성자</th>
               <th class="text-center" style="font-size: 16px;">작성일</th>
@@ -89,23 +112,31 @@
           </thead>
           <tbody>
             {#each projectArray as data, index}
-              <tr on:click={() => (selectedData = data)}>
+              <tr
+                on:click={() => {
+                  getArticleDetailData(data.art_index);
+                  console.log("Index:", data.art_index);
+                  console.log("Data:", data);
+                }}
+              >
                 <td class="text-center" style="font-size: 16px;">
                   {index + 1 + (currentPage - 1) * itemsPerPage}
                 </td>
-                <td class="text-center" style="font-size: 16px;"
-                  >{data.title}</td
-                >
+                <td style="font-size: 16px;">{data.title}</td>
                 <td class="text-center" style="font-size: 16px;">
-                  {data.writer__user_name}</td
-                >
+                  {data.writer__user_name}
+                </td>
                 <td class="text-center" style="font-size: 16px;">
                   {moment(data.created_at).format("YYYY.MM.DD")}
                 </td>
                 <td class="text-center" style="font-size: 16px;">
-                  <a href={`/${data.file_path}`} target="_blank">
-                    {data.original_filename}
-                  </a>
+                  {#if data.file_path}
+                    <a href={`/${data.file_path}`} target="_blank">
+                      {data.original_filename}
+                    </a>
+                  {:else}
+                    없음
+                  {/if}
                 </td>
                 <td class="text-center" style="font-size: 16px;">
                   {data.view_count}
@@ -115,7 +146,7 @@
           </tbody>
         </table>
       </div>
-      <!-- Always fixed pagination at the bottom -->
+      <!-- Pagination -->
       <nav class="pagination">
         <button
           on:click={() => goToPage(currentPage - 1)}

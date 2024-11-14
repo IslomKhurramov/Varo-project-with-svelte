@@ -38,6 +38,19 @@
     }
   });
 
+  const dataRefetch = async () => {
+    try {
+      loading = true;
+      projectData = await getAllPlanLists();
+      projectArray = Object.values(projectData); // Convert object to array
+    } catch (error) {
+      error = err.message;
+      await errorAlert(error);
+    } finally {
+      loading = false;
+    }
+  };
+
   /**********************************/
   let plan_index = "";
   const selectPage = (page, project) => {
@@ -129,7 +142,7 @@
   </article>
 
   {#if currentView === "default"}
-    <RightConainer selectPageMain={selectPage} bind:activeMenu />
+    <RightConainer selectPageMain={selectPage} bind:activeMenu {dataRefetch} />
   {:else if currentPage}
     <svelte:component
       this={currentPage}
@@ -137,6 +150,7 @@
       {currentPage}
       bind:tabMenu
       {plan_index}
+      {dataRefetch}
     />
   {/if}
 </section>

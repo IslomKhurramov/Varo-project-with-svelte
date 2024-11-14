@@ -21,6 +21,7 @@
   import ModalPageForDetail from "./ModalPageForDetail.svelte";
 
   export let projectIndex;
+  export let dataRefetch;
 
   let projectDetails = {};
   let assetsInfo = null;
@@ -144,6 +145,7 @@
 
       await setPlanChange(formData);
       alertConfirm = false;
+      await dataRefetch();
     } catch (error) {
       errorAlert(error?.message);
     }
@@ -501,6 +503,7 @@
               <select
                 bind:value={updateInfo["asg_index"]}
                 style="width: 913px;"
+                disabled
               >
                 <option value="" selected disabled>자산 그룹목록</option>
 
@@ -520,6 +523,7 @@
               <select
                 bind:value={updateInfo["ccp_ruleset"]}
                 style="width: 913px;"
+                disabled
               >
                 <option value="" selected disabled>점검항목 목록</option>
                 {#if planOptions.checklist_group}
@@ -558,6 +562,7 @@
                   <select
                     bind:value={updateInfo["recheck"]}
                     style={`width: ${updateInfo?.recheck === 1 ? "434.5" : "913"}px;`}
+                    disabled
                   >
                     <option value={0}> 신규점겅검 </option>
                     <option value={1}> 이행점검 </option>
@@ -570,6 +575,7 @@
                     <select
                       bind:value={updateInfo["recheck_pno"]}
                       style="width: 434.5px;height:34px;"
+                      disabled
                     >
                       <option value={0} disabled>이전 점검플랜명</option>
 
@@ -703,12 +709,13 @@
                 <label
                   for="file-upload"
                   class="file-label"
-                  style="width: 750px; font-size: 16px; padding: 0 10px;"
+                  style="width: 913px; font-size: 16px; padding: 0 10px;"
                   >{updateInfo?.assessment_command
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
                 >
                 <input
+                  readonly
                   style="font-size: 16px;"
                   type="file"
                   id="file-upload"
@@ -722,16 +729,17 @@
                     };
                   }}
                 />
-                <button
+                <!-- <button
                   id="upload-btn"
                   class="upload-btn btn btnPrimary"
                   on:click={() => {
                     inputFile.click();
                   }}
                   style="width: 155px;"
+                  disabled
                 >
                   Upload
-                </button>
+                </button> -->
               </div>
             </td>
           </tr>
@@ -757,7 +765,6 @@
                 <button
                   type="button"
                   class="btn btnBlue btnSave"
-                  onclick="modalOpen('alert')"
                   on:click={() => (alertConfirm = true)}
                 >
                   변경저장

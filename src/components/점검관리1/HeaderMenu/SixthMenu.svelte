@@ -31,7 +31,7 @@
   let orderVersion = "";
   let orderCdate = "";
   let currentPage = 1;
-  let listCount = 15;
+  let listCount = "15";
 
   let sortField = ""; // No default sort field
   let sortAscending = true; // Default to ascending
@@ -40,7 +40,6 @@
   onMount(() => {
     fetchProgramList();
     fetchTargetList();
-    console.log("plan_index", plan_index);
   });
 
   /**************************************************************/
@@ -85,19 +84,105 @@
           response.CODE.total_count / (limit || response.CODE.total_count),
         );
       }
-
-      console.log("Fetched data:", $programList);
     } catch (err) {
       console.error(`Error fetching data: ${err.message}`);
     }
   }
   /********************MANUAL DOWNLOAD***********************************/
   async function manualDownload() {
+    if ($targetList && $targetList.length > 0) {
+      // Validate $targetList
+      if (
+        !$targetList ||
+        !Array.isArray($targetList) ||
+        $targetList.length === 0
+      ) {
+        errorAlert("대상 목록이 비어 있거나 제대로 로드되지 않았습니다..");
+        return;
+      }
+
+      // Validate target
+      if (!target) {
+        errorAlert("타겟이 선택되지 않았습니다.");
+        return;
+      }
+      try {
+        const response = await axios.post(
+          `${serverApi}/api/getDownloadManualProgram/`,
+          { target: target },
+          { ccp_index: plan_index },
+          { responseType: "blob" },
+        );
+
+        const contentType = response.headers["content-type"];
+        let fileExtension = "bin"; // Default extension for binary files
+
+        // Check content type and determine the appropriate file extension
+        if (contentType.includes("pdf")) {
+          fileExtension = "pdf";
+        } else if (
+          contentType.includes("excel") ||
+          contentType.includes("spreadsheetml")
+        ) {
+          fileExtension = "xlsx";
+        } else if (
+          contentType.includes("word") ||
+          contentType.includes("msword")
+        ) {
+          fileExtension = "docx";
+        } else if (contentType.includes("csv")) {
+          fileExtension = "csv";
+        } else if (contentType.includes("image")) {
+          if (contentType.includes("jpeg") || contentType.includes("jpg")) {
+            fileExtension = "jpg";
+          } else if (contentType.includes("png")) {
+            fileExtension = "png";
+          } else if (contentType.includes("gif")) {
+            fileExtension = "gif";
+          }
+        } else if (contentType.includes("text")) {
+          fileExtension = "txt";
+        } else if (contentType.includes("zip")) {
+          fileExtension = "zip";
+        } else {
+          fileExtension = "bin"; // For unknown or unsupported formats, use a generic binary file
+        }
+
+        const blob = new Blob([response.data], {
+          type: contentType || "application/octet-stream",
+        });
+
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+
+        // Set the filename with the appropriate extension
+        const fileName = `report.${fileExtension}`;
+        a.download = fileName;
+
+        // Simulate a click to trigger the download
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        target = "";
+      } catch (error) {
+        alert("An error occurred while downloading the report.");
+        throw error;
+      }
+    } else {
+      errorAlert("Please select a atrget");
+    }
+  }
+  /*********************AUTO DOWNLOAD**************************************/
+  async function autoDownload(data) {
     try {
-      console.log("target fetch", target, plan_index);
       const response = await axios.post(
-        `${serverApi}/api/getDownloadManualProgram/`,
-        { target: target },
+        `${serverApi}/api/getDownloadAutoProgram/`,
+        { cs_index: data.cs_index },
         { ccp_index: plan_index },
         { responseType: "blob" },
       );
@@ -125,8 +210,8 @@
           fileExtension = "jpg";
         } else if (contentType.includes("png")) {
           fileExtension = "png";
-        } else if (contentType.includes("gif")) {
-          fileExtension = "gif";
+        } else if (contentType.includes("exe")) {
+          fileExtension = "exe";
         }
       } else if (contentType.includes("text")) {
         fileExtension = "txt";
@@ -146,7 +231,7 @@
       a.href = url;
 
       // Set the filename with the appropriate extension
-      const fileName = `report.${fileExtension}`;
+      const fileName = data.cs_filename;
       a.download = fileName;
 
       // Simulate a click to trigger the download
@@ -162,20 +247,13 @@
       throw error;
     }
   }
-
   // Ensure reactivity on listCount change
   $: listCount, fetchProgramList(); // Re-fetch data when listCount changes
 
-  // For debugging purposes
-  $: {
-    console.log("listCount changed:", listCount); // Debugging the value of listCount
-    console.log("plan_index2", plan_index);
-  }
   /************************************************************************/
 
   $: {
     fetchProgramList();
-    console.log("refetched");
   }
   function goToPage(page) {
     if (page >= 1 && page <= totalPages) {
@@ -301,7 +379,7 @@
           {/each}
         {/if}
       </select>
-      <select
+      <!-- <select
         id="target"
         bind:value={search.order_user}
         on:change={searchDataHandler}
@@ -312,12 +390,12 @@
             <option value={user.user_name}>{user.user_name}</option>
           {/each}
         {/if}
-      </select>
-
+      </select> -->
+      <!-- 
       <button type="button" class="btn btnPrimary">
         <img src="./assets/images/reset.png" alt="search" />
         초기화
-      </button>
+      </button> -->
     </div>
   </section>
   <section
@@ -408,7 +486,7 @@
 
         <tbody>
           {#each $programList.list as data, index}
-            <tr>
+            <tr on:click={() => autoDownload(data)}>
               <td class="text-center">{index + 1}</td>
               <td class="text-center">{data.cs_category}</td>
               <td class="text-center">{data.cs_support_os || "N/A"}</td>
@@ -423,40 +501,38 @@
       </table>
     </div>
     <div
-      style="display: flex; flex-direction:row; gap:10px; margin-top:10px; align-items:center;"
+      style="display: flex; flex-direction:row; width:100%; justify-content:space-between; align-items:center"
     >
-      <select bind:value={target}>
-        <option value="점검대상">점검대상</option>
-        {#each $targetList as target}
-          <option value={target.cct_index__cct_target}
-            >{target.cct_index__cct_target}</option
-          >
-        {/each}
+      <div class="downloadSection">
+        <select class="targetDropdown" bind:value={target}>
+          <option value="점검대상" disabled selected>점검대상</option>
+          {#each $targetList as target}
+            <option value={target.cct_index__cct_target}>
+              {target.cct_index__cct_target}
+            </option>
+          {/each}
+        </select>
+        <button class="btn btnPrimary downloadBtn" on:click={manualDownload}>
+          다운로드
+        </button>
+      </div>
+      <select bind:value={listCount}>
+        <option value="15">15개 보기</option>
+        <option value="2">2개 보기</option>
+        <option value="5">5개 보기</option>
+        <option value="30">30개 보기</option>
+        <option value="50">50개 보기</option>
+        <option value="100">100개 보기</option>
+        <option value="전체">전체 보기</option>
       </select>
-      <button class="btn btnPrimary padding_button" on:click={manualDownload}
-        ><img
-          src="./assets/images/icon/download.svg"
-          class="excel-img"
-          alt="download"
-        />다운로드</button
-      >
     </div>
     <div class="pagination_box">
-      <select bind:value={listCount}>
-        <option value="15" selected>15</option>
-        <option value="2">2</option>
-        <option value="5">5</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-        <option value="전체">전체</option>
-      </select>
       <nav class="pagination">
         <button
           on:click={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          &lsaquo; Previous
+          &lsaquo;
         </button>
         {#each Array(totalPages) as _, page (page)}
           <button
@@ -470,7 +546,7 @@
           on:click={() => goToPage(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Next &rsaquo;
+          &rsaquo;
         </button>
       </nav>
     </div>
@@ -478,11 +554,75 @@
 </article>
 
 <style>
+  .modify-btn {
+    background-color: #4caf50; /* Green background for modify button */
+    color: white; /* White text */
+  }
+  .downloadSection {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    margin-top: 20px;
+    align-items: center;
+    background-color: #f8f9fa; /* Light background */
+    border: 1px solid #e3e3e3; /* Subtle border */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1); /* Smooth shadow */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    width: fit-content;
+    justify-content: space-between;
+    width: 30%;
+  }
+
+  .targetDropdown {
+    width: 493px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #ffffff;
+    color: #495057;
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .targetDropdown:focus {
+    border-color: #0067ff;
+    box-shadow: 0 0 6px rgba(0, 103, 255, 0.5);
+    outline: none;
+  }
+
+  .downloadBtn {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #0067ff; /* Primary color */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      transform 0.2s ease;
+  }
+
+  .downloadBtn:hover {
+    background-color: #004bb7; /* Slightly darker hover color */
+  }
+
+  .downloadBtn:active {
+    transform: scale(0.98); /* Subtle click animation */
+  }
+
+  .downloadSection:hover {
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+  }
+
   .pagination_box {
     display: flex;
     flex-direction: row;
-    width: 50%;
-    justify-content: space-between;
+    width: 100%;
+    justify-content: center;
     align-items: center;
   }
   * {

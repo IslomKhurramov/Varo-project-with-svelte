@@ -683,7 +683,6 @@
       on:close={() => (showModalProjectComparison = false)}
       on:click|stopPropagation
     >
-      <p class="header_title">[자산명] [{target}] 점검항목 타이틀</p>
       <Swiper
         slidesPerView={1}
         spaceBetween={10}
@@ -697,7 +696,8 @@
           {#each $comparedVulnsTarget1 as vuln, index}
             <SwiperSlide>
               <p class="header_title">
-                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+                [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
+                점검항목 타이틀
               </p>
               <div>
                 <table>
@@ -888,7 +888,8 @@
           {#each $comparedVulnsTarget2 as vuln, index}
             <SwiperSlide>
               <p class="header_title">
-                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+                [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
+                점검항목 타이틀
               </p>
               <div>
                 <table>

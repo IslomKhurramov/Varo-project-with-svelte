@@ -15,6 +15,7 @@
 
   export let selectPageMain;
   export let activeMenu;
+  export let plan_index;
   let projectData = {};
   let projectArray = [];
   let filteredProjects = [];
@@ -239,7 +240,7 @@
   </nav>
 
   {#if currentPage}
-    <svelte:component this={currentPage} bind:projectIndex />
+    <svelte:component this={currentPage} bind:projectIndex {plan_index} />
     <!-- {:else if detailPage}
   <svelte:component
     this={currentPage}

@@ -39,9 +39,10 @@
   });
 
   /**********************************/
-
+  let plan_index = "";
   const selectPage = (page, project) => {
     currentPage = page;
+    plan_index = project.ccp_index;
     activeMenu = project.ccp_index;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
@@ -135,6 +136,7 @@
       projectIndex={selectedProjectIndex}
       {currentPage}
       bind:tabMenu
+      {plan_index}
     />
   {/if}
 </section>

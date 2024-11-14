@@ -8,6 +8,7 @@
   import { navigate } from "svelte-routing";
   import SixthMenu from "./HeaderMenu/SixthMenu.svelte";
 
+  export let plan_index;
   export let projectIndex;
   let currentPage = null;
   export let tabMenu = null;
@@ -85,7 +86,7 @@
     </ul>
   </nav>
   {#if tabMenu !== "no"}
-    <svelte:component this={currentPage} bind:projectIndex />
+    <svelte:component this={currentPage} bind:projectIndex {plan_index} />
   {:else}
     <ProjectDetail {projectIndex} />
   {/if}

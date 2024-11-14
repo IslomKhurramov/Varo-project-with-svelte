@@ -23,13 +23,86 @@
   let asset_name = "";
   let chklist = "";
   let target = "";
-  function modalData(data) {
-    showModalProjectComparison = true;
-    asset_name = data.ast_uuid__ass_uuid__ast_hostname;
-    chklist = data.ccr_item_no__ccc_item_no;
-    target = data.ast_uuid__ast_target__cct_target;
+  let secondTable = false;
+  let currentModalIndex = 0;
+
+  function handleTableClick(index, data) {
+    currentModalIndex = index;
+    const {
+      ast_uuid__ass_uuid__ast_hostname: asset_name,
+      ccr_item_no__ccc_item_no: chklist,
+      cct_index__cct_target: target,
+    } = data;
     console.log("modal<", asset_name, chklist, target);
+    showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
+  }
+  function handleTableClick2(index, data) {
+    currentModalIndex = index;
+    secondTable = true;
+    const {
+      ast_uuid__ass_uuid__ast_hostname: asset_name,
+      ccr_item_no__ccc_item_no: chklist,
+      cct_index__cct_target: target,
+    } = data;
+    console.log("modal<", asset_name, chklist, target);
+    showModalProjectComparison = true;
+    modalDataFunction(asset_name, chklist, target);
+  }
+  /******************************************************************/
+  function handleNext() {
+    if (currentModalIndex < $comparedVulnsTarget1.length - 1) {
+      currentModalIndex++;
+      const {
+        ast_uuid__ass_uuid__ast_hostname: asset_name,
+        ccr_item_no__ccc_item_no: chklist,
+        cct_index__cct_target: target,
+      } = $comparedVulnsTarget1[currentModalIndex];
+      modalDataFunction(asset_name, chklist, target);
+    } else {
+      console.log("Reached the last item.");
+    }
+  }
+
+  function handleNext2() {
+    if (currentModalIndex < $comparedVulnsTarget2.length - 1) {
+      currentModalIndex++;
+      const {
+        ast_uuid__ass_uuid__ast_hostname: asset_name,
+        ccr_item_no__ccc_item_no: chklist,
+        cct_index__cct_target: target,
+      } = $comparedVulnsTarget2[currentModalIndex];
+      modalDataFunction(asset_name, chklist, target);
+    } else {
+      console.log("Reached the last item.");
+    }
+  }
+  /*************************************************************/
+  function handlePrev() {
+    if (currentModalIndex > 0) {
+      currentModalIndex--;
+      const {
+        ast_uuid__ass_uuid__ast_hostname: asset_name,
+        ccr_item_no__ccc_item_no: chklist,
+        cct_index__cct_target: target,
+      } = $comparedVulnsTarget1[currentModalIndex];
+      modalDataFunction(asset_name, chklist, target);
+    } else {
+      console.log("Reached the first item.");
+    }
+  }
+  function handlePrev2() {
+    if (currentModalIndex > 0) {
+      currentModalIndex--;
+      const {
+        ast_uuid__ass_uuid__ast_hostname: asset_name,
+        ccr_item_no__ccc_item_no: chklist,
+        cct_index__cct_target: target,
+      } = $comparedVulnsTarget2[currentModalIndex];
+      modalDataFunction(asset_name, chklist, target);
+    } else {
+      console.log("Reached the first item.");
+    }
   }
   function selectData1(data1) {
     selectedDataTarget1.set(data1);
@@ -38,15 +111,26 @@
     selectedDataTarget2.set(data2);
   }
 
+  let cachedModalData = {};
+
   async function modalDataFunction(asset_name, chklist, target) {
+    const cacheKey = `${asset_name}-${chklist}-${target}`;
+    if (cachedModalData[cacheKey]) {
+      ModalData.set(cachedModalData[cacheKey]);
+      return;
+    }
+
     try {
       const response = await modalDataService(asset_name, chklist, target);
-      if (response) {
+      if (response && response.CODE) {
+        cachedModalData[cacheKey] = response.CODE;
         ModalData.set(response.CODE);
       } else {
+        ModalData.set([]); // Fallback to empty array
+        console.error("No valid modal data received.");
       }
-      console.log("traceByPlan", $ModalData);
     } catch (err) {
+      console.error("Error fetching modal data:", err.message);
       alert(`Error getting asset details: ${err.message}`);
     }
   }
@@ -86,18 +170,7 @@
       alert(`Error getting asset details: ${err.message}`);
     }
   }
-  $: console.log("comparedPlanTarget1:", $comparedPlanTarget1);
-  $: console.log("comparedPlanTarget2:", $comparedPlanTarget2);
-  $: console.log("comparedVulnsTarget1:", $comparedVulnsTarget1);
-  $: console.log("comparedVulnsTarget2:", $comparedVulnsTarget2);
-  $: console.log("selectedDataTarget1:", $selectedDataTarget1);
-  $: console.log("selectedDataTarget2:", $selectedDataTarget2);
 
-  function modalDataOpen(data) {
-    showModalProjectComparison = true;
-    selectedData = data;
-    console.log("clicked");
-  }
   SwiperCore.use([Navigation, Pagination]);
   let swiperData = [];
   for (let i = 0; i < 20; i++) {
@@ -120,55 +193,6 @@
     else return "#ff0000"; // Red
   }
 
-  let filteredAssets = [
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 12,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 1500,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 900,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-  ];
-  let selectedAsset = filteredAssets[0];
-  let recentAssets = filteredAssets.slice(-5);
   import { onMount } from "svelte";
   import {
     compareTraceByTarget,
@@ -550,7 +574,13 @@
       {#if $comparedVulnsTarget1}
         {#each $comparedVulnsTarget1 as vuln, index}
           <tbody>
-            <tr on:click={modalData(vuln)} class="clickLine">
+            <tr
+              on:click={() => {
+                handleTableClick(index, vuln);
+              }}
+              class="clickLine"
+              class:active-row={index === currentModalIndex}
+            >
               <td class="text-center line-height">{index + 1}</td>
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
@@ -605,7 +635,13 @@
       {#if $comparedVulnsTarget2}
         {#each $comparedVulnsTarget2 as vuln, index}
           <tbody>
-            <tr on:click={modalData(vuln)} class="clickLine">
+            <tr
+              on:click={() => {
+                handleTableClick2(index, vuln);
+              }}
+              class="clickLine"
+              class:active-row={index === currentModalIndex}
+            >
               <td class="text-center line-height">{index + 1}</td>
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
@@ -657,185 +693,415 @@
         }}
         on:swiper={(swiper) => console.log(swiper)}
       >
-        {#each $ModalData as modal, index}
-          <SwiperSlide>
-            <div>
-              <table>
-                <colgroup>
-                  <col style="width: 120px;" />
-                  <col />
-                </colgroup>
+        {#if secondTable}
+          {#each $comparedVulnsTarget1 as vuln, index}
+            <SwiperSlide>
+              <p class="header_title">
+                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+              </p>
+              <div>
+                <table>
+                  <colgroup>
+                    <col style="width: 120px;" />
+                    <col />
+                  </colgroup>
 
-                <!-- 점검플랜 -->
-                <tr>
-                  <th class="text-center">점검플랜</th>
-                  <td>
-                    <div class="graphCardWrap">
-                      <div class="iconCard">
-                        <article class="graphCard">
-                          <div class="contents2">
-                            <div class="text2">
-                              <ul>
-                                <li>
-                                  <span>프로젝트명 : </span>{modal.plan
-                                    .ccp_index__ccp_title || "Unknown Project"}
-                                </li>
-                                <li>
-                                  <span>점검일시 : </span>{modal.plan
-                                    .ccp_index__ccp_cdate
-                                    ? new Date(
-                                        modal.plan.ccp_index__ccp_cdate,
-                                      ).toLocaleString()
-                                    : "Unknown Date"}
-                                </li>
-                                <li>
-                                  <span>관련시스템 : </span>{modal.plan
-                                    .system_count || "No Systems"}건
-                                </li>
-                              </ul>
+                  <!-- 점검플랜 -->
+                  <tr>
+                    <th class="text-center">점검플랜</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
+                          <div class="iconCard">
+                            <article class="graphCard">
+                              <div class="contents2">
+                                <div class="text2">
+                                  <ul>
+                                    <li>
+                                      <span>프로젝트명 : </span>{modal.plan
+                                        .ccp_index__ccp_title ||
+                                        "Unknown Project"}
+                                    </li>
+                                    <li>
+                                      <span>점검일시 : </span>{modal.plan
+                                        .ccp_index__ccp_cdate
+                                        ? new Date(
+                                            modal.plan.ccp_index__ccp_cdate,
+                                          ).toLocaleString()
+                                        : "Unknown Date"}
+                                    </li>
+                                    <li>
+                                      <span>관련시스템 : </span>{modal.plan
+                                        .system_count || "No Systems"}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </article>
+                          </div>
+                        </div>
+                      </td>
+                    {/each}
+                  </tr>
+
+                  <!-- 점검이력 -->
+                  <tr>
+                    <th class="text-center">점검이력</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
+                          {#if modal.result.length > 0}
+                            {#each modal.result as res}
+                              <div class="iconCard">
+                                <article class="graphCard">
+                                  <div class="contents2">
+                                    <div class="text2">
+                                      <ul>
+                                        <li>
+                                          <span
+                                            >프로젝트명 :
+                                          </span>{res.ccr_item_result ||
+                                            "Unknown Result"}
+                                        </li>
+                                        <li>
+                                          <span>점검일시 : </span>{new Date(
+                                            res.ccr_cdate,
+                                          ).toLocaleString() || "Unknown Date"}
+                                        </li>
+                                        <li>
+                                          <span
+                                            >결과상세 :
+                                          </span>{@html res.ccr_item_status.replace(
+                                            /\n/g,
+                                            "<br/>",
+                                          ) || "No Details"}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </article>
+                              </div>
+                            {/each}
+                          {:else}
+                            <div class="graphCardWrap">
+                              <div class="iconCard">no data</div>
                             </div>
-                          </div>
-                        </article>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
+                          {/if}
+                        </div>
+                      </td>
+                    {/each}
+                  </tr>
 
-                <!-- 점검이력 -->
-                <tr>
-                  <th class="text-center">점검이력</th>
-                  <td>
-                    <div class="graphCardWrap">
-                      {#if modal.result.length > 0}
-                        {#each modal.result as res}
-                          <div class="iconCard">
-                            <article class="graphCard">
-                              <div class="contents2">
-                                <div class="text2">
-                                  <ul>
-                                    <li>
-                                      <span
-                                        >프로젝트명 :
-                                      </span>{res.ccr_item_result ||
-                                        "Unknown Result"}
-                                    </li>
-                                    <li>
-                                      <span>점검일시 : </span>{new Date(
-                                        res.ccr_cdate,
-                                      ).toLocaleString() || "Unknown Date"}
-                                    </li>
-                                    <li>
-                                      <span
-                                        >결과상세 :
-                                      </span>{@html res.ccr_item_status.replace(
-                                        /\n/g,
-                                        "<br/>",
-                                      ) || "No Details"}
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </article>
-                          </div>
-                        {/each}
-                      {:else}
+                  <!-- 조치이력 -->
+                  <tr>
+                    <th class="text-center">조치이력</th>
+                    {#each $ModalData as modal, index}
+                      <td>
                         <div class="graphCardWrap">
-                          <div class="iconCard">no data</div>
+                          {#if modal.fix_plan.length > 0}
+                            {#each modal.fix_plan as action}
+                              <div class="iconCard">
+                                <article class="graphCard">
+                                  <div class="contents2">
+                                    <div class="text2">
+                                      <ul>
+                                        <li>
+                                          <span
+                                            >조치명 :
+                                          </span>{action.action_name ||
+                                            "Unknown Action"}
+                                        </li>
+                                        <li>
+                                          <span>조치일시 : </span>{new Date(
+                                            action.action_date,
+                                          ).toLocaleString() || "Unknown Date"}
+                                        </li>
+                                        <li>
+                                          <span>결과 : </span>{action.result ||
+                                            "No Result"}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </article>
+                              </div>
+                            {/each}
+                          {:else}
+                            <div class="graphCardWrap">
+                              <div class="iconCard">no data</div>
+                            </div>
+                          {/if}
                         </div>
-                      {/if}
-                    </div>
-                  </td>
-                </tr>
+                      </td>
+                    {/each}
+                  </tr>
+                  <!-- 조치내역 -->
+                  <tr>
+                    <th class="text-center">조치내역</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
+                          {#if modal.fix_result.length > 0}
+                            {#each modal.fix_result as detail}
+                              <div class="iconCard">
+                                <article class="graphCard">
+                                  <div class="contents2">
+                                    <div class="text2">
+                                      <ul>
+                                        <li>
+                                          <span
+                                            >조치명 :
+                                          </span>{detail.fix_name ||
+                                            "Unknown Fix"}
+                                        </li>
+                                        <li>
+                                          <span>조치일시 : </span>{new Date(
+                                            detail.fix_date,
+                                          ).toLocaleString() || "Unknown Date"}
+                                        </li>
+                                        <li>
+                                          <span
+                                            >상세내용 :
+                                          </span>{detail.fix_description ||
+                                            "No Description"}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </article>
+                              </div>
+                            {/each}
+                          {:else}
+                            <div class="graphCardWrap">
+                              <div class="iconCard">no data</div>
+                            </div>
+                          {/if}
+                        </div>
+                      </td>
+                    {/each}
+                  </tr>
+                </table>
+              </div>
+            </SwiperSlide>
+          {/each}
+        {:else}
+          {#each $comparedVulnsTarget2 as vuln, index}
+            <SwiperSlide>
+              <p class="header_title">
+                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+              </p>
+              <div>
+                <table>
+                  <colgroup>
+                    <col style="width: 120px;" />
+                    <col />
+                  </colgroup>
 
-                <!-- 조치이력 -->
-                <tr>
-                  <th class="text-center">조치이력</th>
-                  <td>
-                    <div class="graphCardWrap">
-                      {#if modal.fix_plan.length > 0}
-                        {#each modal.fix_plan as action}
+                  <!-- 점검플랜 -->
+                  <tr>
+                    <th class="text-center">점검플랜</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
                           <div class="iconCard">
                             <article class="graphCard">
                               <div class="contents2">
                                 <div class="text2">
                                   <ul>
                                     <li>
-                                      <span
-                                        >조치명 :
-                                      </span>{action.action_name ||
-                                        "Unknown Action"}
+                                      <span>프로젝트명 : </span>{modal.plan
+                                        .ccp_index__ccp_title ||
+                                        "Unknown Project"}
                                     </li>
                                     <li>
-                                      <span>조치일시 : </span>{new Date(
-                                        action.action_date,
-                                      ).toLocaleString() || "Unknown Date"}
+                                      <span>점검일시 : </span>{modal.plan
+                                        .ccp_index__ccp_cdate
+                                        ? new Date(
+                                            modal.plan.ccp_index__ccp_cdate,
+                                          ).toLocaleString()
+                                        : "Unknown Date"}
                                     </li>
                                     <li>
-                                      <span>결과 : </span>{action.result ||
-                                        "No Result"}
+                                      <span>관련시스템 : </span>{modal.plan
+                                        .system_count || "No Systems"}
                                     </li>
                                   </ul>
                                 </div>
                               </div>
                             </article>
                           </div>
-                        {/each}
-                      {:else}
-                        <div class="graphCardWrap">
-                          <div class="iconCard">no data</div>
                         </div>
-                      {/if}
-                    </div>
-                  </td>
-                </tr>
-                <!-- 조치내역 -->
-                <tr>
-                  <th class="text-center">조치내역</th>
-                  <td>
-                    <div class="graphCardWrap">
-                      {#if modal.fix_result.length > 0}
-                        {#each modal.fix_result as detail}
-                          <div class="iconCard">
-                            <article class="graphCard">
-                              <div class="contents2">
-                                <div class="text2">
-                                  <ul>
-                                    <li>
-                                      <span>조치명 : </span>{detail.fix_name ||
-                                        "Unknown Fix"}
-                                    </li>
-                                    <li>
-                                      <span>조치일시 : </span>{new Date(
-                                        detail.fix_date,
-                                      ).toLocaleString() || "Unknown Date"}
-                                    </li>
-                                    <li>
-                                      <span
-                                        >상세내용 :
-                                      </span>{detail.fix_description ||
-                                        "No Description"}
-                                    </li>
-                                  </ul>
-                                </div>
+                      </td>
+                    {/each}
+                  </tr>
+
+                  <!-- 점검이력 -->
+                  <tr>
+                    <th class="text-center">점검이력</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
+                          {#if modal.result.length > 0}
+                            {#each modal.result as res}
+                              <div class="iconCard">
+                                <article class="graphCard">
+                                  <div class="contents2">
+                                    <div class="text2">
+                                      <ul>
+                                        <li>
+                                          <span
+                                            >프로젝트명 :
+                                          </span>{res.ccr_item_result ||
+                                            "Unknown Result"}
+                                        </li>
+                                        <li>
+                                          <span>점검일시 : </span>{new Date(
+                                            res.ccr_cdate,
+                                          ).toLocaleString() || "Unknown Date"}
+                                        </li>
+                                        <li>
+                                          <span
+                                            >결과상세 :
+                                          </span>{@html res.ccr_item_status.replace(
+                                            /\n/g,
+                                            "<br/>",
+                                          ) || "No Details"}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </article>
                               </div>
-                            </article>
-                          </div>
-                        {/each}
-                      {:else}
-                        <div class="graphCardWrap">
-                          <div class="iconCard">no data</div>
+                            {/each}
+                          {:else}
+                            <div class="graphCardWrap">
+                              <div class="iconCard">no data</div>
+                            </div>
+                          {/if}
                         </div>
-                      {/if}
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </SwiperSlide>
-        {/each}
+                      </td>
+                    {/each}
+                  </tr>
+
+                  <!-- 조치이력 -->
+                  <tr>
+                    <th class="text-center">조치이력</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
+                          {#if modal.fix_plan.length > 0}
+                            {#each modal.fix_plan as action}
+                              <div class="iconCard">
+                                <article class="graphCard">
+                                  <div class="contents2">
+                                    <div class="text2">
+                                      <ul>
+                                        <li>
+                                          <span
+                                            >조치명 :
+                                          </span>{action.action_name ||
+                                            "Unknown Action"}
+                                        </li>
+                                        <li>
+                                          <span>조치일시 : </span>{new Date(
+                                            action.action_date,
+                                          ).toLocaleString() || "Unknown Date"}
+                                        </li>
+                                        <li>
+                                          <span>결과 : </span>{action.result ||
+                                            "No Result"}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </article>
+                              </div>
+                            {/each}
+                          {:else}
+                            <div class="graphCardWrap">
+                              <div class="iconCard">no data</div>
+                            </div>
+                          {/if}
+                        </div>
+                      </td>
+                    {/each}
+                  </tr>
+                  <!-- 조치내역 -->
+                  <tr>
+                    <th class="text-center">조치내역</th>
+                    {#each $ModalData as modal, index}
+                      <td>
+                        <div class="graphCardWrap">
+                          {#if modal.fix_result.length > 0}
+                            {#each modal.fix_result as detail}
+                              <div class="iconCard">
+                                <article class="graphCard">
+                                  <div class="contents2">
+                                    <div class="text2">
+                                      <ul>
+                                        <li>
+                                          <span
+                                            >조치명 :
+                                          </span>{detail.fix_name ||
+                                            "Unknown Fix"}
+                                        </li>
+                                        <li>
+                                          <span>조치일시 : </span>{new Date(
+                                            detail.fix_date,
+                                          ).toLocaleString() || "Unknown Date"}
+                                        </li>
+                                        <li>
+                                          <span
+                                            >상세내용 :
+                                          </span>{detail.fix_description ||
+                                            "No Description"}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </article>
+                              </div>
+                            {/each}
+                          {:else}
+                            <div class="graphCardWrap">
+                              <div class="iconCard">no data</div>
+                            </div>
+                          {/if}
+                        </div>
+                      </td>
+                    {/each}
+                  </tr>
+                </table>
+              </div>
+            </SwiperSlide>
+          {/each}
+        {/if}
       </Swiper>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
+      {#if secondTable}
+        <div
+          on:click={handlePrev2}
+          class="swiper-button-prev"
+          class:disabled={currentModalIndex === 0}
+        ></div>
+        <div
+          on:click={handleNext2}
+          class="swiper-button-next"
+          class:disabled={currentModalIndex ===
+            $comparedVulnsTarget2.length - 1}
+        ></div>
+      {:else}
+        <div
+          on:click={handlePrev}
+          class="swiper-button-prev"
+          class:disabled={currentModalIndex === 0}
+        ></div>
+        <div
+          on:click={handleNext}
+          class="swiper-button-next"
+          class:disabled={currentModalIndex ===
+            $comparedVulnsTarget1.length - 1}
+        ></div>
+      {/if}
       <div style="display: flex; width:100%; justify-content:center">
         <button
           class="btn modify-btn"
@@ -847,6 +1113,15 @@
 {/if}
 
 <style>
+  .modal-open-wrap table ul {
+    width: 270px;
+  }
+  .modal-open-wrap .iconCard {
+    width: 280px;
+  }
+  .active-row {
+    background-color: rgba(242, 242, 242, 1);
+  }
   .first_select {
     display: flex;
     flex-direction: row;
@@ -963,7 +1238,7 @@
 
   .modal-open-wrap th,
   .modal-open-wrap td {
-    padding: 15px;
+    padding: 5px;
     text-align: left;
     vertical-align: top;
   }

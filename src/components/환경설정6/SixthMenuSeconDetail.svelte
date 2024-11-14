@@ -133,39 +133,21 @@
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
-        <col style="width:5%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
+        <col style="width:60%;" />
+        <col style="width:40%;" />
       </colgroup>
       <thead>
         <tr>
-          <th class="text-center" style="font-size: 16px;">순번</th>
           <th class="text-center" style="font-size: 16px;">용도</th>
-          <th class="text-center" style="font-size: 16px;">버전</th>
-          <th class="text-center" style="font-size: 16px;">파일명</th>
-          <th class="text-center" style="font-size: 16px;">비고</th>
+          <th class="text-center" style="font-size: 16px;">업로드</th>
         </tr>
       </thead>
       <tbody>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         {#each dataArray as data, index}
           <tr>
-            <td class="text-center" style="font-size: 16px;">{index + 1}</td>
             <td style="font-size: 16px;" class="cursor-pointer text-center">
               {data.hostname}
-            </td>
-            <td style="font-size: 16px;" class="text-center line-height">
-              {data.itemTitle}
-            </td>
-            <td
-              class="text-center cursor-pointer line-height"
-              style="font-size: 16px;"
-            >
-              <div class="line-height">
-                {data.itemCriteria}
-              </div>
             </td>
             <td
               style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
@@ -264,9 +246,6 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
-  }
-  .line-height {
-    line-height: 23px;
   }
 
   .btn_dean {

@@ -10,6 +10,7 @@
   async function getUserListsData() {
     try {
       const response = await getUserLists();
+
       if (response?.RESULT === "OK") {
         projectArray = response.CODE.map((user) => ({
           hostname: user.user_name,

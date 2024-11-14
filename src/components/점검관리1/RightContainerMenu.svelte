@@ -12,6 +12,7 @@
   export let projectIndex;
   let currentPage = null;
   export let tabMenu = null;
+  export let dataRefetch;
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -88,7 +89,7 @@
   {#if tabMenu !== "no"}
     <svelte:component this={currentPage} bind:projectIndex {plan_index} />
   {:else}
-    <ProjectDetail {projectIndex} />
+    <ProjectDetail {projectIndex} {dataRefetch} />
   {/if}
 </div>
 

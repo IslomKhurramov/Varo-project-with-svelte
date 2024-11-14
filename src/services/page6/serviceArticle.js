@@ -54,7 +54,7 @@ export const setSystemBasicSetup = async ({
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////// 공지사항 and 사용자관리 API request part ///////////////////////////////////////
+////////////////////////// 공지사항 and 자료실 API request part ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 export const getAllArticles = async ({ page, limit, category }) => {
   try {
@@ -177,3 +177,75 @@ export const deleteArticle = async ({ art_index }) => {
     throw error;
   }
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////// 사용자관리 API request part ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const getUserLists = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getUserLists/`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setPasswordUpdate = async ({
+  user_index,
+  user_curr_pass,
+  user_new_pass1,
+  user_new_pass2,
+}) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setPasswordUpdate/`,
+      {
+        user_index,
+        user_curr_pass,
+        user_new_pass1,
+        user_new_pass2,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+// export const register = async (name, email, password, department) => {
+//   try {
+//     const response = await axios.post(
+//       `${serverApi}/api/setRegisterNewMember/`,
+//       {
+//         user_email: email,
+//         user_pw: password,
+//         user_name: name,
+//         user_depart: department,
+//         user_rolltype: 1,
+//       },
+//       { withCredentials: true },
+//     );
+//     const data = response.data;
+
+//     if (data.RESULT !== "ERROR") {
+//       return data;
+//     } else {
+//       throw new Error(data.CODE);
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// };

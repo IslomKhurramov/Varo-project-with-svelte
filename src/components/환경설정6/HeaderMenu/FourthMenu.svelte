@@ -1,86 +1,81 @@
 <script>
-  import { navigate } from "svelte-routing";
+  import FourthMenuDetail from "../FourthMenuDetail.svelte";
+  import { getUserLists } from "../../../services/page6/serviceArticle";
+  import { onMount } from "svelte";
 
-  let dataArray = [
-    {
-      hostname: "Host1",
-      itemNo: "Item001",
-      itemTitle: "Title1",
-      itemCriteria: "Criteria1",
-      itemStatus: "Status1",
-      itemResult: "양호",
-    },
-    {
-      hostname: "Host2",
-      itemNo: "Item002",
-      itemTitle: "Title2",
-      itemCriteria: "Criteria2",
-      itemStatus: "Status2",
-      itemResult: "취약",
-    },
-    {
-      hostname: "Host3",
-      itemNo: "Item003",
-      itemTitle: "Title3",
-      itemCriteria: "Criteria3",
-      itemStatus: "Status3",
-      itemResult: "예외처리",
-    },
-    {
-      hostname: "Host4",
-      itemNo: "Item004",
-      itemTitle: "Title4",
-      itemCriteria: "Criteria4",
-      itemStatus: "Status4",
-      itemResult: "해당없음",
-    },
-    {
-      hostname: "Host5",
-      itemNo: "Item005",
-      itemTitle: "Title5",
-      itemCriteria: "Criteria5",
-      itemStatus: "Status5",
-      itemResult: "양호",
-    },
-  ];
+  let error = null;
+  let selectedData = null;
+  let projectArray = [];
 
-  function goToDetail(itemNo) {
-    // Sahifani itemNo parametri bilan ochish
-    navigate(`/page6/${itemNo}`);
+  async function getUserListsData() {
+    try {
+      const response = await getUserLists();
+      if (response?.RESULT === "OK") {
+        projectArray = response.CODE.map((user) => ({
+          hostname: user.user_name,
+          itemTitle: user.user_email,
+          itemCriteria: user.user_depart,
+          itemStatus: user.user_roletype__role_type,
+          itemResult: user.user_activate ? "활성" : "비활성",
+          user_index: user.user_index,
+        }));
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
+    }
+  }
+
+  onMount(() => {
+    getUserListsData();
+  });
+
+  function handleRowClick(data) {
+    selectedData = data;
   }
 </script>
 
-<section class="tableWrap" style="height: calc(-100px + 100vh);">
-  <div class="tableListWrap">
-    <table class="tableList hdBorder">
-      <colgroup>
-        <col style="width:3%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="text-center" style="font-size: 16px;">순번</th>
-          <th class="text-center" style="font-size: 16px;">이메일</th>
-          <th class="text-center" style="font-size: 16px;">이름</th>
-          <th class="text-center" style="font-size: 16px;">유저권한</th>
-          <th class="text-center" style="font-size: 16px;">부서</th>
-          <th class="text-center" style="font-size: 16px;">연락처</th>
-          <th class="text-center" style="font-size: 16px;">비밀번호관리</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#if dataArray && dataArray?.length !== 0}
-          {#each dataArray as data, index}
+{#if selectedData}
+  <FourthMenuDetail
+    {selectedData}
+    on:close={() => {
+      selectedData = null;
+      getUserListsData();
+    }}
+  />
+{:else}
+  <section class="tableWrap">
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:3%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+          <col style="width:14%;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center" style="font-size: 16px;">순번</th>
+            <th class="text-center" style="font-size: 16px;">이름 </th>
+            <th class="text-center" style="font-size: 16px;">이메일</th>
+            <th class="text-center" style="font-size: 16px;">유저권한</th>
+            <th class="text-center" style="font-size: 16px;">상태</th>
+            <th class="text-center" style="font-size: 16px;">결과</th>
+            <th class="text-center" style="font-size: 16px;">비밀번호관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each projectArray as data, index}
             <tr
-              on:click={() => goToDetail(data.itemNo)}
+              on:click={() => {
+                handleRowClick(data);
+              }}
               style="cursor: pointer;"
             >
-              <td class="text-center" style="font-size: 16px;">{index + 1}</td>
+              <td class="text-center" style="font-size: 16px;"> {index + 1}</td>
               <td style="font-size: 16px;" class="cursor-pointer text-center">
                 {data.hostname}
               </td>
@@ -102,24 +97,26 @@
                 {data.itemStatus}
               </td>
               <td class="text-center" style="font-size: 16px;">
-                <span class="">
-                  {data.itemResult}
-                </span>
+                <span class="">{data.itemResult}</span>
               </td>
               <td
                 style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
               >
-                <div>
+                <div
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
                   <span class="badge badgePrimary"> 비밀번호초기화 </span>
                 </div>
               </td>
             </tr>
           {/each}
-        {/if}
-      </tbody>
-    </table>
-  </div>
-</section>
+        </tbody>
+      </table>
+    </div>
+  </section>
+{/if}
 
 <style>
   * {
@@ -128,6 +125,14 @@
 
   .tableWrap {
     background-color: #fff;
+    height: 85vh;
+    border-radius: 5px;
+  }
+
+  .tableListWrap {
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: 50px;
   }
 
   thead {

@@ -17,11 +17,7 @@
           itemCriteria: user.user_depart,
           itemStatus: user.user_roletype__role_type,
           itemResult: user.user_activate ? "활성" : "비활성",
-<<<<<<< HEAD
           user_index: user.user_index,
-=======
-          user_index: user.user_index, // user_index ni map ichida saqlaymiz
->>>>>>> cd9ee2e7b619f3f75373621c402c3f449461da47
         }));
       }
     } catch (err) {
@@ -36,11 +32,6 @@
 
   function handleRowClick(data) {
     selectedData = data;
-<<<<<<< HEAD
-=======
-    console.log("Selected Data:", selectedData); // selectedData tarkibini tekshirish
-    console.log("Selected user_index:", selectedData.user_index); // user_index mavjudligini tekshirish
->>>>>>> cd9ee2e7b619f3f75373621c402c3f449461da47
   }
 </script>
 

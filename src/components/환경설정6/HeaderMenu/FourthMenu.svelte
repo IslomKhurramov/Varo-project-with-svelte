@@ -4,9 +4,7 @@
   import { onMount } from "svelte";
 
   let error = null;
-
   let selectedData = null;
-
   let projectArray = [];
 
   async function getUserListsData() {
@@ -19,6 +17,7 @@
           itemCriteria: user.user_depart,
           itemStatus: user.user_roletype__role_type,
           itemResult: user.user_activate ? "활성" : "비활성",
+          user_index: user.user_index, // user_index ni map ichida saqlaymiz
         }));
         console.log("getUser", projectArray);
       }
@@ -34,7 +33,8 @@
 
   function handleRowClick(data) {
     selectedData = data;
-    console.log("Selected Data:", selectedData);
+    console.log("Selected Data:", selectedData); // selectedData tarkibini tekshirish
+    console.log("Selected user_index:", selectedData.user_index); // user_index mavjudligini tekshirish
   }
 </script>
 
@@ -100,9 +100,7 @@
                 {data.itemStatus}
               </td>
               <td class="text-center" style="font-size: 16px;">
-                <span class="">
-                  {data.itemResult}
-                </span>
+                <span class="">{data.itemResult}</span>
               </td>
               <td
                 style="font-size: 16px; display: flex; justify-content: center; align-items: center;"

@@ -1,8 +1,9 @@
 <script>
+  export let projectIndex;
+  export let selectedData;
   import FourtMenuInformation from "./FourtMenuInformation.svelte";
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
 
-  export let projectIndex;
   let currentPage = FourtMenuInformation;
   let tabMenu = "사용자관리";
   let setView = "plan";
@@ -49,7 +50,7 @@
   </section>
 
   {#if currentPage}
-    <svelte:component this={currentPage} bind:projectIndex />
+    <svelte:component this={currentPage} bind:projectIndex bind:selectedData />
   {/if}
 </div>
 

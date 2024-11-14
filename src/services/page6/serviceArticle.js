@@ -192,3 +192,60 @@ export const getUserLists = async () => {
     throw error;
   }
 };
+
+export const setPasswordUpdate = async ({
+  user_index,
+  user_curr_pass,
+  user_new_pass1,
+  user_new_pass2,
+}) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setPasswordUpdate/`,
+      {
+        user_index,
+        user_curr_pass,
+        user_new_pass1,
+        user_new_pass2,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+// export const register = async (name, email, password, department) => {
+//   try {
+//     const response = await axios.post(
+//       `${serverApi}/api/setRegisterNewMember/`,
+//       {
+//         user_email: email,
+//         user_pw: password,
+//         user_name: name,
+//         user_depart: department,
+//         user_rolltype: 1,
+//       },
+//       { withCredentials: true },
+//     );
+//     const data = response.data;
+
+//     if (data.RESULT !== "ERROR") {
+//       return data;
+//     } else {
+//       throw new Error(data.CODE);
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// };

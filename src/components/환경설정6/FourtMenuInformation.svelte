@@ -13,11 +13,21 @@
 
   async function handleEdit() {
     try {
+<<<<<<< HEAD
       if (!selectedData || !selectedData.user_index) {
         await errorAlert("죄송합니다, 비밀번호를 변경할 수 없습니다.");
         return;
       }
 
+=======
+      // selectedData mavjudligini tekshirish
+      if (!selectedData || !selectedData.user_index) {
+        await errorAlert("Uzur, parolni o'zgartira olmaysiz.");
+        return;
+      }
+
+      // Parolni yangilash uchun API chaqiruvini amalga oshirish
+>>>>>>> cd9ee2e7b619f3f75373621c402c3f449461da47
       const response = await setPasswordUpdate({
         user_index: selectedData.user_index,
         user_curr_pass: currentPassword,
@@ -25,6 +35,10 @@
         user_new_pass2: newPassword2,
       });
 
+<<<<<<< HEAD
+=======
+      // Backend javobini tekshirish va mos ravishda xabar chiqarish
+>>>>>>> cd9ee2e7b619f3f75373621c402c3f449461da47
       if (
         response.CODE ===
         "기존 비밀번호가 일치하지 않습니다.The password does not match the supplied hash"
@@ -33,8 +47,14 @@
       } else if (response.CODE === "비밀번호를 업데이트하였습니다.") {
         await successAlert(response.CODE);
 
+<<<<<<< HEAD
         selectedData = null;
         dispatch("close");
+=======
+        // selectedData ni null ga tenglab va "close" voqeasini yuborish
+        selectedData = null;
+        dispatch("close"); // bu voqeani yuqori darajadagi komponentga yuboradi
+>>>>>>> cd9ee2e7b619f3f75373621c402c3f449461da47
       }
     } catch (err) {
       error = err.message;

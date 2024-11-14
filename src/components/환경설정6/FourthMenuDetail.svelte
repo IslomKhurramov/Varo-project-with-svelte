@@ -4,6 +4,12 @@
   import FourtMenuInformation from "./FourtMenuInformation.svelte";
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
 
+<<<<<<< HEAD
+=======
+  export let selectedData;
+  export let projectIndex;
+
+>>>>>>> cd9ee2e7b619f3f75373621c402c3f449461da47
   let currentPage = FourtMenuInformation;
   let tabMenu = "사용자관리";
   let setView = "plan";

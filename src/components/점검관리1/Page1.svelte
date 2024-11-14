@@ -2,234 +2,233 @@
   import RightContainerMenu from "./RightContainerMenu.svelte";
   import AddPorject from "../AddPorject.svelte";
   import RightConainer from "../RightConainer.svelte";
+  import { onMount } from "svelte";
+  import { getAllPlanLists } from "../../services/page1/planInfoService";
+  import { setDeletePlan } from "../../services/page1/newInspection";
+  import { userData } from "../../stores/user.store";
+  import Tooltip from "../../shared/Tooltip.svelte";
+  import {
+    confirmDelete,
+    confirmSureDelete,
+    errorAlert,
+  } from "../../shared/sweetAlert";
+  import { navigate } from "svelte-routing";
+  import { decryptData } from "../../services/login/loginService";
 
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
-  let projects = ["프로젝트 1"];
+  let projectData = {};
+  let projectArray = [];
+  let loading = true;
+  let error = null;
+  let selectedProjectIndex = null;
+  let tabMenu = null;
 
-  const selectPage = (page, menu) => {
-    currentPage = page;
-    activeMenu = menu;
-    currentView = "pageView"; // Switch the view to indicate a specific page is selected
-  };
-
-  const addProject = () => {
-    const newProjectNumber = projects.length + 1;
-    projects = [...projects, `프로젝트 ${newProjectNumber}`];
-  };
-
-  const deleteProject = () => {
-    if (projects.length > 0) {
-      projects = projects.slice(0, -1); // Remove the last project
+  onMount(async () => {
+    try {
+      loading = true;
+      projectData = await getAllPlanLists();
+      projectArray = Object.values(projectData); // Convert object to array
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
+    } finally {
+      loading = false;
     }
+  });
+
+  /**********************************/
+
+  const selectPage = (page, project) => {
+    currentPage = page;
+    activeMenu = project.ccp_index;
+    currentView = "pageView";
+    selectedProjectIndex = project.ccp_index;
+    tabMenu = "no";
+  };
+
+  const deleteProject = async () => {
+    try {
+      const confirm = await confirmDelete();
+      if (confirm) {
+        await setDeletePlan(selectedProjectIndex);
+        navigate(window.location?.pathname == "/" ? "/page1" : "/");
+      }
+    } catch (err) {}
   };
 </script>
 
-<div div class="container">
-  <div class="container_aside">
-    <aside>
-      <div class="add_delete_container">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button
-          on:click="{() => selectPage(AddPorject, 'add')}"
-          class="menu_button">신규점검</button
-        >
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="menu_button">이력삭제</button>
-      </div>
-
-      {#each projects as asset, index}
-        <div class="chasanGroup_button">
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          <!-- svelte-ignore missing-declaration -->
-          <a
-            href="javascript:void(0)"
-            on:click="{() => selectPage(RightContainerMenu, asset)}"
-            class="{activeMenu === asset ? 'active' : ''}"
-          >
-            <i class="fa fa-user-o" aria-hidden="true"></i>
-            {asset}
-          </a>
-        </div>
-      {/each}
-
-      <div class="social">
-        <a
-          href="https://www.linkedin.com/in/florin-cornea-b5118057/"
-          target="_blank"
-        >
-          <i class="fa fa-linkedin"></i>
-        </a>
-      </div>
-    </aside>
+{#if loading}
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
   </div>
-  <div class="right_menu">
-    {#if currentView === "default"}
-      <RightConainer />
-    {:else if currentPage}
-      <svelte:component this="{currentPage}" />
-    {/if}
-  </div>
-</div>
+{/if}
+
+<section>
+  <article class="sideMenu" style="height: calc(100vh - 134px);">
+    <div class="btnWrap">
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <a
+        class={`btn btnPrimary ${activeMenu == "add" ? "buttonActive" : ""}`}
+        on:click={() => selectPage(AddPorject, "add")}
+      >
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <img src="./assets/images/icon/add.svg" />
+        신규점검
+      </a>
+      <button
+        type="button"
+        class="btn btnRed"
+        on:click={deleteProject}
+        disabled={!selectedProjectIndex}
+      >
+        <img src="./assets/images/icon/delete.svg" />
+        점검삭제
+      </button>
+    </div>
+    <ul
+      class="prMenuList"
+      style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
+    >
+      {#if projectArray && projectArray?.length !== 0}
+        {#each projectArray as project, index}
+          <li class={activeMenu === project.ccp_index ? "active" : ""}>
+            <a
+              href="javascript:void(0)"
+              on:click={() => selectPage(RightContainerMenu, project)}
+              title={project.ccp_title}
+            >
+              <span
+                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+              >
+                {project.ccp_title}
+              </span>
+              <span class="tooltip">{project.ccp_title}</span>
+              <span class="arrowIcon"></span></a
+            >
+            {#if activeMenu === project.ccp_index && project?.plan_execution_type == true}
+              <ul class="submenu" style="background: none;padding-left: 10px;">
+                {#each Array.from({ length: project.plan_execute_interval_value }, (_, i) => i + 1) as data}
+                  <li class="active">
+                    <a
+                      href="javascript:void(0);"
+                      style="background: none; color: #9197b3;font-size: 14px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                      >- {project.ccp_title} {data}차</a
+                    >
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </li>
+        {/each}
+      {/if}
+    </ul>
+  </article>
+
+  {#if currentView === "default"}
+    <RightConainer selectPageMain={selectPage} bind:activeMenu />
+  {:else if currentPage}
+    <svelte:component
+      this={currentPage}
+      projectIndex={selectedProjectIndex}
+      {currentPage}
+      bind:tabMenu
+    />
+  {/if}
+</section>
 
 <style>
-  .mainMenuButton {
-    width: auto;
-    font-size: 12px;
-    width: 70px;
-
-    cursor: pointer;
-    background-color: #2c3e50;
+  .submenu {
+    display: block;
+    background-color: #f7fafc;
+    padding-left: 50px;
+  }
+  .submenu .active a {
+    color: #0067ff;
+    display: block;
+    font-size: 14px;
+    padding: 10px 12px;
+    font-weight: 400;
+  }
+  .buttonActive {
+    background-color: #0067ff;
     color: #fff;
-    border: none;
+    transition-duration: 0.2s;
   }
-  .mainMenuButton:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
+  .buttonActive img {
+    filter: brightness(0) invert(1);
   }
 
-  .container_aside {
-    min-height: 100vh;
-    background-color: #2c3e50;
-    padding: 10px;
+  a {
+    position: relative;
   }
-  aside {
+  .btn:hover {
     color: #fff;
-    width: 170px;
+    background-color: #0067ff;
+  }
+
+  /* Tooltip styling */
+  .tooltip {
+    visibility: hidden; /* Hidden by default */
+    width: 87%; /* Width of the tooltip */
+    background-color: rgba(0, 0, 0, 0.7); /* Background color of the tooltip */
+    color: #fff; /* Text color */
+    text-align: center; /* Center text */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px; /* Padding inside tooltip */
+    position: absolute; /* Absolute positioning */
+    z-index: 1; /* On top of other elements */
+    bottom: 125%; /* Position above the button */
+    opacity: 0; /* Initial opacity */
+    transition: opacity 0.2s ease; /* Transition effect */
+    z-index: 9999 !important;
+  }
+
+  /* Show the tooltip on hover */
+  a:hover .tooltip {
+    visibility: visible; /* Show tooltip */
+    opacity: 1; /* Fade in the tooltip */
+  }
+
+  * {
     font-size: 16px;
   }
 
-  .add_delete_container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+  .btn:hover img {
+    filter: brightness(0) invert(1);
   }
 
-  .chasanGroup_button {
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(167, 167, 167, 0.6);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    justify-content: center;
+    z-index: 1000; /* Ensure it sits above other content */
   }
 
-  /* Sidebar Links */
-  aside a {
-    font-size: 14px;
-    color: #fff;
-    display: block;
-    /* padding: 12px 10px; */
-    font-weight: 600;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+  .loading-spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
   }
 
-  aside a:hover,
-  aside a.active {
-    margin-top: 3px;
-    text-decoration: underline;
-  }
-
-  aside a i {
-    margin-right: 5px;
-  }
-
-  /* Sidebar Hover Effects */
-  aside a:hover::after,
-  aside a:hover::before {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    height: 35px;
-    width: 35px;
-  }
-
-  /* Buttons */
-  .menu_button {
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    background-color: #2c3e50;
-    color: #fff;
-  }
-
-  .menu_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-
-  .social {
-    margin-top: 20px;
-  }
-
-  .social a {
-    display: inline-block;
-    color: #fff;
-    font-size: 18px;
-    margin-right: 10px;
-    transition: color 0.3s ease;
-  }
-
-  .social a:hover {
-    color: #0077b5;
-  }
-  aside a {
-    font-size: 16px;
-    color: #fff;
-    display: block;
-    padding: 12px 10px;
-    font-weight: 600;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  aside a:hover {
-    margin-top: 3px;
-    text-decoration: underline;
-  }
-  aside a:hover,
-  aside a.active {
-    text-decoration: underline;
-    margin-top: 3px;
-  }
-
-  aside a i {
-    margin-right: 5px;
-  }
-
-  aside a:hover::after {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    bottom: 100%;
-    right: 0;
-    height: 35px;
-    width: 35px;
-    /* border-bottom-right-radius: 18px; */
-    box-shadow: 0 20px 0 0 #fff;
-  }
-
-  aside a:hover::before {
-    content: "";
-    position: absolute;
-    background-color: transparent;
-    top: 38px;
-    right: 0;
-    height: 35px;
-    width: 35px;
-    /* border-top-right-radius: 18px; */
-    box-shadow: 0 -20px 0 0 #fff;
-  }
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-  }
-
-  .right_menu {
-    width: 100%;
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

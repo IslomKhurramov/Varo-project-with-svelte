@@ -1,0 +1,243 @@
+/* LOGIN JOIN BG */
+.memberWrap {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: url("../assets/images/login_bg.png");
+  align-items: center;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.copyright {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+/* LOGIN */
+
+.loginWrap > section {
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #fff;
+  padding: 60px 40px 60px 40px;
+}
+.loginWrap > section > h1,
+.loginWrap > section > div:not(.joinSummary) {
+  margin-bottom: 30px;
+}
+.loginWrap > section > h1 {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.loginWrap h1 img {
+  margin: 0 auto 30px;
+}
+.loginWrap .joinSummary {
+  font-size: 14px;
+  font-weight: 400;
+  color: #8a929d;
+}
+.loginWrap .joinSummary span {
+  font-weight: 700;
+  color: #0067ff;
+}
+.loginWrap .joinSummary span a {
+  text-decoration: underline;
+  color: #0067ff;
+}
+
+.loginWrap .formControl {
+  text-align: left;
+  margin-bottom: 20px;
+}
+.loginWrap .formControl input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+}
+.loginWrap .formControl input::placeholder {
+  color: #8a929d;
+}
+.loginWrap .formControl label {
+  display: block;
+  color: #101010;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.loginWrap .findIdPw {
+  text-align: right;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.loginWrap .findIdPw a {
+  display: block;
+  color: #8a929d;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.memberWrap .btn {
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: center;
+  display: block;
+  background-color: #0067ff;
+}
+.memberWrap .loginBtn {
+  color: #fff;
+}
+.memberWrap .loginBtn.active {
+  background-color: #0067ff;
+}
+
+/* JOIN */
+.joinWrap > section {
+  max-width: 720px;
+  width: 100%;
+  margin: 70px auto 100px;
+  text-align: center;
+}
+.joinWrap > section > article {
+  background-color: #fff;
+  padding: 40px 60px;
+  border-radius: 3px;
+  border: 1px solid #c0ccda;
+}
+
+.joinWrap h1 {
+  margin-bottom: 20px;
+}
+.joinWrap h1 img {
+  margin: 0 auto;
+}
+.joinWrap h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4a4a4a;
+  margin-bottom: 20px;
+}
+.joinWrap label.required::after {
+  content: "*";
+  color: #fa2222;
+  display: inline-block;
+  margin-left: 2px;
+}
+.joinWrap input::placeholder {
+  color: #7b92ae;
+}
+.joinWrap input,
+.joinWrap select {
+  color: #4a4a4a;
+  border: 1px solid #c0ccda;
+  font-size: 16px;
+  font-weight: 400;
+}
+.joinWrap .formControl {
+  text-align: left;
+}
+.joinWrap .formControl label,
+.joinWrap .formControl input {
+  width: 100%;
+}
+.joinWrap .formControlWrap {
+  margin-bottom: 20px;
+  display: flex;
+  flex-flow: row;
+}
+.joinWrap .formControl label {
+  display: block;
+  font-family: "SUIT Variable", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.joinWrap .formControlWrap.col1 .formControl {
+  width: 100%;
+}
+.joinWrap .formControlWrap.col2 {
+  gap: 20px;
+}
+.joinWrap .formControlWrap.col2 .formControl {
+  width: 50%;
+}
+.joinWrap .phone {
+  gap: 20px;
+}
+.joinWrap select {
+  width: 120px;
+}
+.joinWrap .btnWrap {
+  display: flex;
+  flex-flow: row;
+  gap: 20px;
+}
+.joinWrap .btnWrap .btnDefault {
+  border-color: #c0ccda;
+  color: #485465;
+  width: 60%;
+}
+.joinWrap .btnWrap .btnGray:hover {
+  background-color: #528eff;
+}
+
+.error {
+  margin-top: 20px;
+  color: red;
+}
+
+@media screen and (max-width: 720px) {
+  .memberWrap {
+    background-size: cover;
+  }
+  .memberWrap h1 img {
+    max-width: 102px;
+  }
+  .loginWrap > section,
+  .joinWrap > section {
+    width: 90%;
+  }
+
+  .loginWrap .formControl {
+    height: 54px;
+  }
+  .loginWrap .formControl label span,
+  .loginWrap input,
+  .joinWrap .formControl input {
+    font-size: 15px;
+  }
+  .copyright {
+    position: inherit;
+  }
+
+  .joinWrap {
+    flex-flow: column;
+  }
+  .joinWrap > section > article {
+    padding: 20px 15px;
+  }
+
+  .joinWrap .formControlWrap.col2 {
+    flex-flow: column;
+  }
+  .joinWrap .formControlWrap.col2 .formControl {
+    width: 100%;
+  }
+  .joinWrap .formControl label {
+    font-size: 14px;
+  }
+}

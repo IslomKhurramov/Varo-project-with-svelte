@@ -1,93 +1,199 @@
 <script>
-  export let performanceLog = [];
+  import { getPlanLists } from "../../../services/page1/newInspection";
+  import {
+    getAuditNLog,
+    getPlanFilter,
+  } from "../../../services/logs/logsService";
+  import moment from "moment";
+  import { onMount } from "svelte";
+  import Tooltip from "../../../shared/Tooltip.svelte";
+  import { errorAlert } from "../../../shared/sweetAlert";
 
-  for (let i = 1; i <= 100; i++) {
-    performanceLog.push({
-      number: i.toString(),
-      projectNO: `프로젝트${i}`,
-      assetName: "AAAAAA",
-      cassification: "ERROR-099",
-      logContent: "실행과정에서 에러발생 : SDFSDFSDFSDFSDFSDF",
-      performer: "길동이",
-      date: "2024-12-11 11:21:12",
-      note: "",
-    });
+  export let projectIndex;
+
+  let projects;
+  let searchFilters;
+  let logData = null;
+  let search = {
+    plan_index: "",
+    asset_name: "",
+    order_user: "",
+    search_start_date: "",
+    search_end_date: "",
+    his_type: "plan",
+  };
+
+  onMount(async () => {
+    try {
+      searchFilters = await getPlanFilter();
+      await searchDataHandler();
+    } catch (err) {
+      await errorAlert(err?.message);
+    }
+  });
+
+  const searchDataHandler = async () => {
+    logData = await getAuditNLog(search);
+  };
+
+  const resetFilters = async () => {
+    search = {
+      plan_index: projectIndex,
+      asset_name: "",
+      order_user: "",
+      search_start_date: "",
+      search_end_date: "",
+    };
+    await searchDataHandler();
+  };
+
+  $: {
+    if (projectIndex && !logData) {
+      search = { ...search, plan_index: projectIndex };
+      searchDataHandler();
+    }
   }
 </script>
 
-<main>
-  <table>
-    <tr class="first_line">
-      <th>순번</th>
-      <th>프로젝트NO</th>
-      <th>자산명</th>
-      <th>분류코드</th>
-      <th>로그내용</th>
-      <th>수행자</th>
-      <th>날짜</th>
-      <th>비고</th>
-    </tr>
-    {#each performanceLog as asset}
-      <tr>
-        <td>{asset.number}</td>
-        <td>{asset.projectNO}</td>
-        <td>{asset.assetName}</td>
-        <td>{asset.cassification}</td>
-        <td>{asset.logContent}</td>
-        <td>{asset.performer}</td>
-        <td>{asset.date}</td>
-        <td>{asset.note}</td>
-      </tr>
-    {/each}
-  </table>
-</main>
+<article class="contentArea">
+  <section class="filterWrap">
+    <div>
+      <select
+        id="project"
+        bind:value={search.plan_index}
+        on:change={searchDataHandler}
+      >
+        <option value="" selected>전체</option>
+
+        {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
+          {#each searchFilters?.plans as plan}
+            <option value={plan.ccp_index}>{plan.ccp_title}</option>
+          {/each}
+        {/if}
+      </select>
+      <select
+        id="target"
+        bind:value={search.order_user}
+        on:change={searchDataHandler}
+      >
+        <option value="" selected>수행자</option>
+        {#if searchFilters?.users && searchFilters?.users?.length !== 0}
+          {#each searchFilters?.users as user}
+            <option value={user.user_name}>{user.user_name}</option>
+          {/each}
+        {/if}
+      </select>
+      <div class="dateWrap">
+        <div class="date">
+          <input
+            type="date"
+            class="datepicker"
+            placeholder="시작일시"
+            bind:value={search.search_start_date}
+            on:change={searchDataHandler}
+          />
+        </div>
+        <img src="./assets/images/icon/dash.svg" />
+        <div class="date">
+          <input
+            type="date"
+            class="datepicker"
+            placeholder="종료일시"
+            bind:value={search.search_end_date}
+            on:change={searchDataHandler}
+          />
+        </div>
+      </div>
+      <button type="button" class="btn btnPrimary" on:click={resetFilters}>
+        <img src="./assets/images/reset.png" alt="search" />
+        초기화
+      </button>
+    </div>
+  </section>
+  <section
+    class="tableWrap"
+    style="height: calc(-294px + 100vh); overflow: auto;"
+  >
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center">번호</th>
+            <th class="text-center">프로젝트명</th>
+            <th class="text-center">자산명</th>
+            <th class="text-center">분류코드</th>
+            <th class="text-center">로그내용</th>
+            <th class="text-center">수행자</th>
+            <th class="text-center">날짜</th>
+            <th class="text-center">비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#if logData && logData.length !== 0}
+            {#each logData as data, index}
+              <tr>
+                <td class="text-center" style="font-size: 16px;">{index + 1}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.ccp_index}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.ast_uuid}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_type}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_orig_data}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_order_user}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td
+                >
+                <td class="text-center" style="font-size: 16px;">
+                  <Tooltip text={data?.his_full_data}>비고</Tooltip>
+                </td>
+              </tr>
+            {/each}
+          {/if}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</article>
 
 <style>
-  main {
-    width: 96%;
-    display: flex;
-    justify-content: center;
-    height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin-top: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    margin-left: 20px;
-    margin-bottom: 40px;
+  * {
+    font-size: 16px;
   }
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    background: #ffffff;
-    font-size: 12px;
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
-
-  th,
-  td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
-    text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
-  }
-
+  td,
   th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
+    font-size: 16px;
   }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
+  td {
+    font-size: 16px;
   }
-
   tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
   }
 </style>

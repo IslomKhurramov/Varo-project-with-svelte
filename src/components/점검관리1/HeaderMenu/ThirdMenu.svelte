@@ -1,122 +1,266 @@
 <script>
-  let reportType = "summary"; // State to hold the type of report selected
+  import {
+    getPlanReportLists,
+    setMakeExcelWordFullReport,
+    setPlanSummaryReportCreate,
+  } from "./../../../services/report/reportService.js";
+  import { getPlanLists } from "../../../services/page1/newInspection";
+  import { onMount } from "svelte";
+  import { errorAlert, successAlert } from "../../../shared/sweetAlert.js";
 
-  function showReport(type) {
-    reportType = type; // Update the report type based on the button clicked
+  export let projectIndex;
+
+  let selectedPlan = "";
+  let planList = [];
+  let planReports = null;
+
+  onMount(async () => {
+    try {
+      planList = await getPlanLists();
+    } catch (err) {}
+  });
+
+  const getReportData = async () => {
+    if (!selectedPlan) return;
+    try {
+      planReports = await getPlanReportLists(selectedPlan);
+    } catch (err) {}
+  };
+
+  const setMakeFullReport = async (data) => {
+    try {
+      const response = await setMakeExcelWordFullReport(data);
+
+      await successAlert(response.CODE);
+    } catch (error) {
+      errorAlert(error?.message);
+    }
+  };
+
+  const planSummaryReportHandler = async () => {
+    try {
+      const response = await setPlanSummaryReportCreate(selectedPlan);
+    } catch (error) {
+      errorAlert(error?.message);
+    }
+  };
+
+  $: {
+    if (selectedPlan) {
+      getReportData();
+    }
+  }
+
+  $: {
+    if (projectIndex) selectedPlan = projectIndex;
   }
 </script>
 
-<main>
-  <div class="container">
-    <div class="buttons">
-      <button on:click="{() => showReport('summary')}">요약 보고서생성</button>
-      <button on:click="{() => showReport('detailed')}">상세 보고서생성</button>
-      <button on:click="{() => showReport('target')}"
-        >점검대상별 보고서 생성</button
-      >
-    </div>
-    <div class="second_container">
-      {#if reportType === "summary"}
-        <div>
-          <p>요약 보고서생성</p>
-          <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 요약보고서는 프로젝트에 대한 통계 위주의
-            요약 내용을 엑셀로 저장
-          </p>
-        </div>
-        <div>
-          <p>요약 보고서생성</p>
-          <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 요약보고서는 프로젝트에 대한 통계 위주의
-            요약 내용을 엑셀로 저장
-          </p>
-        </div>
-        <div>
-          <p>요약 보고서생성</p>
-          <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 요약보고서는 프로젝트에 대한 통계 위주의
-            요약 내용을 엑셀로 저장
-          </p>
-        </div>
-      {:else if reportType === "detailed"}
-        <div>
-          <p>상세 보고서생성</p>
-          <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" />상세보고서는 프로젝트에 대한 세부
-            내용을 포함하여 엑셀로 저장
-          </p>
-        </div>
-        <div>
-          <p>요약 보고서생성</p>
-          <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" />요약보고서는 프로젝트에 대한 통계
-            위주의 요약 내용을 엑셀로 저장
-          </p>
-        </div>
-      {:else if reportType === "target"}
-        <div>
-          <p>점검대상별 보고서 생성</p>
-          <p>
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./images/next.png" /> 점검대상별로 구분된 보고서를 엑셀로 저장
-          </p>
-        </div>
-      {/if}
+<article class="flex contentArea projectTitle">
+  <div class="flex">
+    <div class="formControlWrap">
+      <div class="formControl">
+        <label>프로젝트명</label>
+        <select bind:value={selectedPlan}>
+          <option value="" selected disabled>선택</option>
+          {#if planList}
+            {#each planList as plan}
+              <option value={plan.ccp_index}>{plan.ccp_title}</option>
+            {/each}
+          {/if}
+        </select>
+      </div>
     </div>
   </div>
-</main>
+</article>
+
+<article class="contentArea mt-40">
+  <h4
+    class="title border"
+    on:click={() => {
+      if (planReports?.v_excel && planReports?.v_excel?.length !== 0) {
+        planSummaryReportHandler();
+      }
+    }}
+  >
+    요약 보고서생성
+  </h4>
+  <div class="tableListWrap">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col style="width:240px;" />
+        <col />
+        <col style="width:210px;" />
+        <col style="width:210px;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-center" style="font-size: 16px;">보고서유형</th>
+          <th class="pl-20 text-center" style="font-size: 16px;">보고서목록</th>
+          <th class="text-center" style="font-size: 16px;">생성하기</th>
+          <th class="text-center" style="font-size: 16px;">보고서삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center" style="font-size: 16px;"
+            >취약점분석평가보고서(엑셀)</td
+          >
+          <td class="pl-20">
+            <div class="flex excel">
+              {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
+                {#each planReports?.v_excel as report}
+                  <a href="javascript:void(0);">
+                    {report}
+                  </a>
+                {/each}
+              {/if}
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center">
+              <button
+                type="button"
+                class="btn btnPrimary w140"
+                disabled={!planReports?.v_excel?.length}
+                on:click={() =>
+                  setMakeFullReport({
+                    plan_index: selectedPlan,
+                    report_type: "v_excel",
+                    report_target: "ALL",
+                  })}
+              >
+                보고서생성
+              </button>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center">
+              <button
+                type="button"
+                class="btn btnGray w140"
+                disabled={!planReports?.v_excel?.length}>보고서삭제</button
+              >
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<article class="contentArea mt-40">
+  <h4 class="title border">상세 보고서생성</h4>
+  <div class="tableListWrap">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col style="width:240px;" />
+        <col />
+        <col style="width:210px;" />
+        <col style="width:210px;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-center" style="font-size: 16px;">보고서유형</th>
+          <th class="pl-20 text-center" style="font-size: 16px;">보고서목록</th>
+          <th class="text-center" style="font-size: 16px;">생성하기</th>
+          <th class="text-center" style="font-size: 16px;">보고서삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center" style="font-size: 16px;"
+            >취약점분석평가보고서(엑셀)</td
+          >
+          <td class="pl-20">
+            <div class="flex excel">
+              {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
+                {#each planReports?.v_excel as report}
+                  <a>
+                    {report}
+                  </a>
+                {/each}
+              {/if}
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center">
+              <button
+                type="button"
+                class="btn btnPrimary w140"
+                disabled={!planReports?.v_excel?.length}
+                on:click={() =>
+                  setMakeFullReport({
+                    plan_index: selectedPlan,
+                    report_type: "v_excel",
+                    report_target: "ALL",
+                  })}
+              >
+                보고서생성
+              </button>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center">
+              <button
+                type="button"
+                class="btn btnGray w140"
+                disabled={!planReports?.v_excel?.length}
+              >
+                보고서삭제
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center" style="font-size: 16px;"
+            >취약점분석평가보고서(워드)</td
+          >
+          <td class="pl-20">
+            <div class="flex excel">
+              {#if planReports?.v_word && planReports?.v_word?.length !== 0}
+                {#each planReports?.v_word as report}
+                  <a>{report}</a>
+                {/each}
+              {/if}
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center">
+              <button
+                type="button"
+                class="btn btnPrimary w140"
+                disabled={!planReports?.v_word?.length}
+                on:click={() =>
+                  setMakeFullReport({
+                    plan_index: selectedPlan,
+                    report_type: "v_word",
+                    report_target: "ALL",
+                  })}
+              >
+                보고서생성
+              </button>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center">
+              <button
+                type="button"
+                class="btn btnGray w140"
+                disabled={!planReports?.v_word?.length}
+              >
+                보고서삭제
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</article>
 
 <style>
-  main {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-  .container {
-    margin-top: 20px;
-    width: 60%; /* Adjust the width as needed */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-  }
-  .buttons button {
-    background-color: #003366; /* Darker Blue */
-    color: #ffffff;
-    border: 1px solid #ffffff;
-    border-radius: 5px;
-    height: 30px;
-    font-size: 12px;
-    width: 150px;
-    cursor: pointer;
-  }
-  .buttons button:hover {
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-  .second_container {
-    background-color: #dedede;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 12px;
-    box-shadow: inset 0 0 2px 2px #888;
-    padding: 5px 10px;
-  }
-  .second_container img {
-    width: 15px;
-  }
-  .second_container p {
-    align-items: center;
-    display: flex;
+  * {
+    font-size: 16px;
   }
 </style>

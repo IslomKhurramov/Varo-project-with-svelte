@@ -1,357 +1,206 @@
 <script>
+  import { assetDeatilInfo } from "../../../services/page2/asset.store";
   let currentData = null;
   let activeData = null;
+  let selectedDate = ""; // Used as date filter for 네트워크 정보 and 프로세스목록
 
-  const selectData = (page, menu) => {
-    currentData = page;
-    activeData = menu;
-  };
-
-  let data = [];
-  for (let i = 1; i <= 100; i++) {
-    data.push({
-      number: "길동이",
-      projectNO: `프로젝트${i}`,
-      assetName: "AAAAAA",
-      cassification: "ERROR-099",
-      logContent: "실행과정",
-      performer: "길동이",
-      date: "2024-12-11 ",
-      note: "길동이",
-      logContent: "실행과정에서 ",
-      performer: "길동이",
-      date: "2024-12-11 ",
-      note: "길동이",
-    });
-  }
-
-  const pageData = [
-    {
-      data1: "This is data for Second Menu",
-      data2: "This is data for Third Menu",
-      data3: "This is data for Fourth Menu",
-      data4: "This is data for Second Menu",
-      data5: "This is data for Third Menu",
-      data6: "This is data for Fourth Menu",
-      data7: "This is data for Second Menu",
-    },
-  ];
+  // Reactive subscription to assetDeatilInfo store
+  $: assetDetails =
+    $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
+  $: cceHistory = $assetDeatilInfo.length > 1 ? $assetDeatilInfo[1] : [];
+  $: assetHistory = $assetDeatilInfo.length > 0 ? $assetDeatilInfo : [];
+  $: fieldOptions =
+    currentData && currentData.length > 0 ? Object.keys(currentData[0]) : [];
 </script>
 
 <main>
-  <div class="button_container">
-    <button>자산그룹이동 </button>
-    <button>정보수정</button>
-    <button>등록승인 / 등록해제 </button>
-    <button>자산삭제</button>
-  </div>
-  <div class="table_container">
-    <table>
-      <tr>
-        <th>분류그룹</th>
-        <th>INFRA</th>
-        <th>자산코드</th>
-        <th>SW-001</th>
-        <th>용도</th>
-        <th>L2스위치</th>
-        <th>자산모델</th>
-        <th>C9200CX-12P-2X2G</th>
-        <th>점검대상</th>
-        <th>NETWORK</th>
-        <th>호스트명</th>
-        <th>User_L2_51</th>
-      </tr>
-      {#each data as asset}
-        <tr>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.number}</td>
-          <td>{asset.projectNO}</td>
-          <td>{asset.assetName}</td>
-          <td>{asset.cassification}</td>
-          <td>{asset.logContent}</td>
-          <td>{asset.performer}</td>
-          <td>{asset.date}</td>
-          <td>{asset.note}</td>
-        </tr>
-      {/each}
-    </table>
-  </div>
-  <div class="input_container">
-    <div class="input"><input type="text" /></div>
-    <div class="input_buttons">
-      <button style="background: #007bff;">수정하기</button>
-      <button style="background: #dc3545;">비활성하기</button>
-      <button style="background: #28a745;">활성하기</button>
+  <div class="flex col detail">
+    <h3 class="title">자산상세정보</h3>
+    <div class="tableListWrap nohead">
+      {#if Object.keys(assetDetails).length > 0}
+        <table class="tableList">
+          <colgroup>
+            <col style="width:140px;" />
+            <col />
+            <col style="width:140px;" />
+            <col />
+            <col style="width:140px;" />
+            <col />
+            <col style="width:140px;" />
+            <col />
+          </colgroup>
+          <tbody>
+            <tr>
+              <th>아이피주소</th>
+              <td>{assetDetails.ast_ipaddr}</td>
+              <th>IP추적처리</th>
+              <td>{assetDetails.ast_ipaddrs}</td>
+              <th>자산코드</th>
+              <td>{assetDetails.ast_code}</td>
+              <th>용도</th>
+              <td>{assetDetails.ast_usage}</td>
+            </tr>
+            <tr>
+              <th>제조사</th>
+              <td>{assetDetails.ast_brand}</td>
+              <th>운영체제</th>
+              <td>{assetDetails.ast_os}</td>
+              <th>모델</th>
+              <td>{assetDetails.ast_model}</td>
+              <th>점검대상</th>
+              <td>NETWORK</td>
+            </tr>
+            <tr>
+              <th>호스트명</th>
+              <td>{assetDetails.ast_hostname}</td>
+              <th>위치</th>
+              <td>{assetDetails.ast_location}</td>
+              <th>운영팀</th>
+              <td>{assetDetails.ast_operator_team}</td>
+              <th>관리자</th>
+              <td>{assetDetails.ast_operator_person}</td>
+            </tr>
+            <tr>
+              <th>관리전화</th>
+              <td>{assetDetails.ast_operator_phone}</td>
+              <th>기밀성</th>
+              <td>{assetDetails.ast_confidentiality}</td>
+              <th>무결성</th>
+              <td>{assetDetails.ast_integrity}</td>
+              <th>가용성</th>
+              <td>{assetDetails.ast_availability}</td>
+            </tr>
+            <tr>
+              <th>보안점수</th>
+              <td>{assetDetails.ast_security_point}</td>
+              <th>등급</th>
+              <td>{assetDetails.ast_security_level}</td>
+              <th>ISMS인증</th>
+              <td>{assetDetails.ast_isms_target ? "True" : "False"}</td>
+              <th>활성화여부</th>
+              <td>{assetDetails.ast_activate ? "활성화상태" : "비활성화"}</td>
+            </tr>
+          </tbody>
+        </table>
+      {:else}
+        <div class="empty-state-message">
+          <h3>Please select an asset to see details</h3>
+        </div>
+      {/if}
     </div>
-  </div>
-  <div>
-    <div class="header">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data1, '운영체제정보')}"
-        class="{activeData === '운영체제정보' ? 'active' : ''}"
+    <textarea rows="5" placeholder="비고란" style="margin-top: 20px;"
+    ></textarea>
+    <div class="flex align-center btnWrap gap-6" style="margin-top: 10px;">
+      <button type="button" class="btn w140 btnPrimaryFontGray">수정하기</button
       >
-        운영체제정보
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data2, '  설치된')}"
-        class="{activeData === '  설치된' ? 'active' : ''}"
-      >
-        설치된 프로그램 목록
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data3, '프로세스목록')}"
-        class="{activeData === '프로세스목록' ? 'active' : ''}"
-      >
-        프로세스목록
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data4, '네트워크')}"
-        class="{activeData === '네트워크' ? 'active' : ''}"
-      >
-        네트워크 정보
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data5, 'DLL')}"
-        class="{activeData === 'DLL' ? 'active' : ''}"
-      >
-        DLL 정보
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data6, '파일해시')}"
-        class="{activeData === '파일해시' ? 'active' : ''}"
-      >
-        파일해시
-      </h3>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <h3
-        on:click="{() => selectData(pageData[0].data7, '패치내역')}"
-        class="{activeData === '패치내역' ? 'active' : ''}"
-      >
-        패치내역/대상
-      </h3>
+      <button type="button" class="btn w140 btnPrimaryFontGray">비활성</button>
+      <button type="button" class="btn w140 btnPrimaryFontGray">활성</button>
     </div>
-    {#if currentData}
-      <div class="last_container">
-        <p>{currentData}</p>
-      </div>
-    {/if}
   </div>
 </main>
 
 <style>
-  main {
-    margin-left: 10px;
-    margin-right: -25px;
-  }
-  .button_container {
-    width: 96%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 15px;
-    margin-right: 25px;
-  }
-
-  .button_container button {
-    background-color: #003366; /* Darker Blue */
-    color: #ffffff;
-
-    width: 130px;
-    height: 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .button_container button:hover {
-    background-color: #002244;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .table_container {
-    display: flex;
-    justify-content: center;
-    width: 94%;
-    margin: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 300px;
-
-    margin: 20px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-  }
-
-  table {
-    font-family: "Arial", sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    background: #ffffff;
-    font-size: 12px;
-  }
-
-  th,
-  td {
-    border: 1px solid #000000;
-    padding: 12px 15px; /* Increased padding for better spacing */
-    text-align: left;
-    vertical-align: middle; /* Ensure content is vertically centered */
-  }
-
-  th {
-    background-color: #003366; /* Header background color */
-    color: #ffffff; /* Header text color */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    text-transform: uppercase; /* Uppercase text for header */
-    font-size: 12px;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Slightly lighter shade for even rows */
-  }
-
-  tr:hover {
-    background-color: #e0f7fa; /* Soft hover effect */
-  }
-
-  .input_container {
+  .itemListWrap {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    gap: 20px; /* Adds space between each item card */
     margin: 20px;
-    padding: 25px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dddddd;
   }
 
-  .input_buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    margin-top: 10px;
+  .itemCard {
+    background-color: #fff;
+    border: 1px solid #ddd; /* Border for clear separation */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for card effect */
   }
 
-  .input_buttons button {
-    background-color: #007bff; /* Primary button color */
-    color: #ffffff;
-    width: 100px;
-    height: 30px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .input_buttons button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .input {
-    margin-bottom: 10px;
-  }
-
-  .input input {
+  .itemTable {
     width: 100%;
-    height: 45px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #cccccc;
-    font-size: 14px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease;
+    border-collapse: collapse;
   }
 
-  .input input:focus {
-    border-color: #007bff;
-    outline: none;
+  .itemTable td {
+    padding: 8px 10px;
+    vertical-align: top;
   }
 
-  .header {
-    display: flex;
-    flex-direction: row;
-    gap: 50px;
-    padding-left: 40px;
-    width: 100%;
-    color: #000000;
-  }
-
-  .header h3 {
-    color: black;
+  .fieldName {
     font-weight: bold;
-    font-size: 12px;
+    color: #333;
+    width: 150px;
+  }
+
+  .fieldValue {
+    color: #555;
+  }
+
+  /* Optional alternating row color within each card */
+  .itemTable tr:nth-child(even) .fieldValue {
+    background-color: rgba(0, 103, 255, 0.05);
+  }
+  .tableListWrap th,
+  td {
+    font-size: 16px;
+  }
+  .subTabWrap a {
     cursor: pointer;
   }
-  .header h3 {
-    background-image: linear-gradient(to right, #5486d6, #54b3d6 50%, #000 50%);
-    background-size: 200% 100%;
-    background-position: -100%;
-    display: inline-block;
-    padding: 5px 0;
-    position: relative;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition: all 0.3s ease-in-out;
+  thead {
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick the header to the top */
+    z-index: 10; /* Ensure the header is above the scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
-
-  .header h3:before {
-    content: "";
-    background: #54b3d6;
-    display: block;
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    transition: all 0.3s ease-in-out;
+  .scrollTable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 500px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
-
-  .header h3:hover {
-    background-position: 0;
+  .contenArea {
+    min-height: 1200px;
   }
-
-  .header h3:hover::before {
-    width: 100%;
+  .empty_state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
   }
-  .header h3.active {
-    color: #3183a0; /* Ensures active text color is visible */
-    -webkit-text-fill-color: #3183a0; /* Override webkit text fill */
-    background-image: none; /* Remove the gradient on active */
-    text-decoration: underline;
-  }
-  .last_container {
-    width: 100%;
-    height: auto;
-    background: #ffffff;
+  .empty-state-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; /* Adjust the height based on your design */
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    margin-bottom: 40px;
-    width: 90%;
-    margin: 20px;
-    padding: 25px;
+    margin-top: 20px;
+    color: #555; /* Text color */
+  }
+  td:hover {
+    background-color: rgba(242, 242, 242, 1);
+    cursor: pointer;
+  }
+  .empty-state-message h3 {
+    font-size: 18px;
+    color: #007bff;
+    font-weight: bold;
+    text-align: center;
+  }
+  .btn:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  .btn {
+    font-size: 16px;
   }
 </style>

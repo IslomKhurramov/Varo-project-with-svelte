@@ -2,392 +2,818 @@
   import AssetCardsPage from "./AssetCardsPage.svelte";
   import Modal from "../../shared/Modal.svelte";
   import ModalChasanGroup from "./ModalChasanGroup.svelte";
-  import Swiper from "./Swiper.svelte";
   import AssetManagement from "./AssetManagement.svelte";
-  import Jongbusujin from "./Jongbusujin.svelte";
+  import {
+    allAssetGroupList,
+    allAssetList,
+  } from "../../services/page2/asset.store";
+  import {
+    getAssetGroup,
+    setNewAssetGroup,
+  } from "../../services/page2/assetService";
+  import { onMount } from "svelte";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
+  import { checkAuth } from "../../stores/user.store";
+  import GetLog from "./getLog.svelte";
+  import GetLogHeader from "./getLogHeader.svelte";
+  import { getAuditNLog, getPlanFilter } from "../../services/logs/logsService";
+  import axios from "axios";
+  import { derived } from "svelte/store";
+  import { serverApi } from "../../lib/config";
 
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
   let showModal = false;
+  let newGroupName = "전체";
+  let isAddingNewGroup = false;
+  let inputRef;
+  let selectedGroup = "전체";
+  let filteredAssets = [];
+  let asset_ostype = "전체";
+  let assetTargetReg = "전체";
+  let assetAcitve = "전체";
+  let searchedResult = [];
+  let showSearchResult = false;
+  let showGetPlanHeader = false;
+  let assetOs = "";
+  let assetHost = "전체";
+  let showSwiperComponent = false;
+  let selectedUUID = [];
+  let selected = [];
+  /*************************GetAllAssetList*****************************************/
+  async function assetGroupList() {
+    try {
+      const response = await getAssetGroup();
 
-  let assets = ["자산그룹 1"];
+      if (response.RESULT === "OK") {
+        allAssetGroupList.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      await errorAlert(err?.message);
+      loading = false;
+    }
+  }
+  onMount(() => {
+    assetGroupList();
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = [...$allAssetList]; // Copy all assets initially
+    }
+  });
 
-  const addProject = () => {
-    const newProjectNumber = assets.length + 1;
-    assets = [...assets, `자산그룹${newProjectNumber}`];
-  };
+  function closeSwiper() {
+    showSwiperComponent = false;
+  }
+  /*************************************************************/
+  function isNotFiltered(value, filter) {
+    return !filter || filter === "전체" || value === filter;
+  }
 
-  const deleteProject = () => {
-    if (projects.length > 0) {
-      projects = projects.slice(0, -1); // Remove the last project
+  function filterAssets() {
+    if (
+      selectedGroup === "전체" &&
+      asset_ostype === "전체" &&
+      assetTargetReg === "전체" &&
+      assetAcitve === "전체"
+    ) {
+      // If all criteria are "전체", return all assets
+      filteredAssets = [...$allAssetList];
+      return filteredAssets;
+    }
+
+    // Otherwise, proceed with the filtering logic
+    filteredAssets = $allAssetList.filter((asset) => {
+      const groupCondition =
+        selectedGroup === "전체" ||
+        (Array.isArray(asset.asset_group) &&
+          asset.asset_group.some((group) => group.asg_index === selectedGroup));
+
+      const ostypeCondition =
+        asset_ostype === "전체" ||
+        (Array.isArray(asset.assessment_target_system) &&
+          asset.assessment_target_system.some((system) =>
+            Object.keys(system).some(
+              (key) => key === asset_ostype && system[key] === true,
+            ),
+          ));
+
+      const targetRegCondition =
+        assetTargetReg === "전체" ||
+        asset.asset_target_registered === assetTargetReg;
+
+      const activeCondition =
+        assetAcitve === "전체" || asset.ast_activate === !!Number(assetAcitve);
+
+      const hostCondition = isNotFiltered(asset.ast_hostname, assetHost);
+
+      return (
+        groupCondition &&
+        ostypeCondition &&
+        targetRegCondition &&
+        activeCondition &&
+        hostCondition
+      );
+    });
+
+    return filteredAssets;
+  }
+  $: {
+    if ($allAssetList && $allAssetList.length > 0) {
+      filterAssets(); // Call filterAssets to ensure it has the latest data
+    }
+  }
+  function handleFilter() {
+    const results = filterAssets();
+
+    // Update the UI accordingly (e.g., show a message if no assets match)
+    if (results.length === 0) {
+      // Here you can also clear or update the UI to show a 'no assets found' message
+    }
+    activeMenu = selectedGroup;
+  }
+
+  function resetFilters() {
+    // Reset filters to their default values
+    assetHost = "전체";
+    selectedGroup = "전체"; // Resetting this value
+    asset_ostype = "전체";
+    assetTargetReg = "전체";
+    assetAcitve = "전체";
+
+    // Update the active menu to reflect the reset
+    activeMenu = "전체"; // Set the active menu to '전체'
+
+    // Reapply filters to get the initial asset list
+    const results = filterAssets();
+  }
+  /***********************************************************/
+  const addNewGroup = async () => {
+    if (!newGroupName.trim()) {
+      alert("Group name cannot be empty.");
+      return;
+    }
+
+    try {
+      const response = await setNewAssetGroup(newGroupName); // Send new group to backend
+      if (response.success) {
+        successAlert("그룹이 성공적으로 생성되었습니다!");
+
+        allAssetGroupList.update((groups) => [
+          ...groups,
+          { asg_index: response.new_asg_index, asg_title: newGroupName },
+        ]);
+
+        newGroupName = "";
+        isAddingNewGroup = false;
+      } else {
+        throw new Error("Failed to save group.");
+      }
+    } catch (error) {
+      alert("Failed to save the group. Please try again.");
     }
   };
-
-  const selectPage = (page, menu) => {
-    console.log("Page selected:", page);
-    currentPage = page;
-    activeMenu = menu;
+  /************************************************/
+  // Show input field for new group
+  const showNewGroupInput = () => {
+    isAddingNewGroup = true;
+    setTimeout(() => {
+      inputRef?.focus(); // Set focus once the input is available
+    }, 0);
   };
 
-  function toggleView() {
+  // Cancel adding new group
+  const cancelNewGroup = () => {
+    newGroupName = "";
+    isAddingNewGroup = false;
+  };
+  /*****************************************/
+
+  /************************************************************************/
+
+  function selectPage(page, group) {
+    currentPage = page;
+    if (group === "전체") {
+      activeMenu = "전체";
+      selectedGroup = "전체"; // Explicitly set "전체" for filtering and dropdown
+    } else {
+      activeMenu = group; // Correctly set the active menu
+      selectedGroup = group.asg_index; // Use group index for filtering
+    }
+    showSwiperComponent = false;
+    filterAssets(); // Apply filtering
+  }
+  /**********************************************************************/
+  function toggleGetLogHeader() {
+    if (!showGetPlanHeader) {
+      currentPage = GetLog;
+    } else {
+      currentPage = null;
+    }
+    showGetPlanHeader = !showGetPlanHeader;
+  }
+  /************************************************************************/
+  export function toggleView() {
     currentView = currentView === "default" ? "newView" : "default";
+    currentPage = null;
+  }
+  $: if (showGetPlanHeader) {
+  }
+  /**********************************************************************/
+  export let searchFilters;
+  let logData = [];
+  export const search = {
+    plan_index: "",
+    asset_name: "",
+    order_user: "",
+    search_start_date: "",
+    search_end_date: "",
+  };
+
+  onMount(async () => {
+    searchFilters = await getPlanFilter();
+  });
+
+  const searchDataHandler = async () => {
+    logData = await getAuditNLog(search);
+  };
+
+  /**********************************************************************/
+  async function saveAssetToExcel() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${serverApi}/api/setSaveAssetInformationToExcel/`,
+        { ass_uuid: selectedUUID },
+        { responseType: "blob" },
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"] || "application/octet-stream",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const assetNames = selected.map((asset) => asset.ast_hostname).join("_"); // Avoid special characters like commas
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx"; // Customize filename if needed
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      selectedUUID = [];
+    } catch (error) {
+      alert("An error occurred while downloading the report.");
+    }
+  }
+  const handleClickOutside = (event) => {
+    if (event.target === event.currentTarget) {
+      closeModal();
+    }
+  };
+  const closeModal = () => {
+    showModal = false;
+  };
+  /******************************************************************************/
+  async function downloadReport() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      // Send a POST request to the API with the response type set to 'blob'
+      const response = await axios.post(
+        `${serverApi}/api/getSummaryReportOfAsset/`,
+        {
+          ass_uuid: selectedUUID,
+        },
+        {
+          responseType: "blob", // Important to set the response type
+        },
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element for downloading
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
+
+      a.download = fileName; // Change this to your desired file name
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert("An error occurred while downloading the report.");
+    }
+  }
+  /*************************************************************************/
+  async function downloadTotalReport() {
+    if (selectedUUID.length === 0) {
+      alert("No assets selected.");
+      return;
+    }
+
+    try {
+      // Send a POST request to the API with the response type set to 'blob'
+      const response = await axios.post(
+        `${serverApi}/api/getToalReportOfAsset/`,
+        {
+          ass_uuid: selectedUUID,
+        },
+        {
+          responseType: "blob", // Important to set the response type
+        },
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element for downloading
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const assetNames = selected.map((asset) => asset.ast_hostname).join(","); // Extract ast_hostname and join with underscores
+      const fileName = assetNames ? `${assetNames}.xlsx` : "report.xlsx";
+
+      a.download = fileName; // Change this to your desired file name
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert("An error occurred while downloading the report.");
+    }
   }
 </script>
 
-<main class="container">
-  <div class="container_aside">
-    <aside>
-      <div class="add_delete_container">
+<div class="container">
+  <section>
+    <!--SUB MENU-->
+    <article class="sideMenu">
+      <div class="btnWrap">
+        <!-- svelte-ignore a11y-missing-attribute -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button
-          class="menu_button"
-          on:click="{() => {
-            addProject();
-          }}">신규점검</button
+        <a on:click={showNewGroupInput} class="btn btnPrimary"
+          ><img src="./assets/images/icon/add.svg" />그룹추가</a
         >
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="menu_button">이력삭제</button>
-      </div>
-
-      {#each assets as asset, index}
-        <div class="chasanGroup_button">
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          <!-- svelte-ignore missing-declaration -->
-          <a
-            href="javascript:void(0)"
-            on:click="{() => selectPage(AssetPage, asset)}"
-            class="{activeMenu === asset ? 'active' : ''}"
-          >
-            <i class="fa fa-user-o" aria-hidden="true"></i>
-            {asset}
-          </a>
-          <button
-            class="asset_button"
-            on:click="{() => selectPage(AssetManagement, '자산관리')}"
-            >자산관리</button
-          >
-        </div>
-      {/each}
-
-      <div class="social">
-        <a
-          href="https://www.linkedin.com/in/florin-cornea-b5118057/"
-          target="_blank"
+        <button type="button" class="btn btnRed"
+          ><img
+            src="./assets/images/icon/delete.svg"
+            alt="createGroup"
+          />그룹삭제</button
         >
-          <i class="fa fa-linkedin"></i>
-        </a>
       </div>
-    </aside>
-  </div>
-  <div class="right_menu">
-    <header class="header">
-      <div class="header_option">
-        <button on:click="{toggleView}" class="toggle_button">
-          <span class="arrow">&#9662;</span>
-        </button>
-        <form action="/action_page.php" class="form_select">
-          <div class="select_container">
-            <select
-              name="approval_status"
-              id="approval_status"
-              class="select_input"
-            >
-              <option value="pending">자산그룹명</option>
-              <option value="approved">운영체제</option>
-              <option value="rejected">에이전트여부</option>
-              <option value="rejected">등록승인여부</option>
-            </select>
-          </div>
-          <div class="select_container">
-            <select name="asset_group" id="asset_group" class="select_input">
-              <option value="network">운영체제</option>
-              <option value="endpoint">Endpoint Security</option>
-              <option value="cloud">Cloud Security</option>
-            </select>
-          </div>
-          <div class="select_container">
-            <select
-              name="operating_system"
-              id="operating_system"
-              class="select_input"
-            >
-              <option value="windows">에이전트여부</option>
-              <option value="linux">Linux</option>
-              <option value="macos">macOS</option>
-            </select>
-          </div>
-          <div class="select_container">
-            <select name="agent_status" id="agent_status" class="select_input">
-              <option value="active">등록승인여부</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
-            </select>
-          </div>
-        </form>
-      </div>
-      <div class="header_button">
-        <p>자산명</p>
-        <p>엑셀다운로드</p>
-      </div>
-    </header>
-
-    <div class="second_line">
-      <button>자산상세검색</button>
-      <button on:click="{() => selectPage(Jongbusujin, '정보수집')}"
-        >정보수집</button
+      <ul
+        class="prMenuList"
+        style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
       >
+        {#if $allAssetGroupList.length > 0}
+          <li class={activeMenu === "전체" ? "active" : ""}>
+            <a
+              on:click={() => {
+                activeMenu = "전체";
+                selectedGroup = "전체";
+                selectPage(AssetCardsPage, "전체");
+              }}
+              title="전체"
+            >
+              <span
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+              >
+                전체
+              </span>
+              <span class="arrowIcon"></span>
+            </a>
+          </li>
 
-      <button on:click="{() => (showModal = true)}">자산그룹별등록추세</button>
-      <button>요약보고서출력</button>
-      <button>상세보고서출력</button>
-      <button>목록엑셀저장</button>
-    </div>
+          {#each [...$allAssetGroupList].sort((a, b) => b.asg_count - a.asg_count) as group}
+            <li class={activeMenu === group ? "active" : ""}>
+              <a
+                on:click={() => {
+                  activeMenu = group;
+                  selectPage(AssetCardsPage, group);
+                }}
+                title="{group.asg_title}({group.asg_count})"
+              >
+                <span
+                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%;"
+                >
+                  {group.asg_title} ({group.asg_count})
+                </span>
+                <div
+                  style="display: flex; flex-direction: row; align-items: center;"
+                >
+                  {#if group.asg_count === 0}
+                    <button
+                      class="asset_button"
+                      on:click|stopPropagation={() =>
+                        selectPage(AssetManagement)}
+                    >
+                      자산관리
+                    </button>
+                  {/if}
+                  <span class="arrowIcon"></span>
+                </div>
+              </a>
+            </li>
+          {/each}
+        {/if}
 
-    <div class="swiper_container">
+        {#if isAddingNewGroup}
+          <div class="modal-open-wrap">
+            <dialog open on:close={() => (isAddingNewGroup = false)}>
+              <div class="modal-content">
+                <div class="modal">
+                  <input
+                    type="text"
+                    placeholder="Enter Group Name"
+                    bind:value={newGroupName}
+                    bind:this={inputRef}
+                    class="editable_input"
+                  />
+                  <div class="modal-buttons">
+                    <button class="primary-button" on:click={addNewGroup}
+                      >Save</button
+                    >
+                    <button class="secondary-button" on:click={cancelNewGroup}
+                      >Cancel</button
+                    >
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        {/if}
+      </ul>
+    </article>
+    <!--ASSET CARDS MENU-->
+    <div
+      class="contentsWrap asset flex col gap-8"
+      style="width: calc(100% - 280px); "
+    >
+      <article class="contentArea">
+        <section class="filterWrap">
+          <div>
+            {#if !showGetPlanHeader}
+              <!-- Group Filter -->
+              <select
+                name="approval_status"
+                id="approval_status"
+                bind:value={selectedGroup}
+                on:change={handleFilter}
+              >
+                <option value="전체">전체</option>
+                {#each $allAssetGroupList as group}
+                  <option value={group.asg_index}>{group.asg_title}</option>
+                {/each}
+              </select>
+
+              <!-- OS Type Filter -->
+              <select
+                name="asset_group"
+                id="asset_group"
+                bind:value={asset_ostype}
+                on:change={handleFilter}
+              >
+                <option value="전체" selected>전체 </option>
+
+                <option value="UNIX">UNIX</option>
+                <option value="WINDOWS">WINDOWS</option>
+                <option value="PC">PC</option>
+                <option value="NETWORK">NETWORK</option>
+                <option value="DBMS">DBMS</option>
+                <option value="WEB">WEB</option>
+                <option value="WAS">WAS</option>
+                <option value="CLOUD">CLOUD</option>
+                <option value="SECURITY">SECURITY</option>
+              </select>
+
+              <!-- Agent Installation Status Filter -->
+              <select
+                name="operating_system"
+                id="operating_system"
+                bind:value={assetTargetReg}
+                on:change={handleFilter}
+              >
+                <option value="전체" selected>전체</option>
+                <option value="YES">등록 승인</option>
+                <option value="NO">등록 해제</option>
+              </select>
+
+              <!-- Activation Status Filter -->
+              <select
+                name="agent_status"
+                id="agent_status"
+                bind:value={assetAcitve}
+                on:change={handleFilter}
+              >
+                <option value="전체" selected>전체</option>
+                <option value="1">활동적인</option>
+                <option value="0">비활성</option>
+              </select>
+            {:else}
+              <GetLogHeader
+                {searchFilters}
+                {toggleView}
+                {search}
+                {searchDataHandler}
+              />
+            {/if}
+
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            {#if !showGetPlanHeader}
+              <button
+                on:click={resetFilters}
+                class="btn btnPrimary padding_button"
+                ><img src="./assets/images/reset.png" alt="search" />초기화
+              </button>
+            {/if}
+            <button
+              on:click={saveAssetToExcel}
+              class="btn btnPrimary padding_button"
+              ><img
+                src="./assets/images/icon/download.svg"
+                class="excel-img"
+                alt="download"
+              />엑셀저장</button
+            >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <button
+              on:click={() => (showModal = true)}
+              class="btn btnPrimary padding_button">등록현황</button
+            >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <button
+              on:click={toggleGetLogHeader}
+              class="btn btnPrimary padding_button">이력관리</button
+            >
+            <button
+              class="btn btnPrimary padding_button"
+              on:click={downloadReport}>요약보고서</button
+            >
+            <button
+              class="btn btnPrimary padding_button"
+              on:click={downloadTotalReport}
+              >상세보고서
+            </button>
+            {#if showSwiperComponent}
+              <button
+                class="btn btnPrimary padding_button"
+                on:click={closeSwiper}>돌아가기</button
+              >
+            {/if}
+          </div>
+        </section>
+      </article>
       {#if currentPage}
-        <svelte:component this="{currentPage}" />
-      {:else if currentView === "newView"}
-        <Swiper />
+        <svelte:component
+          this={currentPage}
+          bind:selectedGroup
+          {filterAssets}
+          {filteredAssets}
+          {logData}
+          bind:assetHost
+          bind:asset_ostype
+          {handleFilter}
+          {resetFilters}
+          bind:showSwiperComponent
+        />
       {:else}
-        <AssetCardsPage />
+        <AssetCardsPage
+          {searchedResult}
+          {showSearchResult}
+          {filteredAssets}
+          bind:showSwiperComponent
+          bind:selectedUUID
+          bind:selected
+        />
       {/if}
     </div>
-  </div>
+  </section>
+  {#if showModal}
+    <!-- Modal background, closes when clicked outside modal content -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
 
-  <Modal bind:showModal>
-    <ModalChasanGroup />
-  </Modal>
-</main>
+    <div class="modal-open-wrap">
+      <div class="showModal" on:click={handleClickOutside}>
+        <!-- Modal content goes here -->
+        <div class="modal-content">
+          <ModalChasanGroup {closeModal} />
+        </div>
+      </div>
+    </div>
+  {/if}
+</div>
 
 <style>
-  /* Container and Layout Styles */
-  .container_aside {
-    min-height: 100vh;
-    background-color: #2c3e50;
-    padding: 10px;
+  .sideMenu .btnWrap .btn:hover img {
+    filter: brightness(0) invert(1);
   }
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-  }
-
-  .right_menu {
-    width: 100%;
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    /* padding: 20px; */
-    background-color: #f2f3f4; /* Light background for main content area */
-  }
-
-  /* Sidebar Styles */
-  aside {
-    color: #ffffff;
-    width: 170px;
-    font-size: 16px;
-  }
-
-  .add_delete_container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
-  }
-
-  .chasanGroup_button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-
-  /* Sidebar Links */
-  aside a {
-    font-size: 14px;
-    color: #fff;
+  .modal-open-wrap {
     display: block;
-    /* padding: 12px 10px; */
-    font-weight: 600;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
+  .modal-open-wrap {
+    display: block;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(167, 167, 167, 0.6);
+  }
+  .modal-content {
+    text-align: center;
+  }
+  .active {
+    color: #ffffff;
+    background-color: #0067ff;
   }
 
-  aside a:hover,
-  aside a.active {
-    margin-top: 3px;
-    text-decoration: underline;
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeInBackdrop 0.3s ease;
+  }
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
+  }
+  .editable_input {
+    height: 40px;
+    width: 360px;
+  }
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
   }
 
-  aside a i {
-    margin-right: 10px;
-  }
-
-  /* Buttons */
-  .menu_button,
-  .asset_button {
+  .primary-button {
+    background-color: #54b3d6;
+    color: white;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-    text-align: center;
     transition: background-color 0.3s ease;
-    background-color: #2c3e50;
+  }
+
+  .primary-button:hover {
+    background-color: #48a2bf;
+  }
+  /* Tooltip styling */
+  .prMenuList a[title] {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Tooltip on hover */
+  .prMenuList a[title]:hover::after {
+    content: attr(title); /* The full text from the title attribute */
+    position: absolute;
+    bottom: 100%; /* Position the tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
     color: #fff;
-  }
-
-  .menu_button:hover,
-  .asset_button:hover {
-    background-color: #003366;
-    box-shadow: 0.5px 1px 0.5px 1px #161515;
-  }
-
-  .asset_button {
-    background-color: #d9534f;
-    padding: 5px 10px;
+    padding: 5px;
     font-size: 12px;
-    margin-left: 10px;
+    white-space: nowrap;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
   }
 
-  /* Social Links */
-  .social {
-    margin-top: 30px;
+  /* Tooltip arrow */
+  .prMenuList a[title]:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
   }
 
-  .social a {
-    display: inline-block;
-    color: #ffffff;
-    font-size: 20px;
-    margin-right: 10px;
-    transition: color 0.3s ease;
+  * {
+    font-size: 16px;
+  }
+  .secondary-button {
+    background-color: #f0f0f0;
+    color: #666;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
 
-  .social a:hover {
-    color: #0077b5;
+  .secondary-button:hover {
+    background-color: #e0e0e0;
+  }
+  dialog {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+  }
+  .showModal {
+    position: fixed;
+    width: 70%;
+    top: 30%;
+    left: 20%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
   }
 
-  /* Header Styles */
-  .header {
+  select {
+    padding: 0 32px 0 15px;
+    height: 40px;
+    background-size: 8px;
+    color: #626677;
+    border: 1px solid rgba(98, 102, 119, 0.2);
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-size: 10px;
+    background-color: #fff;
+    font-weight: 400;
+    font-size: 16px;
+  }
+  .padding_button {
+    padding: 0 32px 0 15px;
+    background-size: 8px;
+  }
+  option {
+    padding: 0 32px 0 15px;
+    background-size: 8px;
+  }
+  .asset_button {
+    background-color: rgba(0, 103, 255, 0.05);
+    color: #0067ff;
+    border-color: rgba(0, 103, 255, 0.1);
+
+    width: 60px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .asset_button:hover {
+    background-color: #fff;
+    color: #0067ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .assetandbutton {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-
-    color: #000000;
-    border-radius: 5px;
   }
 
-  .header_option {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .header_button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 40px;
-  }
-
-  /* Form and Select Styles */
-  .form_select {
-    display: flex;
-    gap: 20px;
-  }
-
-  .select_container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .select_input {
-    color: #000000;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .select_input:hover {
-    background-color: #b0b0b0;
-  }
-
-  .select_input:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #007acc;
-  }
-
-  /* Header Buttons */
-  .header_button p {
-    color: #000000;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-
-  .header_button p:hover {
-    color: #003366;
-    text-decoration: underline;
-  }
-
-  /* Dropdown Arrow */
-  .arrow {
-    color: #ffffff;
-  }
-
-  /* Toggle Button */
-  .toggle_button {
-    background-color: #003366;
-    color: #ffffff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    height: 30px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .toggle_button:hover {
-    background-color: #27293d;
-  }
-
-  /* Second Line Styles */
-  .second_line {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-
-  .second_line button {
-    background-color: #003366;
-    color: #ffffff;
-    border-radius: 5px;
-    height: 30px;
-    width: 120px;
-    cursor: pointer;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .second_line button:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  .excel-img {
+    filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
+      brightness(100%) contrast(98%);
   }
 </style>

@@ -1,394 +1,427 @@
 <script>
-  let assetGroup = [];
-  for (let i = 1; i <= 25; i++) {
-    assetGroup.push({
-      assetName: `자산그룹${i}`,
+  import { onMount } from "svelte";
+  import { allAssetGroupList } from "../../services/page2/asset.store";
+  import {
+    getAssetGroup,
+    setAssetForNewGroup,
+  } from "../../services/page2/assetService";
+  import { allAssetList } from "../../services/page2/asset.store";
+  import { successAlert } from "../../shared/sweetAlert";
+  import { filter } from "d3";
+
+  let showAssetReg = true;
+  let showCopyReg = false;
+  export let filteredAssets = [];
+
+  export let selectedGroup;
+  let assetHost = "전체";
+  let asset_ostype = "전체";
+
+  let assetRegHow = "add";
+  let uploadedFile = null;
+  let newRegGroupIndex = "전체";
+  /****************************************************/
+  async function assetGroupList() {
+    try {
+      const response = await getAssetGroup();
+
+      if (response.RESULT === "OK") {
+        allAssetGroupList.set(Object.values(response.CODE));
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  onMount(() => {
+    assetGroupList();
+  });
+  /****************************************************/
+  // Function to handle filtering based on selections
+  function handleFilter() {
+    filteredAssets = $allAssetList.filter((asset) => {
+      // Check if the asset belongs to the selected group
+      const groupCondition =
+        newRegGroupIndex === "전체" ||
+        (Array.isArray(asset.asset_group) &&
+          asset.asset_group.some(
+            (group) => group.asg_index === newRegGroupIndex,
+          ));
+
+      // Check if the asset matches the selected hostname
+      const hostCondition =
+        assetHost === "전체" || asset.ast_hostname === assetHost;
+
+      // Check if the asset matches the selected OSType
+      const ostypeCondition =
+        asset_ostype === "전체" || asset.ast_ostype === asset_ostype;
+
+      return groupCondition && hostCondition && ostypeCondition;
     });
   }
 
-  let assetCard = [];
+  // Optional: If you want to reset filters
+  function resetFilters() {
+    newRegGroupIndex = "전체"; // Reset group selection
+    assetHost = "전체"; // Reset hostname selection
+    asset_ostype = "전체"; // Reset OSType selection
+    handleFilter(); // Apply the reset immediately
+  }
 
+  // Call handleFilter on mount or whenever $allAssetList changes
+  onMount(() => {
+    handleFilter();
+  });
+  /***************************************************/
+
+  function handleSelectChange(event) {
+    const value = event.target.value; // Get the selected value
+    assetRegHow = value; // Update assetRegHow based on the selected radio button
+    showAssetReg = value === "add"; // Show asset registration form if "add" is selected
+    showCopyReg = value === "copy"; // Show copy registration form if "copy" is selected
+  }
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0]; // Get the uploaded file
+    if (file && file.name.endsWith(".xlsx")) {
+      uploadedFile = file; // Set the uploadedFile variable
+    } else {
+      alert("Please upload an .xlsx file.");
+      uploadedFile = null; // Reset uploadedFile if invalid file type
+    }
+  }
+
+  /*********************************************************/
+
+  let selectedAssets = [];
+  // Handle selection of individual assets and track their UUIDs
+  function handleAssetSelection(asset, event) {
+    if (event.target.checked) {
+      selectedAssets = [...selectedAssets, asset.ass_uuid];
+    } else {
+      selectedAssets = selectedAssets.filter((uuid) => uuid !== asset.ass_uuid);
+    }
+  }
+
+  /**************************************************************/
+
+  $: addingAssetForm = {
+    asset_reg_how: assetRegHow,
+    existed_asset_group_index: newRegGroupIndex,
+    target_group_index: selectedGroup,
+    asset_file: uploadedFile,
+    asset_lists: selectedAssets,
+  };
+  const handleSubmit = async () => {
+    // Validate required fields
+    if (!newRegGroupIndex) {
+      alert("Please select a target asset group.");
+      return; // Early return if validation fails
+    }
+
+    try {
+      const response = await setAssetForNewGroup(addingAssetForm);
+      if (response.success) {
+        successAlert("자산이 새 그룹에 성공적으로 등록되었습니다.");
+        // Reset form values
+        selectedAssets = [];
+        selectedGroup = "";
+        newRegGroupIndex = "";
+
+        if (uploadedFile) {
+          document.querySelector('input[type="file"]').value = "";
+          uploadedFile = null;
+        }
+      } else {
+        throw new Error("Failed to register asset");
+      }
+    } catch (error) {
+      alert("Error occurred: " + error.message);
+    }
+  };
+
+  /**************************************************************/
   let selected = [];
-  $: allSelected = assetCard.length === selected.length;
+  $: allSelected =
+    selected.length === (filteredAssets.length || $allAssetList.length);
 
-  for (let i = 0; i <= 15; i++) {
-    assetCard.push({
-      secureScore: "90",
-      assetGroup: "(자산그룹1)",
-      assetData: "2024/07/22 13:11:22",
-      operatingSystem: "윈도우 서버 2022",
-      assetName: "ABCDEFSDFSDFEWFSDF",
-      ipAdress: "192.168.0.01",
-      inspectionTarget: "UNIX, DBMS, WEB",
-      agentInstallation: "설치됨",
-    });
-  }
   function toggleAll() {
+    const allAssets =
+      filteredAssets.length > 0 ? filteredAssets : $allAssetList;
     if (allSelected) {
       selected = [];
+      selectedAssets = [];
     } else {
-      selected = [...assetCard];
+      selected = [...allAssets];
+      selectedAssets = allAssets.map((asset) => asset.ass_uuid);
     }
-    // selected = allSelected ? [] : [...assetData]; // short version
   }
+
+  let showCards = false;
+
+  // Function to toggle the visibility
+  const toggleCardsVisibility = () => {
+    showCards = !showCards;
+  };
 </script>
 
-<main>
-  <div class="select_group">
-    <div class="select_container">
-      <button class="select_button">자산그룹명</button>
-      <select name="asset_group" id="asset_group" class="select_input">
-        {#each assetGroup as asset}
-          <option value="network_security">{asset.assetName}</option>
-        {/each}
-      </select>
+<form
+  on:submit|preventDefault={handleSubmit}
+  style="overflow: scroll; height: 100vh;"
+>
+  <article class="contentArea" style="height: 90vh;">
+    <div class="formControlWrap">
+      <div class="formControl">
+        <!-- svelte-ignore a11y-label-has-associated-control -->
+        <label>생성방법</label>
+        <div class="radioWrap">
+          <label class="radio-label">
+            <input
+              type="radio"
+              name="type"
+              value="add"
+              checked={assetRegHow === "add"}
+              on:change={handleSelectChange}
+            />
+            <span>자산등록</span>
+          </label>
+          <label class="radio-label">
+            <input
+              type="radio"
+              name="type"
+              value="copy"
+              checked={assetRegHow === "copy"}
+              on:change={handleSelectChange}
+            />
+            <span>기존그룹복사</span>
+          </label>
+        </div>
+      </div>
     </div>
 
-    <div class="select_container">
-      <button class="select_button">생성방법</button>
-      <select name="creation_method" id="creation_method" class="select_input">
-        <option value="automated">기존 그룹에 엑셀 추가 등록 </option>
-        <option value="manual">개별자산 선택 등록 </option>
-        <option value="hybrid">엑셀과 개별자산 선택 등록 </option>
-      </select>
-    </div>
-  </div>
-  <div class="second_container">
-    <p>생성방법</p>
-    <div class="inside_container">
-      <div class="first_line_container">
-        <input type="file" />
-        <input type="file" />
-        <p style="color: #fff;">대용량업로드(엑셀파일)</p>
-      </div>
-      <div class="second_line_container">
-        <div class="group_container">
-          {#each assetGroup as group}
-            <p>{group.assetName}</p>
-          {/each}
+    {#if showCopyReg}
+      <article class="contentArea registCon">
+        <div class="formControlWrap center">
+          <div style="margin-left: 20px;">
+            <select bind:value={newRegGroupIndex}>
+              <option value="전체" selected>전체</option>
+              {#if $allAssetGroupList.length > 0}
+                {#each $allAssetGroupList as group}
+                  <option value={group.asg_index}>{group.asg_title}</option>
+                {/each}
+              {/if}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="btn w140 btnBlue"
+            style="margin-left: 10px;"
+            >저장하기
+          </button>
         </div>
-        <div class="right_container">
-          <div class="option_container">
-            <select name="" id="">
-              <option value=""></option>
-            </select>
-            <select name="" id="">
-              <option value=""></option>
-            </select>
-            <select name="" id="">
-              <option value=""></option>
-            </select>
-            <button>button</button>
-            <button>저장 </button>
-          </div>
-          <div class="first_check_cont">
-            <input
-              type="checkbox"
-              class="first_checkbox"
-              on:click="{toggleAll}"
-              checked="{allSelected}"
-            />
-            <p>전체선택</p>
-          </div>
-          <div class="card_container">
-            {#each assetCard as asset}
-              <div class="card">
-                <input
-                  type="checkbox"
-                  class="card_checkbox"
-                  bind:group="{selected}"
-                  name="{asset}"
-                  value="{asset}"
-                />
-                <div class="img_container">
-                  <!-- svelte-ignore a11y-img-redundant-alt -->
-                  <img src="./images/Picture1.png" alt="Image description" />
-                  <div class="img_overlay">
-                    <p>UNIX</p>
-                    <p>DBMS</p>
+      </article>
+    {:else if showAssetReg}
+      <article class="contentArea flex col gap-20">
+        <div class="second_line_container">
+          <div class="right_container" style="height:70vh">
+            <div class="top registCon">
+              <section class="filterWrap">
+                <div style="gap: 40px;">
+                  <div class="upload-section">
+                    <label for="file-upload" class="file-label">파일첨부</label>
+                    <input
+                      type="file"
+                      id="file-upload"
+                      accept=".xls,.xlsx"
+                      class="file-input"
+                      on:change={handleFileUpload}
+                    />
+
+                    <p class="btn btnPrimary w190 h50">
+                      {#if uploadedFile}
+                        {uploadedFile.name}
+                      {:else}
+                        대용량업로드(엑셀파일)
+                      {/if}
+                    </p>
+                    <a
+                      href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
+                      style="color: black;">샘플다운로드</a
+                    >
+                  </div>
+
+                  <div class="div2">
+                    <button type="submit" class="btn w140 btnBlue"
+                      >저장하기
+                    </button>
                   </div>
                 </div>
-                <div class="info_card">
-                  <p><strong>이름:</strong> abcdefg</p>
-                  <p><strong>아피:</strong> 192.168.0.2</p>
-                </div>
+              </section>
+            </div>
+
+            <!-- Button to toggle visibility of cards -->
+            <div class="secondLine">
+              <button
+                class="btn w140 btnBlue"
+                on:click|preventDefault={toggleCardsVisibility}
+              >
+                {showCards ? "자산 숨기기" : "자산 보기"}
+              </button>
+              <select bind:value={newRegGroupIndex} on:change={handleFilter}>
+                <option value="전체" selected>전체</option>
+                {#if $allAssetGroupList.length > 0}
+                  {#each $allAssetGroupList as group}
+                    <option value={group.asg_index}>{group.asg_title}</option>
+                  {/each}
+                {/if}
+              </select>
+              <select
+                style="margin"
+                bind:value={assetHost}
+                on:change={handleFilter}
+              >
+                <option value="전체" selected>전체</option>
+                {#each $allAssetList as asset}
+                  <option value={asset.ast_hostname}>
+                    {asset.ast_hostname}
+                  </option>
+                {/each}
+              </select>
+
+              <!-- Select for ast_ostype -->
+              <select bind:value={asset_ostype} on:change={handleFilter}>
+                <option value="전체" selected>전체</option>
+                {#each $allAssetList as asset}
+                  {#if asset.ast_ostype !== ""}
+                    <option value={asset.ast_ostype}>
+                      {asset.ast_ostype}
+                    </option>
+                  {/if}
+                {/each}
+              </select>
+
+              <button
+                class="btn btnPrimary"
+                on:click|preventDefault={resetFilters}
+              >
+                <img src="./assets/images/reset.png" alt="search" />초기화
+              </button>
+            </div>
+
+            {#if showCards}
+              <div class="first_check_cont">
+                <input
+                  type="checkbox"
+                  class="first_checkbox"
+                  on:click={toggleAll}
+                  checked={allSelected}
+                />
+                <p>전체선택</p>
               </div>
-            {/each}
+              <section class="maxheight" style="overflow-y: auto;">
+                <div class="cardWrap col5">
+                  {#each filteredAssets as asset}
+                    <article class="card">
+                      <div class="checkboxWrap default">
+                        <input
+                          class="checkboxWrap default"
+                          type="checkbox"
+                          checked={selectedAssets.includes(asset.ass_uuid)}
+                          on:change={(event) =>
+                            handleAssetSelection(asset, event)}
+                        /> <span></span>
+                      </div>
+                      <div class="imageWrap flex align-center gap-20">
+                        <!-- svelte-ignore a11y-img-redundant-alt -->
+                        <img src="./assets/images/asset_window.png" alt="img" />
+                        <div class="head">
+                          {#if asset.assessment_target_system && Array.isArray(asset.assessment_target_system)}
+                            {#each asset.assessment_target_system as target}
+                              {#if target && typeof target === "object"}
+                                {#each Object.entries(target) as [key, value]}
+                                  {#if value}
+                                    <p>{key}</p>
+                                  {/if}
+                                {/each}
+                              {/if}
+                            {/each}
+                          {/if}
+                        </div>
+                      </div>
+                      <div class="content">
+                        <ul>
+                          <li><span>이름:</span> {asset.ast_hostname}</li>
+                          <li><span>아피:</span> {asset.ast_ipaddr}</li>
+                        </ul>
+                      </div>
+                    </article>
+                  {/each}
+                </div>
+              </section>
+            {/if}
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="input_buttons">
-    <button style="background: #dc3545;">저장하기</button>
-  </div>
-</main>
+      </article>
+    {/if}
+  </article>
+</form>
 
 <style>
-  main {
+  .secondLine {
+    display: flex;
+    flex-direction: row;
     width: 100%;
-    padding: 20px;
-    font-family: "Arial", sans-serif;
-    color: lightgray; /* Light text color for readability */
+    gap: 20px;
+    margin-top: 20px;
   }
-
-  .select_group {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Space between select elements */
-    max-width: 600px;
-    margin: 0 auto;
+  .cardWrap {
+    height: 100%;
   }
-
-  .select_container {
+  .maxheight {
+    padding-bottom: 20px;
+    height: 50vh;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  .center {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Stronger shadow for a more solid feel */
   }
-
-  .select_button {
-    background-color: #4682b4; /* A strong, trustworthy blue */
-    color: #ffffff;
-    padding: 12px 24px;
-    border: none;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    border-right: 1px solid #3e3e3e;
-    flex-shrink: 0;
-    width: 140px;
-  }
-
-  .select_button:hover {
-    background-color: #005a99; /* Darker blue on hover */
-  }
-
-  .select_input {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    font-size: 14px;
-    background-color: #fff;
-    color: #000000; /* Light text for readability */
-    cursor: pointer;
-    outline: none;
-  }
-
-  .select_input:hover,
-  .select_input:focus {
-    background-color: #cccccc;
-  }
-
-  .select_input option {
-    background-color: #fff;
-    color: #000000;
-  }
-
-  .second_container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 100%;
-    padding: 10px 10px;
-  }
-  .second_container p {
-    color: #000;
-  }
-
-  .inside_container {
-    display: flex;
-    flex-direction: column;
-    width: 95%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    background-color: #e0e0e0;
-    color: #000000;
-  }
-
-  .first_line_container {
-    display: flex;
-    flex-direction: row;
-    padding: 20px;
-    gap: 10px;
-    background-color: #2c3e50;
-    border-radius: 10px;
-    color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
   .second_line_container {
+    height: 100%;
     display: flex;
     flex-direction: row;
-    padding: 20px;
-    width: 100%;
     gap: 35px;
-    max-height: 500px;
-  }
-
-  .group_container {
-    width: 250px;
-    font-style: Roboto sans-serif;
-    background-color: #f7f7f7;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Ensure items start from the top */
-    align-items: flex-start; /* Align items to the start of the container */
-    overflow-y: auto; /* Enable scrolling if content overflows */
-    overflow-x: hidden;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 100%; /* Ensure the height fits within the parent container */
-  }
-
-  .group_container p {
-    margin: 5px 0; /* Add spacing between the paragraphs */
-    padding: 0;
-    font-size: 14px;
-    color: #000; /* Adjust text color if needed */
-    width: 100%; /* Ensure the paragraphs take up the full width */
-    box-sizing: border-box; /* Include padding/border in element's width/height */
-  }
-  .group_container p:hover {
-    cursor: pointer;
-    background-color: #37a5f3;
+    height: 100%;
+    padding-bottom: 20px;
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    overflow-y: auto;
   }
 
   .right_container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-width: 650px;
-    background-color: #f7f7f7;
+    width: 100%;
+    background-color: #fff;
     gap: 10px;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
-    margin-right: -35px;
+    box-sizing: border-box;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden; /* Prevent horizontal overflow */
   }
 
-  .option_container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 5px;
-    width: 100%;
-    justify-content: center;
-  }
-
-  .option_container select {
-    width: 120px;
-    background-color: #3a3a3a;
-    color: #e0e0e0;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-  }
-
-  .option_container button {
-    background-color: #4682b4;
-    color: #ffffff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .option_container button:hover {
-    background-color: #005a99;
-  }
-
-  .card_container {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 10px;
-    row-gap: 30px;
-    justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 8px;
-  }
-
-  .card {
-    position: relative;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    color: #000000;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-    padding: 10px;
-    width: 150px;
-    height: 83px;
-    font-size: 12px;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-
-  .card_checkbox {
-    top: 5px;
-    left: 5px;
-    position: absolute;
-    cursor: pointer;
-    transform: scale(1.2);
-  }
-
-  .img_container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center; /* Center image vertically */
-    justify-content: center; /* Center image horizontally */
-  }
-
-  .img_container img {
-    width: 40px;
-    height: 40px;
-    display: block;
-    transition: transform 0.3s ease;
-  }
-
-  .img_container:hover img {
-    transform: scale(1.1);
-  }
-
-  .img_overlay {
-    color: #000000;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-  }
-  .img_overlay p {
-    margin: 0;
-  }
-  .info_card {
-    padding-top: 5px;
-  }
-  .info_card p {
-    margin: 2px;
-  }
   .first_checkbox {
     width: 13px;
     cursor: pointer;
     transform: scale(1.2);
     margin-top: 10px;
+  }
+  .btn:hover {
+    color: #fff;
+    background-color: #0067ff;
   }
   .first_check_cont {
     display: flex;
@@ -396,32 +429,10 @@
     align-items: center;
     gap: 10px;
     width: 100%;
-  }
-  .input_buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    justify-content: center;
-    width: 100%;
     margin-top: 10px;
   }
 
-  .input_buttons button {
-    background-color: #007bff; /* Primary button color */
-    color: #ffffff;
-    width: 100px;
-    height: 35px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    transition:
-      background-color 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .input_buttons button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  .headerSelect select option {
+    padding: 8px;
   }
 </style>

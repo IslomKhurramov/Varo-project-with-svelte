@@ -1,0 +1,69 @@
+<script>
+  import FifthMenuFirst from "../FifthMenuFirst.svelte";
+  import FifthMenuSecon from "../FifthMenuSecon.svelte";
+  import FifthMenuThird from "../FifthMenuThird.svelte";
+
+  let setView = "plan";
+  let currentPage = FifthMenuFirst; // Avtomatik yuklanishi uchun boshlang'ich qiymat
+
+  const selectPage = (page) => {
+    currentPage = page;
+  };
+</script>
+
+<section class="tableWrap" style="height: calc(-100px + 100vh);">
+  <div class="tableListWrap">
+    <section
+      class="subTabWrap"
+      style="height: 50px; background-color: #fff; margin-top: 8px; padding-left: 20px; border-radius: 10px"
+    >
+      <a
+        href="javascript:void(0);"
+        class={setView == "plan" ? "active" : ""}
+        on:click={() => {
+          setView = "plan";
+          selectPage(FifthMenuFirst);
+        }}
+      >
+        시스템로그
+      </a>
+      <a
+        href="javascript:void(0);"
+        class={setView == "plan_accept" ? "active" : ""}
+        on:click={() => {
+          setView = "plan_accept";
+          selectPage(FifthMenuSecon);
+        }}
+        style="margin-left: 10px;"
+      >
+        감사로그
+      </a>
+      <a
+        href="javascript:void(0);"
+        class={setView == "plan_siroj" ? "active" : ""}
+        on:click={() => {
+          setView = "plan_siroj";
+          selectPage(FifthMenuThird);
+        }}
+        style="margin-left: 10px;"
+      >
+        수행명령조회
+      </a>
+    </section>
+
+    {#if currentPage}
+      <svelte:component this={currentPage} />
+    {/if}
+  </div>
+</section>
+
+<style>
+  .tableWrap {
+    height: calc(100vh - 100px);
+    overflow: hidden;
+  }
+
+  .tableListWrap {
+    overflow: hidden;
+  }
+</style>

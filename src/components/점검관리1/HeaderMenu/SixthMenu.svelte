@@ -20,24 +20,21 @@
   const programList = writable({ list: [], total_count: 0 });
   const targetList = writable([]);
   /************************************************/
-  export let plan_index;
+  export let plan_index = "";
   let displayedPages = [];
 
-  let totalPages = 100;
-  let orderCdata = "desc";
-
-  let firstClick = true;
+  let totalPages = 1;
   let target = "점검대상";
   /************SORTINGACENDINGVERSION*************************/
   // Default sorting parameters
-  let orderUsage = "asc";
-  let orderVersion = "desc";
-  let orderCdate = "desc";
+  let orderUsage = "";
+  let orderVersion = "";
+  let orderCdate = "";
   let currentPage = 1;
   let listCount = 15;
 
-  let sortField = "order_version"; // Default sort field
-  let sortAscending = false; // `false` aligns with default 'desc'
+  let sortField = ""; // No default sort field
+  let sortAscending = true; // Default to ascending
 
   // Fetch data on mount
   onMount(() => {
@@ -62,21 +59,34 @@
   async function fetchProgramList() {
     try {
       let limit = listCount === "전체" ? undefined : Number(listCount);
-      console.log("Fetching data with limit:", limit); // Log to check if limit is changing
 
-      const response = await getProgramList(
-        orderUsage,
-        orderVersion,
-        orderCdate,
+      // Dynamically construct parameters
+      const params = {
+        ...(orderUsage && { orderUsage }),
+        ...(orderVersion && { orderVersion }),
+        ...(orderCdate && { orderCdate }),
         currentPage,
         limit,
+      };
+
+      console.log("Fetching data with params:", params);
+
+      const response = await getProgramList(
+        params.orderUsage || "",
+        params.orderVersion || "",
+        params.orderCdate || "",
+        params.currentPage,
+        params.limit,
       );
 
       if (response) {
         programList.set(response.CODE);
+        totalPages = Math.ceil(
+          response.CODE.total_count / (limit || response.CODE.total_count),
+        );
       }
 
-      console.log("fetched data", $programList);
+      console.log("Fetched data:", $programList);
     } catch (err) {
       console.error(`Error fetching data: ${err.message}`);
     }
@@ -159,7 +169,7 @@
   // For debugging purposes
   $: {
     console.log("listCount changed:", listCount); // Debugging the value of listCount
-    console.log("refetched");
+    console.log("plan_index2", plan_index);
   }
   /************************************************************************/
 
@@ -167,6 +177,13 @@
     fetchProgramList();
     console.log("refetched");
   }
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+      fetchProgramList();
+    }
+  }
+
   /**************************FETCHGETTARGETLIST******************/
   async function fetchTargetList() {
     try {
@@ -181,17 +198,28 @@
       console.error(`Error fetching data: ${err.message}`);
     }
   }
+  $: {
+    if (plan_index) {
+      fetchTargetList();
+    }
+  }
   /********************************************************************/
   // Handle sorting logic
   function toggleSort(field) {
+    // Reset all sorting variables
+    orderUsage = "";
+    orderVersion = "";
+    orderCdate = "";
+
     if (sortField === field) {
       sortAscending = !sortAscending; // Toggle direction
     } else {
-      sortField = field; // Update field
-      sortAscending = true; // Default to ascending
+      // Update sorting field and default to ascending
+      sortField = field;
+      sortAscending = true;
     }
 
-    // Update sorting variables
+    // Update the specific sorting variable based on the field
     if (field === "order_usage") {
       orderUsage = sortAscending ? "asc" : "desc";
     } else if (field === "order_version") {
@@ -200,16 +228,11 @@
       orderCdate = sortAscending ? "asc" : "desc";
     }
 
-    // Re-fetch data
+    // Refetch data with updated sorting
     fetchProgramList();
   }
   /**********************************************************/
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages) {
-      currentPage = page;
-      getAllArticlesData(currentPage);
-    }
-  }
+
   $: {
     const maxPagesToShow = 5;
     displayedPages = [];
@@ -240,7 +263,7 @@
   });
 
   const searchDataHandler = async () => {
-    logData = await getAuditNLog(search);
+    logData = await fetchTargetList(plan_index);
   };
 
   const resetFilters = async () => {
@@ -267,7 +290,7 @@
     <div>
       <select
         id="project"
-        bind:value={search.plan_index}
+        bind:value={plan_index}
         on:change={searchDataHandler}
       >
         <option value="" selected>전체</option>
@@ -421,6 +444,8 @@
     <div class="pagination_box">
       <select bind:value={listCount}>
         <option value="15" selected>15</option>
+        <option value="2">2</option>
+        <option value="5">5</option>
         <option value="30">30</option>
         <option value="50">50</option>
         <option value="100">100</option>
@@ -431,23 +456,21 @@
           on:click={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          &lsaquo;
+          &lsaquo; Previous
         </button>
-
-        {#each displayedPages as page}
+        {#each Array(totalPages) as _, page (page)}
           <button
-            class:selected={currentPage === page}
-            on:click={() => goToPage(page)}
+            class:selected={currentPage === page + 1}
+            on:click={() => goToPage(page + 1)}
           >
-            {page}
+            {page + 1}
           </button>
         {/each}
-
         <button
           on:click={() => goToPage(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          &rsaquo;
+          Next &rsaquo;
         </button>
       </nav>
     </div>

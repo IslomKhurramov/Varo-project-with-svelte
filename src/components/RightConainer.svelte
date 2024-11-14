@@ -12,10 +12,12 @@
   import { navigate } from "svelte-routing";
   import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
   import { errorAlert } from "../shared/sweetAlert";
+  import SixthMenu from "./점검관리1/HeaderMenu/SixthMenu.svelte";
 
   export let selectPageMain;
   export let activeMenu;
   export let plan_index;
+  export let dataRefetch;
   let projectData = {};
   let projectArray = [];
   let filteredProjects = [];
@@ -216,6 +218,14 @@
           이력관리
         </a>
       </li>
+      <li class={tabMenu == "점검프로그램다운로드" && "active"}>
+        <a
+          href="javascript:void(0);"
+          on:click={() => selectPage(SixthMenu, "점검프로그램다운로드")}
+        >
+          점검프로그램다운로드
+        </a>
+      </li>
       {#if tabMenu}
         <li>
           <!-- <a
@@ -240,7 +250,12 @@
   </nav>
 
   {#if currentPage}
-    <svelte:component this={currentPage} bind:projectIndex {plan_index} />
+    <svelte:component
+      this={currentPage}
+      bind:projectIndex
+      {plan_index}
+      {dataRefetch}
+    />
     <!-- {:else if detailPage}
   <svelte:component
     this={currentPage}

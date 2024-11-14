@@ -84,10 +84,10 @@
 
   function getStrokeColor(score) {
     if (score > 60)
-      return "#0067ff"; // Blue
+      return "#ff0000"; // Blue
     else if (score > 30)
       return "#00ff00"; // Green
-    else return "#ff0000"; // Red
+    else return "#0067ff"; // Red
   }
   function handleKeyDown(event) {
     if (event.key === "Escape") {
@@ -312,7 +312,6 @@
         on:close={() => (showModalProject = false)}
         on:click|stopPropagation
       >
-        <p class="header_title">[자산명] [U-01] 점검항목 타이틀</p>
         <Swiper
           slidesPerView={1}
           spaceBetween={10}
@@ -325,7 +324,8 @@
           {#each $traceByThird.vulns as vuln, index}
             <SwiperSlide>
               <p class="header_title">
-                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+                [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
+                점검항목 타이틀
               </p>
               <div>
                 <table>
@@ -680,7 +680,7 @@
     color: #626677;
     font-size: 16px;
     font-weight: 500;
-    padding: 0 15px 10px;
+    padding: 0 25px 10px;
   }
   /* Responsive Styles */
   @media (max-width: 1200px) {

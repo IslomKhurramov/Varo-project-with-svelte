@@ -66,10 +66,10 @@
   }
   function getStrokeColor(score) {
     if (score > 60)
-      return "#0067ff"; // Blue
+      return "#ff0000"; // Blue
     else if (score > 30)
       return "#00ff00"; // Green
-    else return "#ff0000"; // Red
+    else return "#0067ff"; // Red
   }
   function handleKeyDown(event) {
     if (event.key === "Escape") {
@@ -325,7 +325,8 @@
           {#each $traceByPlan.vulns as vuln, index}
             <SwiperSlide>
               <p class="header_title">
-                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+                [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
+                점검항목 타이틀
               </p>
               <div>
                 <table>

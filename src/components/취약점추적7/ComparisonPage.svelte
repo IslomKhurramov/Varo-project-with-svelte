@@ -666,7 +666,8 @@
           {#each $comparisonPlan.second_plan.vulns as vuln, index}
             <SwiperSlide>
               <p class="header_title">
-                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+                [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
+                점검항목 타이틀
               </p>
               <div>
                 <table>
@@ -857,7 +858,8 @@
           {#each $comparisonPlan.first_plan.vulns as vuln, index}
             <SwiperSlide>
               <p class="header_title">
-                [자산명] [{vuln.ccr_item_no__ccc_item_no}] 점검항목 타이틀
+                [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
+                점검항목 타이틀
               </p>
               <div>
                 <table>

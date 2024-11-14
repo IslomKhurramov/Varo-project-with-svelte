@@ -2,10 +2,10 @@
   import { allTraceByThird } from "../../services/page7/trace.store";
   function getStrokeColor(score) {
     if (score > 60)
-      return "#0067ff"; // Blue
+      return "#ff0000"; // Blue
     else if (score > 30)
       return "#00ff00"; // Green
-    else return "#ff0000"; // Red
+    else return "#0067ff"; // Red
   }
   export let third;
   let filteredAssetsOfThird = [

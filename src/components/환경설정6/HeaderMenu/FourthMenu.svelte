@@ -98,7 +98,17 @@
                 {data.itemStatus}
               </td>
               <td class="text-center" style="font-size: 16px;">
-                <span class="">{data.itemResult}</span>
+                <!-- <span class="">{data.itemResult}</span> -->
+                <select
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                  name="agent_status"
+                  id="agent_status"
+                >
+                  <option value="1">활동적인</option>
+                  <option value="0">비활성</option>
+                </select>
               </td>
               <td
                 style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
@@ -115,6 +125,10 @@
           {/each}
         </tbody>
       </table>
+      <div class="buttonContainer formControl">
+        <label></label>
+        <button type="button" class="btn btnBlue btnSave"> 계정추가 </button>
+      </div>
     </div>
   </section>
 {/if}
@@ -151,5 +165,49 @@
 
   .line-height {
     line-height: 23px;
+  }
+
+  select {
+    padding: 0 32px 0 15px;
+    height: 40px;
+    background-size: 8px;
+    color: #626677;
+    border: 1px solid rgba(98, 102, 119, 0.2);
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-size: 10px;
+    background-color: #fff;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  option {
+    padding: 0 32px 0 15px;
+    background-size: 8px;
+  }
+
+  .buttonContainer {
+    text-align: center;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btnSave {
+    width: 150px;
+    background-color: #0067ff;
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btnSave:hover {
+    color: #fff;
+    background-color: #4989ff;
   }
 </style>

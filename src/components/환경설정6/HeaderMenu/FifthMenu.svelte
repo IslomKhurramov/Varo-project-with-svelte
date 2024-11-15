@@ -4,7 +4,8 @@
   import FifthMenuThird from "../FifthMenuThird.svelte";
 
   let setView = "plan";
-  let currentPage = FifthMenuFirst; // Avtomatik yuklanishi uchun boshlang'ich qiymat
+  let currentPage = FifthMenuFirst;
+
 
   const selectPage = (page) => {
     currentPage = page;

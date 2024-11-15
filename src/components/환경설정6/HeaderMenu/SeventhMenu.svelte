@@ -1,35 +1,56 @@
 <script>
-  let textareaContent = ``;
-  const sampleClick = async () => {
-    try {
-      await getPlanCommandExcel(selectedCheckList);
-    } catch (error) {}
-  };
+  import { setLicenseUpdate } from "../../../services/page6/serviceArticle";
+    import { errorAlert, successAlert } from "../../../shared/sweetAlert";
 
-  const handleFileUpload = (event) => {
+  let textareaContent = "";
+  let inspectionInformation = null;
+  let error = null;
+
+  async function handleFileUpload(event) {
     inspectionInformation = event.target.files[0];
-  };
 
-  const submitNewSystemCommand = async () => {
-    try {
-      if (assetInsertData.start_date)
-        assetInsertData.start_date = moment(assetInsertData.start_date).format(
-          "YYYY-MM-DD h:mm:ss",
-        );
-      if (assetInsertData.end_date)
-        assetInsertData.end_date = moment(assetInsertData.end_date).format(
-          "YYYY-MM-DD h:mm:ss",
-        );
-
-      const response = await setNewSystemCommand(assetInsertData);
-
-      await successAlert(response.CODE);
-
-      navigate(window.location?.pathname == "/" ? "/page6" : "/");
-    } catch (error) {
-      errorAlert(error?.message);
+    if (!inspectionInformation) {
+      await errorAlert("라이센스 파일을 선택하세요!");
+      return;
     }
-  };
+
+    const formData = new FormData();
+    formData.append("file", inspectionInformation);
+
+    console.log("FormData tarkibi:");
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1].name || pair[1]}`);
+    }
+
+    try {
+      const response = await setLicenseUpdate(formData);
+      if (response.RESULT === "OK") {
+        await successAlert(response.CODE);
+      } else {
+        await errorAlert(response.CODE);
+      }
+    } catch (err) {
+      console.error("Fayl yuklashda xatolik:", err.message);
+      await errorAlert(err.message || "Fayl yuklashda xatolik yuz berdi");
+    }
+  }
+
+  async function submitNewSystemCommand() {
+    const formData = new FormData();
+    formData.append("textareaContent", textareaContent);
+
+    try {
+      const response = await setLicenseUpdate(formData);
+      if (response.RESULT === "OK") {
+        await successAlert(response.CODE);
+      } else {
+        await errorAlert(response.CODE);
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
+    }
+  }
 </script>
 
 <section class="container">
@@ -48,7 +69,7 @@
           <input
             type="file"
             id="file-upload"
-            accept=".xls,.xlsx"
+            accept=""
             class="file-input"
             on:change={(event) => handleFileUpload(event)}
           />
@@ -116,7 +137,7 @@
     align-items: center;
     line-height: 1.5;
     justify-content: space-between;
-    width: 180px; /* Kenglikni kengaytirdik */
+    width: 180px;
   }
 
   .btn {

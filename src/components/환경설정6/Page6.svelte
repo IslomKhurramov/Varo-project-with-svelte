@@ -6,17 +6,37 @@
   import SixthMenu from "./HeaderMenu/SixthMenu.svelte";
   import SeventhMenu from "./HeaderMenu/SeventhMenu.svelte";
   import SecondMenu from "./HeaderMenu/SecondMenu.svelte";
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
 
   let currentView = "default";
   let currentPage = FirstMenu;
   let activeMenu = null;
-  let selectedProjectIndex = null;
+  let selectedProjectIndex = null; 
   let tabMenu = "시스템기본설정";
+  let tab = null;
+
+  onMount(() => {
+    tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab == "Notice") {
+      currentPage = SecondMenu;
+      tabMenu = "공지사항";
+      currentView = "page";
+    }
+
+    if (tab == "Dataroom") {
+      currentPage = ThirdMenu;
+      tabMenu = "자료실";
+      currentView = "page";
+    }
+  });
 
   const selectPage = (page, menu) => {
     currentPage = page;
     tabMenu = menu;
     currentView = "page";
+    tab = null;
+    navigate("/page6");
   };
 </script>
 

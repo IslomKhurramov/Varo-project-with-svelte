@@ -1,72 +1,15 @@
 <script>
-  // export let selectPageMain;
-  let projectIndex = null;
-  let filteredProjects = [];
-  let projectData = {};
-  let dataArray = [
-    {
-      hostname: "윈도우에이전트",
-      itemNo: "CCE 일반점검",
-      itemTitle: "1.0",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "리눅스에이전트",
-      itemNo: "CCE긴급점검",
-      itemTitle: "1.1",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "수동점검프로그램",
-      itemNo: "에이전트정보수집",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "수동점검 스크립트",
-      itemNo: "",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "네트워크장비정보수집 프로그램",
-      itemNo: "Item005",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "매뉴얼",
-      itemNo: "Item005",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "가이드라인",
-      itemNo: "Item005",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-  ];
-  let setView = "plan";
+  import { onMount } from "svelte";
+  import { getProgramList } from "../../services/page6/serviceArticle";
+  import { errorAlert } from "../../shared/sweetAlert";
 
-  let itemsPerPage = 5;
-  let currentPage = 1;
-  let totalItems = dataArray.length;
-  let totalPages = Math.ceil(totalItems / itemsPerPage);
+  let dataArray = []; // Jadval uchun ma'lumotlar
+  let itemsPerPage = 15; // Har bir sahifada elementlar soni
+  let currentPage = 1; // Hozirgi sahifa
+  let totalItems = 0; // Umumiy elementlar soni
+  let totalPages = 0; // Umumiy sahifalar soni
+  let loading = true;
+  let error = null;
 
   $: paginatedData = dataArray.slice(
     (currentPage - 1) * itemsPerPage,
@@ -74,7 +17,6 @@
   );
 
   let maxPageNumbers = 5;
-
   $: pages = [];
   $: {
     let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
@@ -90,27 +32,64 @@
     }
   }
 
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages) {
-      currentPage = page;
+  async function fetchProgramList() {
+    const params = {
+      order_usage: "asc",
+      order_version: "desc",
+      order_cdate: "desc",
+      page_count: currentPage,
+      list_count: itemsPerPage,
+    };
+
+    try {
+      const response = await getProgramList(params);
+
+      if (response.RESULT === "OK") {
+        const data = response.CODE;
+        dataArray = data.list || [];
+        totalItems = data.total_count || 0;
+        totalPages = Math.ceil(totalItems / itemsPerPage);
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
     }
   }
 
-  const selectPage = (page, menu) => {
-    currentPage = page;
-    tabMenu = menu;
-  };
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+      fetchProgramList();
+    }
+  }
+
+  onMount(async () => {
+    try {
+      loading = true;
+      await fetchProgramList();
+    } catch (err) {
+      await errorAlert(err?.message);
+    } finally {
+      loading = false;
+    }
+  });
 </script>
+
+{#if loading}
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+{/if}
 
 <section class="tableWrap" style="height: calc(-100px + 100vh);">
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
-        <col style="width:5%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
+        <col style="width:4%;" />
+        <col style="width:30%;" />
+        <col style="width:10%;" />
+        <col style="width:20%;" />
+        <col style="width:10%;" />
       </colgroup>
       <thead>
         <tr>
@@ -118,39 +97,46 @@
           <th class="text-center" style="font-size: 16px;">용도</th>
           <th class="text-center" style="font-size: 16px;">버전</th>
           <th class="text-center" style="font-size: 16px;">파일명</th>
-          <th class="text-center" style="font-size: 16px;">비고</th>
+          <th class="text-center" style="font-size: 16px;">날짜</th>
         </tr>
       </thead>
       <tbody>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        {#each dataArray as data, index}
+        {#if dataArray.length > 0}
+          {#each dataArray as data, index}
+            <tr>
+              <td class="text-center" style="font-size: 16px;">
+                {index + 1 + (currentPage - 1) * itemsPerPage}
+              </td>
+              <td class="text-center" style="font-size: 16px;"
+                >{data.cs_category || "N/A"}</td
+              >
+              <td class="text-center" style="font-size: 16px;"
+                >{data.cs_version || "N/A"}</td
+              >
+              <td class="text-center" style="font-size: 16px;"
+                >{data.cs_filename || "N/A"}</td
+              >
+              <td class="text-center" style="font-size: 16px;"
+                >{data.cs_provied_date || "N/A"}</td
+              >
+            </tr>
+          {/each}
+        {:else}
           <tr>
-            <td class="text-center" style="font-size: 16px;">{index + 1}</td>
-            <td style="font-size: 16px;" class="cursor-pointer text-center">
-              {data.hostname}
-            </td>
-            <td style="font-size: 16px;" class="text-center line-height">
-              {data.itemTitle}
-            </td>
-            <td
-              class="text-center cursor-pointer line-height"
-              style="font-size: 16px;"
+            <td colspan="5" class="text-center" style="font-size: 16px;"
+              >No data available</td
             >
-              <div class="line-height">
-                {data.itemCriteria}
-              </div>
-            </td>
-            <td
-              style="overflow: hidden; font-size: 16px;"
-              class="text-center line-height"
-            >
-              {data.itemStatus}
-            </td>
           </tr>
-        {/each}
+        {/if}
       </tbody>
     </table>
 
+    <!-- Total Count -->
+    <div class="total-count">
+      <p>총 데이터: <strong>{totalItems}</strong>개</p>
+    </div>
+
+    <!-- Pagination -->
     <nav class="pagination">
       <button
         on:click={() => goToPage(currentPage - 1)}
@@ -183,15 +169,66 @@
     font-size: 16px;
   }
 
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(167, 167, 167, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .loading-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .tableWrap {
     background-color: #fff;
+    height: 85vh;
+    border-radius: 5px;
+  }
+
+  .tableListWrap {
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: 50px;
   }
 
   thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
-    z-index: 10; /* Ensure the header is above the scrolling content */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  }
+
+  .total-count {
+    text-align: left;
+    margin-top: 80px;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #555;
+  }
+  .total-count p {
+    margin: 0;
   }
 
   .pagination {
@@ -226,8 +263,5 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
-  }
-  .line-height {
-    line-height: 23px;
   }
 </style>

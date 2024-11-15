@@ -111,6 +111,16 @@
       alert(`Error getting asset details: ${err.message}`);
     }
   }
+  let test = {
+    0: "조치전",
+    1: "조치예정",
+    2: "조치계획등록",
+    3: "조치계획승인",
+    4: "조치계획반려",
+    5: "조치결과등록",
+    6: "조치결과승은",
+    7: "조치결과반려",
+  };
 </script>
 
 <div>
@@ -275,11 +285,11 @@
               >
               <td class="text-center line-height">
                 <div class="status-container line-height">
-                  {vuln.cfi_fix_status__cvs_index}
+                  {test[vuln?.cfi_fix_status__cvs_index] ?? "조치전"}
                 </div>
               </td>
               <td class="text-center line-height"
-                >{vuln.cfr_fix_status__cvs_index}</td
+                >{vuln[vuln?.cfr_fix_status__cvs_index] ?? "조치전"}</td
               >
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_operator_person}</td

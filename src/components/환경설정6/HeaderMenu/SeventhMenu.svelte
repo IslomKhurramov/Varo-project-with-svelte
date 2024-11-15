@@ -10,7 +10,7 @@
     inspectionInformation = event.target.files[0];
 
     if (!inspectionInformation) {
-      await errorAlert("라이센스 파일을 선택하세요! (Faylni tanlang!)");
+      await errorAlert("라이센스 파일을 선택하세요!");
       return;
     }
 

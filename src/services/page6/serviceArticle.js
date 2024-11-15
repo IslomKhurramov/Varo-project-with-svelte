@@ -273,3 +273,13 @@ export const setLicenseUpdate = async (formData) => {
   }
 };
 
+export const getLicenseInformation = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getLicenseInformation/`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

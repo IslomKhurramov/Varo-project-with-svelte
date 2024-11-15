@@ -14,7 +14,11 @@
   } from "../../services/page4/checklistStore";
   import CheckListDetail from "./checkListDetail.svelte";
   import { filteredChecklistData } from "../../services/page4/checklistStore";
-  import { confirmDelete, successAlert } from "../../shared/sweetAlert";
+  import {
+    confirmDelete,
+    confirmDeleteLast,
+    successAlert,
+  } from "../../shared/sweetAlert";
   import { derived } from "svelte/store";
 
   let currentView = "default";
@@ -188,7 +192,7 @@
   /**************************************************************************************/
   const deleteProject = async () => {
     try {
-      const isConfirmed = await confirmDelete(); // Wait for confirmation
+      const isConfirmed = await confirmDeleteLast(); // Wait for confirmation
 
       if (isConfirmed && selectedChecklist) {
         // Get the index of the selected checklist
@@ -220,8 +224,6 @@
         } else {
           throw new Error("Failed to delete checklist.");
         }
-      } else if (!selectedChecklist) {
-        alert("삭제할 체크리스트를 선택해주세요."); // Alert if no checklist is selected
       }
     } catch (err) {}
   };
@@ -415,6 +417,57 @@
     generalCopy = true;
     showModal = true;
   }
+  // async function deleteLastCreatedChecklist() {
+  //   try {
+  //     if (!lastCreatedChecklistId) {
+  //       alert("마지막으로 생성된 체크리스트가 없습니다."); // Alert if no checklist to delete
+  //       return;
+  //     }
+
+  //     // Find the last created checklist
+  //     const lastCreatedChecklist = allChecklistArray.find(
+  //       (checklist) => checklist.ccg_index === lastCreatedChecklistId,
+  //     );
+
+  //     if (!lastCreatedChecklist) {
+  //       alert("마지막으로 생성된 체크리스트를 찾을 수 없습니다."); // Alert if not found
+  //       return;
+  //     }
+
+  //     // Confirm deletion
+  //     const isConfirmed = await confirmDeleteLast(
+  //       lastCreatedChecklist.ccg_group,
+  //     );
+  //     if (!isConfirmed) return;
+
+  //     // Call the delete API
+  //     const response = await setDeleteChecklistGroup(lastCreatedChecklistId);
+
+  //     if (response.success) {
+  //       // Remove the deleted checklist from the arrays
+  //       allChecklistArray = allChecklistArray.filter(
+  //         (checklist) => checklist.ccg_index !== lastCreatedChecklistId,
+  //       );
+  //       createdChecklists = createdChecklists.filter(
+  //         (checklist) => checklist.ccg_index !== lastCreatedChecklistId,
+  //       );
+
+  //       // Reset state related to the last created checklist
+  //       lastCreatedChecklistId = null;
+  //       selectedChecklist = null;
+  //       activeMenu = null;
+
+  //       // Success message
+  //       successAlert(
+  //         "마지막으로 생성된 체크리스트가 성공적으로 삭제되었습니다!",
+  //       );
+  //     } else {
+  //       throw new Error("체크리스트 삭제에 실패했습니다.");
+  //     }
+  //   } catch (error) {
+  //     alert(`체크리스트 삭제 중 오류가 발생했습니다: ${error.message}`);
+  //   }
+  // }
 </script>
 
 <section>

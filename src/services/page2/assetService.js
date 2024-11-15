@@ -418,3 +418,26 @@ export const getSearch = async (
 };
 
 /********************************************************************************* */
+export const setAssetGroupDelete = async (asset_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setAssetGroupDelete/`,
+      {
+        asset_group: asset_index,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return { success: true };
+    } else {
+      throw new Error(data.CODE); // Log the error code from the backend
+    }
+  } catch (error) {
+    throw error;
+  }
+};

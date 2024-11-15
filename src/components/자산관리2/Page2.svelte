@@ -9,10 +9,16 @@
   } from "../../services/page2/asset.store";
   import {
     getAssetGroup,
+    setAssetGroupDelete,
     setNewAssetGroup,
   } from "../../services/page2/assetService";
   import { onMount } from "svelte";
-  import { errorAlert, successAlert } from "../../shared/sweetAlert";
+  import {
+    confirmDelete,
+    confirmDeleteLast,
+    errorAlert,
+    successAlert,
+  } from "../../shared/sweetAlert";
   import { checkAuth } from "../../stores/user.store";
   import GetLog from "./getLog.svelte";
   import GetLogHeader from "./getLogHeader.svelte";
@@ -189,7 +195,7 @@
   /*****************************************/
 
   /************************************************************************/
-
+  let selectedGroupName = "";
   function selectPage(page, group) {
     currentPage = page;
     if (group === "전체") {
@@ -198,6 +204,7 @@
     } else {
       activeMenu = group; // Correctly set the active menu
       selectedGroup = group.asg_index; // Use group index for filtering
+      selectedGroupName = group.asg_title;
     }
     showSwiperComponent = false;
     filterAssets(); // Apply filtering
@@ -365,6 +372,98 @@
       alert("An error occurred while downloading the report.");
     }
   }
+  /*******************************************************************/
+  // async function deleteLastCreatedAssetGroup() {
+  //   try {
+  //     // Get the current list of asset groups
+  //     let allGroups = $allAssetGroupList;
+
+  //     if (!allGroups || allGroups.length === 0) {
+  //       errorAlert("No asset groups available to delete.");
+  //       return;
+  //     }
+
+  //     // Find the last created group (assuming the list is sorted, or adjust as needed)
+  //     const lastCreatedGroup = allGroups[allGroups.length - 1];
+
+  //     // Confirm deletion
+  //     const isConfirmed = await confirmDeleteLast(lastCreatedGroup.asg_title);
+  //     if (!isConfirmed) return;
+
+  //     // Call the delete API
+  //     const response = await setAssetGroupDelete(lastCreatedGroup.asg_index);
+
+  //     if (response.success) {
+  //       // Update the asset group list to remove the deleted group
+  //       allAssetGroupList.update((groups) =>
+  //         groups.filter(
+  //           (group) => group.asg_index !== lastCreatedGroup.asg_index,
+  //         ),
+  //       );
+
+  //       successAlert(
+  //         `The group "${lastCreatedGroup.asg_title}" was successfully deleted.`,
+  //       );
+  //     } else {
+  //       throw new Error("Failed to delete the group.");
+  //     }
+  //   } catch (error) {
+  //     errorAlert(
+  //       error.message || "An error occurred while deleting the group.",
+  //     );
+  //   }
+  // }
+  async function deleteSelectedAssetGroup() {
+    try {
+      console.log("selected asset", selectedGroup, selectedGroupName);
+      // Ensure a group is selected
+      if (!selectedGroup || selectedGroup === "전체") {
+        errorAlert("삭제할 그룹이 선택되지 않았습니다.");
+        return;
+      }
+
+      // Find the selected group details from the asset group list
+      const selectedGroupDetails = $allAssetGroupList.find(
+        (group) => group.asg_index === selectedGroup,
+      );
+
+      if (!selectedGroupDetails) {
+        errorAlert("선택된 그룹 정보를 찾을 수 없습니다.");
+        return;
+      }
+      console.log("selectedGroupindex", selectedGroupDetails.asg_index);
+
+      // Confirm deletion
+      const isConfirmed = await confirmDelete(selectedGroupDetails.asg_title);
+      if (!isConfirmed) return;
+
+      // Call the delete API
+      const response = await setAssetGroupDelete(
+        selectedGroupDetails.asg_index,
+      );
+
+      if (response.success) {
+        // Update the asset group list to remove the deleted group
+        allAssetGroupList.update((groups) =>
+          groups.filter(
+            (group) => group.asg_index !== selectedGroupDetails.asg_index,
+          ),
+        );
+
+        // Reset the selected group to "전체"
+        selectedGroup = "전체";
+        activeMenu = "전체";
+
+        successAlert(
+          `그룹 "${selectedGroupDetails.asg_title}"이(가) 성공적으로 삭제되었습니다.`,
+        );
+      } else {
+        throw new Error("그룹 삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      errorAlert(error.message || "그룹 삭제 중 오류가 발생했습니다.");
+    }
+  }
 </script>
 
 <div class="container">
@@ -377,7 +476,10 @@
         <a on:click={showNewGroupInput} class="btn btnPrimary"
           ><img src="./assets/images/icon/add.svg" />그룹추가</a
         >
-        <button type="button" class="btn btnRed"
+        <button
+          on:click={deleteSelectedAssetGroup}
+          type="button"
+          class="btn btnRed"
           ><img
             src="./assets/images/icon/delete.svg"
             alt="createGroup"

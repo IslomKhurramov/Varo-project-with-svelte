@@ -70,15 +70,17 @@
                 </tr>
               </thead>
               <tbody>
-                {#each data?.board?.notices.length !== 0 && data?.board?.notices as article}
-                  <tr>
-                    <td class="text-center">{article?.title ?? "-"}</td>
-                    <td class="text-center"
-                      >{article?.writer__user_name ?? "-"}</td
-                    >
-                    <td class="text-center">{article?.view_count ?? 0}</td>
-                  </tr>
-                {/each}
+                {#if data?.board?.notices.length !== 0}
+                  {#each data?.board?.notices as article}
+                    <tr>
+                      <td class="text-center">{article?.title ?? "-"}</td>
+                      <td class="text-center"
+                        >{article?.writer__user_name ?? "-"}</td
+                      >
+                      <td class="text-center">{article?.view_count ?? 0}</td>
+                    </tr>
+                  {/each}
+                {/if}
               </tbody>
             </table>
           </div>
@@ -138,15 +140,17 @@
                 </tr>
               </thead>
               <tbody>
-                {#each data?.board?.dataroom?.length !== 0 && data?.board?.dataroom as article}
-                  <tr>
-                    <td class="text-center">{article?.title ?? "-"}</td>
-                    <td class="text-center"
-                      >{article?.writer__user_name ?? "-"}</td
-                    >
-                    <td class="text-center">{article?.view_count ?? 0}</td>
-                  </tr>
-                {/each}
+                {#if data?.board?.dataroom?.length !== 0}
+                  {#each data?.board?.dataroom as article}
+                    <tr>
+                      <td class="text-center">{article?.title ?? "-"}</td>
+                      <td class="text-center"
+                        >{article?.writer__user_name ?? "-"}</td
+                      >
+                      <td class="text-center">{article?.view_count ?? 0}</td>
+                    </tr>
+                  {/each}
+                {/if}
               </tbody>
             </table>
           </div>
@@ -258,32 +262,35 @@
           </div>
           <div class="barGraphWrap various bottom">
             <div class="bar-graph">
-              {#each data?.monthly_stats as stats}
-                <div class="flex bar-segment">
-                  <div class="bar">
-                    <div
-                      class="bar-con green"
-                      data-label={moment(stats?.month).format("YY") ?? "-"}
-                      style="height: {stats?.vulnerability_fixes ?? '-'}%;"
-                    ></div>
+              {#if data?.monthly_stats}
+                {#each data?.monthly_stats as stats}
+                  <div class="flex bar-segment">
+                    <div class="bar">
+                      <div
+                        class="bar-con green"
+                        data-label={moment(stats?.month).format("YY") ?? "-"}
+                        style="height: {stats?.vulnerability_fixes ?? '-'}%;"
+                      ></div>
+                    </div>
+                    <div class="bar">
+                      <div
+                        class="bar-con blue"
+                        data-label="-"
+                        style="height: {stats?.asset_security_levels?.all ??
+                          '-'}%;"
+                      ></div>
+                    </div>
+                    <div class="bar">
+                      <div
+                        class="bar-con yellow"
+                        data-label={moment(stats?.month).format("MM") ?? "-"}
+                        style="height: {stats?.asset_registration?.all ??
+                          '-'}%;"
+                      ></div>
+                    </div>
                   </div>
-                  <div class="bar">
-                    <div
-                      class="bar-con blue"
-                      data-label="-"
-                      style="height: {stats?.asset_security_levels?.all ??
-                        '-'}%;"
-                    ></div>
-                  </div>
-                  <div class="bar">
-                    <div
-                      class="bar-con yellow"
-                      data-label={moment(stats?.month).format("MM") ?? "-"}
-                      style="height: {stats?.asset_registration?.all ?? '-'}%;"
-                    ></div>
-                  </div>
-                </div>
-              {/each}
+                {/each}
+              {/if}
             </div>
           </div>
         </article>
@@ -307,19 +314,21 @@
                 </tr>
               </thead>
               <tbody>
-                {#each data.top_vulnerable_assets as assets}
-                  <tr>
-                    <td class="text-center"
-                      >{assets?.ast_uuid__ass_uuid__ast_hostname ?? "-"}</td
-                    >
-                    <td class="text-center"
-                      >{assets?.ast_uuid__ass_uuid__ast_ipaddr ?? "-"}</td
-                    >
-                    <td class="text-center"
-                      >{assets?.total_vulnerabilities ?? "-"}</td
-                    >
-                  </tr>
-                {/each}
+                {#if data.top_vulnerable_assets}
+                  {#each data.top_vulnerable_assets as assets}
+                    <tr>
+                      <td class="text-center"
+                        >{assets?.ast_uuid__ass_uuid__ast_hostname ?? "-"}</td
+                      >
+                      <td class="text-center"
+                        >{assets?.ast_uuid__ass_uuid__ast_ipaddr ?? "-"}</td
+                      >
+                      <td class="text-center"
+                        >{assets?.total_vulnerabilities ?? "-"}</td
+                      >
+                    </tr>
+                  {/each}
+                {/if}
               </tbody>
             </table>
           </div>
@@ -342,18 +351,22 @@
                 </tr>
               </thead>
               <tbody>
-                {#each data.top_vulnerabilities as assets}
-                  <tr>
-                    <td
-                      >[{assets.ccc_item_no}] {assets?.ccc_item_title ??
-                        "-"}</td
-                    >
-                    <td class="text-center">{assets?.ccc_item_level ?? "-"}</td>
-                    <td class="text-center"
-                      >{assets?.total_vulnerabilities ?? "-"}</td
-                    >
-                  </tr>
-                {/each}
+                {#if data.top_vulnerabilities}
+                  {#each data.top_vulnerabilities as assets}
+                    <tr>
+                      <td
+                        >[{assets.ccc_item_no}] {assets?.ccc_item_title ??
+                          "-"}</td
+                      >
+                      <td class="text-center"
+                        >{assets?.ccc_item_level ?? "-"}</td
+                      >
+                      <td class="text-center"
+                        >{assets?.total_vulnerabilities ?? "-"}</td
+                      >
+                    </tr>
+                  {/each}
+                {/if}
               </tbody>
             </table>
           </div>

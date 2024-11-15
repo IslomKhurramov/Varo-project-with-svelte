@@ -1,107 +1,122 @@
 <script>
   import { getUserExist } from "../../services/login/loginService";
-  import { setUserDelete } from "../../services/page6/serviceArticle";
-  export let selectedData;
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
+  import { register } from "../../services/page1/authService";
 
-  let find_user = "";
+  let name = "";
+  let email = "";
+  let password = "";
+  let department = "";
+  let userRole = 1; // Default role type
+  let find_user = ""; // For checking duplicate emails
   let errorMessage = "";
-  let error = null;
 
   const dispatch = createEventDispatcher();
 
+  // Check if email already exists
   const findUser = async () => {
     try {
       if (!find_user) throw new Error("이메일 입력하지 않았습니다");
       const result = await getUserExist(find_user);
 
-      await successAlert(result);
+      if (result?.RESULT === "OK") {
+        await successAlert("사용 가능한 이메일입니다.");
+      } else {
+        throw new Error("이미 등록된 이메일입니다.");
+      }
     } catch (err) {
       errorMessage = err?.message;
       await errorAlert(errorMessage);
     } finally {
-      find_user = "";
+      find_user = ""; // Reset the email field
     }
   };
-  async function setUserDeleteData(user_index) {
+
+  // Register a new user
+  const registerUser = async () => {
     try {
-      const response = await setUserDelete(user_index);
+      if (!name || !email || !password || !department) {
+        throw new Error("모든 필드를 입력하세요.");
+      }
+
+      const response = await register(name, email, password, department);
       if (response.RESULT === "OK") {
-        await successAlert();
-        selectedData = null;
+        await successAlert("회원가입이 성공적으로 완료되었습니다.");
+        handleList(); // Close the form after successful registration
       } else {
-        await errorAlert("삭제에 실패했습니다.");
+        throw new Error("회원가입에 실패했습니다.");
       }
     } catch (err) {
-      error = err.message;
-      await errorAlert(error);
+      errorMessage = err?.message;
+      await errorAlert(errorMessage);
     }
-  }
+  };
 
   function handleList() {
     dispatch("close");
   }
 </script>
 
-<main class="table-container" style="margin: 0; border-radius: 10px">
+<main class="table-container" style="border-radius: 10px;">
   <div class="table-container_1">
     <div class="formControlWrap">
+      <!-- Name -->
       <div class="formControl">
-        <label>사용자이름</label>
+        <label>사용자 이름</label>
         <div class="inputGroup">
-          <input type="text" placeholder="사용자이름" />
+          <input type="text" placeholder="사용자 이름" bind:value={name} />
         </div>
       </div>
+      <!-- Password -->
       <div class="formControl">
         <label>비밀번호</label>
         <div class="inputGroup">
-          <input type="text" placeholder="비밀번호" />
+          <input type="password" placeholder="비밀번호" bind:value={password} />
         </div>
       </div>
+      <!-- Department -->
       <div class="formControl">
-        <label>이메일(변경불가)</label>
+        <label>부서</label>
+        <div class="inputGroup">
+          <input type="text" placeholder="부서" bind:value={department} />
+        </div>
+      </div>
+      <!-- Email -->
+      <div class="formControl">
+        <label>이메일</label>
         <div class="inputGroup">
           <input
             type="email"
             placeholder="admin@admin.com"
-            bind:value={find_user}
+            bind:value={email}
           />
           <button class="btn close-btn" on:click={findUser}>
             이메일 중복확인
           </button>
         </div>
       </div>
-      <div class="formControl">
-        <label>부서</label>
-        <div class="inputGroup">
-          <input type="text" placeholder="default" />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>유저권한</label>
-        <div class="inputGroup">
-          <input type="text" placeholder="유저권한" />
-        </div>
-      </div>
+      <!-- Actions -->
       <div class="formControl">
         <label></label>
         <div class="inputGroup">
           <div class="buttons">
             <div class="buttonGroup">
-              <button class="btn modify-btn">수정하기</button>
-              <button class="btn close-btn">다시 놓기</button>
+              <button class="btn modify-btn" on:click={registerUser}>
+                등록하기
+              </button>
               <button
-                class="btn delete-btn"
+                class="btn close-btn"
                 on:click={() => {
-                  if (selectedData && selectedData.user_index) {
-                    setUserDeleteData(selectedData.user_index);
-                  } else {
-                    errorAlert("삭제할 사용자를 선택하지 않았습니다.");
-                  }
-                }}>삭제하기</button
+                  name = "";
+                  email = "";
+                  password = "";
+                  department = "";
+                }}
               >
-              <button class="btn btn-info" on:click={handleList}>목록</button>
+                다시 놓기
+              </button>
+              <button class="btn btn-info" on:click={handleList}> 목록 </button>
             </div>
           </div>
         </div>
@@ -113,10 +128,10 @@
 <style>
   .table-container {
     width: 100%;
-    height: calc(100vh - 280px);
+    height: calc(100vh - 220px);
     background-color: #ffffff;
     padding: 20px;
-    margin: 5px 0 0 0;
+    margin: 10px 0 0 0;
   }
 
   .table-container_1 {

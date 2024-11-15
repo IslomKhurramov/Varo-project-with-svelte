@@ -44,6 +44,10 @@
       await errorAlert(error);
     }
   }
+
+  function handleList() {
+    dispatch("close");
+  }
 </script>
 
 <main class="table-container" style="margin: 0; border-radius: 10px">
@@ -90,6 +94,7 @@
               <button class="btn close-btn" on:click={() => dispatch("close")}>
                 다시 놓기
               </button>
+              <button class="btn btn-info" on:click={handleList}>목록</button>
             </div>
           </div>
         </div>
@@ -190,5 +195,9 @@
 
   .close-btn:hover {
     background-color: #1976d2;
+  }
+  .btn-info {
+    background-color: #17a2b8;
+    color: white;
   }
 </style>

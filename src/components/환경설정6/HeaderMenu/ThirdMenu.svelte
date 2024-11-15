@@ -7,6 +7,7 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
+  import NewArticle1 from "../NewArticle1.svelte";
 
   let projectArray = [];
   let error = null;
@@ -15,13 +16,7 @@
   let totalPages = 1;
   let displayedPages = [];
   let selectedData = null;
-
-  onMount(async () => {
-    const art_index = new URLSearchParams(window.location.search).get("id");
-    if (art_index) {
-      await getArticleDetailData(art_index);
-    }
-  });
+  let showNewMember = false;
 
   async function getAllArticlesData(
     page = 1,
@@ -45,7 +40,6 @@
       const response = await getArticleDetail(art_index);
       if (response.RESULT === "OK") {
         selectedData = response.CODE;
-        console.log("Article Details:", selectedData);
       }
     } catch (err) {
       error = err.message;
@@ -53,10 +47,7 @@
     }
   }
 
-  onMount(() => {
-    getAllArticlesData(currentPage);
-  });
-
+  // Pagination logic
   function goToPage(page) {
     if (page >= 1 && page <= totalPages) {
       currentPage = page;
@@ -83,12 +74,22 @@
       }
     }
   }
+
+  function handleNewMemberClose() {
+    showNewMember = false;
+    getAllArticlesData();
+  }
+
+  onMount(() => {
+    getAllArticlesData(currentPage);
+  });
 </script>
 
-{#if selectedData}
+{#if showNewMember}
+  <NewArticle1 on:close={handleNewMemberClose} />
+{:else if selectedData}
   <SecondMenuDetails
     {selectedData}
-    {getArticleDetailData}
     on:close={() => {
       selectedData = null;
       getAllArticlesData(currentPage);
@@ -109,12 +110,12 @@
           </colgroup>
           <thead>
             <tr>
-              <th class="text-center" style="font-size: 16px;">번호</th>
-              <th class="text-center" style="font-size: 16px;">제목</th>
-              <th class="text-center" style="font-size: 16px;">작성자</th>
-              <th class="text-center" style="font-size: 16px;">작성일</th>
-              <th class="text-center" style="font-size: 16px;">첨부파일</th>
-              <th class="text-center" style="font-size: 16px;">조회수</th>
+              <th class="text-center">번호</th>
+              <th class="text-center">제목</th>
+              <th class="text-center">작성자</th>
+              <th class="text-center">작성일</th>
+              <th class="text-center">첨부파일</th>
+              <th class="text-center">조회수</th>
             </tr>
           </thead>
           <tbody>
@@ -122,21 +123,17 @@
               <tr
                 on:click={() => {
                   getArticleDetailData(data.art_index);
-                  console.log("Index:", data.art_index);
-                  console.log("Data:", data);
                 }}
               >
-                <td class="text-center" style="font-size: 16px;">
+                <td class="text-center">
                   {index + 1 + (currentPage - 1) * itemsPerPage}
                 </td>
-                <td style="font-size: 16px;">{data.title}</td>
-                <td class="text-center" style="font-size: 16px;">
-                  {data.writer__user_name}
-                </td>
-                <td class="text-center" style="font-size: 16px;">
+                <td>{data.title}</td>
+                <td class="text-center">{data.writer__user_name}</td>
+                <td class="text-center">
                   {moment(data.created_at).format("YYYY.MM.DD")}
                 </td>
-                <td class="text-center" style="font-size: 16px;">
+                <td class="text-center">
                   {#if data.file_path}
                     <a href={`/${data.file_path}`} target="_blank">
                       {data.original_filename}
@@ -145,13 +142,22 @@
                     없음
                   {/if}
                 </td>
-                <td class="text-center" style="font-size: 16px;">
-                  {data.view_count}
-                </td>
+                <td class="text-center">{data.view_count}</td>
               </tr>
             {/each}
           </tbody>
         </table>
+        <div class="buttonContainer">
+          <button
+            type="button"
+            class="btn btnBlue btnSave"
+            on:click={() => {
+              showNewMember = true;
+            }}
+          >
+            게시물추가
+          </button>
+        </div>
       </div>
       <!-- Pagination -->
       <nav class="pagination">
@@ -210,6 +216,31 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
+  }
+
+  .buttonContainer {
+    text-align: center;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btnSave {
+    width: 150px;
+    background-color: #0067ff;
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btnSave:hover {
+    color: #fff;
+    background-color: #4989ff;
   }
 
   .pagination {

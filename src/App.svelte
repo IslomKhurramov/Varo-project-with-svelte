@@ -60,8 +60,6 @@
     const searchParams = new URLSearchParams(window.location.search);
     const tab = searchParams.get("tab");
 
-    console.log("updateActiveMenu", path, tab);
-
     if (path === "/page6" || tab) {
       activeMenu = "환경설정";
     } else {

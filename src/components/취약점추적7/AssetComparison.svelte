@@ -213,6 +213,16 @@
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
+  let test = {
+    0: "조치전",
+    1: "조치예정",
+    2: "조치계획등록",
+    3: "조치계획승인",
+    4: "조치계획반려",
+    5: "조치결과등록",
+    6: "조치결과승은",
+    7: "조치결과반려",
+  };
 </script>
 
 <p class="header_title2">자산 그룹별 점검 결과</p>

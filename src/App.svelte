@@ -25,40 +25,84 @@
   let openNotification = false;
   let activeMenu = "점검관리";
   let nofiticationData = [];
+  let currentPath = "";
+  let currentSearch = "";
+
+  beforeUpdate(() => {
+    if (
+      currentPath !== window.location.pathname ||
+      currentSearch !== window.location.search
+    ) {
+      currentPath = window.location.pathname;
+      currentSearch = window.location.search;
+      updateActiveMenu();
+    }
+  });
+
+  // URL 변경 감지를 위한 interval 설정
+  onMount(() => {
+    const interval = setInterval(() => {
+      if (
+        currentPath !== window.location.pathname ||
+        currentSearch !== window.location.search
+      ) {
+        currentPath = window.location.pathname;
+        currentSearch = window.location.search;
+        updateActiveMenu();
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  });
+
+  const updateActiveMenu = () => {
+    const path = window.location.pathname;
+    const searchParams = new URLSearchParams(window.location.search);
+    const tab = searchParams.get("tab");
+
+    console.log("updateActiveMenu", path, tab);
+
+    if (path === "/page6" || tab) {
+      activeMenu = "환경설정";
+    } else {
+      switch (path) {
+        case "/page2":
+          activeMenu = "자산관리";
+          break;
+        case "/page3":
+          activeMenu = "취약점관리";
+          break;
+        case "/page4":
+          activeMenu = "점검항목관리";
+          break;
+        case "/page5":
+          activeMenu = "대시보드";
+          break;
+        case "/page7":
+          activeMenu = "취약점추적";
+          break;
+        default:
+          activeMenu = "점검관리";
+      }
+    }
+  };
 
   $: {
-    switch (window.location.pathname) {
-      case "/page2":
-        activeMenu = "자산관리";
-        break;
-      case "/page3":
-        activeMenu = "취약점관리";
-        break;
-      case "/page4":
-        activeMenu = "점검항목관리";
-        break;
-      case "/page5":
-        activeMenu = "대시보드";
-        break;
-      case "/page6":
-        activeMenu = "환경설정";
-        break;
-      case "/page7":
-        activeMenu = "취약점추적";
-        break;
-      default:
-        activeMenu = "점검관리";
-    }
+    updateActiveMenu();
   }
 
   onMount(() => {
     const path = new URLSearchParams(window.location.search).get("path");
-    switch (path) {
-      case "page1":
-        activeMenu = "점검관리";
-        break;
+    const tab = new URLSearchParams(window.location.search).get("tab");
+
+    // Initial menu selection
+    if (tab) {
+      activeMenu = "환경설정";
+    } else if (path === "page1") {
+      activeMenu = "점검관리";
     }
   });
+
   onMount(async () => {
     checkAuth();
     if (!$userData.isLoggedIn) {
@@ -112,72 +156,72 @@
 </script>
 
 <Router>
-  <!-- {#if $userData.isLoggedIn} -->
-  <body>
-    <div id="wrap">
-      <Header bind:activeMenu />
-      <div class="container">
-        <nav class="titleWrap">
-          <h1>{activeMenu}</h1>
-          {#if $userData?.userInfo}
-            <section>
-              <div class="alarmWrap">
-                <button type="button" class="alarm on notification">
-                  <!-- svelte-ignore a11y-missing-attribute -->
-                  <img src="./assets/images/icon/alarm.svg" />
-                </button>
-                <div class="tooltip-modal">
-                  <h3 class="title">알림</h3>
-                  <section
-                    class="content"
-                    style="height: 290px;overflow: auto;"
-                  >
-                    {#each nofiticationData as data}
-                      <div>
-                        <!-- svelte-ignore a11y-invalid-attribute -->
-                        <a href="javascript:void(0);">
-                          <div class="title">
-                            {data?.am_message}
-                          </div>
-                          <div class="day">{daysAgo(data.am_cdate)}</div>
-                        </a>
-                      </div>
-                    {/each}
-                  </section>
-                </div>
-              </div>
-              <article class="user-box-menu">
-                <!-- svelte-ignore a11y-missing-attribute -->
-                <img src="./assets/images/icon/person.svg" />
-                <div class="user" style="min-width: 60px;font-size: 16px;">
-                  <span style="font-size: 16px;"
-                    >{decryptData($userData?.userInfo?.user_name)}
-                  </span>님
-                </div>
-                <div class="logout-menu">
-                  <button on:click={handleLogout} class="logout-button">
-                    로그아웃
+  {#if $userData.isLoggedIn}
+    <body>
+      <div id="wrap">
+        <Header bind:activeMenu />
+        <div class="container">
+          <nav class="titleWrap">
+            <h1>{activeMenu}</h1>
+            {#if $userData?.userInfo}
+              <section>
+                <div class="alarmWrap">
+                  <button type="button" class="alarm on notification">
+                    <!-- svelte-ignore a11y-missing-attribute -->
+                    <img src="./assets/images/icon/alarm.svg" />
                   </button>
+                  <div class="tooltip-modal">
+                    <h3 class="title">알림</h3>
+                    <section
+                      class="content"
+                      style="height: 290px;overflow: auto;"
+                    >
+                      {#each nofiticationData as data}
+                        <div>
+                          <!-- svelte-ignore a11y-invalid-attribute -->
+                          <a href="javascript:void(0);">
+                            <div class="title">
+                              {data?.am_message}
+                            </div>
+                            <div class="day">{daysAgo(data.am_cdate)}</div>
+                          </a>
+                        </div>
+                      {/each}
+                    </section>
+                  </div>
                 </div>
-              </article>
-            </section>
-          {/if}
-        </nav>
+                <article class="user-box-menu">
+                  <!-- svelte-ignore a11y-missing-attribute -->
+                  <img src="./assets/images/icon/person.svg" />
+                  <div class="user" style="min-width: 60px;font-size: 16px;">
+                    <span style="font-size: 16px;"
+                      >{decryptData($userData?.userInfo?.user_name)}
+                    </span>님
+                  </div>
+                  <div class="logout-menu">
+                    <button on:click={handleLogout} class="logout-button">
+                      로그아웃
+                    </button>
+                  </div>
+                </article>
+              </section>
+            {/if}
+          </nav>
 
-        <Route path="/" component={Page1} />
-        <Route path="/page1" component={Page1} />
-        <Route path="/page2" component={Page2} />
-        <Route path="/page3" component={Page3} />
-        <Route path="/page4" component={Page4} />
-        <Route path="/page5" component={Page5} />
-        <Route path="/page6" component={Page6} />
-        <Route path="/page7" component={Page7} />
+          <Route path="/" component={Page1} />
+          <Route path="/page1" component={Page1} />
+          <Route path="/page2" component={Page2} />
+          <Route path="/page3" component={Page3} />
+          <Route path="/page4" component={Page4} />
+          <Route path="/page5" component={Page5} />
+          <Route path="/page6" component={Page6} />
+          <Route path="/page7" component={Page7} />
+        </div>
       </div>
-    </div>
-  </body>
-  <!-- {:else} -->
-  <Route path="/login" component={Login} />
-  <!-- {/if} -->
+    </body>
+  {:else}
+    <Route path="/login" component={Login} />
+  {/if}
 </Router>
 
 <style>

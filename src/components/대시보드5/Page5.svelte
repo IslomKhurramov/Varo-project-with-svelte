@@ -61,7 +61,12 @@
           >
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             공지사항
-            <span on:click={() => navigate("/page6?tab=Notice")}> 전체 </span>
+            <span
+              on:click={() => navigate("/page6?tab=Notice")}
+              style="cursor: pointer;"
+            >
+              전체
+            </span>
           </h4>
           <div class="tableListWrap nofirstth">
             <table class="tableList hdBorder">
@@ -81,8 +86,9 @@
                 {#if data?.board?.notices.length !== 0}
                   {#each data?.board?.notices as article}
                     <tr
-                      on:click={() =>
-                        navigate(`/page6?tab=Notice&id=${article?.art_index}`)}
+                      on:click={() => {
+                        navigate(`/page6?tab=Notice&id=${article?.art_index}`);
+                      }}
                     >
                       <td class="text-center" style="font-size: 16px;"
                         >{article?.title ?? "-"}</td
@@ -145,7 +151,12 @@
           >
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             자료실
-            <span on:click={() => navigate("/page6?tab=Dataroom")}> 전체 </span>
+            <span
+              on:click={() => navigate("/page6?tab=Dataroom")}
+              style="cursor: pointer;"
+            >
+              전체
+            </span>
           </h4>
 
           <div class="tableListWrap nofirstth">
@@ -446,5 +457,11 @@
   th,
   td {
     font-size: 16px;
+  }
+
+  tr:hover {
+    cursor: pointer;
+    background-color: #f4f4f4;
+    transition-duration: 0.3s;
   }
 </style>

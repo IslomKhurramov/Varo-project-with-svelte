@@ -150,11 +150,8 @@
               placeholder="아이디"
             />
             <span>패스워드</span>
-            <input
-              type="password"
-              bind:value={remoteMailServer.password}
-              placeholder="패스워드"
-            />
+            <!-- bind:value={remoteMailServer.password} -->
+            <input type="password" placeholder="패스워드" />
           </div>
         </div>
       </div>

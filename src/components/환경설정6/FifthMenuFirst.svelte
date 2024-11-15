@@ -1,106 +1,82 @@
 <script>
-  // export let selectPageMain;
-  let projectIndex = null;
-  let filteredProjects = [];
-  let projectData = {};
-  let dataArray = [
-    {
-      hostname: "Host1",
-      itemNo: "CCE 일반점검",
-      itemTitle: "Title1",
-      itemCriteria: "Criteria1",
-      itemStatus: "Status1",
-      itemResult: "양호",
-    },
-    {
-      hostname: "Host2",
-      itemNo: "CCE긴급점검",
-      itemTitle: "Title2",
-      itemCriteria: "Criteria2",
-      itemStatus: "Status2",
-      itemResult: "취약",
-    },
-    {
-      hostname: "Host3",
-      itemNo: "에이전트정보수집",
-      itemTitle: "Title3",
-      itemCriteria: "Criteria3",
-      itemStatus: "Status3",
-      itemResult: "예외처리",
-    },
-    {
-      hostname: "Host4", // Blank fields in this row
-      itemNo: "",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "해당없음",
-    },
-    {
-      hostname: "Host5",
-      itemNo: "Item005",
-      itemTitle: "Title5",
-      itemCriteria: "Criteria5",
-      itemStatus: "Status5",
-      itemResult: "양호",
-    },
-  ];
-  let setView = "plan";
+  import moment from "moment";
+  import { getAuditNLog } from "../../services/logs/logsService";
+  import { onMount } from "svelte";
+  import { errorAlert } from "../../shared/sweetAlert";
 
-  let itemsPerPage = 5;
-  let currentPage = 1;
-  let totalItems = dataArray.length;
-  let totalPages = Math.ceil(totalItems / itemsPerPage);
+  let logData = [];
+  let error = null;
+  let loading = true;
+  export const search = {
+    plan_index: "",
+    asset_name: "",
+    order_user: "",
+    search_start_date: "",
+    search_end_date: "",
+    page_cnt: 1,
+    list_cnt: 5,
+  };
 
-  $: paginatedData = dataArray.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  let itemsPerPage = search.list_cnt;
+  let currentPage = search.page_cnt;
+  let totalItems = 0;
+  let totalPages = 0;
 
-  let maxPageNumbers = 5;
+  const searchDataHandler = async () => {
+    try {
+      const response = await getAuditNLog(search);
 
-  $: pages = [];
-  $: {
-    let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
-    let endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
-
-    if (endPage - startPage + 1 < maxPageNumbers) {
-      startPage = Math.max(1, endPage - maxPageNumbers + 1);
+      logData = response || response?.CODE || [];
+      totalItems =
+        response?.total_count || response?.CODE?.total_count || logData.length;
+      totalPages = Math.ceil(totalItems / itemsPerPage);
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
     }
+  };
 
-    pages = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-  }
-
-  function goToPage(page) {
+  const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
       currentPage = page;
+      search.page_cnt = currentPage;
+      searchDataHandler();
     }
-  }
-
-  const selectPage = (page, menu) => {
-    currentPage = page;
-    tabMenu = menu;
   };
+
+  onMount(async () => {
+    try {
+      loading = true;
+      await searchDataHandler();
+    } catch (err) {
+      await errorAlert(err?.message);
+    } finally {
+      loading = false;
+    }
+  });
 </script>
+
+{#if loading}
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+{/if}
 
 <section class="tableWrap" style="height: calc(-100px + 100vh);">
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
+        <col style="width:4%;" />
+        <col style="width:8%;" />
+        <col style="width:8%;" />
+        <col style="width:10%;" />
+        <col style="width:8%;" />
+        <col style="width:10%;" />
         <col style="width:5%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
-        <col style="width:14%;" />
+        <col style="width:40%;" />
+        <col style="width:4%;" />
+        <col style="width:4%;" />
+        <col style="width:4%;" />
       </colgroup>
       <thead>
         <tr>
@@ -118,59 +94,62 @@
         </tr>
       </thead>
       <tbody>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        {#each dataArray as data, index}
+        {#each logData as data, index}
           <tr>
+            <!-- 순번: Tartib raqami -->
             <td class="text-center" style="font-size: 16px;">{index + 1}</td>
+
+            <!-- 명령대상: Buyruq obyekti -->
             <td style="font-size: 16px;" class="cursor-pointer text-center">
-              {data.hostname}
+              {data.asset_name || "N/A"}
             </td>
+
+            <!-- 일시: Vaqt -->
             <td style="font-size: 16px;" class="text-center line-height">
-              {data.itemTitle}
+              {moment(data.his_create_time).format("YYYY.MM.DD")}
             </td>
+
+            <!-- 수행자: Buyruqni bergan foydalanuvchi -->
             <td
               class="text-center cursor-pointer line-height"
               style="font-size: 16px;"
             >
-              <div class="line-height">
-                {data.itemCriteria}
-              </div>
+              {data.his_order_user || "N/A"}
             </td>
-            <td
-              style="overflow: hidden; font-size: 16px;"
-              class="text-center line-height"
-            >
-              {data.itemStatus}
+
+            <!-- 스케쥴링: Turi -->
+            <td style="font-size: 16px;" class="text-center line-height">
+              {data.his_type || "N/A"}
             </td>
+
+            <!-- 반복주기: Asl ma'lumot -->
             <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
+              <span>{data.his_orig_data || "N/A"}</span>
             </td>
+
+            <!-- 수행횟수: Yangi ma'lumot -->
             <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
+              <span>{data.his_new_data || "N/A"}</span>
             </td>
+
+            <!-- 수행결과: To'liq ma'lumot -->
             <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
+              <span>{data.his_full_data || "N/A"}</span>
             </td>
+
+            <!-- 등등: Log turi -->
             <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
+              <span>{data.logging_type_index_id}</span>
             </td>
+
+            <!-- …: CCP indeksi -->
             <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
+              <span>{data.ccp_index}</span>
             </td>
+
+            <!-- …: Natija indeksi -->
             <td class="text-center" style="font-size: 16px;">
-              <span class="">
-                {data.itemResult}
-              </span>
+              <span>{data.result_index}</span>
             </td>
           </tr>
         {/each}
@@ -185,7 +164,7 @@
       &lsaquo;
     </button>
 
-    {#each pages as page}
+    {#each Array.from({ length: totalPages }, (_, i) => i + 1) as page}
       <button
         class:selected={currentPage === page}
         on:click={() => goToPage(page)}
@@ -208,15 +187,56 @@
     font-size: 16px;
   }
 
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(167, 167, 167, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .loading-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .tableWrap {
     background-color: #fff;
+    height: 85vh;
+    border-radius: 5px;
+  }
+
+  .tableListWrap {
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: 50px;
+    cursor: pointer;
   }
 
   thead {
-    position: sticky; /* Make the header sticky */
-    top: 0; /* Stick the header to the top */
-    z-index: 10; /* Ensure the header is above the scrolling content */
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
   .pagination {

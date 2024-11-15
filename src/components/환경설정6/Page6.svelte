@@ -12,7 +12,7 @@
   let currentView = "default";
   let currentPage = FirstMenu;
   let activeMenu = null;
-  let selectedProjectIndex = null;
+  let selectedProjectIndex = null; 
   let tabMenu = "시스템기본설정";
   let tab = null;
 

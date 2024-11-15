@@ -1,11 +1,13 @@
 <script>
   import FourthMenuDetail from "../FourthMenuDetail.svelte";
+  import NewMember from "../NewMember.svelte";
   import { getUserLists } from "../../../services/page6/serviceArticle";
   import { onMount } from "svelte";
 
   let error = null;
   let selectedData = null;
   let projectArray = [];
+  let showNewMember = false; // To track if the NewMember component should be shown
 
   async function getUserListsData() {
     try {
@@ -23,7 +25,7 @@
       }
     } catch (err) {
       error = err.message;
-      await errorAlert(error);
+      console.error("Error fetching user lists:", error);
     }
   }
 
@@ -34,9 +36,16 @@
   function handleRowClick(data) {
     selectedData = data;
   }
+
+  function handleNewMemberClose() {
+    showNewMember = false;
+    getUserListsData(); // Refresh the list after closing the NewMember component
+  }
 </script>
 
-{#if selectedData}
+{#if showNewMember}
+  <NewMember on:close={handleNewMemberClose} />
+{:else if selectedData}
   <FourthMenuDetail
     {selectedData}
     on:close={() => {
@@ -60,7 +69,7 @@
         <thead>
           <tr>
             <th class="text-center" style="font-size: 16px;">순번</th>
-            <th class="text-center" style="font-size: 16px;">이름 </th>
+            <th class="text-center" style="font-size: 16px;">이름</th>
             <th class="text-center" style="font-size: 16px;">이메일</th>
             <th class="text-center" style="font-size: 16px;">유저권한</th>
             <th class="text-center" style="font-size: 16px;">상태</th>
@@ -76,7 +85,7 @@
               }}
               style="cursor: pointer;"
             >
-              <td class="text-center" style="font-size: 16px;"> {index + 1}</td>
+              <td class="text-center" style="font-size: 16px;">{index + 1}</td>
               <td style="font-size: 16px;" class="cursor-pointer text-center">
                 {data.hostname}
               </td>
@@ -98,7 +107,6 @@
                 {data.itemStatus}
               </td>
               <td class="text-center" style="font-size: 16px;">
-                <!-- <span class="">{data.itemResult}</span> -->
                 <select
                   on:click={(e) => {
                     e.stopPropagation();
@@ -118,7 +126,7 @@
                     e.stopPropagation();
                   }}
                 >
-                  <span class="badge badgePrimary"> 비밀번호초기화 </span>
+                  <span class="badge badgePrimary">비밀번호초기화</span>
                 </div>
               </td>
             </tr>
@@ -127,7 +135,15 @@
       </table>
       <div class="buttonContainer formControl">
         <label></label>
-        <button type="button" class="btn btnBlue btnSave"> 계정추가 </button>
+        <button
+          type="button"
+          class="btn btnBlue btnSave"
+          on:click={() => {
+            showNewMember = true; // Open NewMember component
+          }}
+        >
+          계정추가
+        </button>
       </div>
     </div>
   </section>

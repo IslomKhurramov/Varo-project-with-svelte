@@ -143,7 +143,7 @@
   .tableWrap {
     width: 100%;
     background-color: #fff;
-    height: 85vh;
+    height: calc(100vh - 220px);
     border-radius: 10px;
     padding: 20px;
     margin-top: 10px;

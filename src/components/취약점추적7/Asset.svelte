@@ -99,7 +99,7 @@
   }
   function getStrokeColor(score) {
     if (score > 60)
-      return "##ff0000"; // Blue
+      return "#ff0000"; // Blue
     else if (score > 30)
       return "#00ff00"; // Green
     else return "#0067ff"; // Red

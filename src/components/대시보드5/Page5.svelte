@@ -73,11 +73,15 @@
                 {#if data?.board?.notices.length !== 0}
                   {#each data?.board?.notices as article}
                     <tr>
-                      <td class="text-center">{article?.title ?? "-"}</td>
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
+                        >{article?.title ?? "-"}</td
+                      >
+                      <td class="text-center" style="font-size: 16px;"
                         >{article?.writer__user_name ?? "-"}</td
                       >
-                      <td class="text-center">{article?.view_count ?? 0}</td>
+                      <td class="text-center" style="font-size: 16px;"
+                        >{article?.view_count ?? 0}</td
+                      >
                     </tr>
                   {/each}
                 {/if}
@@ -106,13 +110,13 @@
                 {#if data?.vulnerability_fix_notifications?.length !== 0}
                   {#each data?.vulnerability_fix_notifications as notify}
                     <tr>
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{notify?.ccr_index__ccr_item_no ?? "-"}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{notify?.cfi_fix_status ?? "-"}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{notify?.user_index__user_name ?? 0}</td
                       >
                     </tr>
@@ -143,11 +147,15 @@
                 {#if data?.board?.dataroom?.length !== 0}
                   {#each data?.board?.dataroom as article}
                     <tr>
-                      <td class="text-center">{article?.title ?? "-"}</td>
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
+                        >{article?.title ?? "-"}</td
+                      >
+                      <td class="text-center" style="font-size: 16px;"
                         >{article?.writer__user_name ?? "-"}</td
                       >
-                      <td class="text-center">{article?.view_count ?? 0}</td>
+                      <td class="text-center" style="font-size: 16px;"
+                        >{article?.view_count ?? 0}</td
+                      >
                     </tr>
                   {/each}
                 {/if}
@@ -255,9 +263,9 @@
           <div class="flex head title border justify-between">
             <h4>대시보드</h4>
             <ul class="flex barColorGuide">
-              <li class="green">월별취약점조치건수</li>
-              <li class="blue">전체자산 보안수준</li>
-              <li class="yellow">자산등록현황</li>
+              <li class="green" style="font-size: 16px;">월별취약점조치건수</li>
+              <li class="blue" style="font-size: 16px;">전체자산 보안수준</li>
+              <li class="yellow" style="font-size: 16px;">자산등록현황</li>
             </ul>
           </div>
           <div class="barGraphWrap various bottom">
@@ -317,13 +325,13 @@
                 {#if data.top_vulnerable_assets}
                   {#each data.top_vulnerable_assets as assets}
                     <tr>
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{assets?.ast_uuid__ass_uuid__ast_hostname ?? "-"}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{assets?.ast_uuid__ass_uuid__ast_ipaddr ?? "-"}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{assets?.total_vulnerabilities ?? "-"}</td
                       >
                     </tr>
@@ -354,14 +362,14 @@
                 {#if data.top_vulnerabilities}
                   {#each data.top_vulnerabilities as assets}
                     <tr>
-                      <td
+                      <td style="font-size: 16px;"
                         >[{assets.ccc_item_no}] {assets?.ccc_item_title ??
                           "-"}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{assets?.ccc_item_level ?? "-"}</td
                       >
-                      <td class="text-center"
+                      <td class="text-center" style="font-size: 16px;"
                         >{assets?.total_vulnerabilities ?? "-"}</td
                       >
                     </tr>
@@ -407,5 +415,12 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  *,
+  table,
+  th,
+  td {
+    font-size: 16px;
   }
 </style>

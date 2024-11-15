@@ -3,45 +3,29 @@
   import { getProgramList } from "../../services/page6/serviceArticle";
   import { errorAlert } from "../../shared/sweetAlert";
 
-  let dataArray = []; // Jadval uchun ma'lumotlar
-  let itemsPerPage = 15; // Har bir sahifada elementlar soni
-  let currentPage = 1; // Hozirgi sahifa
-  let totalItems = 0; // Umumiy elementlar soni
-  let totalPages = 0; // Umumiy sahifalar soni
-  let loading = true;
+  let dataArray = []; // Table data
+  let itemsPerPage = 15; // Items per page
+  let currentPage = 1; // Current page
+  let totalItems = 0; // Total items
+  let totalPages = 0; // Total pages
   let error = null;
 
-  $: paginatedData = dataArray.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
-  let maxPageNumbers = 5;
-  $: pages = [];
-  $: {
-    let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
-    let endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
-
-    if (endPage - startPage + 1 < maxPageNumbers) {
-      startPage = Math.max(1, endPage - maxPageNumbers + 1);
-    }
-
-    pages = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-  }
+  let sortField = ""; // Current sorting field
+  let sortAscending = true; // Sorting direction
 
   async function fetchProgramList() {
-    const params = {
-      order_usage: "asc",
-      order_version: "desc",
-      order_cdate: "desc",
-      page_count: currentPage,
-      list_count: itemsPerPage,
-    };
-
     try {
+      const params = {
+        order_usage:
+          sortField === "order_usage" ? (sortAscending ? "asc" : "desc") : "",
+        order_version:
+          sortField === "order_version" ? (sortAscending ? "asc" : "desc") : "",
+        order_cdate:
+          sortField === "order_cdate" ? (sortAscending ? "asc" : "desc") : "",
+        page_count: currentPage,
+        list_count: itemsPerPage,
+      };
+
       const response = await getProgramList(params);
 
       if (response.RESULT === "OK") {
@@ -49,6 +33,8 @@
         dataArray = data.list || [];
         totalItems = data.total_count || 0;
         totalPages = Math.ceil(totalItems / itemsPerPage);
+      } else {
+        throw new Error(response.MESSAGE || "Error fetching data");
       }
     } catch (err) {
       error = err.message;
@@ -63,25 +49,20 @@
     }
   }
 
-  onMount(async () => {
-    try {
-      loading = true;
-      await fetchProgramList();
-    } catch (err) {
-      await errorAlert(err?.message);
-    } finally {
-      loading = false;
+  function toggleSort(field) {
+    if (sortField === field) {
+      sortAscending = !sortAscending; // Toggle sorting direction
+    } else {
+      sortField = field; // Update sorting field
+      sortAscending = true; // Default to ascending for new field
     }
-  });
+    fetchProgramList();
+  }
+
+  onMount(fetchProgramList);
 </script>
 
-{#if loading}
-  <div class="loading-overlay">
-    <div class="loading-spinner"></div>
-  </div>
-{/if}
-
-<section class="tableWrap" style="height: calc(-100px + 100vh);">
+<section class="tableWrap">
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
@@ -93,39 +74,47 @@
       </colgroup>
       <thead>
         <tr>
-          <th class="text-center" style="font-size: 16px;">순번</th>
-          <th class="text-center" style="font-size: 16px;">용도</th>
-          <th class="text-center" style="font-size: 16px;">버전</th>
-          <th class="text-center" style="font-size: 16px;">파일명</th>
-          <th class="text-center" style="font-size: 16px;">날짜</th>
+          <th class="text-center">순번</th>
+          <th class="text-center" on:click={() => toggleSort("order_usage")}>
+            용도 {sortField === "order_usage"
+              ? sortAscending
+                ? "▲"
+                : "▼"
+              : "▲ ▼"}
+          </th>
+          <th class="text-center" on:click={() => toggleSort("order_version")}>
+            버전 {sortField === "order_version"
+              ? sortAscending
+                ? "▲"
+                : "▼"
+              : "▲ ▼"}
+          </th>
+          <th class="text-center">파일명</th>
+          <th class="text-center" on:click={() => toggleSort("order_cdate")}>
+            날짜 {sortField === "order_cdate"
+              ? sortAscending
+                ? "▲"
+                : "▼"
+              : "▲ ▼"}
+          </th>
         </tr>
       </thead>
       <tbody>
         {#if dataArray.length > 0}
           {#each dataArray as data, index}
             <tr>
-              <td class="text-center" style="font-size: 16px;">
-                {index + 1 + (currentPage - 1) * itemsPerPage}
-              </td>
-              <td class="text-center" style="font-size: 16px;"
-                >{data.cs_category || "N/A"}</td
+              <td class="text-center"
+                >{index + 1 + (currentPage - 1) * itemsPerPage}</td
               >
-              <td class="text-center" style="font-size: 16px;"
-                >{data.cs_version || "N/A"}</td
-              >
-              <td class="text-center" style="font-size: 16px;"
-                >{data.cs_filename || "N/A"}</td
-              >
-              <td class="text-center" style="font-size: 16px;"
-                >{data.cs_provied_date || "N/A"}</td
-              >
+              <td class="text-center">{data.cs_category || "N/A"}</td>
+              <td class="text-center">{data.cs_version || "N/A"}</td>
+              <td class="text-center">{data.cs_filename || "N/A"}</td>
+              <td class="text-center">{data.cs_provied_date || "N/A"}</td>
             </tr>
           {/each}
         {:else}
           <tr>
-            <td colspan="5" class="text-center" style="font-size: 16px;"
-              >No data available</td
-            >
+            <td colspan="5" class="text-center">No data available</td>
           </tr>
         {/if}
       </tbody>
@@ -145,12 +134,12 @@
         &lsaquo;
       </button>
 
-      {#each pages as page}
+      {#each Array(totalPages) as _, index}
         <button
-          class:selected={currentPage === page}
-          on:click={() => goToPage(page)}
+          class:selected={currentPage === index + 1}
+          on:click={() => goToPage(index + 1)}
         >
-          {page}
+          {index + 1}
         </button>
       {/each}
 
@@ -167,38 +156,6 @@
 <style>
   * {
     font-size: 16px;
-  }
-
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(167, 167, 167, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-
-  .loading-spinner {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-  }
-
-  /* Spinner animation */
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 
   .tableWrap {
@@ -227,9 +184,6 @@
     font-size: 16px;
     color: #555;
   }
-  .total-count p {
-    margin: 0;
-  }
 
   .pagination {
     display: flex;
@@ -239,7 +193,7 @@
   }
 
   .pagination button {
-    border: none !important;
+    border: none;
     padding: 8px 12px;
     margin: 0 4px;
     cursor: pointer;

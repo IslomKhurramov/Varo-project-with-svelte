@@ -2,6 +2,7 @@
   import { dashboardData } from "./../../services/dashboard/dashboard.js";
   import moment from "moment";
   import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
 
   let data = null;
   let loading = true;
@@ -54,7 +55,14 @@
 
       <section class="rowContents col3">
         <article class="contentArea">
-          <h4 class="title border">공지사항</h4>
+          <h4
+            class="title border"
+            style="display: flex; justify-content: space-between;"
+          >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            공지사항
+            <span on:click={() => navigate("/page6?tab=Notice")}> 전체 </span>
+          </h4>
           <div class="tableListWrap nofirstth">
             <table class="tableList hdBorder">
               <colgroup>
@@ -72,7 +80,10 @@
               <tbody>
                 {#if data?.board?.notices.length !== 0}
                   {#each data?.board?.notices as article}
-                    <tr>
+                    <tr
+                      on:click={() =>
+                        navigate(`/page6?tab=Notice&id=${article?.art_index}`)}
+                    >
                       <td class="text-center" style="font-size: 16px;"
                         >{article?.title ?? "-"}</td
                       >
@@ -128,7 +139,15 @@
         </article>
 
         <article class="contentArea">
-          <h4 class="title border">자료실</h4>
+          <h4
+            class="title border"
+            style="display: flex; justify-content: space-between;"
+          >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            자료실
+            <span on:click={() => navigate("/page6?tab=Dataroom")}> 전체 </span>
+          </h4>
+
           <div class="tableListWrap nofirstth">
             <table class="tableList hdBorder">
               <colgroup>
@@ -146,7 +165,12 @@
               <tbody>
                 {#if data?.board?.dataroom?.length !== 0}
                   {#each data?.board?.dataroom as article}
-                    <tr>
+                    <tr
+                      on:click={() =>
+                        navigate(
+                          `/page6?tab=Dataroom&id=${article?.art_index}`,
+                        )}
+                    >
                       <td class="text-center" style="font-size: 16px;"
                         >{article?.title ?? "-"}</td
                       >

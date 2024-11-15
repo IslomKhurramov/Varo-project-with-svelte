@@ -1,67 +1,51 @@
 <script>
-  // Accept props from the parent component
-  export let selectedData;
-  export let getArticleDetailData;
-
-  import {
-    updateArticle,
-    deleteArticle,
-  } from "../../services/page6/serviceArticle";
+  import { createArticle } from "../../services/page6/serviceArticle";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
 
-  let title = "";
-  let content = "";
-  let writer_name = "";
-  let file = null;
+  export let selectedData;
+
+  let title = selectedData?.title || "";
+  let content = selectedData?.content || "";
+  let category = selectedData?.category || "DATAROOM";
+  let selectedFile = null;
+  let fileName = selectedData?.original_filename || null;
   let error = null;
 
   const dispatch = createEventDispatcher();
 
-  $: if (selectedData && !title && !content && !writer_name) {
-    title = selectedData.title || "";
-    content = selectedData.content || "";
-    writer_name = selectedData.writer_name || "";
-  }
-
-  async function handleEdit() {
-    try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
-      formData.append("writer_name", writer_name);
-      formData.append("art_index", selectedData.art_index);
-      if (file) formData.append("file", file);
-
-      const response = await updateArticle(formData);
-      if (response.RESULT === "OK") {
-        await successAlert(response.CODE);
-        await getArticleDetailData(selectedData.art_index);
-        dispatch("close");
-      }
-    } catch (err) {
-      error = err.message;
-      console.log("Error details:", err.response ? err.response.data : err);
-      await errorAlert(error);
+  // Handle file selection
+  const handleFileSelect = (event) => {
+    selectedFile = event.target.files[0];
+    if (selectedFile) {
+      fileName = selectedFile.name;
     }
-  }
+  };
 
-  async function handleDelete() {
+  // Handle form submission
+  const handleSubmit = async () => {
     try {
-      const response = await deleteArticle({
-        art_index: selectedData.art_index,
+      const response = await createArticle({
+        title,
+        content,
+        category,
+        file: selectedFile,
       });
+
       if (response.RESULT === "OK") {
-        await successAlert(response.CODE);
+        await successAlert("Article created successfully!");
         dispatch("close");
+      } else {
+        throw new Error(response.MESSAGE || "Failed to create the article");
       }
     } catch (err) {
       error = err.message;
       console.log("Error details:", err.response ? err.response.data : err);
       await errorAlert(error);
     }
-  }
+  };
 
+  // Handle list navigation
   function handleList() {
     dispatch("close");
   }
@@ -76,6 +60,7 @@
           <input bind:value={title} type="text" placeholder="제목" />
         </div>
       </div>
+
       <div class="formControl">
         <label>내용</label>
         <div class="inputGroup">
@@ -83,54 +68,33 @@
           ></textarea>
         </div>
       </div>
+
       <div class="formControl">
         <label>파일</label>
         <div class="inputGroup">
-          {#if selectedData.file_path}
+          {#if selectedData?.file_path}
             <a href={`/${selectedData.file_path}`} target="_blank">
               {selectedData.original_filename}
             </a>
-            <div class="inputGroup_1">
-              <input
-                style="border: none;"
-                type="file"
-                on:change={(e) => (file = e.target.files[0])}
-              />
-            </div>
-          {:else}
-            <div class="inputGroup_1">
-              <input
-                style="border: none;"
-                type="file"
-                on:change={(e) => (file = e.target.files[0])}
-              />
-            </div>
           {/if}
+          <input type="file" on:change={handleFileSelect} />
         </div>
       </div>
+
       <div class="formControl">
         <label></label>
-        <div class="inputGroup">
-          <div class="buttons">
-            <div class="buttonGroup">
-              <button
-                type="button"
-                class="btn btn-primary"
-                on:click={handleEdit}
-              >
-                수정
-              </button>
-              <button
-                type="button"
-                class="btn btn-warning"
-                on:click={handleDelete}
-              >
-                삭제
-              </button>
-              <button type="button" class="btn btn-green" on:click={handleList}>
-                목록
-              </button>
-            </div>
+        <div class="buttons">
+          <div class="buttonGroup">
+            <button
+              type="button"
+              class="btn btn-primary"
+              on:click={handleSubmit}
+            >
+              등록하기
+            </button>
+            <button type="button" class="btn btn-green" on:click={handleList}>
+              목록
+            </button>
           </div>
         </div>
       </div>
@@ -187,8 +151,21 @@
     align-items: center;
   }
 
-  .inputGroup_1 {
-    margin-top: 10px;
+  .file-name-input {
+    width: 300px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #555;
+    background-color: #f9f9f9;
+  }
+  .file-name-input[readonly] {
+    background-color: #f0f0f0;
+  }
+
+  .file-input {
+    display: none;
   }
 
   .buttonGroup {

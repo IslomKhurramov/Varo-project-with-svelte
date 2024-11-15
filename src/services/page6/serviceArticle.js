@@ -112,13 +112,16 @@ export const createArticle = async ({ title, content, category, file }) => {
     formData.append("title", title);
     formData.append("content", content);
     formData.append("category", category);
-    if (file) formData.append("file", file); // Add file if it exists
+    if (file) formData.append("file", file);
 
     const response = await axios.post(
       `${serverApi}/api/createArticle/`,
       formData,
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
     );
 
@@ -127,7 +130,9 @@ export const createArticle = async ({ title, content, category, file }) => {
     if (data.RESULT !== "ERROR") {
       return data;
     } else {
-      throw new Error(data.CODE);
+      throw new Error(
+        data.MESSAGE || "An error occurred while creating the article.",
+      );
     }
   } catch (error) {
     throw error;
@@ -297,7 +302,7 @@ export const getProgramList = async (params) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/getProgramList/`,
-      params, // Parametrlar obyekt sifatida yuboriladi
+      params,
       {
         withCredentials: true,
       },

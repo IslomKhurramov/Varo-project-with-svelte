@@ -7,7 +7,7 @@
   let error = null;
   let selectedData = null;
   let projectArray = [];
-  let showNewMember = false; // To track if the NewMember component should be shown
+  let showNewMember = false;
 
   async function getUserListsData() {
     try {

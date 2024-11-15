@@ -247,27 +247,29 @@ export const setUserDelete = async (user_index) => {
   }
 };
 
-// export const register = async (name, email, password, department) => {
-//   try {
-//     const response = await axios.post(
-//       `${serverApi}/api/setRegisterNewMember/`,
-//       {
-//         user_email: email,
-//         user_pw: password,
-//         user_name: name,
-//         user_depart: department,
-//         user_rolltype: 1,
-//       },
-//       { withCredentials: true },
-//     );
-//     const data = response.data;
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////// 사용자관리 API request part ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
-//     if (data.RESULT !== "ERROR") {
-//       return data;
-//     } else {
-//       throw new Error(data.CODE);
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const setLicenseUpdate = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setLicenseUpdate/`,
+      formData,
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+

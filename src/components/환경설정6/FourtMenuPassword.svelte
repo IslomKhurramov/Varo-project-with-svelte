@@ -1,7 +1,40 @@
 <script>
+  import { getUserExist } from "../../services/login/loginService";
+  import { setUserDelete } from "../../services/page6/serviceArticle";
+  export let selectedData;
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
 
+  let find_user = "";
+  let errorMessage = "";
+  let error = null;
 
+  const findUser = async () => {
+    try {
+      if (!find_user) throw new Error("이메일 입력하지 않았습니다");
+      const result = await getUserExist(find_user);
 
+      await successAlert(result);
+    } catch (err) {
+      errorMessage = err?.message;
+      await errorAlert(errorMessage);
+    } finally {
+      find_user = "";
+    }
+  };
+  async function setUserDeleteData(user_index) {
+    try {
+      const response = await setUserDelete(user_index);
+      if (response.RESULT === "OK") {
+        await successAlert(); 
+        selectedData = null;
+      } else {
+        await errorAlert("삭제에 실패했습니다.");
+      }
+    } catch (err) {
+      error = err.message;
+      await errorAlert(error);
+    }
+  }
 </script>
 
 <main class="table-container" style="margin: 0; border-radius: 10px">
@@ -22,8 +55,14 @@
       <div class="formControl">
         <label>이메일(변경불가)</label>
         <div class="inputGroup">
-          <input type="email" placeholder="admin@admin.com" />
-          <button class="btn close-btn">이메일 중복확인</button>
+          <input
+            type="email"
+            placeholder="admin@admin.com"
+            bind:value={find_user}
+          />
+          <button class="btn close-btn" on:click={findUser}>
+            이메일 중복확인
+          </button>
         </div>
       </div>
       <div class="formControl">
@@ -45,7 +84,16 @@
             <div class="buttonGroup">
               <button class="btn modify-btn">수정하기</button>
               <button class="btn close-btn">다시 놓기</button>
-              <button class="btn delete-btn">삭제하기</button>
+              <button
+                class="btn delete-btn"
+                on:click={() => {
+                  if (selectedData && selectedData.user_index) {
+                    setUserDeleteData(selectedData.user_index);
+                  } else {
+                    errorAlert("삭제할 사용자를 선택하지 않았습니다.");
+                  }
+                }}>삭제하기</button
+              >
               <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
             </div>
           </div>
@@ -54,7 +102,6 @@
     </div>
   </div>
 </main>
-
 
 <style>
   .table-container {

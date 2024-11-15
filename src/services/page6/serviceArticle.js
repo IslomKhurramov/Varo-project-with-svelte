@@ -225,6 +225,28 @@ export const setPasswordUpdate = async ({
   }
 };
 
+export const setUserDelete = async (user_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setUserDelete/`,
+      { user_index: user_index },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 // export const register = async (name, email, password, department) => {
 //   try {
 //     const response = await axios.post(

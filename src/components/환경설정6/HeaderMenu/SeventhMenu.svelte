@@ -1,5 +1,5 @@
 <script>
-  let textareaContent = `{"id": "2gy3g4gy334ggyfdf7f76df7787f"}`;
+  let textareaContent = ``;
   const sampleClick = async () => {
     try {
       await getPlanCommandExcel(selectedCheckList);
@@ -91,7 +91,7 @@
 
   textarea {
     width: 100%;
-    height: 200px;
+    height: 120px;
     padding: 10px;
     font-size: 18px;
     border: 1px solid #ccc;

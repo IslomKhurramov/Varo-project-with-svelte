@@ -407,8 +407,8 @@
         <colgroup>
           <col style="width:60px;" />
           <col style="width:160px;" />
-          <col style="width:207px;" />
-          <col style="width:260px;" />
+          <col style="width:240px;" />
+          <col style="width:350px;" />
           <col style="width:90px;" />
           <col style="width:120px;" />
           <col style="width:90px;" />
@@ -494,7 +494,7 @@
               <td class="text-center">{data.cs_version}</td>
               <td class="text-center">{data.cs_provied_date}</td>
               <td class="text-center">N/A</td>
-              <td class="text-center">{data.cs_description}</td>
+              <td>{data.cs_description}</td>
             </tr>
           {/each}
         </tbody>

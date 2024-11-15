@@ -257,10 +257,12 @@ export const setLicenseUpdate = async (formData) => {
       `${serverApi}/api/setLicenseUpdate/`,
       formData,
       {
-        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data", // Ensure correct content type
+        },
+        withCredentials: true, // Include credentials (cookies/sessions) if needed
       },
     );
-
     const data = response.data;
 
     if (data.RESULT !== "ERROR") {
@@ -269,7 +271,7 @@ export const setLicenseUpdate = async (formData) => {
       throw new Error(data.CODE);
     }
   } catch (error) {
-    throw error;
+    throw error; // This will be caught in your try-catch in the calling function
   }
 };
 
@@ -310,6 +312,6 @@ export const getProgramList = async (params) => {
     }
   } catch (error) {
     console.error("Error in getProgramList API:", error.message);
-    throw error; 
+    throw error;
   }
 };

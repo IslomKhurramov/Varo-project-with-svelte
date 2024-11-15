@@ -275,11 +275,41 @@ export const setLicenseUpdate = async (formData) => {
 
 export const getLicenseInformation = async () => {
   try {
-    const response = await axios.get(`${serverApi}/api/getLicenseInformation/`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${serverApi}/api/getLicenseInformation/`,
+      {
+        withCredentials: true,
+      },
+    );
     return response.data;
   } catch (error) {
     throw error;
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////// 사용자관리 API request part ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const getProgramList = async (params) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getProgramList/`,
+      params, // Parametrlar obyekt sifatida yuboriladi
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT === "OK") {
+      return data;
+    } else {
+      throw new Error(data.CODE || "Unknown error from backend");
+    }
+  } catch (error) {
+    console.error("Error in getProgramList API:", error.message);
+    throw error; 
   }
 };

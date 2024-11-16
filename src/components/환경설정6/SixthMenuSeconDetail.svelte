@@ -1,74 +1,16 @@
 <script>
+  import { serverApi } from "../../lib/config";
+  import { dataArray } from "../../services/page7/trace.store";
+  import { errorAlert, successAlert } from "../../shared/sweetAlert";
   // export let selectPageMain;
-  let projectIndex = null;
   let filteredProjects = [];
-  let projectData = {};
-  let dataArray = [
-    {
-      hostname: "윈도우에이전트",
-      itemNo: "CCE 일반점검",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "리눅스에이전트",
-      itemNo: "CCE긴급점검",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "수동점검프로그램",
-      itemNo: "에이전트정보수집",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "수동점검 스크립트",
-      itemNo: "",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "네트워크장비정보수집 프로그램",
-      itemNo: "Item005",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "매뉴얼",
-      itemNo: "Item005",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-    {
-      hostname: "가이드라인",
-      itemNo: "Item005",
-      itemTitle: "",
-      itemCriteria: "",
-      itemStatus: "",
-      itemResult: "",
-    },
-  ];
-  let setView = "plan";
 
   let itemsPerPage = 5;
   let currentPage = 1;
-  let totalItems = dataArray.length;
+  let totalItems = $dataArray.length;
   let totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  $: paginatedData = dataArray.slice(
+  $: paginatedData = $dataArray.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
@@ -127,74 +69,127 @@
     link.click();
     document.body.removeChild(link);
   }
+
+  /**********************************************/
+  let selectedFiles = {}; // Use an object to store files for each row
+  let fileNames = {}; // Use an object to store file names for each row
+
+  // Handle file selection
+  function handleFileSelect(event, type) {
+    const file = event.target.files[0];
+    if (file) {
+      selectedFiles[type] = file; // Store the selected file by type
+      fileNames[type] = file.name; // Store the file name by type
+    } else {
+      fileNames[type] = "선택된 파일 없음"; // Default text if no file is selected
+    }
+  }
+
+  // Upload the selected file
+  async function uploadFile(type) {
+    const file = selectedFiles[type];
+    if (!file) {
+      errorAlert(`${type}에 대해 파일을 선택해주세요.`);
+      return;
+    }
+
+    const apiUrl = `${serverApi}/api/setUploadProgram/`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", type); // Include the file type
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: formData,
+        credentials: "include", // Include cookies if necessary
+      });
+
+      const result = await response.json();
+
+      if (result.RESULT === "OK") {
+        successAlert(`${type} 파일 업로드 성공!`);
+      } else {
+        errorAlert(`${type} 파일 업로드 실패: ${result.CODE}`);
+      }
+    } catch (error) {
+      console.error(`Error uploading file for ${type}:`, error);
+    }
+  }
 </script>
 
 <section class="tableWrap" style="height: calc(-100px + 100vh);">
-  <div class="tableListWrap">
-    <table class="tableList hdBorder">
-      <colgroup>
-        <col style="width:60%;" />
-        <col style="width:40%;" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="text-center" style="font-size: 16px;">용도</th>
-          <th class="text-center" style="font-size: 16px;">업로드</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        {#each dataArray as data, index}
+  <div class="parent_table">
+    <div
+      class="tableListWrap"
+      style="height: calc(-294px + 100vh); overflow: auto;"
+    >
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col style="width: 36%;" />
+        </colgroup>
+        <thead>
           <tr>
-            <td style="font-size: 16px;" class="cursor-pointer text-center">
-              {data.hostname}
-            </td>
-            <td
-              style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
-            >
-              <div>
-                <button
-                  type="button"
-                  class="btn btnPrimary btn_dean"
-                  on:click={downloadCSV}
-                >
-                  <img
-                    src="./assets/images/icon/download.svg"
-                    class="excel-img"
-                  />
-                  <span> 파일업로드</span>
-                </button>
-              </div>
-            </td>
+            <th class="text-center" style="font-size: 16px;">순번</th>
+            <th class="text-center" style="font-size: 16px;">용도</th>
+            <th class="text-center" style="font-size: 16px;">업로드</th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
-
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
-
-      {#each pages as page}
-        <button
-          class:selected={currentPage === page}
-          on:click={() => goToPage(page)}
-        >
-          {page}
-        </button>
-      {/each}
-
-      <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        &rsaquo;
-      </button>
-    </nav>
+        </thead>
+        <tbody>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          {#each $dataArray as data, index}
+            <tr>
+              <td class="text-center">{index + 1}</td>
+              <td style="font-size: 16px;" class="text-center">
+                {data.cs_category}
+                <!-- Display the purpose (e.g., Windows Agent) -->
+              </td>
+              <td class="text-center">
+                <div
+                  style="width: 100%; display:flex; gap:10px; justify-content:center"
+                >
+                  <!-- File Input -->
+                  <label
+                    class="btn btnPrimary"
+                    style="display: flex; flex-direction:row; gap:10px; width:170px;"
+                  >
+                    <input
+                      type="file"
+                      class="file-input"
+                      data-index={index}
+                      on:change={(event) =>
+                        handleFileSelect(event, data.cs_category)}
+                    />
+                    <img
+                      src="./assets/images/icon/download.svg"
+                      class="excel-img"
+                    />
+                    <span>파일업로드</span>
+                  </label>
+                  <!-- Display the file name -->
+                  <input
+                    type="text"
+                    placeholder="선택된 파일 없음"
+                    value={fileNames[data.cs_category] || "선택된 파일 없음"}
+                    readonly
+                    class="file-name-input"
+                  />
+                  <button
+                    type="button"
+                    class="upload-btn"
+                    on:click={() => uploadFile(data.cs_category)}
+                  >
+                    업로드
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
@@ -202,11 +197,40 @@
   * {
     font-size: 16px;
   }
+  .upload-btn,
+  .btnSave {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 85px;
+    height: 40px;
+  }
+
+  .upload-btn:hover,
+  .btnSave:hover {
+    background-color: #45a049;
+  }
+  .file-name-input {
+    width: 300px;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: rgba(0, 103, 255, 0.05);
+    color: #0067ff;
+    border-color: rgba(0, 103, 255, 0.1);
+    height: 40px;
+  }
 
   .tableWrap {
     background-color: #fff;
   }
-
+  .parent_table {
+    padding: 20px;
+    height: 100%;
+  }
   thead {
     position: sticky;
     top: 0;
@@ -251,6 +275,7 @@
   .btn_dean {
     display: flex;
     gap: 10px;
+    width: 250px;
   }
 
   .btn:hover {

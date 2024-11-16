@@ -15,9 +15,11 @@
   import { writable } from "svelte/store";
   import { serverApi } from "../../../lib/config";
   import axios from "axios";
+  import { programList } from "../../../services/page7/trace.store";
+
   export let projectIndex;
   /*********VARIABLE FOR DATA FROM BACKEND********/
-  const programList = writable({ list: [], total_count: 0 });
+
   const targetList = writable([]);
   /************************************************/
   export let plan_index = "";

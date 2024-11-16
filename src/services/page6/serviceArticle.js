@@ -252,8 +252,33 @@ export const setUserDelete = async (user_index) => {
   }
 };
 
+export const setUserActivate = async (user_index, user_activate) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setUserActivate/`,
+      {
+        user_index: user_index,
+        user_activate: user_activate,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE || "Unknown error");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////// 사용자관리 API request part ///////////////////////////////////////
+////////////////////////// 로그분석 API request part ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const setLicenseUpdate = async (formData) => {
@@ -276,7 +301,7 @@ export const setLicenseUpdate = async (formData) => {
       throw new Error(data.CODE);
     }
   } catch (error) {
-    throw error; // This will be caught in your try-catch in the calling function
+    throw error;
   }
 };
 
@@ -295,7 +320,7 @@ export const getLicenseInformation = async () => {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////// 사용자관리 API request part ///////////////////////////////////////
+////////////////////////// 프로그램관리 API request part ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const getProgramList = async (params) => {

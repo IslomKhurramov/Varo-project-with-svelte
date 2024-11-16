@@ -39,7 +39,7 @@
 
   function handleNewMemberClose() {
     showNewMember = false;
-    getUserListsData(); // Refresh the list after closing the NewMember component
+    getUserListsData();
   }
 </script>
 
@@ -106,7 +106,7 @@
               >
                 {data.itemStatus}
               </td>
-              <td class="text-center" style="font-size: 16px;">
+              <td class="text-center" style="font-size: 12px;">
                 <select
                   on:click={(e) => {
                     e.stopPropagation();
@@ -114,7 +114,7 @@
                   name="agent_status"
                   id="agent_status"
                 >
-                  <option value="1">활동적인</option>
+                  <option value="1">활성</option>
                   <option value="0">비활성</option>
                 </select>
               </td>
@@ -185,7 +185,7 @@
 
   select {
     padding: 0 32px 0 15px;
-    height: 40px;
+    height: 20px;
     background-size: 8px;
     color: #626677;
     border: 1px solid rgba(98, 102, 119, 0.2);

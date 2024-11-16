@@ -1,13 +1,25 @@
 <script>
   import FourthMenuDetail from "../FourthMenuDetail.svelte";
   import NewMember from "../NewMember.svelte";
-  import { getUserLists } from "../../../services/page6/serviceArticle";
+  import {
+    getUserLists,
+    setUserActivate,
+  } from "../../../services/page6/serviceArticle";
   import { onMount } from "svelte";
+  import { errorAlert, successAlert } from "../../../shared/sweetAlert";
+  import { userData } from "../../../stores/user.store";
 
   let error = null;
   let selectedData = null;
   let projectArray = [];
   let showNewMember = false;
+  let userInfo = null;
+
+  // Subscribe to userData store
+  // userData.subscribe((value) => {
+  //   userInfo = value.userInfo;
+  //   console.log("Fetched userInfo from store:", userInfo);
+  // });
 
   async function getUserListsData() {
     try {
@@ -19,13 +31,45 @@
           itemTitle: user.user_email,
           itemCriteria: user.user_depart,
           itemStatus: user.user_roletype__role_type,
-          itemResult: user.user_activate ? "활성" : "비활성",
+          itemResult: user.user_activate ? "1" : "0",
           user_index: user.user_index,
         }));
       }
     } catch (err) {
       error = err.message;
       console.error("Error fetching user lists:", error);
+    }
+  }
+
+  async function handleStatusChange(userIndex, event) {
+    const originalValue = event.target.value;
+    try {
+      const newStatus = parseInt(event.target.value, 10);
+
+      if ([1, 9].includes(userIndex)) {
+        await errorAlert("관리자 또는 에이전트 계정은 변경할 수 없습니다.");
+        event.target.value = newStatus === 1 ? "0" : "1";
+        return;
+      }
+
+      const response = await setUserActivate(userIndex, newStatus);
+
+      if (response.RESULT === "OK") {
+        await successAlert(
+          newStatus === 1
+            ? "사용자가 활성화되었습니다."
+            : "사용자가 비활성화되었습니다.",
+        );
+
+        await getUserListsData();
+      }
+    } catch (err) {
+      console.error("Error in handleStatusChange:", err);
+      event.target.value = originalValue;
+      await errorAlert(
+        err.message || "사용자 상태를 변경하는 중 오류가 발생했습니다.",
+        await getUserListsData(),
+      );
     }
   }
 
@@ -108,9 +152,9 @@
               </td>
               <td class="text-center" style="font-size: 12px;">
                 <select
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
+                  bind:value={data.itemResult}
+                  on:change={(e) => handleStatusChange(data.user_index, e)}
+                  on:click={(e) => e.stopPropagation()}
                   name="agent_status"
                   id="agent_status"
                 >
@@ -118,10 +162,12 @@
                   <option value="0">비활성</option>
                 </select>
               </td>
+
               <td
                 style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
               >
                 <div
+                  class="passwordreset"
                   on:click={(e) => {
                     e.stopPropagation();
                   }}
@@ -139,10 +185,10 @@
           type="button"
           class="btn btnBlue btnSave"
           on:click={() => {
-            showNewMember = true; // Open NewMember component
+            showNewMember = true;
           }}
         >
-          계정추가
+          사용자추가
         </button>
       </div>
     </div>
@@ -183,9 +229,14 @@
     line-height: 23px;
   }
 
+  .passwordreset {
+    padding: 0 25px 0 15px;
+    height: 30px;
+  }
+
   select {
-    padding: 0 32px 0 15px;
-    height: 20px;
+    padding: 0 25px 0 15px;
+    height: 30px;
     background-size: 8px;
     color: #626677;
     border: 1px solid rgba(98, 102, 119, 0.2);

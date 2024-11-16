@@ -95,7 +95,7 @@
 
     const apiUrl = `${serverApi}/api/setUploadProgram/`;
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("upload_file", file);
     formData.append("type", type); // Include the file type
 
     try {

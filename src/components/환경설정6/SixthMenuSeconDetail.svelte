@@ -95,7 +95,7 @@
 
     const apiUrl = `${serverApi}/api/setUploadProgram/`;
     const formData = new FormData();
-    formData.append("upload_file", file);
+    formData.append("update_file", file);
     formData.append("type", type); // Include the file type
 
     try {
@@ -109,6 +109,7 @@
 
       if (result.RESULT === "OK") {
         successAlert(`${type} 파일 업로드 성공!`);
+        fileNames = {};
       } else {
         errorAlert(`${type} 파일 업로드 실패: ${result.CODE}`);
       }
@@ -118,78 +119,73 @@
   }
 </script>
 
-<section class="tableWrap" style="height: calc(-100px + 100vh);">
-  <div class="parent_table">
-    <div
-      class="tableListWrap"
-      style="height: calc(-294px + 100vh); overflow: auto;"
-    >
-      <table class="tableList hdBorder">
-        <colgroup>
-          <col style="width:90px;" />
-          <col />
-          <col style="width: 36%;" />
-        </colgroup>
-        <thead>
+<section class="tableWrap">
+  <div class="tableListWrap">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col style="width:90px;" />
+        <col />
+        <col style="width: 36%;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-center" style="font-size: 16px;">순번</th>
+          <th class="text-center" style="font-size: 16px;">용도</th>
+          <th class="text-center" style="font-size: 16px;">업로드</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        {#each $dataArray as data, index}
           <tr>
-            <th class="text-center" style="font-size: 16px;">순번</th>
-            <th class="text-center" style="font-size: 16px;">용도</th>
-            <th class="text-center" style="font-size: 16px;">업로드</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          {#each $dataArray as data, index}
-            <tr>
-              <td class="text-center">{index + 1}</td>
-              <td style="font-size: 16px;" class="text-center">
-                {data.cs_category}
-                <!-- Display the purpose (e.g., Windows Agent) -->
-              </td>
-              <td class="text-center">
-                <div
-                  style="width: 100%; display:flex; gap:10px; justify-content:center"
+            <td class="text-center">{index + 1}</td>
+            <td style="font-size: 16px;" class="text-center">
+              {data.cs_category}
+              <!-- Display the purpose (e.g., Windows Agent) -->
+            </td>
+            <td class="text-center">
+              <div
+                style="width: 100%; display:flex; gap:10px; justify-content:center"
+              >
+                <!-- File Input -->
+                <label
+                  class="btn btnPrimary"
+                  style="display: flex; flex-direction:row; gap:10px; width:170px;"
                 >
-                  <!-- File Input -->
-                  <label
-                    class="btn btnPrimary"
-                    style="display: flex; flex-direction:row; gap:10px; width:170px;"
-                  >
-                    <input
-                      type="file"
-                      class="file-input"
-                      data-index={index}
-                      on:change={(event) =>
-                        handleFileSelect(event, data.cs_category)}
-                    />
-                    <img
-                      src="./assets/images/icon/download.svg"
-                      class="excel-img"
-                    />
-                    <span>파일업로드</span>
-                  </label>
-                  <!-- Display the file name -->
                   <input
-                    type="text"
-                    placeholder="선택된 파일 없음"
-                    value={fileNames[data.cs_category] || "선택된 파일 없음"}
-                    readonly
-                    class="file-name-input"
+                    type="file"
+                    class="file-input"
+                    data-index={index}
+                    on:change={(event) =>
+                      handleFileSelect(event, data.cs_category)}
                   />
-                  <button
-                    type="button"
-                    class="upload-btn"
-                    on:click={() => uploadFile(data.cs_category)}
-                  >
-                    업로드
-                  </button>
-                </div>
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
+                  <img
+                    src="./assets/images/icon/download.svg"
+                    class="excel-img"
+                  />
+                  <span>파일업로드</span>
+                </label>
+                <!-- Display the file name -->
+                <input
+                  type="text"
+                  placeholder="선택된 파일 없음"
+                  value={fileNames[data.cs_category] || "선택된 파일 없음"}
+                  readonly
+                  class="file-name-input"
+                />
+                <button
+                  type="button"
+                  class="upload-btn"
+                  on:click={() => uploadFile(data.cs_category)}
+                >
+                  업로드
+                </button>
+              </div>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -207,6 +203,11 @@
     font-size: 16px;
     width: 85px;
     height: 40px;
+  }
+  .tableWrap {
+    background-color: #fff;
+    height: 85vh;
+    border-radius: 5px;
   }
 
   .upload-btn:hover,

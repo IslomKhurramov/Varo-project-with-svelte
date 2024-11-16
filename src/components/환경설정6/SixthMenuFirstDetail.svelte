@@ -62,136 +62,128 @@
 </script>
 
 <section class="tableWrap">
-  <div class="parent_table">
-    <div
-      class="tableListWrap"
-      style="height: calc(-294px + 100vh); overflow: auto;"
-    >
-      <table class="tableList hdBorder">
-        <colgroup>
-          <col style="width:4%;" />
-          <col style="width:30%;" />
-          <col style="width:10%;" />
-          <col style="width:20%;" />
-          <col style="width:10%;" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th class="text-center">순번</th>
-            <th class="text-center" on:click={() => toggleSort("order_usage")}>
-              용도
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 576 512"
-                style="transform: rotate({sortField === 'order_usage' &&
-                sortAscending
-                  ? '0deg'
-                  : '180deg'});
+  <div class="tableListWrap">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col style="width:4%;" />
+        <col style="width:30%;" />
+        <col style="width:10%;" />
+        <col style="width:20%;" />
+        <col style="width:10%;" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-center">순번</th>
+          <th class="text-center" on:click={() => toggleSort("order_usage")}>
+            용도
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              style="transform: rotate({sortField === 'order_usage' &&
+              sortAscending
+                ? '0deg'
+                : '180deg'});
                      transition: transform 0.2s;"
-                width="16px"
-                height="16px"
-              >
-                <path
-                  d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
-                  fill="#0067ff"
-                />
-              </svg>
-            </th>
-            <th
-              class="text-center"
-              on:click={() => toggleSort("order_version")}
+              width="16px"
+              height="16px"
             >
-              버전
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 576 512"
-                style="transform: rotate({sortField === 'order_version' &&
-                sortAscending
-                  ? '0deg'
-                  : '180deg'});
+              <path
+                d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                fill="#0067ff"
+              />
+            </svg>
+          </th>
+          <th class="text-center" on:click={() => toggleSort("order_version")}>
+            버전
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              style="transform: rotate({sortField === 'order_version' &&
+              sortAscending
+                ? '0deg'
+                : '180deg'});
                      transition: transform 0.2s;"
-                width="16px"
-                height="16px"
-              >
-                <path
-                  d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
-                  fill="#0067ff"
-                />
-              </svg>
-            </th>
-            <th class="text-center">파일명</th>
-            <th class="text-center" on:click={() => toggleSort("order_cdate")}>
-              날짜
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 576 512"
-                style="transform: rotate({sortField === 'order_cdate' &&
-                sortAscending
-                  ? '0deg'
-                  : '180deg'});
+              width="16px"
+              height="16px"
+            >
+              <path
+                d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                fill="#0067ff"
+              />
+            </svg>
+          </th>
+          <th class="text-center">파일명</th>
+          <th class="text-center" on:click={() => toggleSort("order_cdate")}>
+            날짜
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              style="transform: rotate({sortField === 'order_cdate' &&
+              sortAscending
+                ? '0deg'
+                : '180deg'});
                      transition: transform 0.2s;"
-                width="16px"
-                height="16px"
-              >
-                <path
-                  d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
-                  fill="#0067ff"
-                />
-              </svg>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {#if $dataArray.length > 0}
-            {#each $dataArray as data, index}
-              <tr>
-                <td class="text-center"
-                  >{index + 1 + (currentPage - 1) * itemsPerPage}</td
-                >
-                <td class="text-center">{data.cs_category || "N/A"}</td>
-                <td class="text-center">{data.cs_version || "N/A"}</td>
-                <td class="text-center">{data.cs_filename || "N/A"}</td>
-                <td class="text-center">{data.cs_provied_date || "N/A"}</td>
-              </tr>
-            {/each}
-          {:else}
+              width="16px"
+              height="16px"
+            >
+              <path
+                d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                fill="#0067ff"
+              />
+            </svg>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {#if $dataArray.length > 0}
+          {#each $dataArray as data, index}
             <tr>
-              <td colspan="5" class="text-center">No data available</td>
+              <td class="text-center"
+                >{index + 1 + (currentPage - 1) * itemsPerPage}</td
+              >
+              <td class="text-center">{data.cs_category || "N/A"}</td>
+              <td class="text-center">{data.cs_version || "N/A"}</td>
+              <td class="text-center">{data.cs_filename || "N/A"}</td>
+              <td class="text-center">{data.cs_provied_date || "N/A"}</td>
             </tr>
-          {/if}
-        </tbody>
-      </table>
-      <!-- Total Count -->
-      <div class="total-count">
-        <p>총 데이터: <strong>{totalItems}</strong>개</p>
-      </div>
-
-      <!-- Pagination -->
-      <nav class="pagination">
-        <button
-          on:click={() => goToPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          &lsaquo;
-        </button>
-
-        {#each Array(totalPages) as _, index}
-          <button
-            class:selected={currentPage === index + 1}
-            on:click={() => goToPage(index + 1)}
-          >
-            {index + 1}
-          </button>
-        {/each}
-
-        <button
-          on:click={() => goToPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          &rsaquo;
-        </button>
-      </nav>
+          {/each}
+        {:else}
+          <tr>
+            <td colspan="5" class="text-center">No data available</td>
+          </tr>
+        {/if}
+      </tbody>
+    </table>
+    <!-- Total Count -->
+    <div class="total-count">
+      <p>총 데이터: <strong>{totalItems}</strong>개</p>
     </div>
+
+    <!-- Pagination -->
+    <nav class="pagination">
+      <button
+        on:click={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lsaquo;
+      </button>
+
+      {#each Array(totalPages) as _, index}
+        <button
+          class:selected={currentPage === index + 1}
+          on:click={() => goToPage(index + 1)}
+        >
+          {index + 1}
+        </button>
+      {/each}
+
+      <button
+        on:click={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
   </div>
 </section>
 
@@ -203,9 +195,7 @@
     padding: 20px;
     height: 100%;
   }
-  .tableListWrap {
-    padding: 20px;
-  }
+
   .tableWrap {
     background-color: #fff;
     height: 85vh;

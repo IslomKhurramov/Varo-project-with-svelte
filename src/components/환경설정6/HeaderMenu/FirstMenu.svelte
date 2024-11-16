@@ -74,7 +74,7 @@
 </script>
 
 <main class="table-container" style="border-radius: 10px;">
-  <div class="table-container_1 contentArea">
+  <!-- <div class="table-container_1 contentArea">
     <div class="formControlWrap">
       <div class="formControl">
         <label>서버</label>
@@ -150,8 +150,8 @@
               placeholder="아이디"
             />
             <span>패스워드</span>
-            <!-- bind:value={remoteMailServer.password} -->
-            <input type="password" placeholder="패스워드" />
+             bind:value={remoteMailServer.password} -->
+  <!-- <input type="password" placeholder="패스워드" />
           </div>
         </div>
       </div>
@@ -166,10 +166,174 @@
         </button>
       </div>
     </div>
-  </div>
+  </div> -->
+  <article class="contentArea" style="position: relative;">
+    <table class="tableForm">
+      <colgroup>
+        <col style="width:130px;" />
+        <col />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>서버</th>
+          <td>
+            <div class="td_cont">
+              <div>
+                <span>IP</span>
+                <input
+                  type="text"
+                  bind:value={serverIP}
+                  placeholder="000.000.0.00"
+                />
+              </div>
+              <div>
+                <span>PORT</span>
+                <input type="number" bind:value={port} placeholder="PORT" />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th> 에이전트연결주기</th>
+          <td
+            ><input
+              type="number"
+              bind:value={agentConnectInterval}
+              placeholder="에이전트연결주기"
+            />
+          </td>
+        </tr>
+        <tr>
+          <th>에이전트연결주기</th>
+          <td>
+            <div class="second_row">
+              <div>
+                <span>상</span>
+                <input type="number" placeholder="3" disabled />
+              </div>
+              <div>
+                <span>중</span>
+                <input type="number" placeholder="2" disabled />
+              </div>
+              <div>
+                <span>하</span>
+                <input type="number" placeholder="1" disabled />
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>메일서버설정</th>
+          <td>
+            <div class="last_cont">
+              <div class="mailServerBottom">
+                <span>메일서버주소</span>
+                <input
+                  type="text"
+                  bind:value={remoteMailServer.ip}
+                  placeholder="아이피"
+                />
+              </div>
+              <div class="mailServerBottom">
+                <span>메일서버포트</span>
+                <input
+                  type="text"
+                  bind:value={remoteMailServer.port}
+                  placeholder="포트"
+                />
+              </div>
+
+              <div class="mailServerBottom">
+                <span>아이디</span>
+                <input
+                  type="text"
+                  bind:value={remoteMailServer.id}
+                  placeholder="아이디"
+                />
+              </div>
+              <div class="mailServerBottom">
+                <span>패스워드</span>
+                <!-- bind:value={remoteMailServer.password} -->
+                <input type="password" placeholder="패스워드" />
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button
+      type="button"
+      class="btn btnBlue btnSave"
+      style="margin-top: 15px;"
+      on:click={setSystemBasicSetupData}
+    >
+      저장하기
+    </button>
+  </article>
 </main>
 
 <style>
+  .tableForm input {
+    font-size: 16px;
+  }
+  .tableForm tr:not(:last-child) th,
+  .tableForm tr:not(:last-child) td {
+    padding: 15px;
+  }
+  .td_cont span input {
+    font-size: 16px;
+  }
+  .second_row input {
+    width: 60px;
+    align-items: center;
+    font-size: 16px;
+  }
+  .last_cont {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  .second_row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .td_cont div,
+  .second_row div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+  }
+  .td_cont {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 16px;
+  }
+  th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .tableForm {
+    width: 42%;
+  }
+  td,
+  th {
+    font-size: 16px;
+  }
+  tr {
+    border: 1px solid #f2f2f2;
+  }
+  td {
+    margin-left: 10px;
+  }
+  /****************************************/
   .table-container {
     background-color: #ffffff;
     padding: 20px;
@@ -249,6 +413,7 @@
     gap: 10px;
     margin-bottom: 10px;
     align-items: center;
+    font-size: 16px;
   }
 
   .mailServerBottom input {
@@ -256,12 +421,13 @@
     padding: 8px;
     border: 1px solid #cccccc;
     border-radius: 5px;
+    font-size: 16px;
   }
 
   .mailServerBottom span {
     width: 100px;
     /* font-weight: bold; */
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .buttonContainer {

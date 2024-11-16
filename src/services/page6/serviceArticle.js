@@ -183,6 +183,31 @@ export const deleteArticle = async ({ art_index }) => {
   }
 };
 
+export const downloadArticleFile = async (file_path, file_name) => {
+  try {
+    const response = await axios({
+      url: `${serverApi}/media/${file_path}`,
+      method: "GET",
+      responseType: "blob", // Important! Set the response type to blob
+    });
+
+    console.log("response:", response);
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file_name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Clean up the blob URL
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download error:", error);
+    throw error;
+  }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////// 사용자관리 API request part ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////

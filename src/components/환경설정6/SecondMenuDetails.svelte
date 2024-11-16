@@ -6,6 +6,7 @@
   import {
     updateArticle,
     deleteArticle,
+    downloadArticleFile,
   } from "../../services/page6/serviceArticle";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
@@ -87,7 +88,18 @@
         <label>파일</label>
         <div class="inputGroup">
           {#if selectedData.file_path}
-            <a href={`/${selectedData.file_path}`} target="_blank">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <a
+              href="javascript:void(0)"
+              on:click={(e) => {
+                e.stopPropagation();
+                downloadArticleFile(
+                  selectedData.file_path,
+                  selectedData.original_filename,
+                );
+              }}
+            >
               {selectedData.original_filename}
             </a>
             <div class="inputGroup_1">

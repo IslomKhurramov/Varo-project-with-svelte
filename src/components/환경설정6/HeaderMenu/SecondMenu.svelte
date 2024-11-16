@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import moment from "moment";
   import {
+    downloadArticleFile,
     getAllArticles,
     getArticleDetail,
   } from "../../../services/page6/serviceArticle";
@@ -135,7 +136,16 @@
                 </td>
                 <td class="text-center">
                   {#if data.file_path}
-                    <a href={`/${data.file_path}`} target="_blank">
+                    <a
+                      href="javascript:void(0)"
+                      on:click={(e) => {
+                        e.stopPropagation();
+                        downloadArticleFile(
+                          data.file_path,
+                          data.original_filename,
+                        );
+                      }}
+                    >
                       {data.original_filename}
                     </a>
                   {:else}

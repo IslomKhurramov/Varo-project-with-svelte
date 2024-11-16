@@ -68,128 +68,187 @@
   }
 </script>
 
-<main class="tableWrap">
-  <div class="table-container_1">
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>제목</label>
-        <div class="inputGroup">
-          <input bind:value={title} type="text" placeholder="제목" />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>내용</label>
-        <div class="inputGroup">
-          <textarea bind:value={content} class="form-control" placeholder="내용"
-          ></textarea>
-        </div>
-      </div>
-      <div class="formControl">
-        <label>파일</label>
-        <div class="inputGroup">
-          {#if selectedData.file_path}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <a
-              href="javascript:void(0)"
-              on:click={(e) => {
-                e.stopPropagation();
-                downloadArticleFile(
-                  selectedData.file_path,
-                  selectedData.original_filename,
-                );
-              }}
-            >
-              {selectedData.original_filename}
-            </a>
-            <div class="inputGroup_1">
-              <input
-                style="border: none;"
-                type="file"
-                on:change={(e) => (file = e.target.files[0])}
-              />
+<main class="table-container" style="border-radius: 10px;">
+  <article class="contentArea" style="position: relative; width:28%;">
+    <table class="tableForm">
+      <colgroup>
+        <col style="width:130px;" />
+        <col />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th> 제목 </th>
+
+          <td>
+            <div class="inputGroup">
+              <input bind:value={title} type="text" placeholder="제목" />
             </div>
-          {:else}
-            <div class="inputGroup_1">
-              <input
-                style="border: none;"
-                type="file"
-                on:change={(e) => (file = e.target.files[0])}
-              />
+          </td>
+        </tr>
+        <tr>
+          <th> 내용 </th>
+          <td>
+            <div class="inputGroup">
+              <textarea
+                bind:value={content}
+                class="form-control"
+                placeholder="내용"
+              ></textarea>
             </div>
-          {/if}
-        </div>
-      </div>
-      <div class="formControl">
-        <label></label>
-        <div class="inputGroup">
-          <div class="buttons">
-            <div class="buttonGroup">
-              <button
-                type="button"
-                class="btn btn-primary"
-                on:click={handleEdit}
-              >
-                수정
-              </button>
-              <button
-                type="button"
-                class="btn btn-warning"
-                on:click={handleDelete}
-              >
-                삭제
-              </button>
-              <button type="button" class="btn btn-green" on:click={handleList}>
-                목록
-              </button>
+          </td>
+        </tr>
+        <tr>
+          <th> 파일 </th>
+          <td>
+            <div class="inputGroup">
+              {#if selectedData.file_path}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <a
+                  href="javascript:void(0)"
+                  on:click={(e) => {
+                    e.stopPropagation();
+                    downloadArticleFile(
+                      selectedData.file_path,
+                      selectedData.original_filename,
+                    );
+                  }}
+                >
+                  {selectedData.original_filename}
+                </a>
+
+                <label
+                  class="btn btnPrimary"
+                  style="display: flex; flex-direction:row; gap:10px; width:170px;"
+                >
+                  <input
+                    class="file-input"
+                    style="border: none;"
+                    type="file"
+                    on:change={(e) => (file = e.target.files[0])}
+                  />
+                  <img
+                    src="./assets/images/icon/download.svg"
+                    class="excel-img"
+                  />
+                  <span>파일업로드</span>
+                </label>
+              {:else}
+                <label
+                  class="btn btnPrimary"
+                  style="display: flex; flex-direction:row; gap:10px; width:170px;"
+                >
+                  <input
+                    class="file-input"
+                    style="border: none;"
+                    type="file"
+                    on:change={(e) => (file = e.target.files[0])}
+                  />
+                  <img
+                    src="./assets/images/icon/download.svg"
+                    class="excel-img"
+                  />
+                  <span>파일업로드</span>
+                </label>
+              {/if}
             </div>
-          </div>
+          </td>
+        </tr>
+        <tr></tr>
+      </tbody>
+    </table>
+    <div class="formControl">
+      <div class="buttons">
+        <div class="buttonGroup">
+          <button type="button" class="btn modify-btn" on:click={handleEdit}>
+            수정
+          </button>
+          <button type="button" class="btn delete-btn" on:click={handleDelete}>
+            삭제
+          </button>
+          <button type="button" class="btn close-btn" on:click={handleList}>
+            목록
+          </button>
         </div>
       </div>
     </div>
-  </div>
+  </article>
 </main>
 
 <style>
-  .tableWrap {
-    width: 100%;
-    background-color: #fff;
-    height: calc(100vh - 220px);
-    border-radius: 10px;
-    padding: 20px;
+  .modify-btn {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .modify-btn:hover {
+    background-color: #45a049;
+  }
+
+  .close-btn {
+    background-color: #2196f3;
+    color: white;
+  }
+
+  .close-btn:hover {
+    background-color: #1976d2;
+  }
+
+  .delete-btn {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .delete-btn:hover {
+    background-color: #e53935;
+  }
+
+  .contentArea {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+    margin-left: 20px;
     margin-top: 10px;
+    width: fit-content;
   }
 
-  .table-container_1 {
-    margin: 20px 0;
-    border-radius: 5px;
-    width: 50%;
-  }
-
-  .formControlWrap {
+  .formControl {
     display: flex;
-    flex-direction: column;
-    row-gap: 13px;
+    justify-content: center;
+    padding: 20px;
   }
 
-  .formControlWrap textarea {
-    width: 0;
+  .tableForm tr:not(:last-child) th,
+  .tableForm tr:not(:last-child) td {
+    padding: 15px;
   }
 
-  .formControl label {
-    width: 100px;
-    margin-right: 10px;
-    font-weight: bold;
-    margin-top: 10px;
+  .tableForm input {
+    font-size: 16px;
   }
+  .tableForm {
+    width: 100%;
+  }
+  td,
+  th {
+    font-size: 16px;
+  }
+  tr {
+    border: 1px solid #f2f2f2;
+  }
+  td {
+    margin-left: 10px;
+  }
+  .table-container {
+    background-color: #ffffff;
 
-  .formControl .form-control input {
-    width: 50%;
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    /* width: 100%; */
+    height: calc(100vh - 134px);
+  }
+  th {
+    background-color: #ffffff;
+    color: #333;
+    font-weight: 600;
+    white-space: nowrap;
   }
 
   .inputGroup {
@@ -197,10 +256,7 @@
     flex: 1;
     gap: 10px;
     align-items: center;
-  }
-
-  .inputGroup_1 {
-    margin-top: 10px;
+    justify-content: space-between;
   }
 
   .buttonGroup {
@@ -208,18 +264,24 @@
     flex-direction: row;
     gap: 10px;
   }
-
+  .inputGroup input {
+    height: 50px;
+  }
   .inputGroup input,
   .inputGroup textarea {
     flex: 1;
   }
-
-  .formControl input:focus,
-  .formControl textarea:focus {
-    border-color: #0067ff;
-    outline: none;
+  .inputGroup textarea {
+    height: 120px;
   }
 
+  .buttonGroup button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
+    cursor: pointer;
+  }
   .btn {
     padding: 10px 20px;
     border: none;
@@ -230,25 +292,5 @@
       background-color 0.3s,
       transform 0.2s;
     outline: none;
-  }
-
-  .btn-primary {
-    background-color: #007bff;
-    color: white;
-  }
-
-  .btn-warning {
-    background-color: #ff5507;
-    color: white;
-  }
-
-  .btn-info {
-    background-color: #17a2b8;
-    color: white;
-  }
-
-  .btn-green {
-    background-color: #1cb817;
-    color: white;
   }
 </style>

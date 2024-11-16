@@ -363,6 +363,19 @@
       searchDataHandler();
     }
   }
+  let fakeData = [];
+  for (let i = 0; i <= 100; i++) {
+    fakeData.push({
+      cs_index: 6,
+      cs_category: "MANUAL",
+      cs_support_os: "",
+      cs_codetype: "MANUAL",
+      cs_filename: "varo_agent_manual_v1.0.docx",
+      cs_version: "0.8",
+      cs_provied_date: "2024-04-11",
+      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
+    });
+  }
 </script>
 
 <article class="contentArea">
@@ -402,7 +415,7 @@
   </section>
   <section
     class="tableWrap"
-    style="height: calc(-294px + 100vh); overflow-y: auto; overflow-x:hidden "
+    style="height:63vh; overflow-y: auto; overflow-x:hidden "
   >
     <div class="tableListWrap">
       <table class="tableList hdBorder">
@@ -502,57 +515,57 @@
         </tbody>
       </table>
     </div>
-    <div
-      style="display: flex; flex-direction:row; width:100%; justify-content:space-between; align-items:center"
-    >
-      <div class="downloadSection">
-        <select class="targetDropdown" bind:value={target}>
-          <option value="점검대상" disabled selected>점검대상</option>
-          {#each $targetList as target}
-            <option value={target.cct_index__cct_target}>
-              {target.cct_index__cct_target}
-            </option>
-          {/each}
-        </select>
-        <button class="btn btnPrimary downloadBtn" on:click={manualDownload}>
-          다운로드
-        </button>
-      </div>
-      <select bind:value={listCount}>
-        <option value="15">15개 보기</option>
-        <option value="2">2개 보기</option>
-        <option value="5">5개 보기</option>
-        <option value="30">30개 보기</option>
-        <option value="50">50개 보기</option>
-        <option value="100">100개 보기</option>
-        <option value="전체">전체 보기</option>
-      </select>
-    </div>
-    <div class="pagination_box">
-      <nav class="pagination">
-        <button
-          on:click={() => goToPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          &lsaquo;
-        </button>
-        {#each Array(totalPages) as _, page (page)}
-          <button
-            class:selected={currentPage === page + 1}
-            on:click={() => goToPage(page + 1)}
-          >
-            {page + 1}
-          </button>
-        {/each}
-        <button
-          on:click={() => goToPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          &rsaquo;
-        </button>
-      </nav>
-    </div>
   </section>
+  <div
+    style="display: flex; flex-direction:row; width:100%; justify-content:space-between; align-items:center"
+  >
+    <div class="downloadSection">
+      <select class="targetDropdown" bind:value={target}>
+        <option value="점검대상" disabled selected>점검대상</option>
+        {#each $targetList as target}
+          <option value={target.cct_index__cct_target}>
+            {target.cct_index__cct_target}
+          </option>
+        {/each}
+      </select>
+      <button class="btn btnPrimary downloadBtn" on:click={manualDownload}>
+        다운로드
+      </button>
+    </div>
+    <select bind:value={listCount}>
+      <option value="15">15개 보기</option>
+      <option value="2">2개 보기</option>
+      <option value="5">5개 보기</option>
+      <option value="30">30개 보기</option>
+      <option value="50">50개 보기</option>
+      <option value="100">100개 보기</option>
+      <option value="전체">전체 보기</option>
+    </select>
+  </div>
+  <div class="pagination_box">
+    <nav class="pagination">
+      <button
+        on:click={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lsaquo;
+      </button>
+      {#each Array(totalPages) as _, page (page)}
+        <button
+          class:selected={currentPage === page + 1}
+          on:click={() => goToPage(page + 1)}
+        >
+          {page + 1}
+        </button>
+      {/each}
+      <button
+        on:click={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
+  </div>
 </article>
 
 <style>

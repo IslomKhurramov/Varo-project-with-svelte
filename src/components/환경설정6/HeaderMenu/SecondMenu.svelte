@@ -86,77 +86,79 @@
   });
 </script>
 
-{#if showNewMember}
-  <NewArticle on:close={handleNewMemberClose} />
-{:else if selectedData}
-  <SecondMenuDetails
-    {selectedData}
-    on:close={() => {
-      selectedData = null;
-      getAllArticlesData(currentPage);
-    }}
-  />
-{:else}
-  <div>
-    <section class="tableWrap">
-      <div class="tableListWrap">
-        <table class="tableList hdBorder">
-          <colgroup>
-            <col style="width:3%;" />
-            <col style="width:30%;" />
-            <col style="width:10%;" />
-            <col style="width:6%;" />
-            <col style="width:10%;" />
-            <col style="width:5%;" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th class="text-center">번호</th>
-              <th class="text-center">제목</th>
-              <th class="text-center">작성자</th>
-              <th class="text-center">작성일</th>
-              <th class="text-center">첨부파일</th>
-              <th class="text-center">조회수</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each projectArray as data, index}
-              <tr
-                on:click={() => {
-                  getArticleDetailData(data.art_index);
-                }}
-              >
-                <td class="text-center">
-                  {index + 1 + (currentPage - 1) * itemsPerPage}
-                </td>
-                <td>{data.title}</td>
-                <td class="text-center">{data.writer__user_name}</td>
-                <td class="text-center">
-                  {moment(data.created_at).format("YYYY.MM.DD")}
-                </td>
-                <td class="text-center">
-                  {#if data.file_path}
-                    <a
-                      href="javascript:void(0)"
-                      on:click={(e) => {
-                        e.stopPropagation();
-                        downloadArticleFile(
-                          data.file_path,
-                          data.original_filename,
-                        );
-                      }}
-                    >
-                      {data.original_filename}
-                    </a>
-                  {:else}
-                    없음
-                  {/if}
-                </td>
-                <td class="text-center">{data.view_count}</td>
+<main class="table-container" style="border-radius: 10px;">
+  {#if showNewMember}
+    <NewArticle on:close={handleNewMemberClose} />
+  {:else if selectedData}
+    <SecondMenuDetails
+      {selectedData}
+      on:close={() => {
+        selectedData = null;
+        getAllArticlesData(currentPage);
+      }}
+    />
+  {:else}
+    <div>
+      <section class="tableWrap">
+        <div class="tableListWrap">
+          <table class="tableList hdBorder">
+            <colgroup>
+              <col style="width:3%;" />
+              <col style="width:30%;" />
+              <col style="width:10%;" />
+              <col style="width:6%;" />
+              <col style="width:10%;" />
+              <col style="width:5%;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="text-center">번호</th>
+                <th class="text-center">제목</th>
+                <th class="text-center">작성자</th>
+                <th class="text-center">작성일</th>
+                <th class="text-center">첨부파일</th>
+                <th class="text-center">조회수</th>
               </tr>
-            {/each}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {#each projectArray as data, index}
+                <tr
+                  on:click={() => {
+                    getArticleDetailData(data.art_index);
+                  }}
+                >
+                  <td class="text-center">
+                    {index + 1 + (currentPage - 1) * itemsPerPage}
+                  </td>
+                  <td>{data.title}</td>
+                  <td class="text-center">{data.writer__user_name}</td>
+                  <td class="text-center">
+                    {moment(data.created_at).format("YYYY.MM.DD")}
+                  </td>
+                  <td class="text-center">
+                    {#if data.file_path}
+                      <a
+                        href="javascript:void(0)"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                          downloadArticleFile(
+                            data.file_path,
+                            data.original_filename,
+                          );
+                        }}
+                      >
+                        {data.original_filename}
+                      </a>
+                    {:else}
+                      없음
+                    {/if}
+                  </td>
+                  <td class="text-center">{data.view_count}</td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
         <div class="buttonContainer">
           <button
             type="button"
@@ -168,41 +170,47 @@
             게시물추가
           </button>
         </div>
-      </div>
-      <!-- Pagination -->
-      <nav class="pagination">
-        <button
-          on:click={() => goToPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          &lsaquo;
-        </button>
-
-        {#each displayedPages as page}
+        <!-- Pagination -->
+        <nav class="pagination">
           <button
-            class:selected={currentPage === page}
-            on:click={() => goToPage(page)}
+            on:click={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
           >
-            {page}
+            &lsaquo;
           </button>
-        {/each}
 
-        <button
-          on:click={() => goToPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          &rsaquo;
-        </button>
-      </nav>
-    </section>
-  </div>
-{/if}
+          {#each displayedPages as page}
+            <button
+              class:selected={currentPage === page}
+              on:click={() => goToPage(page)}
+            >
+              {page}
+            </button>
+          {/each}
+
+          <button
+            on:click={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            &rsaquo;
+          </button>
+        </nav>
+      </section>
+    </div>
+  {/if}
+</main>
 
 <style>
   * {
     font-size: 16px;
   }
-
+  .table-container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 10px 0;
+    /* width: 100%; */
+    height: calc(100vh - 134px);
+  }
   .tableWrap {
     background-color: #fff;
     height: 85vh;
@@ -229,13 +237,15 @@
   }
 
   .buttonContainer {
-    text-align: center;
     margin-top: 50px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    margin-left: 10px;
   }
-
+  td,
+  th {
+    font-size: 16px;
+  }
   .btnSave {
     width: 150px;
     background-color: #0067ff;
@@ -260,6 +270,7 @@
     margin-top: 20px;
     padding: 10px 0;
     background-color: #fff;
+    margin-bottom: 60px;
   }
 
   .pagination button {

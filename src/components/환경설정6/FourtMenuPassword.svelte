@@ -45,80 +45,116 @@
 </script>
 
 <main class="table-container" style="margin: 0; border-radius: 10px">
-  <div class="table-container_1">
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>사용자이름</label>
-        <div class="inputGroup">
-          <input type="text" placeholder="사용자이름" />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>비밀번호</label>
-        <div class="inputGroup">
-          <input type="text" placeholder="비밀번호" />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>이메일(변경불가)</label>
-        <div class="inputGroup">
-          <input
-            type="email"
-            placeholder="admin@admin.com"
-            bind:value={find_user}
-          />
-          <button class="btn close-btn" on:click={findUser}>
-            이메일 중복확인
-          </button>
-        </div>
-      </div>
-      <div class="formControl">
-        <label>부서</label>
-        <div class="inputGroup">
-          <input type="text" placeholder="default" />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>유저권한</label>
-        <div class="inputGroup">
-          <input type="text" placeholder="유저권한" />
-        </div>
-      </div>
-      <div class="formControl">
-        <label></label>
-        <div class="inputGroup">
-          <div class="buttons">
-            <div class="buttonGroup">
-              <button class="btn modify-btn">수정하기</button>
-              <button class="btn close-btn">다시 놓기</button>
-              <button
-                class="btn delete-btn"
-                on:click={() => {
-                  if (selectedData && selectedData.user_index) {
-                    setUserDeleteData(selectedData.user_index);
-                  } else {
-                    errorAlert("삭제할 사용자를 선택하지 않았습니다.");
-                  }
-                }}>삭제하기</button
-              >
-              <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
+  <article class="contentArea" style="position: relative; width:33%;">
+    <table class="tableForm">
+      <colgroup>
+        <col style="width:130px;" />
+        <col />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th> 사용자이름 </th>
+          <td>
+            <div class="inputGroup">
+              <input type="text" placeholder="사용자이름" />
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </td>
+        </tr>
+        <tr>
+          <th> 비밀번호 </th>
+
+          <td>
+            <div class="inputGroup">
+              <input type="text" placeholder="비밀번호" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th> 이메일(변경불가) </th>
+
+          <td>
+            <div class="inputGroup">
+              <input
+                type="email"
+                placeholder="admin@admin.com"
+                bind:value={find_user}
+              />
+              <button
+                style="height: 49px;"
+                class="btn close-btn"
+                on:click={findUser}
+              >
+                이메일 중복확인
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th> 부서 </th>
+
+          <td>
+            <div class="inputGroup">
+              <input type="text" placeholder="default" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>유저권한</th>
+          <td>
+            <div class="inputGroup">
+              <input type="text" placeholder="유저권한" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>
+            <div class="formControl">
+              <label></label>
+              <div class="inputGroup">
+                <div class="buttons">
+                  <div class="buttonGroup">
+                    <button class="btn modify-btn">수정하기</button>
+                    <button class="btn close-btn">다시 놓기</button>
+                    <button
+                      class="btn delete-btn"
+                      on:click={() => {
+                        if (selectedData && selectedData.user_index) {
+                          setUserDeleteData(selectedData.user_index);
+                        } else {
+                          errorAlert("삭제할 사용자를 선택하지 않았습니다.");
+                        }
+                      }}>삭제하기</button
+                    >
+                    <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
 </main>
 
 <style>
+  .contentArea {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+    margin-left: 20px;
+    margin-top: 10px;
+    width: fit-content;
+  }
   .table-container {
     width: 100%;
     height: calc(100vh - 280px);
     background-color: #ffffff;
-    padding: 20px;
-    margin: 5px 0 0 0;
   }
-
+  th,
+  td {
+    font-size: 16px;
+  }
   .table-container_1 {
     margin: 20px 0;
     border-radius: 5px;
@@ -166,6 +202,9 @@
 
   .inputGroup input {
     flex: 1;
+    font-size: 16px;
+    margin: 5px;
+    height: 50px;
   }
   .buttons {
     width: 100%;

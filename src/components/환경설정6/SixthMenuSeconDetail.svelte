@@ -1,73 +1,127 @@
 <script>
   import { serverApi } from "../../lib/config";
-  import { dataArray } from "../../services/page7/trace.store";
+  import { getProgramList } from "../../services/page1/getProgramListService";
+  import { dataArray, programList } from "../../services/page7/trace.store";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   // export let selectPageMain;
-  let filteredProjects = [];
 
-  let itemsPerPage = 5;
+  let displayedPages = [];
+
+  let totalPages = 1;
+  let target = "점검대상";
+  /************SORTINGACENDINGVERSION*************************/
+  // Default sorting parameters
+  let orderUsage = "";
+  let orderVersion = "";
+  let orderCdate = "";
   let currentPage = 1;
-  let totalItems = $dataArray.length;
-  let totalPages = Math.ceil(totalItems / itemsPerPage);
+  let listCount = "15";
 
-  $: paginatedData = $dataArray.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  let sortField = ""; // No default sort field
+  let sortAscending = true; // Default to ascending
 
-  let maxPageNumbers = 5;
+  async function fetchProgramList() {
+    try {
+      let limit = listCount === "전체" ? undefined : Number(listCount);
 
-  $: pages = [];
-  $: {
-    let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbers / 2));
-    let endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
+      // Dynamically construct parameters
+      const params = {
+        ...(orderUsage && { orderUsage }),
+        ...(orderVersion && { orderVersion }),
+        ...(orderCdate && { orderCdate }),
+        currentPage,
+        limit,
+      };
 
-    if (endPage - startPage + 1 < maxPageNumbers) {
-      startPage = Math.max(1, endPage - maxPageNumbers + 1);
+      console.log("Fetching data with params:", params);
+
+      const response = await getProgramList(
+        params.orderUsage || "",
+        params.orderVersion || "",
+        params.orderCdate || "",
+        params.currentPage,
+        params.limit,
+      );
+
+      if (response) {
+        programList.set(response.CODE);
+        totalPages = Math.ceil(
+          response.CODE.total_count / (limit || response.CODE.total_count),
+        );
+      }
+    } catch (err) {
+      console.error(`Error fetching data: ${err.message}`);
+    }
+  }
+
+  function toggleSort(field) {
+    // Reset all sorting variables
+    orderUsage = "";
+    orderVersion = "";
+    orderCdate = "";
+
+    if (sortField === field) {
+      sortAscending = !sortAscending; // Toggle direction
+    } else {
+      // Update sorting field and default to ascending
+      sortField = field;
+      sortAscending = true;
     }
 
-    pages = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+    // Update the specific sorting variable based on the field
+    if (field === "order_usage") {
+      orderUsage = sortAscending ? "asc" : "desc";
+    } else if (field === "order_version") {
+      orderVersion = sortAscending ? "asc" : "desc";
+    } else if (field === "order_cdate") {
+      orderCdate = sortAscending ? "asc" : "desc";
     }
+
+    // Refetch data with updated sorting
+    fetchProgramList();
   }
 
   function goToPage(page) {
     if (page >= 1 && page <= totalPages) {
       currentPage = page;
+      fetchProgramList();
     }
   }
 
-  const selectPage = (page, menu) => {
-    currentPage = page;
-    tabMenu = menu;
-  };
+  $: listCount, fetchProgramList(); // Re-fetch data when listCount changes
 
-  function downloadCSV() {
-    const csvRows = [];
-    const headers = Object.keys(filteredProjects[0]);
-    csvRows.push(headers.join(",")); // Add headers
+  $: {
+    const maxPagesToShow = 5;
+    displayedPages = [];
 
-    for (const row of filteredProjects) {
-      const values = headers.map((header) => {
-        const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
-        return `"${escaped}"`; // Wrap in quotes
-      });
-      csvRows.push(values.join(","));
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) displayedPages.push(i);
+    } else {
+      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+      if (endPage - startPage + 1 < maxPagesToShow) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        displayedPages.push(i);
+      }
     }
+  }
 
-    const csvString = csvRows.join("\n");
-    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    // Create a link to download the file
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "table_data.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  let fakeData = [];
+  for (let i = 0; i <= 100; i++) {
+    fakeData.push({
+      cs_index: 6,
+      cs_category: "MANUAL",
+      cs_support_os: "",
+      cs_codetype: "MANUAL",
+      cs_filename: "varo_agent_manual_v1.0.docx",
+      cs_version: "0.8",
+      cs_provied_date: "2024-04-11",
+      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
+    });
   }
 
   /**********************************************/
@@ -119,79 +173,122 @@
   }
 </script>
 
-<section class="tableWrap">
-  <div class="tableListWrap">
-    <table class="tableList hdBorder">
-      <colgroup>
-        <col style="width:90px;" />
-        <col />
-        <col style="width: 36%;" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="text-center" style="font-size: 16px;">순번</th>
-          <th class="text-center" style="font-size: 16px;">용도</th>
-          <th class="text-center" style="font-size: 16px;">업로드</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        {#each $dataArray as data, index}
+<section style="background-color: #fff;">
+  <div class="tableWrap">
+    <div class="tableListWrap">
+      <table class="tableList hdBorder">
+        <colgroup>
+          <col style="width:90px;" />
+          <col />
+          <col style="width: 36%;" />
+        </colgroup>
+        <thead>
           <tr>
-            <td class="text-center">{index + 1}</td>
-            <td style="font-size: 16px;" class="text-center">
-              {data.cs_category}
-              <!-- Display the purpose (e.g., Windows Agent) -->
-            </td>
-            <td class="text-center">
-              <div
-                style="width: 100%; display:flex; gap:10px; justify-content:center"
-              >
-                <!-- File Input -->
-                <label
-                  class="btn btnPrimary"
-                  style="display: flex; flex-direction:row; gap:10px; width:170px;"
-                >
-                  <input
-                    type="file"
-                    class="file-input"
-                    data-index={index}
-                    on:change={(event) =>
-                      handleFileSelect(event, data.cs_category)}
-                  />
-                  <img
-                    src="./assets/images/icon/download.svg"
-                    class="excel-img"
-                  />
-                  <span>파일업로드</span>
-                </label>
-                <!-- Display the file name -->
-                <input
-                  type="text"
-                  placeholder="선택된 파일 없음"
-                  value={fileNames[data.cs_category] || "선택된 파일 없음"}
-                  readonly
-                  class="file-name-input"
-                />
-                <button
-                  type="button"
-                  class="upload-btn"
-                  on:click={() => uploadFile(data.cs_category)}
-                >
-                  업로드
-                </button>
-              </div>
-            </td>
+            <th class="text-center" style="font-size: 16px;">순번</th>
+            <th class="text-center" style="font-size: 16px;">용도</th>
+            <th class="text-center" style="font-size: 16px;">업로드</th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          {#each $programList.list as data, index}
+            <tr>
+              <td class="text-center">{index + 1}</td>
+              <td style="font-size: 16px;" class="text-center">
+                {data.cs_category}
+                <!-- Display the purpose (e.g., Windows Agent) -->
+              </td>
+              <td class="text-center">
+                <div
+                  style="width: 100%; display:flex; gap:10px; justify-content:center"
+                >
+                  <!-- File Input -->
+                  <label
+                    class="btn btnPrimary"
+                    style="display: flex; flex-direction:row; gap:10px; width:170px;"
+                  >
+                    <input
+                      type="file"
+                      class="file-input"
+                      data-index={index}
+                      on:change={(event) =>
+                        handleFileSelect(event, data.cs_category)}
+                    />
+                    <img
+                      src="./assets/images/icon/download.svg"
+                      class="excel-img"
+                    />
+                    <span>파일업로드</span>
+                  </label>
+                  <!-- Display the file name -->
+                  <input
+                    type="text"
+                    placeholder="선택된 파일 없음"
+                    value={fileNames[data.cs_category] || "선택된 파일 없음"}
+                    readonly
+                    class="file-name-input"
+                  />
+                  <button
+                    type="button"
+                    class="upload-btn"
+                    on:click={() => uploadFile(data.cs_category)}
+                  >
+                    업로드
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <select style="margin-top:10px; margin-left:10px" bind:value={listCount}>
+    <option value="15">15개 보기</option>
+    <option value="2">2개 보기</option>
+    <option value="5">5개 보기</option>
+    <option value="30">30개 보기</option>
+    <option value="50">50개 보기</option>
+    <option value="100">100개 보기</option>
+    <option value="전체">전체 보기</option>
+  </select>
+  <div class="pagination_box">
+    <nav class="pagination">
+      <button
+        on:click={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lsaquo;
+      </button>
+      {#each Array(totalPages) as _, page (page)}
+        <button
+          class:selected={currentPage === page + 1}
+          on:click={() => goToPage(page + 1)}
+        >
+          {page + 1}
+        </button>
+      {/each}
+      <button
+        on:click={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
   </div>
 </section>
 
 <style>
+  /*******************/
   * {
     font-size: 16px;
+  }
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
   }
   .upload-btn,
   .btnSave {
@@ -206,8 +303,11 @@
   }
   .tableWrap {
     background-color: #fff;
-    height: 85vh;
+    height: 70vh;
     border-radius: 5px;
+    overflow-y: auto;
+  }
+  .tableList {
   }
 
   .upload-btn:hover,
@@ -243,7 +343,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 150px;
+    margin-bottom: 60px;
   }
 
   .pagination button {

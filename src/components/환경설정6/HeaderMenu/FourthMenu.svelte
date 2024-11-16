@@ -85,100 +85,116 @@
     showNewMember = false;
     getUserListsData();
   }
+  let fakeData = [];
+  for (let i = 0; i <= 100; i++) {
+    fakeData.push({
+      cs_index: 6,
+      cs_category: "MANUAL",
+      cs_support_os: "",
+      cs_codetype: "MANUAL",
+      cs_filename: "varo_agent_manual_v1.0.docx",
+      cs_version: "0.8",
+      cs_provied_date: "2024-04-11",
+      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
+    });
+  }
 </script>
 
-{#if showNewMember}
-  <NewMember on:close={handleNewMemberClose} />
-{:else if selectedData}
-  <FourthMenuDetail
-    {selectedData}
-    on:close={() => {
-      selectedData = null;
-      getUserListsData();
-    }}
-  />
-{:else}
-  <section class="tableWrap">
-    <div class="tableListWrap">
-      <table class="tableList hdBorder">
-        <colgroup>
-          <col style="width:3%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-          <col style="width:14%;" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th class="text-center" style="font-size: 16px;">순번</th>
-            <th class="text-center" style="font-size: 16px;">이름</th>
-            <th class="text-center" style="font-size: 16px;">이메일</th>
-            <th class="text-center" style="font-size: 16px;">유저권한</th>
-            <th class="text-center" style="font-size: 16px;">상태</th>
-            <th class="text-center" style="font-size: 16px;">결과</th>
-            <th class="text-center" style="font-size: 16px;">비밀번호관리</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each projectArray as data, index}
-            <tr
-              on:click={() => {
-                handleRowClick(data);
-              }}
-              style="cursor: pointer;"
-            >
-              <td class="text-center" style="font-size: 16px;">{index + 1}</td>
-              <td style="font-size: 16px;" class="cursor-pointer text-center">
-                {data.hostname}
-              </td>
-              <td style="font-size: 16px;" class="text-center line-height">
-                {data.itemTitle}
-              </td>
-              <td
-                class="text-center cursor-pointer line-height"
-                style="font-size: 16px;"
-              >
-                <div class="line-height">
-                  {data.itemCriteria}
-                </div>
-              </td>
-              <td
-                style="overflow: hidden; font-size: 16px;"
-                class="text-center line-height"
-              >
-                {data.itemStatus}
-              </td>
-              <td class="text-center" style="font-size: 12px;">
-                <select
-                  bind:value={data.itemResult}
-                  on:change={(e) => handleStatusChange(data.user_index, e)}
-                  on:click={(e) => e.stopPropagation()}
-                  name="agent_status"
-                  id="agent_status"
-                >
-                  <option value="1">활성</option>
-                  <option value="0">비활성</option>
-                </select>
-              </td>
-
-              <td
-                style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
-              >
-                <div
-                  class="passwordreset"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <span class="badge badgePrimary">비밀번호초기화</span>
-                </div>
-              </td>
+<main class="table-container" style="border-radius: 10px;">
+  {#if showNewMember}
+    <NewMember on:close={handleNewMemberClose} />
+  {:else if selectedData}
+    <FourthMenuDetail
+      {selectedData}
+      on:close={() => {
+        selectedData = null;
+        getUserListsData();
+      }}
+    />
+  {:else}
+    <section class="tableWrap">
+      <div class="tableListWrap">
+        <table class="tableList hdBorder">
+          <colgroup>
+            <col style="width:3%;" />
+            <col style="width:14%;" />
+            <col style="width:14%;" />
+            <col style="width:14%;" />
+            <col style="width:14%;" />
+            <col style="width:14%;" />
+            <col style="width:14%;" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="text-center" style="font-size: 16px;">순번</th>
+              <th class="text-center" style="font-size: 16px;">이름</th>
+              <th class="text-center" style="font-size: 16px;">이메일</th>
+              <th class="text-center" style="font-size: 16px;">유저권한</th>
+              <th class="text-center" style="font-size: 16px;">상태</th>
+              <th class="text-center" style="font-size: 16px;">결과</th>
+              <th class="text-center" style="font-size: 16px;">비밀번호관리</th>
             </tr>
-          {/each}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {#each projectArray as data, index}
+              <tr
+                on:click={() => {
+                  handleRowClick(data);
+                }}
+                style="cursor: pointer;"
+              >
+                <td class="text-center" style="font-size: 16px;">{index + 1}</td
+                >
+                <td style="font-size: 16px;" class="cursor-pointer text-center">
+                  {data.hostname}
+                </td>
+                <td style="font-size: 16px;" class="text-center line-height">
+                  {data.itemTitle}
+                </td>
+                <td
+                  class="text-center cursor-pointer line-height"
+                  style="font-size: 16px;"
+                >
+                  <div class="line-height">
+                    {data.itemCriteria}
+                  </div>
+                </td>
+                <td
+                  style="overflow: hidden; font-size: 16px;"
+                  class="text-center line-height"
+                >
+                  {data.itemStatus}
+                </td>
+                <td class="text-center" style="font-size: 12px;">
+                  <select
+                    bind:value={data.itemResult}
+                    on:change={(e) => handleStatusChange(data.user_index, e)}
+                    on:click={(e) => e.stopPropagation()}
+                    name="agent_status"
+                    id="agent_status"
+                  >
+                    <option value="1">활성</option>
+                    <option value="0">비활성</option>
+                  </select>
+                </td>
+
+                <td
+                  style="font-size: 16px; display: flex; justify-content: center; align-items: center;"
+                >
+                  <div
+                    class="passwordreset"
+                    on:click={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <span class="badge badgePrimary">비밀번호초기화</span>
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
       <div class="buttonContainer formControl">
         <label></label>
         <button
@@ -191,19 +207,26 @@
           사용자추가
         </button>
       </div>
-    </div>
-  </section>
-{/if}
+    </section>
+  {/if}
+</main>
 
 <style>
   * {
     font-size: 16px;
   }
-
+  .table-container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 10px 0;
+    /* width: 100%; */
+    height: calc(100vh - 134px);
+  }
   .tableWrap {
     background-color: #fff;
     height: 85vh;
     border-radius: 5px;
+    margin-top: 10px;
   }
 
   .tableListWrap {
@@ -259,6 +282,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 60px;
   }
 
   .btnSave {
@@ -277,4 +301,5 @@
     color: #fff;
     background-color: #4989ff;
   }
+  /***************************/
 </style>

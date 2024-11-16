@@ -51,56 +51,77 @@
 </script>
 
 <main class="table-container" style="margin: 0; border-radius: 10px">
-  <div class="table-container_1">
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>현재비밀번호</label>
-        <div class="inputGroup">
-          <input
-            type="password"
-            placeholder="현재비밀번호"
-            bind:value={currentPassword}
-          />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>비밀번호변경#1</label>
-        <div class="inputGroup">
-          <input
-            type="password"
-            placeholder="비밀번호변경#1"
-            bind:value={newPassword1}
-          />
-        </div>
-      </div>
-      <div class="formControl">
-        <label>비밀번호변경#2</label>
-        <div class="inputGroup">
-          <input
-            type="password"
-            placeholder="비밀번호변경#2"
-            bind:value={newPassword2}
-          />
-        </div>
-      </div>
-      <div class="formControl">
-        <label></label>
-        <div class="inputGroup">
-          <div class="buttons">
-            <div class="buttonGroup">
-              <button class="btn modify-btn" on:click={handleEdit}>
-                수정하기
-              </button>
-              <button class="btn close-btn" on:click={() => dispatch("close")}>
-                다시 놓기
-              </button>
-              <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
+  <article class="contentArea" style="position: relative; width:33%;">
+    <table class="tableForm">
+      <colgroup>
+        <col style="width:130px;" />
+        <col />
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>현재비밀번호</th>
+          <td>
+            <div class="inputGroup">
+              <input
+                type="password"
+                placeholder="현재비밀번호"
+                bind:value={currentPassword}
+              />
+            </div></td
+          >
+        </tr>
+        <tr>
+          <th>비밀번호변경</th>
+          <td>
+            <div class="inputGroup">
+              <input
+                type="password"
+                placeholder="비밀번호변경#1"
+                bind:value={newPassword1}
+              />
+            </div></td
+          >
+        </tr>
+        <tr>
+          <th>비밀번호변경</th>
+          <td>
+            <div class="inputGroup">
+              <input
+                type="password"
+                placeholder="비밀번호변경#2"
+                bind:value={newPassword2}
+              />
+            </div></td
+          >
+        </tr>
+
+        <tr>
+          <th></th>
+          <td>
+            <div class="formControl">
+              <label></label>
+              <div class="inputGroup">
+                <div class="buttons">
+                  <div class="buttonGroup">
+                    <button class="btn modify-btn" on:click={handleEdit}>
+                      수정하기
+                    </button>
+                    <button
+                      class="btn close-btn"
+                      on:click={() => dispatch("close")}
+                    >
+                      다시 놓기
+                    </button>
+                    <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
 </main>
 
 <style>
@@ -108,10 +129,18 @@
     width: 100%;
     height: calc(100vh - 280px);
     background-color: #ffffff;
-    padding: 20px;
-    margin: 5px 0 0 0;
   }
-
+  .contentArea {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+    margin-left: 20px;
+    margin-top: 10px;
+    width: fit-content;
+  }
+  th,
+  td {
+    font-size: 16px;
+  }
   .table-container_1 {
     margin: 20px 0;
     border-radius: 10px;
@@ -155,7 +184,12 @@
     flex: 1;
     gap: 10px;
   }
-
+  .inputGroup input {
+    flex: 1;
+    font-size: 16px;
+    margin: 5px;
+    height: 50px;
+  }
   .buttons {
     width: 100%;
     display: flex;

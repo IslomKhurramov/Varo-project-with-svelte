@@ -167,114 +167,128 @@
       </div>
     </div>
   </div> -->
-  <article class="contentArea" style="position: relative;">
-    <table class="tableForm">
-      <colgroup>
-        <col style="width:130px;" />
-        <col />
-      </colgroup>
-      <tbody>
-        <tr>
-          <th>서버</th>
-          <td>
-            <div class="td_cont">
-              <div>
-                <span>IP</span>
-                <input
-                  type="text"
-                  bind:value={serverIP}
-                  placeholder="000.000.0.00"
-                />
-              </div>
-              <div>
-                <span>PORT</span>
-                <input type="number" bind:value={port} placeholder="PORT" />
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th> 에이전트연결주기</th>
-          <td
-            ><input
-              type="number"
-              bind:value={agentConnectInterval}
-              placeholder="에이전트연결주기"
-            />
-          </td>
-        </tr>
-        <tr>
-          <th>에이전트연결주기</th>
-          <td>
-            <div class="second_row">
-              <div>
-                <span>상</span>
-                <input type="number" placeholder="3" disabled />
-              </div>
-              <div>
-                <span>중</span>
-                <input type="number" placeholder="2" disabled />
-              </div>
-              <div>
-                <span>하</span>
-                <input type="number" placeholder="1" disabled />
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th>메일서버설정</th>
-          <td>
-            <div class="last_cont">
-              <div class="mailServerBottom">
-                <span>메일서버주소</span>
-                <input
-                  type="text"
-                  bind:value={remoteMailServer.ip}
-                  placeholder="아이피"
-                />
-              </div>
-              <div class="mailServerBottom">
-                <span>메일서버포트</span>
-                <input
-                  type="text"
-                  bind:value={remoteMailServer.port}
-                  placeholder="포트"
-                />
-              </div>
 
-              <div class="mailServerBottom">
-                <span>아이디</span>
-                <input
-                  type="text"
-                  bind:value={remoteMailServer.id}
-                  placeholder="아이디"
-                />
+  <div class="tableCont">
+    <article class="contentArea" style="position: relative; margin-top:40px;">
+      <table class="tableForm">
+        <colgroup>
+          <col style="width:130px;" />
+          <col />
+        </colgroup>
+        <tbody>
+          <tr>
+            <th>서버</th>
+            <td>
+              <div class="td_cont">
+                <div>
+                  <span>IP</span>
+                  <input
+                    type="text"
+                    bind:value={serverIP}
+                    placeholder="000.000.0.00"
+                  />
+                </div>
+                <div>
+                  <span>PORT</span>
+                  <input type="number" bind:value={port} placeholder="PORT" />
+                </div>
               </div>
-              <div class="mailServerBottom">
-                <span>패스워드</span>
-                <!-- bind:value={remoteMailServer.password} -->
-                <input type="password" placeholder="패스워드" />
+            </td>
+          </tr>
+          <tr>
+            <th> 에이전트연결주기</th>
+            <td
+              ><input
+                type="number"
+                bind:value={agentConnectInterval}
+                placeholder="에이전트연결주기"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th>에이전트연결주기</th>
+            <td>
+              <div class="second_row">
+                <div>
+                  <span>상</span>
+                  <input type="number" placeholder="3" disabled />
+                </div>
+                <div>
+                  <span>중</span>
+                  <input type="number" placeholder="2" disabled />
+                </div>
+                <div>
+                  <span>하</span>
+                  <input type="number" placeholder="1" disabled />
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <button
-      type="button"
-      class="btn btnBlue btnSave"
-      style="margin-top: 15px;"
-      on:click={setSystemBasicSetupData}
-    >
-      저장하기
-    </button>
-  </article>
+            </td>
+          </tr>
+          <tr>
+            <th>메일서버설정</th>
+            <td>
+              <div class="last_cont">
+                <div class="mailServerBottom">
+                  <span>메일서버주소</span>
+                  <input
+                    type="text"
+                    bind:value={remoteMailServer.ip}
+                    placeholder="아이피"
+                  />
+                </div>
+                <div class="mailServerBottom">
+                  <span>메일서버포트</span>
+                  <input
+                    type="text"
+                    bind:value={remoteMailServer.port}
+                    placeholder="포트"
+                  />
+                </div>
+
+                <div class="mailServerBottom">
+                  <span>아이디</span>
+                  <input
+                    type="text"
+                    bind:value={remoteMailServer.id}
+                    placeholder="아이디"
+                  />
+                </div>
+                <div class="mailServerBottom">
+                  <span>패스워드</span>
+                  <!-- bind:value={remoteMailServer.password} -->
+                  <input type="password" placeholder="패스워드" />
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr> </tr>
+        </tbody>
+      </table>
+      <div style="display: flex; width:100%; justify-content:center;">
+        <button
+          type="button"
+          class="btn btnBlue btnSave"
+          style="margin-top: 15px;"
+          on:click={setSystemBasicSetupData}
+        >
+          저장하기
+        </button>
+      </div>
+    </article>
+  </div>
 </main>
 
 <style>
   .tableForm input {
     font-size: 16px;
+    height: 50px;
+  }
+  .contentArea {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+    margin-top: 40px;
+    margin-left: 45px;
+    width: fit-content;
   }
   .tableForm tr:not(:last-child) th,
   .tableForm tr:not(:last-child) td {
@@ -314,14 +328,14 @@
     font-size: 16px;
   }
   th {
-    background-color: #007bff;
-    color: white;
+    background-color: #ffffff;
+    color: #333;
     font-weight: 600;
     white-space: nowrap;
-    text-align: center;
   }
   .tableForm {
     width: 42%;
+    /* height: 650px; */
   }
   td,
   th {
@@ -335,11 +349,18 @@
   }
   /****************************************/
   .table-container {
-    background-color: #ffffff;
-    padding: 20px;
-    margin: 10px 0;
+    /* background-color: #ffffff; */
+    display: flex;
+
+    border-radius: 10px;
     /* width: 100%; */
     height: calc(100vh - 134px);
+  }
+  .tableCont {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    margin-top: 10px;
   }
 
   .table-container_1 {

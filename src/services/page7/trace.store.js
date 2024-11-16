@@ -26,3 +26,6 @@ export const selectedDataTarget1 = writable([]);
 export const selectedDataTarget2 = writable([]);
 /*************************************************** */
 export const ModalData = writable([]);
+/******************************************** */
+export const programList = writable({ list: [], total_count: 0 });
+export const dataArray = writable([]);

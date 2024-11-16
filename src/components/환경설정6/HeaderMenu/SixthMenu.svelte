@@ -4,7 +4,7 @@
 
   let setView = "plan";
   let currentPage = SixthMenuFirstDetail; // Avtomatik yuklanishi uchun boshlang'ich qiymat
-
+  let dataArray = [];
   const selectPage = (page) => {
     currentPage = page;
   };
@@ -40,7 +40,7 @@
     </section>
 
     {#if currentPage}
-      <svelte:component this={currentPage} />
+      <svelte:component this={currentPage} {dataArray} />
     {/if}
   </div>
 </section>

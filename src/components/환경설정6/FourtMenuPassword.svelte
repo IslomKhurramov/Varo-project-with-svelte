@@ -1,5 +1,4 @@
 <script>
-  export let projectIndex;
   import { getUserExist } from "../../services/login/loginService";
   import {
     setUserDelete,

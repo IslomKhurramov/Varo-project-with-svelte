@@ -9,7 +9,7 @@ const encryptedData = {
 
 const IV = CryptoJS.enc.Utf8.parse("\0".repeat(16)); // Null IV as used in Python
 
-function decryptData(encryptedString) {
+export function decryptData(encryptedString) {
   const AES_ENCRYPT_KEY = "oingisprettyintheworld1234567890".slice(0, 32);
   try {
     const ciphertext = CryptoJS.enc.Base64.parse(encryptedString);

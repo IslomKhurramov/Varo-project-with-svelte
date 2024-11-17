@@ -9,6 +9,17 @@
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
   import NewArticle from "../NewArticle.svelte";
+  // ///////////////////////////////////////////////////////////////////////
+  import { userData } from "../../../stores/user.store";
+  import { decryptData } from "../../../services/login/loginService";
+
+  let userRoleTypeIndex = null;
+
+  userData.subscribe((data) => {
+    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  });
+  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // //////////////////////////////////////////////////////////////////////
 
   let projectArray = [];
   let error = null;
@@ -166,17 +177,19 @@
             </tbody>
           </table>
         </div>
-        <div class="buttonContainer">
-          <button
-            type="button"
-            class="btn btnBlue btnSave"
-            on:click={() => {
-              showNewMember = true;
-            }}
-          >
-            게시물추가
-          </button>
-        </div>
+        {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+          <div class="buttonContainer">
+            <button
+              type="button"
+              class="btn btnBlue btnSave"
+              on:click={() => {
+                showNewMember = true;
+              }}
+            >
+              게시물추가
+            </button>
+          </div>
+        {/if}
         <!-- Pagination -->
         <nav class="pagination">
           <button

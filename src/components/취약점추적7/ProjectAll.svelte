@@ -58,7 +58,7 @@
   $: recentAssets = filteredAssets.slice(-5);
 </script>
 
-<div>
+<div class="containerAsset">
   <div class="graphCardWrap col3" style="width:100%;">
     {#each $allTraceByPlan as asset, index}
       <div class="iconCard">
@@ -209,12 +209,18 @@
   .graphCardWrap.col3 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-
+    row-gap: 30px;
     padding: 20px;
     height: 100%;
     align-items: center;
   }
-
+  .containerAsset {
+    height: 75vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    padding-bottom: 40px;
+  }
   /* Card and Hover Styles */
   .hoverCard {
     display: flex;

@@ -302,6 +302,40 @@ export const setUserActivate = async (user_index, user_activate) => {
   }
 };
 
+export const setUserUpdate = async ({
+  user_index,
+  user_name,
+  user_email,
+  user_depart,
+  user_level,
+}) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setUserUpdate/`,
+      {
+        user_index,
+        user_name,
+        user_email,
+        user_depart,
+        user_level,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////// 로그분석 API request part ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////

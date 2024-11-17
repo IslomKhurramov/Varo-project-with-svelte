@@ -4,9 +4,9 @@
   import FourtMenuInformation from "./FourtMenuInformation.svelte";
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
 
-  let currentPage = FourtMenuInformation;
+  let currentPage = FourtMenuPassword;
   let tabMenu = "사용자관리";
-  let setView = "plan";
+  let setView = "plan_accept";
 
   const selectPage = (page, menu) => {
     currentPage = page;

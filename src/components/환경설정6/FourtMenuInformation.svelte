@@ -13,7 +13,7 @@
 
   async function handleEdit() {
     try {
-      console.log("password", selectedData);
+      // console.log("password", selectedData);
 
       if (!selectedData || !selectedData.user_index) {
         await errorAlert("죄송합니다, 비밀번호를 변경할 수 없습니다.");

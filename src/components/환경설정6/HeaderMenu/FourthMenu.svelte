@@ -7,19 +7,12 @@
   } from "../../../services/page6/serviceArticle";
   import { onMount } from "svelte";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert";
-  import { userData } from "../../../stores/user.store";
+  import { setPasswordReset } from "../../../services/login/loginService";
 
   let error = null;
   let selectedData = null;
   let projectArray = [];
   let showNewMember = false;
-  let userInfo = null;
-
-  // Subscribe to userData store
-  // userData.subscribe((value) => {
-  //   userInfo = value.userInfo;
-  //   console.log("Fetched userInfo from store:", userInfo);
-  // });
 
   async function getUserListsData() {
     try {
@@ -68,14 +61,20 @@
       event.target.value = originalValue;
       await errorAlert(
         err.message || "사용자 상태를 변경하는 중 오류가 발생했습니다.",
-        await getUserListsData(),
       );
     }
   }
 
-  onMount(() => {
-    getUserListsData();
-  });
+  async function resetPassword(userEmail) {
+    try {
+      if (!userEmail) throw new Error("이메일 정보가 없습니다.");
+      const result = await setPasswordReset(userEmail);
+
+      await successAlert(result);
+    } catch (err) {
+      await errorAlert(err?.message || "비밀번호 초기화 실패");
+    }
+  }
 
   function handleRowClick(data) {
     selectedData = data;
@@ -85,19 +84,10 @@
     showNewMember = false;
     getUserListsData();
   }
-  let fakeData = [];
-  for (let i = 0; i <= 100; i++) {
-    fakeData.push({
-      cs_index: 6,
-      cs_category: "MANUAL",
-      cs_support_os: "",
-      cs_codetype: "MANUAL",
-      cs_filename: "varo_agent_manual_v1.0.docx",
-      cs_version: "0.8",
-      cs_provied_date: "2024-04-11",
-      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
-    });
-  }
+
+  onMount(() => {
+    getUserListsData();
+  });
 </script>
 
 <main class="table-container" style="border-radius: 10px;">
@@ -187,7 +177,14 @@
                       e.stopPropagation();
                     }}
                   >
-                    <span class="badge badgePrimary">비밀번호초기화</span>
+                    <span
+                      class="badge badgePrimary"
+                      on:click={() => {
+                        resetPassword(data.itemTitle);
+                      }}
+                    >
+                      비밀번호초기화
+                    </span>
                   </div>
                 </td>
               </tr>

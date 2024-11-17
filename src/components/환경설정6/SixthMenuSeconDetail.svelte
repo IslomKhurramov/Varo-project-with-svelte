@@ -245,8 +245,7 @@
   </div>
   <select style="margin-top:10px; margin-left:10px" bind:value={listCount}>
     <option value="15">15개 보기</option>
-    <option value="2">2개 보기</option>
-    <option value="5">5개 보기</option>
+
     <option value="30">30개 보기</option>
     <option value="50">50개 보기</option>
     <option value="100">100개 보기</option>

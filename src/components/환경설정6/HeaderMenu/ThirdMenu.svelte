@@ -19,6 +19,13 @@
   let selectedData = null;
   let showNewMember = false;
 
+  onMount(async () => {
+    const art_index = new URLSearchParams(window.location.search).get("id");
+    if (art_index) {
+      await getArticleDetailData(art_index);
+    }
+  });
+
   async function getAllArticlesData(
     page = 1,
     limit = itemsPerPage,

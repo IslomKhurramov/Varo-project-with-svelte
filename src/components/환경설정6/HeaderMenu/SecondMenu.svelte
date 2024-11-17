@@ -116,7 +116,7 @@
       }}
     />
   {:else}
-    <div>
+    <div style="background-color: #fff; height:100%;">
       <section class="tableWrap">
         <div class="tableListWrap">
           <table class="tableList hdBorder">
@@ -233,13 +233,19 @@
   }
   .tableWrap {
     background-color: #fff;
-    height: 85vh;
+    /* height: 85vh; */
     border-radius: 5px;
   }
-
+  .tableWrap {
+    height: 1076px;
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+  }
   .tableListWrap {
     overflow-y: auto;
-    height: 100%;
+    max-height: 65vh;
     padding-bottom: 50px;
   }
 
@@ -276,6 +282,13 @@
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
+  }
+  .tableWrap {
+    height: 1076px;
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
   }
 
   .btnSave:hover {

@@ -378,7 +378,7 @@
   }
 </script>
 
-<article class="contentArea">
+<article class="contentArea" style="background-color: #fff; height:100%">
   <section class="filterWrap">
     <div>
       <select
@@ -415,7 +415,7 @@
   </section>
   <section
     class="tableWrap"
-    style="height:63vh; overflow-y: auto; overflow-x:hidden "
+    style="max-height:63vh; overflow-y: auto; overflow-x:hidden "
   >
     <div class="tableListWrap">
       <table class="tableList hdBorder">

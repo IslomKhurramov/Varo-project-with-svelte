@@ -302,7 +302,7 @@
   }
   .tableWrap {
     background-color: #fff;
-    height: 70vh;
+    max-height: 70vh;
     border-radius: 5px;
     overflow-y: auto;
   }

@@ -258,8 +258,16 @@
 
   .tableListWrap {
     overflow-y: auto;
-    height: 100%;
-    padding-bottom: 50px;
+    /* height: 100%;*/
+    max-height: 65vh;
+    /* padding-bottom: 50px; */
+  }
+  .tableWrap {
+    height: 1076px;
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
   }
 
   thead {

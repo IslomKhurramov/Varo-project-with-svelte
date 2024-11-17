@@ -15,6 +15,7 @@
   import { onMount } from "svelte";
   import {
     confirmDelete,
+    confirmDelete2,
     confirmDeleteLast,
     errorAlert,
     successAlert,
@@ -434,7 +435,7 @@
       console.log("selectedGroupindex", selectedGroupDetails.asg_index);
 
       // Confirm deletion
-      const isConfirmed = await confirmDelete(selectedGroupDetails.asg_title);
+      const isConfirmed = await confirmDelete2(selectedGroupDetails.asg_title);
       if (!isConfirmed) return;
 
       // Call the delete API

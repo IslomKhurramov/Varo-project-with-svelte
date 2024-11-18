@@ -544,6 +544,9 @@
 </div>
 
 <style>
+  .active-row {
+    background-color: rgba(242, 242, 242, 1);
+  }
   .status-container {
     max-height: 120px; /* Set the maximum height for the content */
     overflow-y: auto;

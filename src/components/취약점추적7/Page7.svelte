@@ -12,9 +12,16 @@
     allTraceByAsset,
     allTraceByPlan,
     allTraceByThird,
+    filterData,
+    filterDataAsset,
+    filteredDataTarget,
+    filteredTableDataForAsset,
+    filteredTableDataForPlan,
+    filteredTableDataForTarget,
     leftTrackData,
     selectedAssetTableData,
     selectedPlan,
+    selectedPlanAsset,
     traceByPlan,
     traceByThird,
   } from "../../services/page7/trace.store";
@@ -29,7 +36,10 @@
   } from "../../services/page7/service";
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
-
+  import { derived } from "svelte/store";
+  import FilterPage from "./FilterPage.svelte";
+  import FilterPageAsset from "./FilterPageAsset.svelte";
+  import FilterTarget from "./FilterTarget.svelte";
   // Create a writable store for selectedPlans
 
   let currentPage = ProjectAll;
@@ -42,11 +52,59 @@
   let plan_id = "";
   let trace_cct_index = "";
   let trace_ccc_index = "";
+  /********************************/
+  // Create writable stores for the search filters
+  let actionStatusValue = "";
+  let selectedDate = "";
+  let selectedProject = "";
+  let selectedOperator = "";
+  let selectedAssetForfilter = "";
+  let filterPage = false;
+  let filterAssetPage = false;
+  let filterTargetPage = false;
 
   function selectPage(pageComponent, menuName) {
     currentPage = pageComponent;
     activeMenu = menuName; // Set the active menu to reflect the selection
   }
+  $: if (filterPage) {
+    currentPage = FilterPage;
+    activeMenu = null;
+  } else {
+    currentPage = ProjectAll;
+    actionStatusValue = "";
+    selectedDate = "";
+    selectedProject = "";
+    selectedOperator = "";
+    selectedAssetForfilter = "";
+    activeMenu = "전체";
+  }
+
+  $: if (filterAssetPage) {
+    currentPage = FilterPageAsset;
+    activeMenu = null;
+  } else {
+    currentPage = AssetAll;
+    actionStatusValue = "";
+    selectedDate = "";
+    selectedProject = "";
+    selectedOperator = "";
+    selectedAssetForfilter = "";
+    activeMenu = "전체";
+  }
+  $: if (filterTargetPage) {
+    currentPage = FilterTarget;
+    activeMenu = null;
+  } else {
+    currentPage = ThirdAll;
+    actionStatusValue = "";
+    selectedDate = "";
+    selectedProject = "";
+    selectedOperator = "";
+    selectedAssetForfilter = "";
+    activeMenu = "전체";
+  }
+
   function selectAsset(asset) {
     // Set selectedAsset based on the asset's asg_index
     selectedAsset = asset.asg_index;
@@ -145,6 +203,68 @@
     }
   }
 
+  async function planDataByCategory(selectedProject) {
+    try {
+      console.log("Fetching data for selected project:", selectedProject);
+      const response = await getTraceByPlan(selectedProject);
+
+      if (response && response.CODE) {
+        filterData.set(response.CODE); // Store the full data
+        filterPage = true;
+      } else {
+        console.error("No data found for selected project:", selectedProject);
+        filterData.set({ plans: [], vulns: [] }); // Reset if no data
+      }
+    } catch (err) {
+      console.error("Error fetching filtered data:", err.message);
+      alert(`Error: ${err.message}`);
+    }
+  }
+
+  const uniqueOperators = derived(filterData, ($filterData) => {
+    if ($filterData?.vulns) {
+      // Use a Set to keep unique names
+      const uniqueNames = new Set(
+        $filterData.vulns.map(
+          (plan) => plan.ast_uuid__ass_uuid__ast_operator_person,
+        ),
+      );
+      return [...uniqueNames];
+    }
+    return [];
+  });
+
+  $: console.log("filterData", $filterData);
+  $: if (selectedProject) {
+    planDataByCategory(selectedProject);
+  }
+  $: {
+    // Watch for changes in filterData and the selected filters (actionStatusValue, selectedDate, selectedOperator)
+    filterData.subscribe((data) => {
+      if (!data || !data.vulns || data.vulns.length === 0) {
+        filteredTableDataForPlan.set([]); // If no data, reset filtered data
+        return;
+      }
+
+      const filtered = data.vulns.filter((item) => {
+        const matchesStatus = actionStatusValue
+          ? item.cfr_fix_status__cvs_index === actionStatusValue // Filter based on status
+          : true;
+        const matchesDate = selectedDate
+          ? item.ccr_cdate.startsWith(selectedDate) // Assuming `ccr_cdate` format is "YYYY-MM-DD HH:MM:SS"
+          : true;
+        const matchesOperator = selectedOperator
+          ? item.ast_uuid__ass_uuid__ast_operator_person === selectedOperator // Filter based on operator
+          : true;
+
+        return matchesStatus && matchesDate && matchesOperator;
+      });
+
+      // Set filtered data
+      filteredTableDataForPlan.set(filtered);
+    });
+  }
+  $: console.log("filteredTableDataForPlan", $filteredTableDataForPlan);
   /*************************************************************************/
   /*****************ASSETDATA**********************************************/
   async function assetData() {
@@ -159,7 +279,7 @@
       loading = false;
     }
   }
-  $: console.log("allTraceByAsset", $allTraceByAsset);
+
   /************************************************************************/
   // Reactive statement to filter plans based on selectedAsset
   $: {
@@ -191,6 +311,70 @@
       alert(`Error getting asset details: ${err.message}`);
     }
   }
+
+  /*********************************************************/
+  async function tableDataOfAsset2(selectedAssetForfilter) {
+    console.log("selectedAsset:", selectedAssetForfilter);
+    try {
+      const response = await getTraceByAsset(selectedAssetForfilter);
+
+      if (response) {
+        filterDataAsset.set(response.CODE);
+        filterAssetPage = true;
+      } else {
+        filterDataAsset.set({ plans: [], vulns: [] });
+      }
+    } catch (err) {
+      alert(`Error getting asset details: ${err.message}`);
+    }
+  }
+  const uniqueOperatorsAsset = derived(filterDataAsset, ($filterDataAsset) => {
+    if ($filterDataAsset[0]?.vulns) {
+      // Use a Set to keep unique names
+      const uniqueNames = new Set(
+        $filterDataAsset[0].vulns.map(
+          (plan) => plan.ast_uuid__ass_uuid__ast_operator_person,
+        ),
+      );
+      return [...uniqueNames];
+    }
+    return [];
+  });
+  $: console.log("allTraceByThird", $allTraceByThird);
+
+  $: if (selectedAssetForfilter) {
+    tableDataOfAsset2(selectedAssetForfilter); // Pass the correct argument
+  }
+  $: {
+    filterDataAsset.subscribe((data) => {
+      if (!data || !data[0]?.vulns || data[0].vulns.length === 0) {
+        filteredTableDataForAsset.set([]); // If no data, reset filtered data
+        return;
+      }
+
+      // Filter the vulnerabilities based on selected values
+      const filtered = data[0].vulns.filter((item) => {
+        const matchesStatus = actionStatusValue
+          ? item.cfr_fix_status__cvs_index === actionStatusValue // Filter based on status
+          : true;
+
+        const matchesDate = selectedDate
+          ? item.ccr_cdate.startsWith(selectedDate) // Assuming `ccr_cdate` format is "YYYY-MM-DD HH:MM:SS"
+          : true;
+
+        const matchesOperator = selectedOperator
+          ? item.ast_uuid__ass_uuid__ast_operator_person === selectedOperator // Filter based on operator
+          : true;
+
+        // Return true if all conditions match
+        return matchesStatus && matchesDate && matchesOperator;
+      });
+
+      // Set the filtered results in the store
+      filteredTableDataForAsset.set(filtered);
+    });
+  }
+  $: console.log("filteredTableDataForAsset", $filteredTableDataForAsset);
   /*****************************************************************************/
   /********************THIRDDATA*******************************************/
   async function thirdData() {
@@ -218,8 +402,98 @@
       throw err;
     }
   }
-  $: console.log("third", $traceByThird);
+  $: console.log("allTraceByPlan", $allTraceByPlan);
   /********************MODAL DATA*******************************/
+
+  let selectedTarget = "";
+  let selectedRelatedItem = "";
+  let relatedItemDetails = {};
+  let cct_index = ""; // Variable to store cct_index
+
+  // Reactive updates for related targets and their details
+  $: relatedTargetsData =
+    $leftTrackData?.[2]?.find(
+      (target) => target.cct_target === selectedTarget?.split("|")[0],
+    )?.targets_data || [];
+
+  $: relatedItemDetails =
+    relatedTargetsData.find(
+      (item) => item.ccc_item_no === selectedRelatedItem,
+    ) || {};
+
+  // Clear selections when selectedTarget changes
+  $: if (selectedTarget) {
+    const [cct_target, extractedCctIndex] = selectedTarget.split("|");
+    cct_index = extractedCctIndex || ""; // Assign cct_index
+    selectedRelatedItem = "";
+    relatedItemDetails = {};
+  }
+
+  $: ccc_index = relatedItemDetails.ccc_index || "";
+  async function targetDataFilter(cct_index, ccc_index) {
+    console.log("function", cct_index, ccc_index);
+    try {
+      const response = await traceByTarget(cct_index, ccc_index);
+
+      if (response) {
+        filteredDataTarget.set(response.CODE);
+        filterTargetPage = true;
+      } else {
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+  $: if (cct_index && ccc_index) {
+    targetDataFilter(cct_index, ccc_index); // Call only when valid indices are provided
+  }
+  $: {
+    filteredDataTarget.subscribe((data) => {
+      if (!data || !data?.vulns || data.vulns.length === 0) {
+        filteredTableDataForTarget.set([]); // If no data, reset filtered data
+        return;
+      }
+
+      // Filter the vulnerabilities based on selected values
+      const filtered = data.vulns.filter((item) => {
+        const matchesStatus = actionStatusValue
+          ? item.cfr_fix_status__cvs_index === actionStatusValue // Filter based on status
+          : true;
+
+        const matchesDate = selectedDate
+          ? item.ccr_cdate.startsWith(selectedDate) // Assuming `ccr_cdate` format is "YYYY-MM-DD HH:MM:SS"
+          : true;
+
+        const matchesOperator = selectedOperator
+          ? item.ast_uuid__ass_uuid__ast_operator_person === selectedOperator // Filter based on operator
+          : true;
+
+        // Return true if all conditions match
+        return matchesStatus && matchesDate && matchesOperator;
+      });
+
+      // Set the filtered results in the store
+      filteredTableDataForTarget.set(filtered);
+    });
+  }
+
+  const uniqueOperatorsTarget = derived(
+    filteredDataTarget,
+    ($filteredDataTarget) => {
+      if ($filteredDataTarget?.vulns) {
+        // Use a Set to keep unique names
+        const uniqueNames = new Set(
+          $filteredDataTarget.vulns.map(
+            (plan) => plan.ast_uuid__ass_uuid__ast_operator_person,
+          ),
+        );
+        return [...uniqueNames];
+      }
+      return [];
+    },
+  );
+
+  $: console.log("uniqueOperatorsTarget", $filteredDataTarget);
 </script>
 
 <!-- {#if loading}
@@ -424,33 +698,122 @@
         <section class="topCon" style="margin-bottom: 0px;">
           <section class="filterWrap">
             <div>
-              <select>
-                <option value="" selected>프로젝트</option>
+              {#if activeView === "project"}
+                <select bind:value={selectedProject}>
+                  <option value="" selected>프로젝트</option>
+                  {#if $leftTrackData.length > 0}
+                    {#each $leftTrackData[0] as plan}
+                      <option value={plan.ccp_index}> {plan.ccp_title}</option>
+                    {/each}
+                  {/if}
+                </select>
+              {:else if activeView === "asset"}
+                <select bind:value={selectedAssetForfilter}>
+                  <option value="" selected>프로젝트</option>
+                  {#if $leftTrackData.length > 0}
+                    {#each $leftTrackData[1] as asset}
+                      <option value={asset.asg_index}>
+                        {asset.asg_title}</option
+                      >
+                    {/each}
+                  {/if}
+                </select>
+              {:else if activeView === "third"}
+                {#if $leftTrackData[2]?.length}
+                  <select
+                    name="operating_system"
+                    id="operating_system"
+                    class="select_input"
+                    bind:value={selectedTarget}
+                  >
+                    <option value="" selected>운영 체제 선택</option>
+                    {#if $leftTrackData[2].length > 0}
+                      {#each $leftTrackData[2] as target (target.cct_target)}
+                        <option
+                          value={`${target.cct_target}|${target.cct_index}`}
+                          >{target.cct_target}</option
+                        >
+                      {/each}
+                    {/if}
+                  </select>
 
-                <option value="프로젝트"> 프로젝트</option>
-              </select>
-              <select name="asset_group" id="asset_group" class="select_input">
-                <option value="" selected>날짜범위지정</option>
-                <option value="날짜범위지정">날짜범위지정</option>
-                <option value="날짜범위지정">날짜범위지정</option>
-              </select>
+                  {#if selectedTarget}
+                    <select
+                      bind:value={selectedRelatedItem}
+                      name="related_data"
+                      id="related_data"
+                      class="select_input"
+                    >
+                      <option value="" selected disabled>관련 항목 선택</option>
+                      {#each relatedTargetsData as item}
+                        <option value={item.ccc_item_no}
+                          >{item.ccc_item_no}</option
+                        >
+                      {/each}
+                    </select>
+                  {/if}
+                {:else}
+                  <p>운영 체제 데이터가 없습니다.</p>
+                {/if}
+              {/if}
+
+              <input
+                bind:value={selectedDate}
+                class="select_input"
+                type="date"
+              />
+
               <select
                 name="operating_system"
                 id="operating_system"
                 class="select_input"
+                bind:value={actionStatusValue}
               >
                 <option value="" selected>조치상태별</option>
-                <option value="조치상태별">조치상태별</option>
+                <option value="0">조치전</option>
+                <option value="1">조치예정</option>
+                <option value="2">조치계획등록</option>
+                <option value="3">조치계획승인</option>
+                <option value="4">조치계획반려</option>
+                <option value="5">조치결과등록</option>
+                <option value="6">조치결과승인</option>
+                <option value="7">조치결과반려</option>
               </select>
-              <select
-                name="operating_system"
-                id="operating_system"
-                class="select_input"
-              >
-                <option value="" selected>담당자별</option>
-                <option value="담당자별">담당자별</option>
-              </select>
-
+              {#if selectedProject !== "" || selectedAssetForfilter !== "" || ccc_index !== ""}
+                <select
+                  name="operating_system"
+                  id="operating_system"
+                  class="select_input"
+                  bind:value={selectedOperator}
+                >
+                  <option value="" selected>담당자별</option>
+                  {#if activeView === "project"}
+                    {#if $filterData?.vulns?.length > 0}
+                      {#each $uniqueOperators as operator}
+                        <option value={operator}>{operator}</option>
+                      {/each}
+                    {:else}
+                      <option disabled>담당자가 없습니다</option>
+                    {/if}
+                  {:else if activeView === "asset"}
+                    {#if $filterDataAsset[0]?.vulns?.length > 0}
+                      {#each $uniqueOperatorsAsset as operator}
+                        <option value={operator}>{operator}</option>
+                      {/each}
+                    {:else}
+                      <option disabled>담당자가 없습니다</option>
+                    {/if}
+                  {:else if activeView === "third"}
+                    {#if $filteredDataTarget?.vulns && $filteredDataTarget.vulns.length > 0}
+                      {#each $uniqueOperatorsTarget as operator}
+                        <option value={operator}>{operator}</option>
+                      {/each}
+                    {:else}
+                      <option disabled>담당자가 없습니다</option>
+                    {/if}
+                  {/if}
+                </select>
+              {/if}
               <button type="button" class="btn btnPrimary">
                 <img src="./assets/images/reset.png" alt="search" />
                 초기화
@@ -483,6 +846,20 @@
                   class="btn btnPrimary"
                 >
                   비교
+                </button>
+              {/if}
+
+              {#if filterPage || filterAssetPage || filterTargetPage}
+                <button
+                  on:click={() => {
+                    (filterPage = false),
+                      (filterAssetPage = false),
+                      (filterTargetPage = false);
+                  }}
+                  type="button"
+                  class="btn btnPrimary"
+                >
+                  돌아가기
                 </button>
               {/if}
             </div>

@@ -528,7 +528,11 @@
           </option>
         {/each}
       </select>
-      <button class="btn btnPrimary downloadBtn" on:click={manualDownload}>
+      <button
+        style="width: 120px;"
+        class="btn btnPrimary downloadBtn"
+        on:click={manualDownload}
+      >
         다운로드
       </button>
     </div>

@@ -29,3 +29,11 @@ export const ModalData = writable([]);
 /******************************************** */
 export const programList = writable({ list: [], total_count: 0 });
 export const dataArray = writable([]);
+/********************************************************** */
+export const filterData = writable({ plans: [], vulns: [] });
+export const filterDataAsset = writable({ plans: [], vulns: [] });
+export const selectedPlanAsset = writable([]);
+export const filteredTableDataForPlan = writable([]);
+export const filteredTableDataForAsset = writable([]);
+export const filteredDataTarget = writable([]);
+export const filteredTableDataForTarget = writable([]);

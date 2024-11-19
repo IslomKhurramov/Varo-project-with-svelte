@@ -67,6 +67,7 @@
           (selectedAgentStatus === "0" && project.uploaded_result <= 0))
       );
     });
+    currentPageNum = 1; // Reset to first page when filtering
   }
 
   function doesProjectMatchOS(project, os) {
@@ -217,6 +218,31 @@
       return sortAscending ? comparison : -comparison;
     });
   }
+
+  let currentPageNum = 1;
+  let itemsPerPage = 10;
+  let totalPages = 0;
+
+  $: {
+    if (filteredProjects) {
+      totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+    }
+  }
+
+  $: paginatedProjects = filteredProjects?.slice(
+    (currentPageNum - 1) * itemsPerPage,
+    currentPageNum * itemsPerPage,
+  );
+
+  $: pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPageNum = page;
+    }
+  }
+
+  $: baseIndex = filteredProjects?.length - (currentPageNum - 1) * itemsPerPage;
 </script>
 
 <div
@@ -366,7 +392,7 @@
         <section>
           <div
             class="tableListWrap"
-            style="height: calc(-294px + 100vh); overflow: auto;"
+            style="height: calc(-374px + 100vh); overflow: auto;"
           >
             <table class="tableList">
               <colgroup>
@@ -434,9 +460,9 @@
                 </tr>
               </thead>
               <tbody>
-                {#if filteredProjects && filteredProjects?.length !== 0}
+                {#if paginatedProjects && paginatedProjects?.length !== 0}
                   <!-- svelte-ignore a11y-click-events-have-key-events -->
-                  {#each filteredProjects as project, index}
+                  {#each paginatedProjects as project, index}
                     <tr
                       on:click={() => {
                         currentPage = ProjectDetail;
@@ -444,9 +470,7 @@
                         selectPageMain(RightContainerMenu, project);
                       }}
                     >
-                      <td class="text-center"
-                        >{filteredProjects.length - index}</td
-                      >
+                      <td class="text-center">{baseIndex - index}</td>
                       <td class="circleTd">
                         <div
                           class="circle"
@@ -647,6 +671,32 @@
               </tbody>
             </table>
           </div>
+          <div class="pagination_box">
+            <nav class="pagination">
+              <button
+                on:click={() => goToPage(currentPageNum - 1)}
+                disabled={currentPageNum === 1}
+              >
+                &lsaquo;
+              </button>
+
+              {#each pageNumbers as pageNum}
+                <button
+                  class={pageNum === currentPageNum ? "selected" : ""}
+                  on:click={() => goToPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              {/each}
+
+              <button
+                on:click={() => goToPage(currentPageNum + 1)}
+                disabled={currentPageNum === totalPages}
+              >
+                &rsaquo;
+              </button>
+            </nav>
+          </div>
         </section>
       </article>
     </div>
@@ -688,5 +738,45 @@
   .excel-img {
     filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
       brightness(100%) contrast(98%);
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #fff;
+    /* box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); */
+  }
+
+  .pagination button {
+    border: none !important;
+    padding: 8px 12px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .pagination button.selected {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .pagination button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination button:hover:not([disabled]) {
+    background-color: #d4d4d4;
   }
 </style>

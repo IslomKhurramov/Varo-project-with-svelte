@@ -209,11 +209,11 @@
     };
   });
   /*****************************************************************************************/
-  let selectedTarget = null;
-  let selectedRelatedItem = "";
+  let selectedTarget = "";
+  let selectedRelatedItem = "관련 항목 선택";
   let relatedItemDetails = {};
-  let selectedTarget2 = null;
-  let selectedRelatedItem2 = "";
+  let selectedTarget2 = "";
+  let selectedRelatedItem2 = "관련 항목 선택";
   let relatedItemDetails2 = {};
 
   $: console.log("related", relatedItemDetails);

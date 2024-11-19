@@ -17,6 +17,7 @@
   import {
     confirmDelete,
     confirmDeleteLast,
+    errorAlert,
     successAlert,
   } from "../../shared/sweetAlert";
   import { derived } from "svelte/store";
@@ -114,9 +115,24 @@
   /*****************************************************************************/
 
   async function createNewChecklistGroup() {
+    // Check if a valid checklist is selected for copying (either via selectedChecklistForCopyId or anotherChecklistId)
+    const sourceChecklistId = generalCopy
+      ? anotherChecklistId
+      : selectedChecklistForCopyId;
+
+    if (!sourceChecklistId) {
+      errorAlert("복사할 유효한 체크리스트를 선택하세요!");
+      return; // Prevent further execution if no valid source checklist is selected
+    }
+    if (newChecklistName === "") {
+      errorAlert("제목을 입력해주세요!");
+      return; // Prevent further execution if the checklist name is empty
+    }
+
+    // Proceed with creating the new checklist group
     try {
       const response = await setNewChecklistGroup(
-        selectedChecklistForCopyId,
+        sourceChecklistId,
         newChecklistName,
       );
 
@@ -124,7 +140,7 @@
         // Fetch the updated checklist data
         showModal = false;
         showEdit = true;
-        sweetAlert("Checklist created successfully!");
+        successAlert("체크리스트가 성공적으로 생성되었습니다!");
         await refreshChecklistData();
         lastCreatedChecklistId = selectedChecklist.ccg_index;
 
@@ -149,12 +165,13 @@
         // Reset the form and modal
         newChecklistName = "";
         selectedChecklistForCopyId = null;
+        anotherChecklistId = null; // Reset the other checklist ID as well
         showModal = false;
       } else {
         throw new Error("Failed to create checklist.");
       }
     } catch (err) {
-      alert(`Failed to create new checklist group: ${err.message}`);
+      throw err;
     }
   }
 
@@ -339,9 +356,9 @@
   /*************************************************************/
   $: {
     if (selectedChecklist) {
-      selectedChecklistForCopyId = selectedChecklist.ccg_index;
+      selectedChecklistForCopyId = selectedChecklist?.ccg_index;
     } else if (generalCopy) {
-      selectedChecklistForCopyId = anotherChecklistId.ccg_index;
+      selectedChecklistForCopyId = anotherChecklistId?.ccg_index;
     }
   }
   /***********************************************************/
@@ -592,32 +609,7 @@
               복사
             </button>
           {/if}
-          {#if showModalModalEditItem}
-            <button
-              style="padding: 15px;"
-              class="btn btnPrimary"
-              on:click={() => {
-                console.log("Closing modal");
-                showEdit = false;
-                showModalModalEditItem = false;
-              }}
-            >
-              돌아가기
-            </button>
-          {:else if currentPage === CheckListDetail}
-            <button
-              style="padding: 15px;"
-              class="btn btnPrimary"
-              on:click={() => {
-                console.log("Going back to ItemPage");
-                selectPage(ItemPage);
 
-                resetEditAndModalState();
-              }}
-            >
-              돌아가기
-            </button>
-          {/if}
           {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <!-- If the checklist is in edit mode, show Save/Cancel buttons -->
             {#if editingChecklistId === selectedChecklist.ccg_index}
@@ -667,6 +659,32 @@
                 점검그룹삭제
               </button>
             {/if}
+          {/if}
+          {#if showModalModalEditItem}
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                console.log("Closing modal");
+                showEdit = false;
+                showModalModalEditItem = false;
+              }}
+            >
+              돌아가기
+            </button>
+          {:else if currentPage === CheckListDetail}
+            <button
+              style="padding: 15px;"
+              class="btn btnPrimary"
+              on:click={() => {
+                console.log("Going back to ItemPage");
+                selectPage(ItemPage);
+
+                resetEditAndModalState();
+              }}
+            >
+              돌아가기
+            </button>
           {/if}
         </div>
       </section>

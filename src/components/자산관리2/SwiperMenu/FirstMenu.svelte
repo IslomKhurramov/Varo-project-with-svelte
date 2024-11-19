@@ -88,8 +88,6 @@
         </div>
       {/if}
     </div>
-    <textarea rows="5" placeholder="비고란" style="margin-top: 20px;"
-    ></textarea>
   </div>
 </main>
 

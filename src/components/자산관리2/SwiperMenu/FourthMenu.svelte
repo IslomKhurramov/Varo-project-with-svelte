@@ -109,6 +109,7 @@
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
+  $: console.log("detailof asset", detailofAsset);
 </script>
 
 <main>
@@ -116,7 +117,7 @@
     <h3 class="title">관련프로젝트</h3>
     <div
       class="tableListWrap nofirstth"
-      style="max-height:410px; overflow-y:auto; font-size:16px;"
+      style="max-height:312px; overflow-y:auto; font-size:16px; position:sticky;"
     >
       <table class="tableList hdBorder">
         <colgroup>
@@ -289,7 +290,7 @@
 
     <div
       class="tableListWrap maxh"
-      style="height: 30vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
+      style="height: 26vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
     >
       <table class="tableList hdBorder tableScroll">
         <colgroup>
@@ -314,7 +315,9 @@
           {#if filteredVulns.length > 0}
             {#each filteredVulns as vuln, vulnIndex}
               <tr on:click={() => itemClickHandle(vuln)}>
-                <td class="wordBreak text-center">{vulnIndex + 1}</td>
+                <td class="wordBreak text-center"
+                  >{filteredVulns.length - vulnIndex}</td
+                >
                 <td class="line-height"
                   >{detailofAsset[0]?.ast_hostname || "No Title"}</td
                 >

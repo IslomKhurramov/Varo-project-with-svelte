@@ -214,17 +214,12 @@
           </div>
           <div class="flex align-center btnWrap gap-6">
             <button class="btn w140 btnPrimaryFontGray" type="submit"
-              >Submit</button
-            >
-            <button
-              class="btn w140 btnPrimaryFontGray"
-              type="reset"
-              on:click={() => (formData = { ...assetDetails })}>Reset</button
+              >저장</button
             >
 
             <button
               class="btn w140 btnPrimaryFontGray"
-              on:click={closeModalEdit}>Cancel</button
+              on:click={closeModalEdit}>취소</button
             >
           </div>
         </div>

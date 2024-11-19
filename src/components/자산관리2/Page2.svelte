@@ -32,7 +32,7 @@
   let currentPage = null;
   let activeMenu = null;
   let showModal = false;
-  let newGroupName = "전체";
+  let newGroupName = "";
   let isAddingNewGroup = false;
   let inputRef;
   let selectedGroup = "전체";
@@ -165,13 +165,30 @@
       if (response.success) {
         successAlert("그룹이 성공적으로 생성되었습니다!");
 
-        allAssetGroupList.update((groups) => [
-          ...groups,
-          { asg_index: response.new_asg_index, asg_title: newGroupName },
-        ]);
+        // Create the new group object
+        const newGroup = {
+          asg_index: response.new_asg_index,
+          asg_title: newGroupName,
+        };
 
+        // Force a reactivity update by using `update` and add the new group
+        allAssetGroupList.update((currentGroups) => {
+          return [...currentGroups, newGroup]; // Reassign with a new array
+        });
+
+        // Set the selectedGroup to the new group immediately
+        selectedGroup = newGroup.asg_index;
+        activeMenu = newGroup.asg_index;
+
+        // Optionally, call `selectPage` or any method to show the new group in the UI
+        selectPage(AssetCardsPage, newGroup);
+
+        // Clear the new group name and hide the input
         newGroupName = "";
         isAddingNewGroup = false;
+
+        // Re-run the `onMount` method or any other update if needed
+        assetGroupList(); // Re-fetch and update the list of asset groups
       } else {
         throw new Error("Failed to save group.");
       }
@@ -179,6 +196,7 @@
       alert("Failed to save the group. Please try again.");
     }
   };
+
   /************************************************/
   // Show input field for new group
   const showNewGroupInput = () => {
@@ -416,7 +434,6 @@
   // }
   async function deleteSelectedAssetGroup() {
     try {
-      console.log("selected asset", selectedGroup, selectedGroupName);
       // Ensure a group is selected
       if (!selectedGroup || selectedGroup === "전체") {
         errorAlert("삭제할 그룹이 선택되지 않았습니다.");
@@ -432,7 +449,6 @@
         errorAlert("선택된 그룹 정보를 찾을 수 없습니다.");
         return;
       }
-      console.log("selectedGroupindex", selectedGroupDetails.asg_index);
 
       // Confirm deletion
       const isConfirmed = await confirmDelete2(selectedGroupDetails.asg_title);
@@ -444,16 +460,18 @@
       );
 
       if (response.success) {
-        // Update the asset group list to remove the deleted group
-        allAssetGroupList.update((groups) =>
-          groups.filter(
+        // Remove the group from the store using `update()`
+        allAssetGroupList.update((currentGroups) => {
+          return currentGroups.filter(
             (group) => group.asg_index !== selectedGroupDetails.asg_index,
-          ),
-        );
+          );
+        });
 
-        // Reset the selected group to "전체"
-        selectedGroup = "전체";
-        activeMenu = "전체";
+        // Check if the selected group was deleted and reset `selectedGroup` if necessary
+        if (selectedGroup === selectedGroupDetails.asg_index) {
+          selectedGroup = "전체"; // Reset to "전체" if the current group was deleted
+          activeMenu = "전체";
+        }
 
         successAlert(
           `그룹 "${selectedGroupDetails.asg_title}"이(가) 성공적으로 삭제되었습니다.`,
@@ -465,6 +483,8 @@
       errorAlert(error.message || "그룹 삭제 중 오류가 발생했습니다.");
     }
   }
+
+  $: console.log("selectedGroup", selectedGroup);
 </script>
 
 <div class="container">
@@ -550,17 +570,17 @@
                 <div class="modal">
                   <input
                     type="text"
-                    placeholder="Enter Group Name"
+                    placeholder="그룹 이름을 입력하세요"
                     bind:value={newGroupName}
                     bind:this={inputRef}
                     class="editable_input"
                   />
                   <div class="modal-buttons">
                     <button class="primary-button" on:click={addNewGroup}
-                      >Save</button
+                      >저장</button
                     >
                     <button class="secondary-button" on:click={cancelNewGroup}
-                      >Cancel</button
+                      >취소</button
                     >
                   </div>
                 </div>
@@ -620,7 +640,7 @@
                 on:change={handleFilter}
               >
                 <option value="전체" selected>전체</option>
-                <option value="YES">등록 승인</option>
+                <option value="YES">등록승인</option>
                 <option value="NO">등록 해제</option>
               </select>
 
@@ -772,6 +792,7 @@
   .editable_input {
     height: 40px;
     width: 360px;
+    margin-bottom: 50px;
   }
   .modal-buttons {
     display: flex;

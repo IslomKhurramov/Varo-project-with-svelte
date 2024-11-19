@@ -184,14 +184,14 @@
   });
 </script>
 
-<div class="contentArea" style="height: calc(-236px + 100vh); overflow-y:auto;">
+<div class="contentArea" style="height: calc(-236px + 100vh); ">
   <article
     class="contentArea"
     style=" height: calc(100vh - 134px); padding-left:0px; padding-top:0px; padding-right:0px; margin-bottom:15px;"
   >
     <p style="padding-bottom:15px; ">점검그룹</p>
 
-    <div class="tableListWrap table1">
+    <div class="tableListWrap table1" style="margin-bottom: 20px;">
       <table class="tableList hdBorder font-size: 16px;">
         <colgroup>
           <col style="width:50px;" />
@@ -214,7 +214,7 @@
         <tbody>
           {#each [...allChecklistArray].sort((a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate)) as data, index}
             <tr on:click={() => handleProjectData(data)}>
-              <td class="text-center">{index + 1}</td>
+              <td class="text-center">{allChecklistArray.length - index}</td>
               <td class="text-center">{data.ccg_group}</td>
               <td class="text-center">{data.ccg_checklist_year}</td>
               <td
@@ -275,7 +275,7 @@
         >
       {/if}
     </div>
-    <div class="tableListWrap table2" style="margin-bottom: 20px; height:60vh;">
+    <div class="tableListWrap table2" style="margin-bottom: 20px; height:45vh;">
       <table class="tableList hdBorder font-size: 16px;">
         {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <colgroup>
@@ -336,7 +336,9 @@
                       /></td
                     >
                   {/if}
-                  <td class="text-center line-height">{index + 1}</td>
+                  <td class="text-center line-height"
+                    >{$filteredChecklistData.length - index}</td
+                  >
                   <td class="text-center line-height">{selectedCategory}</td>
                   <td class="text-center line-height">{item.ccc_item_group}</td>
                   <td class="text-center line-height">{item.ccc_item_no}</td>

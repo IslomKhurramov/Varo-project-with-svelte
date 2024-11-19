@@ -48,6 +48,8 @@
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
 
+  $: console.log("assetdetails", $assetDeatilInfo);
+
   let formData = {
     ass_uuid: "",
     ast_group: "",
@@ -275,7 +277,7 @@
 
       if (response.success) {
         showModal = false;
-        sweetAlert("그룹이 성공적으로 변경되었습니다!");
+        successAlert("그룹이 성공적으로 변경되었습니다!");
       } else {
         errorAlert("자산을 선택해주세요!");
       }
@@ -300,6 +302,7 @@
       );
 
       if (response.RESULT === "OK") {
+        console.log(response);
         successAlert("자산이 등록 승인 처리되었습니다");
 
         // Update the asset's approval status in the store
@@ -488,11 +491,11 @@
 
               <div class="modal-buttons">
                 <button class="primary-button" on:click={assetGroupChange}
-                  >OK</button
+                  >저장</button
                 >
                 <button
                   class="secondary-button"
-                  on:click={() => (showModal = false)}>Cancel</button
+                  on:click={() => (showModal = false)}>취소</button
                 >
               </div>
             </div>
@@ -533,7 +536,8 @@
   }
   .contentArea {
     height: 80vh;
-    max-height: 114%;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .subTabWrap a {
     cursor: pointer;

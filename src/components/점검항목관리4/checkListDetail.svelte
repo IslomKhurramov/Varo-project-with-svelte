@@ -203,7 +203,9 @@
                       />
                     </td>
                   {/if}
-                  <td class="text-center line-height">{index + 1}</td>
+                  <td class="text-center line-height"
+                    >{$filteredChecklistData.length - index}</td
+                  >
                   <td class="text-center line-height">{selectedCategory}</td>
                   <td class="text-center line-height">{item.ccc_item_group}</td>
                   <td class="text-center line-height">{item.ccc_item_no}</td>

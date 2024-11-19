@@ -277,7 +277,6 @@
           <button on:click={deleteSelectedItem} class="btn delete-btn"
             >삭제하기</button
           >
-          <button class="btn close-btn">창닫기</button>
         </div>
       </div>
     {/if}

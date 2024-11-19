@@ -152,55 +152,6 @@
     else return "#ff0000"; // Red
   }
 
-  let filteredAssets = [
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 12,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 1500,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 900,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-  ];
-  let selectedAsset = filteredAssets[0];
-  let recentAssets = filteredAssets.slice(-5);
   import { onMount } from "svelte";
   import {
     compareByPlan,
@@ -229,7 +180,6 @@
       class="select_input"
     >
       <option value="" selected>플랜명</option>
-      <option value="8">8</option>
       {#each $leftTrackData[0] as plan}
         <option value={plan.ccp_index}>{plan.ccp_title}</option>
       {/each}
@@ -377,7 +327,6 @@
       class="select_input"
     >
       <option value="" selected>플랜명</option>
-      <option value="7">7</option>
       {#each $leftTrackData[0] as plan}
         <option value={plan.ccp_index}>{plan.ccp_title}</option>
       {/each}

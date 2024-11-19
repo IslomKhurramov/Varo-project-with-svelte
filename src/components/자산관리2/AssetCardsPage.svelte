@@ -228,9 +228,11 @@
 
               <span
                 class="badge badgePrimary noneborder"
-                style="color: {asset.ast_activate ? 'blue' : 'red'}"
+                style="color: {asset.ast_lastconnect === 'YES'
+                  ? 'blue'
+                  : 'red'}"
               >
-                {asset.ast_activate ? "연결중" : "연결 안됨"}
+                {asset.ast_lastconnect === "YES" ? "연결중" : "연결 안됨"}
               </span>
             </div>
             <div class="btnWrap">
@@ -357,7 +359,7 @@
                       selectedAsset = asset;
                     }}
                   >
-                    등록 승인
+                    점검대상지정
                   </button>
                 </div>
               {:else}

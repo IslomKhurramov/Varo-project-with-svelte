@@ -360,9 +360,9 @@
               </div>
             </div>
           </div>
-          <div class="detailForm">
+          <div class="detailForm" style="background: none; padding-left: 0;">
             <div class="formControl">
-              <label style="width: 112px;">점검 실행</label>
+              <label style="width: 130px;">점검 실행</label>
               <div class="radioWrap">
                 <label class="radio-label">
                   <input

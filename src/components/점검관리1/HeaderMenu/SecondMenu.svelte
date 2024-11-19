@@ -244,13 +244,9 @@
         on:change={refetchDataHandler}
       >
         <option value="" selected>점검결과</option>
-        {#if results && results.length !== 0}
-          {#each results as result}
-            <option value={result?.ccr_item_result}
-              >{result?.ccr_item_result}</option
-            >
-          {/each}
-        {/if}
+        {#each ["양호", "취약", "수동점검", "예외처리", "해당없음"] as result}
+          <option value={result}>{result}</option>
+        {/each}
       </select>
       <button type="button" class="btn btnPrimary" on:click={resetFilters}>
         <img src="./assets/images/reset.png" alt="search" />
@@ -367,7 +363,6 @@
                         disabled
                         selected={data?.ccr_item_result === ""}
                       >
-                        없음
                       </option>
                       <option
                         style="font-size: 16px;"
@@ -382,6 +377,13 @@
                         selected={data?.ccr_item_result === "취약"}
                       >
                         취약
+                      </option>
+                      <option
+                        style="font-size: 16px;"
+                        value="수동점검"
+                        selected={data?.ccr_item_result === "수동점검"}
+                      >
+                        수동점검
                       </option>
                       <option
                         style="font-size: 16px;"

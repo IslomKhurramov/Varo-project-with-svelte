@@ -11,8 +11,9 @@
   import { toggleTooltip } from "../../public/assets/js/common.js";
   import { navigate } from "svelte-routing";
   import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
-  import { errorAlert } from "../shared/sweetAlert";
+  import { errorAlert, successAlert } from "../shared/sweetAlert";
   import SixthMenu from "./점검관리1/HeaderMenu/SixthMenu.svelte";
+  import { setFinalPlanSecurityPoint } from "../services/result/resultService";
 
   export let selectPageMain;
   export let activeMenu;
@@ -166,6 +167,22 @@
       loading = false;
     }
   }
+
+  const clickSecyurityPoint = async (plan_index) => {
+    try {
+      if (!plan_index) return false;
+      const response = await setFinalPlanSecurityPoint(plan_index);
+
+      projectData = await getAllPlanLists();
+      projectArray = Object.values(projectData);
+      filteredProjects = projectArray;
+
+      successAlert(response);
+    } catch (err) {
+      loading = false;
+      errorAlert(err?.message);
+    }
+  };
 </script>
 
 <div
@@ -536,6 +553,15 @@
                                 }}
                               >
                                 이력관리
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href="javascript:void(0)"
+                                on:click={() =>
+                                  clickSecyurityPoint(project.ccp_index)}
+                              >
+                                보안점수확정
                               </a>
                             </li>
                           </ul>

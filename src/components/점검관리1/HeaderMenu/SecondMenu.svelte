@@ -313,7 +313,7 @@
                 }}
               >
                 <td class="text-center" style="font-size: 16px;"
-                  >{resultData.length - 1}</td
+                  >{resultData.length - index}</td
                 >
                 <td style="font-size: 16px;" class="cursor-pointer text-center">
                   {data?.ast_uuid__ass_uuid__ast_hostname}

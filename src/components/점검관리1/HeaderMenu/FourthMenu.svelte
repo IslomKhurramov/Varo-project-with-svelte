@@ -144,7 +144,7 @@
             {#each logData as data, index}
               <tr>
                 <td class="text-center" style="font-size: 16px;"
-                  >{logData.length - 1}</td
+                  >{logData.length - index}</td
                 >
                 <td class="text-center" style="font-size: 16px;"
                   >{data?.ccp_index}</td

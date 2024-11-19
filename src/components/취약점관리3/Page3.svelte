@@ -274,13 +274,14 @@
               loading = true;
               activePlan = null;
               toggleList("project");
-              plans = await getVulnsOfAsset(search);
-              tableData = plans?.vulns;
+
               search = {
                 plan_index: "",
                 asset_target_uuid: "",
                 step_vuln: "1",
               };
+              plans = await getVulnsOfAsset(search);
+              tableData = plans?.vulns;
               setView = "plan";
               selectedSendData = {
                 plan_index: "",
@@ -313,7 +314,7 @@
                 asset_target_uuid: "",
                 step_vuln: "1",
               };
-              setView = "plan";
+              // setView = "plan";
               selectedSendData = {
                 plan_index: "",
                 asset_target_uuid: "",

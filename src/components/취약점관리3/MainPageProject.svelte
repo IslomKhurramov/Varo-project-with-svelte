@@ -736,7 +736,7 @@
                           style="font-size: 16px; width:70px"
                           class="xs"
                           on:change={(e) => {
-                            if (setView == "plan") {
+                            if (setView == "plan" || setView == "plan_accept") {
                               const data = {
                                 plan_index: item?.ccp_index,
                                 asset_target_uuid: item?.ast_uuid,
@@ -765,20 +765,21 @@
                         >
                           <option
                             value="없음"
-                            selected={setView == "plan"
+                            selected={setView == "plan" ||
+                            setView == "plan_accept"
                               ? item?.cfi_fix_status__cvs_index != 3 ||
                                 item?.cfi_fix_status__cvs_index != 4
-                              : item?.cfi_fix_status__cvs_index != 3 ||
+                              : item?.cfr_fix_status__cvs_index != 3 ||
                                 item?.cfr_fix_status__cvs_index != 4}
                           >
-                            없음
                           </option>
                           <option
                             value="승인"
-                            selected={setView == "plan"
+                            selected={setView == "plan" ||
+                            setView == "plan_accept"
                               ? item?.cfi_fix_status__cvs_index == 3 ||
                                 item?.cfi_fix_status__cvs_index == 4
-                              : item?.cfi_fix_status__cvs_index == 3 ||
+                              : item?.cfr_fix_status__cvs_index == 3 ||
                                 item?.cfr_fix_status__cvs_index == 4}
                           >
                             승인

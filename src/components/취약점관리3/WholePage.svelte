@@ -43,7 +43,7 @@
     asset_uuid: "",
     ccr_index: "",
     fix_method: "",
-    fix_level: "",
+    fix_level: "긴급",
     fix_start_date: "",
     fix_end_date: "",
     fix_comment: "",
@@ -54,7 +54,7 @@
   let sendApproveData = {
     asset_target_uuid: "",
     plan_index: "",
-    approved: "",
+    approved: "1",
     approved_targets: "",
     approved_comment: "",
   };
@@ -73,7 +73,7 @@
   let sendSetFixDoneApprove = {
     asset_target_uuid: "",
     plan_index: "",
-    approved: "",
+    approved: "1",
     approved_targets: "",
     approved_comment: "",
   };
@@ -81,10 +81,21 @@
   onMount(async () => {
     usernames = await getUserName();
     options = await getVulnsFixWay();
+    sendFixDone["fixed_method"] = options?.[0]?.cvf_index;
+    sendPlanRegisterData["fix_method"] = options?.[0]?.cvf_index;
   });
 
   const fixPlanRegister = async () => {
     try {
+      if (
+        !sendPlanRegisterData["fix_start_date"] ||
+        !sendPlanRegisterData["fix_end_date"]
+      )
+        throw new Error("조치일정을 확인해 주세요!");
+
+      if (!sendPlanRegisterData["fix_user_index"])
+        throw new Error("조치담당자를 확인해 주세요!");
+
       sendPlanRegisterData.asset_uuid = targetData?.ast_uuid;
       sendPlanRegisterData.ccr_index = targetData?.ccr_index;
 
@@ -144,6 +155,12 @@
 
   const setFixDoneRegisterHandler = async () => {
     try {
+      if (!sendFixDone["fixed_start_date"] || !sendFixDone["fixed_end_date"])
+        throw new Error("조치일정을 확인해 주세요!");
+
+      if (!sendFixDone["fixed_user_index"])
+        throw new Error("조치수행자를 확인해 주세요!");
+
       sendFixDone.asset_uuid = targetData?.ast_uuid;
       sendFixDone.ccr_index = targetData?.ccr_index;
       const formData = new FormData();
@@ -410,7 +427,7 @@
                           bind:value={sendFixDone["fixed_user_index"]}
                           style="font-size: 16px;"
                         >
-                          <option value={""}> 조치담당자</option>
+                          <option value={""}>조치수행자</option>
                           {#if usernames?.length !== 0}
                             {#each usernames as username}
                               <option value={username?.user_index}
@@ -738,7 +755,7 @@
                       };
                     }}
                   >
-                    의견등록
+                    조치승인
                   </button>
                 {:else if isAgentUser && setView == "result"}
                   <button

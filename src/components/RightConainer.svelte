@@ -319,6 +319,7 @@
           >
             <table class="tableList">
               <colgroup>
+                <col style="width: 4%;" />
                 <col style="width:6%;" />
                 <col style="width: 13%;" />
                 <col style="width:30%;" />
@@ -330,6 +331,7 @@
               </colgroup>
               <thead>
                 <tr>
+                  <th class="text-center" style="font-size: 16px;">번호</th>
                   <th class="text-center" style="font-size: 16px;">보안점수</th>
                   <th class="text-center" style="font-size: 16px;">제목</th>
                   <th class="text-center" style="font-size: 16px;">점검대상</th>
@@ -351,6 +353,9 @@
                         selectPageMain(RightContainerMenu, project);
                       }}
                     >
+                      <td class="text-center"
+                        >{filteredProjects.length - index}</td
+                      >
                       <td class="circleTd">
                         <div
                           class="circle"

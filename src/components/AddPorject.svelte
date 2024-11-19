@@ -19,26 +19,15 @@
   let showTable = false;
   // Data for the form
   let projectName = "";
-  let selectedType = "";
+  let selectedType = "0";
   let selectedCheckList = "";
   let selectedAssetList = "";
   let selectedPersons = "";
   let startDate = "";
   let endDate = "";
   let schedule = "0";
-  let repetition = "";
   let repeatCycle = "";
   let inspectionInformation = "";
-
-  //Data2
-  let commandType = "에이전트 시스템 정보수집";
-  let scheduleType = "예약실행";
-  let repeatStartTime;
-  let repeatEndTime;
-  let repeatInterval = 0;
-  let systemCommand = "윈도우 PowerShell";
-  let searchPath = "c:/path/, /home/";
-  let fileExtensions = "all, exe, dll";
 
   let assetGroup = [];
 
@@ -46,8 +35,6 @@
   let actionSchedule = "0";
   let actionStartDate = "";
   let actionEndDate = "";
-  let ruleType = "";
-  let repealRule = "";
   let conductorInfo = "";
   let recheckplanIndex = null;
   let plan_execute_interval_value = 0;
@@ -64,15 +51,9 @@
     reserved: "0",
     start_date: "",
     end_date: "",
-    repeat_interval: "",
+    repeat_interval: 0,
     repeat_term: "",
   };
-
-  $: if (ruleType === "1") {
-    repealRule = `${projectName} {}`;
-  } else {
-    repealRule = projectName;
-  }
 
   //
   let planOptions = [];
@@ -84,6 +65,21 @@
 
   const submitNewPlan = async () => {
     try {
+      if (!projectName) throw new Error("플랜명을 확인해 주세요!");
+      if (selectedType == "0") {
+        if (!selectedCheckList) throw new Error("점검대상을 확인해 주세요!");
+      }
+
+      if (!selectedAssetList) throw new Error("점검항목을 확인해 주세요!");
+      if (!selectedPersons) throw new Error("점검자를 확인해 주세요!");
+      if (!conductorInfo) throw new Error("조치승인담당자를 확인해 주세요!");
+      if (!startDate || !endDate) throw new Error("점검일정을 확인해 주세요!");
+
+      if (schedule == "1") {
+        if (plan_execute_interval_value == 0)
+          throw new Error("주기를 0 보다 큰 숫자를 입력해 주세요!");
+      }
+
       const sendData = {
         plan_name: projectName,
         plan_recheck: parseInt(selectedType),
@@ -94,10 +90,9 @@
         plan_start_date: moment(startDate).format("YYYY-MM-DD h:mm:ss"),
         plan_end_date: moment(endDate).format("YYYY-MM-DD h:mm:ss"),
         plan_execution_type: parseInt(schedule),
-        plan_execute_interval_value: plan_execute_interval_value,
+        plan_execute_interval_value:
+          plan_execute_interval_value == 0 ? null : plan_execute_interval_value,
         plan_execute_interval_term: schedule == 0 ? "hours" : repeatCycle,
-        plan_name_repeat_rule_type: ruleType ? parseInt(ruleType) : 0,
-        plan_name_repeat_rule: repealRule,
         fix_date_setup: parseInt(actionSchedule),
         fix_start_date: actionStartDate,
         fix_end_date: actionEndDate,
@@ -188,14 +183,25 @@
 
   const submitNewSystemCommand = async () => {
     try {
+      if (!assetInsertData.target_group)
+        throw new Error("대상을 확인해 주세요!");
+
       if (assetInsertData.start_date)
         assetInsertData.start_date = moment(assetInsertData.start_date).format(
           "YYYY-MM-DD h:mm:ss",
         );
+
       if (assetInsertData.end_date)
         assetInsertData.end_date = moment(assetInsertData.end_date).format(
           "YYYY-MM-DD h:mm:ss",
         );
+      if (assetInsertData.reserved == "1") {
+        if (assetInsertData.repeat_interval == 0) {
+          throw new Error("주기를 0 보다 큰 숫자를 입력해 주세요!");
+        }
+      }
+
+      console.log("assetInsertData:", assetInsertData);
 
       const response = await setNewSystemCommand(assetInsertData);
 
@@ -203,6 +209,7 @@
 
       navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
+      console.log("error:", error);
       errorAlert(error?.message);
     }
   };
@@ -251,7 +258,6 @@
               placeholder="test"
               style="font-size: 16px;"
             >
-              <option value="" selected disabled>신규점검/이행점검</option>
               <option value="0">신규점검</option>
               <option value="1">이행점검</option>
             </select>
@@ -354,9 +360,9 @@
               </div>
             </div>
           </div>
-          <div class="detailForm">
+          <div class="detailForm" style="background: none; padding-left: 0;">
             <div class="formControl">
-              <label style="width: 112px;">점검 실행</label>
+              <label style="width: 130px;">점검 실행</label>
               <div class="radioWrap">
                 <label class="radio-label">
                   <input
@@ -402,42 +408,13 @@
                     bind:value={repeatCycle}
                     style="font-size: 16px;"
                   >
-                    <option value="" selected disabled>시/일/주/월/년</option>
+                    <option value="" selected disabled>반복주기</option>
                     <option value="hours">시</option>
                     <option value="days">일</option>
                     <option value="weeks">주</option>
                     <option value="months">월</option>
                     <option value="years">년</option>
                   </select>
-                </div>
-              </div>
-            {/if}
-
-            {#if schedule == "1"}
-              <div class="formControl">
-                <label style="width: 115px; font-size: 16px;"
-                  >점검 플랜 <br /> 생성 규칙</label
-                >
-                <div class="controlWrap">
-                  <select bind:value={ruleType} style="font-size: 16px;">
-                    <option value="" selected disabled>
-                      반복실행시 마다 신규점검 자동 생성/현 점검 하위로 점검
-                      자동 생성
-                    </option>
-                    <option value="1">반복실행시 마다 신규점검 자동 생성</option
-                    >
-                    <option value="0">현 점검 하위로 점검 자동 생성</option>
-                  </select>
-                  {#if ruleType === "1"}
-                    <input
-                      style="font-size: 16px;"
-                      class="w472"
-                      type="text"
-                      placeholder={"점검플랜명 '{}' ({}는 순차이며 프로젝트명에서 위치를 지정해 주세요.)"}
-                      bind:value={repealRule}
-                      disabled
-                    />
-                  {/if}
                 </div>
               </div>
             {/if}
@@ -562,7 +539,7 @@
                   reserved: "0",
                   start_date: "",
                   end_date: "",
-                  repeat_interval: "",
+                  repeat_interval: 0,
                   repeat_term: "",
                 };
               }}
@@ -838,7 +815,7 @@
                   bind:value={assetInsertData.repeat_term}
                   style="font-size: 16px;"
                 >
-                  <option value="" selected disabled>시/일/주/월/년</option>
+                  <option value="" selected disabled>반복주기</option>
                   <option value="hours">시</option>
                   <option value="days">일</option>
                   <option value="weeks">주</option>

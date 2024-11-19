@@ -714,7 +714,7 @@
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
                 >
-                <input
+                <!-- <input
                   readonly
                   style="font-size: 16px;"
                   type="file"
@@ -728,7 +728,7 @@
                       assessment_command: e.target.files[0],
                     };
                   }}
-                />
+                /> -->
                 <!-- <button
                   id="upload-btn"
                   class="upload-btn btn btnPrimary"
@@ -755,13 +755,13 @@
                     ? "파일 업로드됨"
                     : "엑셀파일업로드"}</label
                 >
-                <input
+                <!-- <input
                   style="visibility: hidden;"
                   type="file"
                   id="file-upload"
                   accept=".xls,.xlsx"
                   class="file-input"
-                />
+                /> -->
                 <button
                   type="button"
                   class="btn btnBlue btnSave"

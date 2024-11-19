@@ -14,6 +14,11 @@
   let projects;
   let searchFilters;
   let logData = null;
+  let currentPageNum = 1;
+  let totalPages;
+  let pageNumbers = [];
+  const itemsPerPage = 15;
+
   let search = {
     plan_index: "",
     asset_name: "",
@@ -21,6 +26,8 @@
     search_start_date: "",
     search_end_date: "",
     his_type: "plan",
+    page_cnt: "1",
+    list_cnt: itemsPerPage.toString(),
   };
 
   onMount(async () => {
@@ -33,16 +40,46 @@
   });
 
   const searchDataHandler = async () => {
-    logData = await getAuditNLog(search);
+    search.page_cnt = currentPageNum.toString();
+    const response = await getAuditNLog(search);
+    if (response && Array.isArray(response)) {
+      logData = response;
+      // If response length is less than itemsPerPage, we're on the last page
+      if (response.length < itemsPerPage) {
+        totalPages = currentPageNum;
+      } else {
+        // Keep current totalPages if data length equals itemsPerPage
+        totalPages =
+          response.length === itemsPerPage
+            ? Math.max(currentPageNum, totalPages || 1)
+            : currentPageNum;
+      }
+      updatePageNumbers();
+    }
+  };
+
+  const updatePageNumbers = () => {
+    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  };
+
+  const goToPage = async (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      currentPageNum = pageNum;
+      await searchDataHandler();
+    }
   };
 
   const resetFilters = async () => {
+    currentPageNum = 1;
     search = {
-      plan_index: projectIndex,
+      plan_index: projectIndex ?? "",
       asset_name: "",
       order_user: "",
       search_start_date: "",
       search_end_date: "",
+      his_type: "plan",
+      page_cnt: "1",
+      list_cnt: itemsPerPage.toString(),
     };
     await searchDataHandler();
   };
@@ -52,6 +89,10 @@
       search = { ...search, plan_index: projectIndex };
       searchDataHandler();
     }
+  }
+
+  $: {
+    console.log("logData:", logData);
   }
 </script>
 
@@ -112,7 +153,7 @@
   </section>
   <section
     class="tableWrap"
-    style="height: calc(-294px + 100vh); overflow: auto;"
+    style="height: calc(-374px + 100vh); overflow: auto;"
   >
     <div class="tableListWrap">
       <table class="tableList hdBorder">
@@ -142,8 +183,10 @@
           {#if logData && logData.length !== 0}
             {#each logData as data, index}
               <tr>
-                <td class="text-center" style="font-size: 16px;">{index + 1}</td
-                >
+                <td class="text-center" style="font-size: 16px;">
+                  {logData.length -
+                    ((currentPageNum - 1) * itemsPerPage + index)}
+                </td>
                 <td class="text-center" style="font-size: 16px;"
                   >{data?.ccp_index}</td
                 >
@@ -172,6 +215,32 @@
       </table>
     </div>
   </section>
+  <div class="pagination_box">
+    <nav class="pagination">
+      <button
+        on:click={() => goToPage(currentPageNum - 1)}
+        disabled={currentPageNum === 1}
+      >
+        &lsaquo;
+      </button>
+
+      {#each pageNumbers as pageNum}
+        <button
+          class={pageNum === currentPageNum ? "selected" : ""}
+          on:click={() => goToPage(pageNum)}
+        >
+          {pageNum}
+        </button>
+      {/each}
+
+      <button
+        on:click={() => goToPage(currentPageNum + 1)}
+        disabled={currentPageNum === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
+  </div>
 </article>
 
 <style>
@@ -195,5 +264,45 @@
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #fff;
+    /* box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); */
+  }
+
+  .pagination button {
+    border: none !important;
+    padding: 8px 12px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .pagination button.selected {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .pagination button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination button:hover:not([disabled]) {
+    background-color: #d4d4d4;
   }
 </style>

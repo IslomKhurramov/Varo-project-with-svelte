@@ -115,7 +115,7 @@
               value={modalData?.ccr_item_result}
               on:change={(e) => (insertData.change_result = e.target.value)}
             >
-              <option value="" disabled style="font-size: 16px;"> 없음 </option>
+              <option value="" disabled style="font-size: 16px;"> </option>
               <option
                 style="font-size: 16px;"
                 value="양호"
@@ -132,11 +132,19 @@
               </option>
               <option
                 style="font-size: 16px;"
+                value="수동점검"
+                selected={modalData?.ccr_item_result === "수동점검"}
+              >
+                수동점검
+              </option>
+              <option
+                style="font-size: 16px;"
                 value="예외처리"
                 selected={modalData?.ccr_item_result === "예외처리"}
               >
                 예외처리
               </option>
+
               <option
                 style="font-size: 16px;"
                 value="해당없음"

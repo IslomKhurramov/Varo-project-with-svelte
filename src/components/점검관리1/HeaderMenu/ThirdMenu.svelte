@@ -75,6 +75,7 @@
 </article>
 
 <article class="contentArea mt-40">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <h4
     class="title border"
     on:click={() => {
@@ -122,7 +123,6 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
-                disabled={!planReports?.v_excel?.length}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -136,11 +136,7 @@
           </td>
           <td class="text-center">
             <div class="flex justify-center">
-              <button
-                type="button"
-                class="btn btnGray w140"
-                disabled={!planReports?.v_excel?.length}>보고서삭제</button
-              >
+              <button type="button" class="btn btnGray w140">보고서삭제</button>
             </div>
           </td>
         </tr>
@@ -188,7 +184,6 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
-                disabled={!planReports?.v_excel?.length}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -202,11 +197,7 @@
           </td>
           <td class="text-center">
             <div class="flex justify-center">
-              <button
-                type="button"
-                class="btn btnGray w140"
-                disabled={!planReports?.v_excel?.length}
-              >
+              <button type="button" class="btn btnGray w140">
                 보고서삭제
               </button>
             </div>
@@ -230,7 +221,6 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
-                disabled={!planReports?.v_word?.length}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -244,11 +234,7 @@
           </td>
           <td class="text-center">
             <div class="flex justify-center">
-              <button
-                type="button"
-                class="btn btnGray w140"
-                disabled={!planReports?.v_word?.length}
-              >
+              <button type="button" class="btn btnGray w140">
                 보고서삭제
               </button>
             </div>

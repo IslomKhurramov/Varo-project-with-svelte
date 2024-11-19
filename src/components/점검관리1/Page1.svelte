@@ -18,6 +18,7 @@
   let currentView = "default";
   let currentPage = null;
   let activeMenu = null;
+  let parentIndex = null;
   let projectData = {};
   let projectArray = [];
   let loading = true;
@@ -57,6 +58,7 @@
     currentPage = page;
     plan_index = project.ccp_index;
     activeMenu = project.ccp_index;
+    parentIndex = project?.ccp_index_parent;
     currentView = "pageView";
     selectedProjectIndex = project.ccp_index;
     tabMenu = "no";
@@ -109,29 +111,34 @@
       {#if projectArray && projectArray?.length !== 0}
         {#each projectArray as project, index}
           <li class={activeMenu === project.ccp_index ? "active" : ""}>
-            <a
-              href="javascript:void(0)"
-              on:click={() => selectPage(RightContainerMenu, project)}
-              title={project.ccp_title}
-            >
-              <span
-                style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+            {#if project?.ccp_index_parent == 0}
+              <a
+                href="javascript:void(0)"
+                on:click={() => selectPage(RightContainerMenu, project)}
+                title={project.ccp_title}
               >
-                {project.ccp_title}
-              </span>
-              <span class="tooltip">{project.ccp_title}</span>
-              <span class="arrowIcon"></span></a
-            >
-            {#if activeMenu === project.ccp_index && project?.plan_execution_type == true}
+                <span
+                  style="white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
+                >
+                  {project.ccp_title}
+                </span>
+                <span class="tooltip">{project.ccp_title}</span>
+                <span class="arrowIcon"></span></a
+              >
+            {/if}
+            {#if activeMenu === project.ccp_index || parentIndex === project.ccp_index}
               <ul class="submenu" style="background: none;padding-left: 10px;">
-                {#each Array.from({ length: project.plan_execute_interval_value }, (_, i) => i + 1) as data}
-                  <li class="active">
-                    <a
-                      href="javascript:void(0);"
-                      style="background: none; color: #9197b3;font-size: 14px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis;"
-                      >- {project.ccp_title} {data}차</a
-                    >
-                  </li>
+                {#each projectArray as data}
+                  {#if project.ccp_index == data?.ccp_index_parent}
+                    <li class="active">
+                      <a
+                        href="javascript:void(0);"
+                        on:click={() => selectPage(RightContainerMenu, data)}
+                        style={`background: none; color: #9197b3;font-size: 14px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis; ${activeMenu == data.ccp_index && "color: rgb(0 114 253); font-weight: bold;"}`}
+                        >- {data.ccp_title}</a
+                      >
+                    </li>
+                  {/if}
                 {/each}
               </ul>
             {/if}

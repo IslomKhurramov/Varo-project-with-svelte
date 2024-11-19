@@ -11,8 +11,9 @@
   import { toggleTooltip } from "../../public/assets/js/common.js";
   import { navigate } from "svelte-routing";
   import RightContainerMenu from "./점검관리1/RightContainerMenu.svelte";
-  import { errorAlert } from "../shared/sweetAlert";
+  import { errorAlert, successAlert } from "../shared/sweetAlert";
   import SixthMenu from "./점검관리1/HeaderMenu/SixthMenu.svelte";
+  import { setFinalPlanSecurityPoint } from "../services/result/resultService";
 
   export let selectPageMain;
   export let activeMenu;
@@ -66,6 +67,7 @@
           (selectedAgentStatus === "0" && project.uploaded_result <= 0))
       );
     });
+    currentPageNum = 1; // Reset to first page when filtering
   }
 
   function doesProjectMatchOS(project, os) {
@@ -166,6 +168,81 @@
       loading = false;
     }
   }
+
+  const clickSecyurityPoint = async (plan_index) => {
+    try {
+      if (!plan_index) return false;
+      const response = await setFinalPlanSecurityPoint(plan_index);
+
+      projectData = await getAllPlanLists();
+      projectArray = Object.values(projectData);
+      filteredProjects = projectArray;
+
+      successAlert(response);
+    } catch (err) {
+      loading = false;
+      errorAlert(err?.message);
+    }
+  };
+
+  let sortField = ""; // No default sort field
+  let sortAscending = true; // Default to ascending
+
+  function handleSort(field) {
+    if (sortField === field) {
+      sortAscending = !sortAscending;
+    } else {
+      sortField = field;
+      sortAscending = true;
+    }
+    sortProjects();
+  }
+
+  function sortProjects() {
+    if (!sortField || !filteredProjects) return;
+
+    filteredProjects = [...filteredProjects].sort((a, b) => {
+      let aVal = a[sortField];
+      let bVal = b[sortField];
+
+      if (sortField === "plan_start_date" || sortField === "plan_end_date") {
+        aVal = new Date(aVal).getTime();
+        bVal = new Date(bVal).getTime();
+      } else if (typeof aVal === "string") {
+        aVal = aVal.toLowerCase();
+        bVal = bVal.toLowerCase();
+      }
+
+      if (aVal === bVal) return 0;
+      const comparison = aVal > bVal ? 1 : -1;
+      return sortAscending ? comparison : -comparison;
+    });
+  }
+
+  let currentPageNum = 1;
+  let itemsPerPage = 10;
+  let totalPages = 0;
+
+  $: {
+    if (filteredProjects) {
+      totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+    }
+  }
+
+  $: paginatedProjects = filteredProjects?.slice(
+    (currentPageNum - 1) * itemsPerPage,
+    currentPageNum * itemsPerPage,
+  );
+
+  $: pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPageNum = page;
+    }
+  }
+
+  $: baseIndex = filteredProjects?.length - (currentPageNum - 1) * itemsPerPage;
 </script>
 
 <div
@@ -315,10 +392,11 @@
         <section>
           <div
             class="tableListWrap"
-            style="height: calc(-294px + 100vh); overflow: auto;"
+            style="height: calc(-374px + 100vh); overflow: auto;"
           >
             <table class="tableList">
               <colgroup>
+                <col style="width: 4%;" />
                 <col style="width:6%;" />
                 <col style="width: 13%;" />
                 <col style="width:30%;" />
@@ -330,20 +408,61 @@
               </colgroup>
               <thead>
                 <tr>
+                  <th class="text-center" style="font-size: 16px;">번호</th>
                   <th class="text-center" style="font-size: 16px;">보안점수</th>
-                  <th class="text-center" style="font-size: 16px;">제목</th>
+                  <th
+                    class="text-center"
+                    style="font-size: 16px;"
+                    on:click={() => handleSort("ccp_title")}
+                    >제목 <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 576 512"
+                      style="transform: rotate({sortField === 'ccp_title' &&
+                      sortAscending
+                        ? '0deg'
+                        : '180deg'});
+                            transition: transform 0.2s;"
+                      width="16px"
+                      height="16px"
+                    >
+                      <path
+                        d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                        fill={"#0067ff"}
+                      />
+                    </svg>
+                  </th>
                   <th class="text-center" style="font-size: 16px;">점검대상</th>
                   <th class="text-center" style="font-size: 16px;">생성자</th>
                   <th class="text-center" style="font-size: 16px;">진행상태</th>
-                  <th class="text-center" style="font-size: 16px;">점검일시</th>
+                  <th
+                    class="text-center"
+                    style="font-size: 16px;"
+                    on:click={() => handleSort("plan_start_date")}
+                    >점검일시 <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 576 512"
+                      style="transform: rotate({sortField ===
+                        'plan_start_date' && sortAscending
+                        ? '0deg'
+                        : '180deg'});
+                            transition: transform 0.2s;"
+                      width="16px"
+                      height="16px"
+                    >
+                      <path
+                        d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                        fill={"#0067ff"}
+                      />
+                    </svg>
+                  </th>
                   <th class="text-center" style="font-size: 16px;">점검방법</th>
                   <th class="text-center" style="font-size: 16px;"></th>
                 </tr>
               </thead>
               <tbody>
-                {#if filteredProjects && filteredProjects?.length !== 0}
+                {#if paginatedProjects && paginatedProjects?.length !== 0}
                   <!-- svelte-ignore a11y-click-events-have-key-events -->
-                  {#each filteredProjects as project, index}
+                  {#each paginatedProjects as project, index}
                     <tr
                       on:click={() => {
                         currentPage = ProjectDetail;
@@ -351,6 +470,7 @@
                         selectPageMain(RightContainerMenu, project);
                       }}
                     >
+                      <td class="text-center">{baseIndex - index}</td>
                       <td class="circleTd">
                         <div
                           class="circle"
@@ -533,6 +653,15 @@
                                 이력관리
                               </a>
                             </li>
+                            <li>
+                              <a
+                                href="javascript:void(0)"
+                                on:click={() =>
+                                  clickSecyurityPoint(project.ccp_index)}
+                              >
+                                보안점수확정
+                              </a>
+                            </li>
                           </ul>
                         </div>
                       </td>
@@ -541,6 +670,32 @@
                 {/if}
               </tbody>
             </table>
+          </div>
+          <div class="pagination_box">
+            <nav class="pagination">
+              <button
+                on:click={() => goToPage(currentPageNum - 1)}
+                disabled={currentPageNum === 1}
+              >
+                &lsaquo;
+              </button>
+
+              {#each pageNumbers as pageNum}
+                <button
+                  class={pageNum === currentPageNum ? "selected" : ""}
+                  on:click={() => goToPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              {/each}
+
+              <button
+                on:click={() => goToPage(currentPageNum + 1)}
+                disabled={currentPageNum === totalPages}
+              >
+                &rsaquo;
+              </button>
+            </nav>
           </div>
         </section>
       </article>
@@ -583,5 +738,45 @@
   .excel-img {
     filter: invert(45%) sepia(100%) saturate(550%) hue-rotate(195deg)
       brightness(100%) contrast(98%);
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #fff;
+    /* box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); */
+  }
+
+  .pagination button {
+    border: none !important;
+    padding: 8px 12px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .pagination button.selected {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .pagination button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination button:hover:not([disabled]) {
+    background-color: #d4d4d4;
   }
 </style>

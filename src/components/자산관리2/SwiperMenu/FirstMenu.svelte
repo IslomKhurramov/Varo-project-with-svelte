@@ -90,12 +90,6 @@
     </div>
     <textarea rows="5" placeholder="비고란" style="margin-top: 20px;"
     ></textarea>
-    <div class="flex align-center btnWrap gap-6" style="margin-top: 10px;">
-      <button type="button" class="btn w140 btnPrimaryFontGray">수정하기</button
-      >
-      <button type="button" class="btn w140 btnPrimaryFontGray">비활성</button>
-      <button type="button" class="btn w140 btnPrimaryFontGray">활성</button>
-    </div>
   </div>
 </main>
 

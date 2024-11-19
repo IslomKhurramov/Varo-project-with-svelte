@@ -300,7 +300,7 @@
       );
 
       if (response.RESULT === "OK") {
-        successAlert("자산 등록부가 성공적으로 변경되었습니다!");
+        successAlert("자산이 등록 승인 처리되었습니다");
 
         // Update the asset's approval status in the store
         allAssetList.update((assets) => {
@@ -439,11 +439,11 @@
               {/if}
               {#if !assetDetails.ast_activate}
                 <button class="btn w140 btnBlue" on:click={activateAsset}>
-                  자산등록
+                  사용함
                 </button>
               {:else}
                 <button class="btn w140 btnBlue" on:click={unactivate}>
-                  자산삭제
+                  사용안함
                 </button>
               {/if}
             </section>
@@ -481,7 +481,7 @@
                     value={group.asg_index}
                     selected={group.asg_index == selectedGroupIndex}
                   >
-                    {group.asg_index} - {group.asg_title}
+                    {group.asg_title}
                   </option>
                 {/each}
               </select>
@@ -532,7 +532,8 @@
     width: 100%;
   }
   .contentArea {
-    height: 78vh;
+    height: 80vh;
+    max-height: 114%;
   }
   .subTabWrap a {
     cursor: pointer;

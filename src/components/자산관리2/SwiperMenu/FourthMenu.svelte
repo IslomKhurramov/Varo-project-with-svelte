@@ -114,8 +114,11 @@
 <main>
   <div class="flex col detail">
     <h3 class="title">관련프로젝트</h3>
-    <div class="tableListWrap nofirstth">
-      <table class="tableList hdBorder font-size: 16px;">
+    <div
+      class="tableListWrap nofirstth"
+      style="max-height:410px; overflow-y:auto; font-size:16px;"
+    >
+      <table class="tableList hdBorder">
         <colgroup>
           <col style="width:80px;" />
           <col />
@@ -126,7 +129,7 @@
         </colgroup>
         <thead>
           <tr>
-            <th class="text-center">넘버</th>
+            <th class="text-center">순번</th>
             <th class="text-center">프로젝트명</th>
             <th class="text-center">점검항목</th>
             <th class="text-center">생성일</th>
@@ -140,7 +143,8 @@
             {#each plantoSHow as historyItem, index}
               {#if historyItem.plans}
                 <tr>
-                  <td class="text-center">{index + 1}</td>
+                  <td class="text-center">{plantoSHow.length - index}</td>
+                  <!-- Descending index -->
                   <td class="text-center line-height"
                     >{historyItem.plans.ccp_index__ccp_title}</td
                   >
@@ -190,7 +194,7 @@
     </div>
   </div>
   <div class="section">
-    <section class="filterWrap" style="margin-top: 20px;">
+    <section class="filterWrap" style="margin-top: 50px;">
       <!-- 프로젝트 (Project) -->
       <div>
         <select
@@ -285,7 +289,7 @@
 
     <div
       class="tableListWrap maxh"
-      style="height: 80vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
+      style="height: 30vh; overflow-y: auto; margin-top: 20px;  font-size: 16px; "
     >
       <table class="tableList hdBorder tableScroll">
         <colgroup>
@@ -384,6 +388,7 @@
   .line-height {
     line-height: 23px;
   }
+
   .modal-open-wrap {
     display: block;
     z-index: 99;

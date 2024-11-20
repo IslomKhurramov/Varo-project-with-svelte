@@ -163,11 +163,11 @@
                     }).format(new Date(detailofAsset[0]?.ast_createdate))}</td
                   >
 
-                  {#if detailofAsset[0]?.ast_security_point === -1}
+                  {#if historyItem.plans.ast_security_point === -1}
                     <td class="text-center">0</td>
                   {:else}
                     <td class="text-center line-height"
-                      >{detailofAsset[0]?.ast_security_point}</td
+                      >{historyItem.plans.ast_security_point}</td
                     >
                   {/if}
                   {#if historyItem.plans.ast_security_point === -1}

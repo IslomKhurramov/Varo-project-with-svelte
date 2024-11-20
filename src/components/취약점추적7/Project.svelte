@@ -563,7 +563,7 @@
     width: 246px;
   }
   .modal-open-wrap .iconCard {
-    width: 250px;
+    width: 255px;
   }
   .status-container {
     max-height: 120px; /* Set the maximum height for the content */

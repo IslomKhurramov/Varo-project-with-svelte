@@ -556,6 +556,7 @@
   .active-row {
     background-color: rgba(242, 242, 242, 1);
   }
+
   .no-data-message {
     text-align: center; /* Center the text */
     font-style: italic; /* Italicize the text for emphasis */
@@ -793,7 +794,7 @@
     width: 270px;
   }
   .modal-open-wrap .iconCard {
-    width: 280px;
+    width: 255px;
   }
   .modal-open-wrap th,
   .modal-open-wrap td {

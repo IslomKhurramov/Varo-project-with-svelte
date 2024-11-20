@@ -592,7 +592,7 @@
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >
               <td class="text-center line-height">{vuln.ccr_item_result}</td>
-              <td class="text-center">
+              <td>
                 <div class="status-container line-height">
                   {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
                 </div>
@@ -653,7 +653,7 @@
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >
               <td class="text-center line-height">{vuln.ccr_item_result}</td>
-              <td class="text-center">
+              <td>
                 <div class="status-container line-height">
                   {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
                 </div>
@@ -1138,7 +1138,7 @@
     width: 270px;
   }
   .modal-open-wrap .iconCard {
-    width: 280px;
+    width: 255px;
   }
   .active-row {
     background-color: rgba(242, 242, 242, 1);

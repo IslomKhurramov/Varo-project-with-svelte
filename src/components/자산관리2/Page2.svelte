@@ -67,6 +67,12 @@
       filteredAssets = [...$allAssetList]; // Copy all assets initially
     }
   });
+  $: {
+    // Only apply filtering when $allAssetList is available
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
+    }
+  }
 
   function closeSwiper() {
     showSwiperComponent = false;
@@ -77,6 +83,7 @@
   }
 
   function filterAssets() {
+    console.log("worked");
     if (
       selectedGroup === "전체" &&
       asset_ostype === "전체" &&
@@ -128,6 +135,9 @@
     if ($allAssetList && $allAssetList.length > 0) {
       filterAssets(); // Call filterAssets to ensure it has the latest data
     }
+  }
+  function updateFilteredAssets(updatedAssets) {
+    filteredAssets = updatedAssets;
   }
   function handleFilter() {
     const results = filterAssets();
@@ -392,46 +402,7 @@
     }
   }
   /*******************************************************************/
-  // async function deleteLastCreatedAssetGroup() {
-  //   try {
-  //     // Get the current list of asset groups
-  //     let allGroups = $allAssetGroupList;
 
-  //     if (!allGroups || allGroups.length === 0) {
-  //       errorAlert("No asset groups available to delete.");
-  //       return;
-  //     }
-
-  //     // Find the last created group (assuming the list is sorted, or adjust as needed)
-  //     const lastCreatedGroup = allGroups[allGroups.length - 1];
-
-  //     // Confirm deletion
-  //     const isConfirmed = await confirmDeleteLast(lastCreatedGroup.asg_title);
-  //     if (!isConfirmed) return;
-
-  //     // Call the delete API
-  //     const response = await setAssetGroupDelete(lastCreatedGroup.asg_index);
-
-  //     if (response.success) {
-  //       // Update the asset group list to remove the deleted group
-  //       allAssetGroupList.update((groups) =>
-  //         groups.filter(
-  //           (group) => group.asg_index !== lastCreatedGroup.asg_index,
-  //         ),
-  //       );
-
-  //       successAlert(
-  //         `The group "${lastCreatedGroup.asg_title}" was successfully deleted.`,
-  //       );
-  //     } else {
-  //       throw new Error("Failed to delete the group.");
-  //     }
-  //   } catch (error) {
-  //     errorAlert(
-  //       error.message || "An error occurred while deleting the group.",
-  //     );
-  //   }
-  // }
   async function deleteSelectedAssetGroup() {
     try {
       // Ensure a group is selected
@@ -720,16 +691,21 @@
           bind:asset_ostype
           {handleFilter}
           {resetFilters}
+          {updateFilteredAssets}
           bind:showSwiperComponent
+          {assetGroupList}
         />
       {:else}
         <AssetCardsPage
+          {assetGroupList}
           {searchedResult}
           {showSearchResult}
           {filteredAssets}
+          {filterAssets}
           bind:showSwiperComponent
           bind:selectedUUID
           bind:selected
+          {updateFilteredAssets}
         />
       {/if}
     </div>

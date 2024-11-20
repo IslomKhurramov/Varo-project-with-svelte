@@ -838,7 +838,12 @@
     max-height: 200px; /* Limit height */
     overflow: hidden;
   }
-
+  .modal-open-wrap table ul {
+    width: 246px;
+  }
+  .modal-open-wrap .iconCard {
+    width: 255px;
+  }
   .modal-open-wrap .iconCard .contents2 {
     flex-grow: 1;
     overflow-y: auto; /* Allow scrolling for overflowing content */

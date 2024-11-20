@@ -797,7 +797,7 @@
     width: 270px;
   }
   .modal-open-wrap .iconCard {
-    width: 280px;
+    width: 255px;
   }
   .modal-open-wrap th,
   .modal-open-wrap td {

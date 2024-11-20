@@ -212,8 +212,10 @@
           </tbody>
         </table>
       </div>
+      <div class="total-count">
+        <p>총 데이터: <strong>{projectArray.length}</strong>개</p>
+      </div>
       <div class="buttonContainer formControl">
-        <label></label>
         <button
           type="button"
           class="btn btnBlue btnSave"
@@ -319,6 +321,14 @@
   .btnSave:hover {
     color: #fff;
     background-color: #4989ff;
+  }
+
+  .total-count {
+    text-align: left;
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #555;
   }
   /***************************/
 </style>

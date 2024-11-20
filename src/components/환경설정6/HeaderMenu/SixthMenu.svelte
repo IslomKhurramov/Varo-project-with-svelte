@@ -11,7 +11,7 @@
 </script>
 
 <main class="table-container" style="border-radius: 10px;">
-  <section class="tableWrap" style="height: calc(-100px + 100vh);">
+  <section class="tableWrap">
     <div class="tableListWrap">
       <section
         class="subTabWrap"
@@ -57,7 +57,7 @@
     padding: 20px;
     margin: 10px 0;
     /* width: 100%; */
-    height: calc(100vh - 134px);
+    /* height: calc(100vh - 134px); */
   }
   .tableListWrap {
     overflow: hidden;

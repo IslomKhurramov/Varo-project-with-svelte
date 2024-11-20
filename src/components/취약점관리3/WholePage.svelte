@@ -376,7 +376,10 @@
                     <tr>
                       <th>조치일정</th>
                       <td>
-                        <div class="dateWrap">
+                        <div
+                          class="dateWrap"
+                          style="justify-content: space-between;"
+                        >
                           <div class="date">
                             <input
                               style="font-size: 16px;"
@@ -562,7 +565,10 @@
                     <tr>
                       <th>조치일정</th>
                       <td>
-                        <div class="dateWrap">
+                        <div
+                          class="dateWrap"
+                          style="justify-content: space-between;"
+                        >
                           <div class="date">
                             <input
                               style="font-size: 16px;"
@@ -679,7 +685,10 @@
                     <tr>
                       <th>조치일정</th>
                       <td>
-                        <div class="dateWrap">
+                        <div
+                          class="dateWrap"
+                          style="justify-content: space-between;"
+                        >
                           <div class="date">
                             <input
                               style="font-size: 16px;"

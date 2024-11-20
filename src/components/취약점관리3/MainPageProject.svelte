@@ -208,6 +208,12 @@
   }
 
   $: baseIndex = data?.length - (currentPageNum - 1) * itemsPerPage;
+
+  $: {
+    console.log("+selectedSendData:", selectedSendData);
+    console.log("+setView:", setView);
+    console.log("+selectedItems:", selectedItems);
+  }
 </script>
 
 <section class="content">
@@ -315,7 +321,7 @@
             </a>
           {/if}
         </section>
-        <!-- {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
+        {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
           {#if setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
@@ -468,9 +474,9 @@
               {/if}
             </section>
           {/if}
-        {/if} -->
+        {/if}
 
-        {#if isAgenUser}
+        {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && data?.length !== 0}
           {#if setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
@@ -510,25 +516,25 @@
                 </button>
               {/if}
 
-              <!-- {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid} -->
-              <button
-                class="btn btnBlue"
-                on:click={() => {
-                  fixApproveAssetHandler(data, "1");
-                }}
-              >
-                일괄승인
-              </button>
-              <button
-                type="button"
-                class="btn btnBlue"
-                on:click={() => {
-                  fixApproveAssetHandler(data, "0");
-                }}
-              >
-                일괄반려
-              </button>
-              <!-- {/if} -->
+              {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+                <button
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveAssetHandler(data, "1");
+                  }}
+                >
+                  일괄승인
+                </button>
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveAssetHandler(data, "0");
+                  }}
+                >
+                  일괄반려
+                </button>
+              {/if}
             </section>
           {/if}
 
@@ -569,24 +575,26 @@
                 </button>
               {/if}
 
-              <button
-                type="button"
-                class="btn btnBlue"
-                on:click={() => {
-                  fixDoneApproveAssetHandler(data, "1");
-                }}
-              >
-                일괄승인
-              </button>
-              <button
-                type="button"
-                class="btn btnBlue"
-                on:click={() => {
-                  fixDoneApproveAssetHandler(data, "0");
-                }}
-              >
-                일괄반려
-              </button>
+              {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveAssetHandler(data, "1");
+                  }}
+                >
+                  일괄승인
+                </button>
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveAssetHandler(data, "0");
+                  }}
+                >
+                  일괄반려
+                </button>
+              {/if}
             </section>
           {/if}
         {/if}
@@ -600,7 +608,10 @@
         >
           <table class="tableList hdBorder">
             <colgroup>
-              {#if isAgenUser && (setView == "plan_accept" || setView == "result_accept")}
+              {#if isAgenUser && selectedSendData?.plan_index && (setView == "plan_accept" || setView == "result_accept")}
+                <col style="width:33px;" />
+              {/if}
+              {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && (setView == "plan_accept" || setView == "result_accept")}
                 <col style="width:33px;" />
               {/if}
               <col style="width:90px;" />
@@ -619,7 +630,29 @@
             </colgroup>
             <thead>
               <tr>
-                {#if isAgenUser && (setView == "plan_accept" || setView == "result_accept")}
+                {#if isAgenUser && selectedSendData?.plan_index && (setView == "plan_accept" || setView == "result_accept")}
+                  <th class="text-center">
+                    <div class="checkboxWrap">
+                      <label class="checkbox-label">
+                        <input
+                          type="checkbox"
+                          name="target"
+                          bind:checked={theadChecked}
+                          on:change={(e) => {
+                            if (e.target.checked)
+                              selectedItems = data?.map(
+                                (ele) => ele?.ccr_index,
+                              );
+                            else selectedItems = [];
+                          }}
+                        />
+                        <span></span>
+                      </label>
+                    </div>
+                  </th>
+                {/if}
+
+                {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && (setView == "plan_accept" || setView == "result_accept")}
                   <th class="text-center">
                     <div class="checkboxWrap">
                       <label class="checkbox-label">
@@ -671,7 +704,28 @@
                       search.plan_index = item?.ccp_index;
                     }}
                   >
-                    {#if isAgenUser && (setView == "plan_accept" || setView == "result_accept")}
+                    {#if isAgenUser && selectedSendData?.plan_index && (setView == "plan_accept" || setView == "result_accept")}
+                      <!-- svelte-ignore a11y-click-events-have-key-events -->
+                      <td
+                        class="text-center"
+                        on:click={(e) => e.stopPropagation()}
+                      >
+                        <div class="checkboxWrap">
+                          <label class="checkbox-label">
+                            <input
+                              type="checkbox"
+                              name="target"
+                              on:click={(e) => e.stopPropagation()}
+                              on:change={() => toggleSelection(item?.ccr_index)}
+                              checked={selectedItems.includes(item?.ccr_index)}
+                            />
+                            <span></span>
+                          </label>
+                        </div>
+                      </td>
+                    {/if}
+
+                    {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && (setView == "plan_accept" || setView == "result_accept")}
                       <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <td
                         class="text-center"

@@ -40,10 +40,10 @@
         department,
       );
 
-      await userData.set({
-        isLoggedIn: true,
-        userInfo: response?.CODE,
-      });
+      // await userData.set({
+      //   isLoggedIn: true,
+      //   userInfo: response?.CODE,
+      // });
 
       successMessageSignUp = "Registration successful! Redirecting to login...";
       errorMessage = "";
@@ -388,7 +388,7 @@
               {/if}
             </div>
 
-            <div class="btnWrap">
+            <div class="btnWrap" style="margin: 30px 0;">
               <a
                 on:click={handleRegister}
                 class="btn loginBtn"

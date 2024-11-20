@@ -26,6 +26,9 @@
   let selectedAsset = null;
   let asset_group_index = "";
   export let filteredAssets = [];
+  export let filterAssets;
+  export let updateFilteredAssets;
+  export let assetGroupList;
   let allSelected;
   $: allAssetList.subscribe((data) => {
     allSelected = data.length === selected.length;
@@ -69,6 +72,13 @@
     targetList();
     assetList();
   });
+  $: {
+    // Only apply filtering when $allAssetList is available
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
+    }
+    assetList();
+  }
 
   /**************UnActivate**************************************/
 
@@ -187,11 +197,65 @@
       if (response.success) {
         showModalChange = false;
         successAlert("그룹이 성공적으로 변경되었습니다!");
+        if (asset) {
+          asset.asset_group = [selectedGroupIndex]; // Modify the group to the new one
+
+          // Now make sure $allAssetList is updated (if it's a writable store)
+          // The assignment will trigger reactivity
+          $allAssetList = [...$allAssetList];
+        }
+        // Update the asset group in the allAssetList store
+        allAssetList.update((assets) => {
+          return assets.map((asset) => {
+            // If the asset UUID matches, update the asset's group
+            if (asset.ass_uuid === uuid_asset) {
+              // Create a new asset object with updated group information
+              return {
+                ...asset,
+                asset_group: asset.asset_group.map((group) =>
+                  group.asg_index === asset_group_index
+                    ? { ...group, asg_index: selectedGroupIndex }
+                    : group,
+                ),
+              };
+            }
+            return asset;
+          });
+        });
+
+        const updatedAssets = filteredAssets.map((asset) => {
+          if (asset.ass_uuid === uuid_asset) {
+            // Move the asset to the new group
+            return { ...asset, asset_group: selectedGroupIndex };
+          }
+          return asset;
+        });
+
+        // Update the parent with the new list of assets
+        updateFilteredAssets(updatedAssets);
+
+        // Update the parent with the new list of assets
+        updateFilteredAssets(updatedAssets);
+        assetList();
+        filterAssets();
       } else {
         errorAlert("자산을 선택해주세요!");
       }
     } catch (err) {}
   }
+  $: {
+    // Only apply filtering when $allAssetList is available
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
+    }
+  }
+  $: {
+    assetGroupList();
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = [...$allAssetList]; // Copy all assets initially
+    }
+  }
+
   /**********************************************************************/
   function handleGroupChange(event) {
     selectedGroupIndex = event.target.value;
@@ -398,7 +462,14 @@
   -ms-overflow-style: none;      
   -webkit-overflow-scrolling: touch;"
   >
-    <Swiper {selectedAsset} {filteredAssets} />
+    <Swiper
+      {selectedAsset}
+      {filteredAssets}
+      {filterAssets}
+      {updateFilteredAssets}
+      {assetGroupList}
+      {assetList}
+    />
   </div>
 {/if}
 {#if showModalChange}
@@ -412,7 +483,7 @@
             value={group.asg_index}
             selected={group.asg_index == selectedGroupIndex}
           >
-            {group.asg_index} - {group.asg_title}
+            {group.asg_title}
           </option>
         {/each}
       </select>

@@ -821,7 +821,12 @@
     overflow-y: auto; /* Enable vertical scrolling */
     overflow-x: hidden;
   }
-
+  .modal-open-wrap table ul {
+    width: 246px;
+  }
+  .modal-open-wrap .iconCard {
+    width: 255px;
+  }
   .modal-open-wrap .iconCard {
     position: relative;
     border: 1px solid #e0e0e0;

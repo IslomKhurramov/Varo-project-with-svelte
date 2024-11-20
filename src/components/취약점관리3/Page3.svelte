@@ -44,6 +44,8 @@
   let assets = [];
   let targetData = null;
 
+  let currentPageNum = 1;
+
   const selectPage = async (page, menu) => {
     currentPage = page;
     activeMenu = menu;
@@ -272,6 +274,7 @@
           on:click={async () => {
             try {
               loading = true;
+              currentPageNum = 1;
               activePlan = null;
               toggleList("project");
 
@@ -307,6 +310,7 @@
           on:click={async () => {
             try {
               loading = true;
+              currentPageNum = 1;
               toggleList("asset");
               // activeMenu = null;
               search = {
@@ -383,6 +387,7 @@
                   on:click={() => {
                     setView = "plan";
                     search.step_vuln = "1";
+                    currentPageNum = 1;
                     if (search.plan_index != plan.plan_index) {
                       search.plan_index = plan.plan_index;
                     } else {
@@ -449,6 +454,7 @@
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
                                     };
+                                    currentPageNum = 1;
                                     loading = false;
                                   }}
                                 >
@@ -505,6 +511,7 @@
                         default:
                           setView = "plan";
                       }
+                      currentPageNum = 1;
                       selectPage(MainPageProject, asset.ast_uuid);
                       search = {
                         ...search,
@@ -640,6 +647,7 @@
             bind:selectedItems
             bind:search
             bind:data
+            bind:currentPageNum
           />
         {/if}
 

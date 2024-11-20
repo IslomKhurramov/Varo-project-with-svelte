@@ -21,6 +21,7 @@
   export let selectedItems = [];
   export let loading;
   export let search;
+  export let currentPageNum;
 
   let theadChecked = false;
   let isAgenUser = ["1", "3", "5"].includes(
@@ -183,6 +184,30 @@
       selectedItems = selectedItems.filter((i) => i !== item);
     }
   }
+
+  let itemsPerPage = 15;
+  let totalPages = 0;
+
+  $: {
+    if (data) {
+      totalPages = Math.ceil(data.length / itemsPerPage);
+    }
+  }
+
+  $: paginatedDatas = data?.slice(
+    (currentPageNum - 1) * itemsPerPage,
+    currentPageNum * itemsPerPage,
+  );
+
+  $: pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPageNum = page;
+    }
+  }
+
+  $: baseIndex = data?.length - (currentPageNum - 1) * itemsPerPage;
 </script>
 
 <section class="content">
@@ -198,6 +223,7 @@
             on:click={async () => {
               try {
                 loading = true;
+                currentPageNum = 1;
                 setView = "plan";
                 selectedItems = [];
                 theadChecked = false;
@@ -220,6 +246,7 @@
             on:click={async () => {
               try {
                 loading = true;
+                currentPageNum = 1;
                 setView = "plan_accept";
                 selectedItems = [];
                 theadChecked = false;
@@ -244,6 +271,7 @@
               on:click={async () => {
                 try {
                   loading = true;
+                  currentPageNum = 1;
                   setView = "result";
                   selectedItems = [];
                   theadChecked = false;
@@ -267,6 +295,7 @@
               on:click={async () => {
                 try {
                   loading = true;
+                  currentPageNum = 1;
                   setView = "result_accept";
                   selectedItems = [];
                   theadChecked = false;
@@ -628,8 +657,8 @@
               </tr>
             </thead>
             <tbody>
-              {#if data?.length !== 0}
-                {#each data as item, index}
+              {#if paginatedDatas?.length !== 0}
+                {#each paginatedDatas as item, index}
                   <tr
                     on:click={() => {
                       wholePage = true;
@@ -663,7 +692,7 @@
                       </td>
                     {/if}
 
-                    <td class="text-center">{index + 1}</td>
+                    <td class="text-center">{baseIndex - index}</td>
                     <td class="text-center">
                       {item.ast_uuid__ass_uuid__ast_hostname}
                     </td>
@@ -768,11 +797,64 @@
         </div>
         <div class="pagination_box">
           <nav class="pagination">
-            <button> &lsaquo; </button>
+            <!-- Previous button -->
+            <button
+              on:click={() => goToPage(currentPageNum - 1)}
+              disabled={currentPageNum === 1}
+            >
+              &lsaquo;
+            </button>
 
-            <button class={"selected"}> 1 </button>
+            <!-- First page -->
+            {#if totalPages > 0}
+              <button
+                class={1 === currentPageNum ? "selected" : ""}
+                on:click={() => goToPage(1)}
+              >
+                1
+              </button>
+            {/if}
 
-            <button> &rsaquo; </button>
+            <!-- Left ellipsis -->
+            {#if currentPageNum > 4}
+              <button class="dots" disabled>...</button>
+            {/if}
+
+            <!-- Pages around current page -->
+            {#each pageNumbers.filter((num) => {
+              const offset = 2; // Show 2 pages before and after current page
+              return num !== 1 && num !== totalPages && num >= currentPageNum - offset && num <= currentPageNum + offset;
+            }) as pageNum}
+              <button
+                class={pageNum === currentPageNum ? "selected" : ""}
+                on:click={() => goToPage(pageNum)}
+              >
+                {pageNum}
+              </button>
+            {/each}
+
+            <!-- Right ellipsis -->
+            {#if currentPageNum < totalPages - 3}
+              <button class="dots" disabled>...</button>
+            {/if}
+
+            <!-- Last page -->
+            {#if totalPages > 1}
+              <button
+                class={totalPages === currentPageNum ? "selected" : ""}
+                on:click={() => goToPage(totalPages)}
+              >
+                {totalPages}
+              </button>
+            {/if}
+
+            <!-- Next button -->
+            <button
+              on:click={() => goToPage(currentPageNum + 1)}
+              disabled={currentPageNum === totalPages}
+            >
+              &rsaquo;
+            </button>
           </nav>
         </div>
       </div>

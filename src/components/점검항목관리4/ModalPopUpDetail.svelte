@@ -128,7 +128,7 @@
           </tr>
         {:else}
           <tr>
-            <td class="line-height" colspan="2">No data available</td>
+            <td class="line-height" colspan="2">데이터 없음</td>
           </tr>
         {/if}
       </tbody>

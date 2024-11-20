@@ -187,7 +187,7 @@
             {/each}
           {:else}
             <tr>
-              <td class="text-center" colspan="6">No data available</td>
+              <td class="text-center" colspan="6">데이터 없음</td>
             </tr>
           {/if}
         </tbody>
@@ -363,7 +363,7 @@
             {/each}
           {:else}
             <tr>
-              <td class="text-center" colspan="6">No data available</td>
+              <td class="text-center" colspan="6">데이터 없음</td>
             </tr>
           {/if}
         </tbody>

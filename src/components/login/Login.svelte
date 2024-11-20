@@ -45,12 +45,11 @@
         userInfo: response?.CODE,
       });
 
-      await localStorage.setItem("userInfo", JSON.stringify(response?.CODE));
-
       successMessageSignUp = "Registration successful! Redirecting to login...";
       errorMessage = "";
 
-      navigate("/");
+      navigate("/login");
+      tabMenu = "login";
     } catch (err) {
       errorMessage = err?.message;
       successMessageSignUp = "";
@@ -231,131 +230,195 @@
         </h1>
         <div class="form">
           <div class="formControl">
-            <label for="email" style="font-size: 16px;">Email</label>
+            <label for="username" style="font-size: 16px;">Username</label>
             <input
               style="font-size: 16px;"
               type="text"
-              placeholder="email"
-              id="email"
-              name="email"
-              bind:value={emailSignUp}
+              placeholder="username"
+              id="username"
+              name="username"
+              bind:value={username}
               required
               on:keydown={(event) => {
                 if (event.key === "Enter") {
-                  if (emailSignUp && passwordSignUp && confirmPasswordSignUp) {
+                  if (
+                    department &&
+                    emailSignUp &&
+                    passwordSignUp &&
+                    confirmPasswordSignUp
+                  ) {
                     handleRegister();
                   }
                 }
               }}
             />
           </div>
-          <div class="formControl">
-            <label for="userPw" style="font-size: 16px;">Password</label>
-            <input
-              style="font-size: 16px;"
-              type="password"
-              id="userPw"
-              placeholder="Your password"
-              name="password"
-              bind:value={passwordSignUp}
-              required
-              on:keydown={(event) => {
-                if (event.key === "Enter") {
-                  if (emailSignUp && passwordSignUp && confirmPasswordSignUp) {
-                    handleRegister();
+          <div class="form">
+            <div class="formControl">
+              <label for="department" style="font-size: 16px;">Department</label
+              >
+              <input
+                style="font-size: 16px;"
+                type="text"
+                placeholder="department"
+                id="department"
+                name="department"
+                bind:value={department}
+                required
+                on:keydown={(event) => {
+                  if (event.key === "Enter") {
+                    if (
+                      department &&
+                      emailSignUp &&
+                      passwordSignUp &&
+                      confirmPasswordSignUp
+                    ) {
+                      handleRegister();
+                    }
                   }
-                }
-              }}
-            />
-          </div>
-          <div class="formControl">
-            <label for="userPw" style="font-size: 16px;">Confirm Password</label
-            >
-            <input
-              style="font-size: 16px;"
-              type="password"
-              id="userPw"
-              placeholder="Your password"
-              name="password"
-              bind:value={confirmPasswordSignUp}
-              required
-              on:keydown={(event) => {
-                if (event.key === "Enter") {
-                  handleRegister();
-                }
-              }}
-            />
-          </div>
-          <div class="findIdPw">
-            <a
-              href="javascript:void(0);"
-              style="font-size: 16px;"
-              on:click={() => {
-                email = "";
-                password = "";
-                find_user = "";
-                errorMessage = null;
-                username = "";
-                emailSignUp = "";
-                passwordSignUp = "";
-                confirmPasswordSignUp = "";
-                department = "";
-                successMessageSignUp = "";
-                tabMenu = "find_user";
-              }}>아이디 찾기</a
-            >
-            <a
-              href="javascript:void(0);"
-              style="font-size: 16px;"
-              on:click={() => {
-                email = "";
-                password = "";
-                find_user = "";
-                errorMessage = null;
-                username = "";
-                emailSignUp = "";
-                passwordSignUp = "";
-                confirmPasswordSignUp = "";
-                department = "";
-                successMessageSignUp = "";
-                tabMenu = "reset_password";
-              }}>비밀번호 초기화</a
-            >
-          </div>
-          {#if errorMessage}
-            <p class="error">{errorMessage}</p>
-          {/if}
-        </div>
+                }}
+              />
+            </div>
+            <div class="form">
+              <div class="formControl">
+                <label for="email" style="font-size: 16px;">Email</label>
+                <input
+                  style="font-size: 16px;"
+                  type="text"
+                  placeholder="email"
+                  id="email"
+                  name="email"
+                  bind:value={emailSignUp}
+                  required
+                  on:keydown={(event) => {
+                    if (event.key === "Enter") {
+                      if (
+                        department &&
+                        emailSignUp &&
+                        passwordSignUp &&
+                        confirmPasswordSignUp
+                      ) {
+                        handleRegister();
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div class="formControl">
+                <label for="userPw" style="font-size: 16px;">Password</label>
+                <input
+                  style="font-size: 16px;"
+                  type="password"
+                  id="userPw"
+                  placeholder="Your password"
+                  name="password"
+                  bind:value={passwordSignUp}
+                  required
+                  on:keydown={(event) => {
+                    if (event.key === "Enter") {
+                      if (
+                        department &&
+                        emailSignUp &&
+                        passwordSignUp &&
+                        confirmPasswordSignUp
+                      ) {
+                        handleRegister();
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div class="formControl">
+                <label for="userPw" style="font-size: 16px;"
+                  >Confirm Password</label
+                >
+                <input
+                  style="font-size: 16px;"
+                  type="password"
+                  id="userPw"
+                  placeholder="Your password"
+                  name="password"
+                  bind:value={confirmPasswordSignUp}
+                  required
+                  on:keydown={(event) => {
+                    if (event.key === "Enter") {
+                      handleRegister();
+                    }
+                  }}
+                />
+              </div>
+              <div class="findIdPw">
+                <a
+                  href="javascript:void(0);"
+                  style="font-size: 16px;"
+                  on:click={() => {
+                    email = "";
+                    password = "";
+                    find_user = "";
+                    errorMessage = null;
+                    username = "";
+                    emailSignUp = "";
+                    passwordSignUp = "";
+                    confirmPasswordSignUp = "";
+                    department = "";
+                    successMessageSignUp = "";
+                    tabMenu = "find_user";
+                  }}>아이디 찾기</a
+                >
+                <a
+                  href="javascript:void(0);"
+                  style="font-size: 16px;"
+                  on:click={() => {
+                    email = "";
+                    password = "";
+                    find_user = "";
+                    errorMessage = null;
+                    username = "";
+                    emailSignUp = "";
+                    passwordSignUp = "";
+                    confirmPasswordSignUp = "";
+                    department = "";
+                    successMessageSignUp = "";
+                    tabMenu = "reset_password";
+                  }}>비밀번호 초기화</a
+                >
+              </div>
+              {#if errorMessage}
+                <p class="error">{errorMessage}</p>
+              {/if}
+            </div>
 
-        <div class="btnWrap">
-          <a
-            on:click={handleRegister}
-            class="btn loginBtn"
-            href="javascript:void(0);"
-            style="font-size: 16px;">회원가입</a
-          >
-        </div>
-        <div class="joinSummary" style="font-size: 16px;">
-          계정이 있으신가요?
-          <span
-            ><a
-              href="javascript:void(0);"
-              style="font-size: 16px;"
-              on:click={() => {
-                email = "";
-                password = "";
-                find_user = "";
-                errorMessage = null;
-                username = "";
-                emailSignUp = "";
-                passwordSignUp = "";
-                confirmPasswordSignUp = "";
-                department = "";
-                successMessageSignUp = "";
-                tabMenu = "login";
-              }}>로그인</a
-            > 하기</span
-          >
+            <div class="btnWrap">
+              <a
+                on:click={handleRegister}
+                class="btn loginBtn"
+                href="javascript:void(0);"
+                style="font-size: 16px;">회원가입</a
+              >
+            </div>
+            <div class="joinSummary" style="font-size: 16px;">
+              계정이 있으신가요?
+              <span
+                ><a
+                  href="javascript:void(0);"
+                  style="font-size: 16px;"
+                  on:click={() => {
+                    email = "";
+                    password = "";
+                    find_user = "";
+                    errorMessage = null;
+                    username = "";
+                    emailSignUp = "";
+                    passwordSignUp = "";
+                    confirmPasswordSignUp = "";
+                    department = "";
+                    successMessageSignUp = "";
+                    tabMenu = "login";
+                  }}>로그인</a
+                > 하기</span
+              >
+            </div>
+          </div>
         </div>
       </section>
     {/if}

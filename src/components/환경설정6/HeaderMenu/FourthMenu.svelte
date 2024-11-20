@@ -115,7 +115,7 @@
       }}
     />
   {:else}
-    <section class="tableWrap">
+    <section class="tableWrap_3">
       <div class="tableListWrap">
         <table class="tableList hdBorder">
           <colgroup>
@@ -170,8 +170,8 @@
                 </td>
 
                 <td class="text-center" style="font-size: 12px;">
+                  <!-- {#if parseInt(user_roletype_role_index) === 0} -->
                   {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9}
-                    <!-- {#if parseInt(user_roletype_role_index) === 0} -->
                     <select
                       bind:value={data.itemResult}
                       on:change={(e) => handleStatusChange(data.user_index, e)}
@@ -238,17 +238,20 @@
     /* width: 100%; */
     height: calc(100vh - 134px);
   }
-  .tableWrap {
+  .tableWrap_3 {
     background-color: #fff;
-    height: 85vh;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    gap: 20px;
+    height: 75vh;
     border-radius: 5px;
     margin-top: 10px;
   }
 
   .tableListWrap {
     overflow-y: auto;
-    height: 100%;
-    padding-bottom: 50px;
+    max-height: 65vh;
   }
 
   thead {
@@ -294,11 +297,10 @@
 
   .buttonContainer {
     text-align: center;
-    margin-top: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 60px;
+    margin-bottom: 20px;
   }
 
   .btnSave {

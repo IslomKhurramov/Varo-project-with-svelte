@@ -29,6 +29,7 @@
   let displayedPages = [];
   let selectedData = null;
   let showNewMember = false;
+  let totalItems = 100000000000000000;
 
   onMount(async () => {
     const art_index = new URLSearchParams(window.location.search).get("id");
@@ -47,6 +48,7 @@
       if (response.RESULT === "OK") {
         projectArray = response.CODE.articles;
         totalPages = response.CODE.pagination.total_pages;
+        totalItems = response.CODE.pagination.total_count;
       }
     } catch (err) {
       error = err.message;
@@ -160,7 +162,7 @@
                   }}
                 >
                   <td class="text-center">
-                    {index + 1 + (currentPage - 1) * itemsPerPage}
+                    {totalItems - (currentPage - 1) * itemsPerPage - index}
                   </td>
                   <td>{data.title}</td>
                   <td class="text-center">{data.writer__user_name}</td>

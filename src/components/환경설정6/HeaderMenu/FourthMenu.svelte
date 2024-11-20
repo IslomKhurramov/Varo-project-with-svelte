@@ -39,7 +39,7 @@
           itemStatus: user.user_roletype__role_type,
           itemResult: user.user_activate ? "1" : "0",
           user_index: user.user_index,
-        }));
+        })).reverse();
       }
     } catch (err) {
       error = err.message;
@@ -146,7 +146,8 @@
                 }}
                 style="cursor: pointer;"
               >
-                <td class="text-center" style="font-size: 16px;">{index + 1}</td
+                <td class="text-center" style="font-size: 16px;"
+                  >{projectArray.length - index}</td
                 >
                 <td style="font-size: 16px;" class="cursor-pointer text-center">
                   {data.hostname}

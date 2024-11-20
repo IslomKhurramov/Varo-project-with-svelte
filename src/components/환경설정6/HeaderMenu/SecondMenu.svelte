@@ -8,10 +8,10 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import NewArticle1 from "../NewArticle1.svelte";
   // ///////////////////////////////////////////////////////////////////////
   import { userData } from "../../../stores/user.store";
   import { decryptData } from "../../../services/login/loginService";
+  import NewArticle from "../NewArticle.svelte";
 
   let userRoleTypeIndex = null;
 
@@ -29,8 +29,10 @@
   let displayedPages = [];
   let selectedData = null;
   let showNewMember = false;
+  let totalItems = 100000000000000000;
 
   onMount(async () => {
+    getAllArticlesData(currentPage);
     const art_index = new URLSearchParams(window.location.search).get("id");
     if (art_index) {
       await getArticleDetailData(art_index);
@@ -47,6 +49,7 @@
       if (response.RESULT === "OK") {
         projectArray = response.CODE.articles;
         totalPages = response.CODE.pagination.total_pages;
+        totalItems = response.CODE.pagination.total_count;
       }
     } catch (err) {
       error = err.message;
@@ -92,6 +95,7 @@
         displayedPages.push(i);
       }
     }
+    getAllArticlesData(currentPage);
   }
 
   function handleNewMemberClose() {
@@ -120,7 +124,7 @@
 
 <main class="table-container" style="border-radius: 10px;">
   {#if showNewMember}
-    <NewArticle1 on:close={handleNewMemberClose} />
+    <NewArticle on:close={handleNewMemberClose} />
   {:else if selectedData}
     <SecondMenuDetails
       {selectedData}
@@ -160,7 +164,8 @@
                   }}
                 >
                   <td class="text-center">
-                    {index + 1 + (currentPage - 1) * itemsPerPage}
+                    <!-- {totalItems - (currentPage - 1) * itemsPerPage - index} -->
+                    {totalItems - (currentPage - 1) * itemsPerPage - index}
                   </td>
                   <td>{data.title}</td>
                   <td class="text-center">{data.writer__user_name}</td>

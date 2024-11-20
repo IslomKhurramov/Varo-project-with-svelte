@@ -42,70 +42,8 @@
     7: "조치결과반려",
   };
 
-  function transformVulns(vulns, vulnerabilityStatusValue, actionStatusValue) {
-    const transformed = [];
-
-    for (const key in vulns) {
-      let currentResult = null;
-      let fixPlan = {};
-      let fixResult = {};
-
-      vulns[key].forEach((item) => {
-        if (item.result) {
-          const result = item?.result;
-          const statusMatch =
-            !vulnerabilityStatusValue ||
-            result.ccr_item_result === vulnerabilityStatusValue;
-          let actionMatch;
-          if (
-            actionStatusValue == "5" ||
-            actionStatusValue == "6" ||
-            actionStatusValue == "7"
-          ) {
-            actionMatch =
-              !actionStatusValue ||
-              result.cfr_fix_status__cvs_index == actionStatusValue;
-          } else {
-            actionMatch =
-              !actionStatusValue ||
-              result.cfi_fix_status__cvs_index == actionStatusValue;
-          }
-
-          // const agentMatch = !filters.agentStatus || result.agent === filters.agentStatus;
-
-          // If all conditions match, assign the result to currentResult
-          if (statusMatch && actionMatch) {
-            currentResult = result;
-          }
-
-          //   if (planMatch && statusMatch && actionMatch && agentMatch) {
-          //   currentResult = result;
-          // }
-        } else {
-          if (item.fix_plan) {
-            fixPlan = item.fix_plan;
-          }
-          if (item.fix_result) {
-            fixResult = item.fix_result;
-          }
-        }
-      });
-
-      if (currentResult) {
-        transformed.push({
-          ...currentResult,
-          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
-          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
-        });
-      }
-    }
-
-    return transformed;
-  }
-
   const fixApproveHandler = async (data) => {
     try {
-      console.log("fixApproveHandler:", data);
       const result = await setFixApprove(data);
       await successAlert(result);
 
@@ -118,10 +56,7 @@
 
   const fixApproveAssetHandler = async (data, approved) => {
     try {
-      console.log("fixApproveAssetHandler data:", data);
-      console.log("fixApproveAssetHandler approved:", approved);
       const approved_targets = data.map((ele) => ele.ccr_index);
-      console.log("fixApproveAssetHandler approved_targets:", approved_targets);
       const result = await setFixApprove({
         plan_index: data[0].ccp_index,
         asset_target_uuid: selectedSendData?.asset_target_uuid,
@@ -140,7 +75,6 @@
 
   const fixDoneApproveHandler = async (data) => {
     try {
-      console.log("fixDoneApproveHandler data:", data);
       const result = await setFixDoneApprove(data);
       successAlert(result);
 
@@ -154,12 +88,7 @@
   const fixDoneApproveAssetHandler = async (data, approved) => {
     try {
       const approved_targets = data.map((ele) => ele.ccr_index);
-      console.log("fixDoneApproveAssetHandler data:", data);
-      console.log("fixDoneApproveAssetHandler approved:", approved);
-      console.log(
-        "fixDoneApproveAssetHandler approved_targets:",
-        approved_targets,
-      );
+
       const result = await setFixDoneApprove({
         plan_index: data[0].ccp_index,
         asset_target_uuid: selectedSendData?.asset_target_uuid,
@@ -208,12 +137,6 @@
   }
 
   $: baseIndex = data?.length - (currentPageNum - 1) * itemsPerPage;
-
-  $: {
-    console.log("+selectedSendData:", selectedSendData);
-    console.log("+setView:", setView);
-    console.log("+selectedItems:", selectedItems);
-  }
 </script>
 
 <section class="content">
@@ -330,10 +253,11 @@
                   selectedItems = [];
                   theadChecked = false;
 
-                  search.step_vuln = "5";
+                  search = { ...search, step_vuln: "5" };
 
+                  tableData = [];
                   const data = await getVulnsOfAsset(search);
-                  tableData = data?.vulns;
+                  if (data) tableData = data?.vulns;
                   loading = false;
                 } catch (err) {
                   errorAlert(err?.message);

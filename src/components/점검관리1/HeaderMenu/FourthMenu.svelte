@@ -90,10 +90,6 @@
       searchDataHandler();
     }
   }
-
-  $: {
-    console.log("logData:", logData);
-  }
 </script>
 
 <article class="contentArea">

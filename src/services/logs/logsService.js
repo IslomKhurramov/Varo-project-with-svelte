@@ -11,8 +11,6 @@ export const getAuditNLog = async (search) => {
       },
     );
 
-    console.log("response:", response);
-
     if (response?.data?.RESULT == "ERROR")
       throw new Error("Something went wrong!");
 

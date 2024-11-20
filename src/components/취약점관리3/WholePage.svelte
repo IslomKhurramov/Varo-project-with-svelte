@@ -315,7 +315,7 @@
             <div
               value={item.ccr_index}
               name={item}
-              class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+              class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
               on:click={() => {
                 targetData = item;
               }}

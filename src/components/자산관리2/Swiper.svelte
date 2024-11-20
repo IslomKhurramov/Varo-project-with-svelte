@@ -37,7 +37,11 @@
   let menuWrapper;
   export let selectedAsset;
   export let filteredAssets = [];
+  export let filterAssets;
   let activeAsset = null;
+  export let updateFilteredAssets;
+  export let assetGroupList;
+  export let assetList;
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -267,7 +271,9 @@
   async function assetGroupChange() {
     if (uuid_asset === "") {
       errorAlert("자산을 선택해주세요");
+      return; // Exit if no asset is selected
     }
+
     try {
       const response = await setAssetGroupChange(
         uuid_asset,
@@ -278,11 +284,69 @@
       if (response.success) {
         showModal = false;
         successAlert("그룹이 성공적으로 변경되었습니다!");
+        // window.location.reload();
+        const asset = $allAssetList.find(
+          (asset) => asset.ass_uuid === uuid_asset,
+        );
+        if (asset) {
+          asset.asset_group = [selectedGroupIndex]; // Modify the group to the new one
+
+          // Now make sure $allAssetList is updated (if it's a writable store)
+          // The assignment will trigger reactivity
+          $allAssetList = [...$allAssetList];
+        }
+        // Update the asset group in the allAssetList store
+        allAssetList.update((assets) => {
+          return assets.map((asset) => {
+            // If the asset UUID matches, update the asset's group
+            if (asset.ass_uuid === uuid_asset) {
+              // Create a new asset object with updated group information
+              return {
+                ...asset,
+                asset_group: asset.asset_group.map((group) =>
+                  group.asg_index === asset_group_index
+                    ? { ...group, asg_index: selectedGroupIndex }
+                    : group,
+                ),
+              };
+            }
+            return asset;
+          });
+        });
+
+        const updatedAssets = filteredAssets.map((asset) => {
+          if (asset.ass_uuid === uuid_asset) {
+            // Move the asset to the new group
+            return { ...asset, asset_group: selectedGroupIndex };
+          }
+          return asset;
+        });
+
+        // Update the parent with the new list of assets
+        updateFilteredAssets(updatedAssets);
+        assetList();
+        filterAssets();
       } else {
         errorAlert("자산을 선택해주세요!");
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error("Error changing asset group:", err);
+      // Optionally handle errors here
+    }
   }
+  $: {
+    // Only apply filtering when $allAssetList is available
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
+    }
+  }
+  $: {
+    assetGroupList();
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = [...$allAssetList]; // Copy all assets initially
+    }
+  }
+
   /**********************************************************************/
   function handleGroupChange(event) {
     selectedGroupIndex = event.target.value;

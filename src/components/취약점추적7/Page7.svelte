@@ -132,13 +132,23 @@
     showThird = view;
     activeView = view;
     activeMenu = "전체";
-
+    filterPage = false;
+    filterAssetPage = false;
+    filterTargetPage = false;
     if (view === "project") {
       currentPage = ProjectAll;
+      filterPage = false;
+      filterAssetPage = false;
+      filterTargetPage = false;
     } else if (view === "asset") {
       currentPage = AssetAll;
+      filterPage = false;
+      filterAssetPage = false;
+      filterTargetPage = false;
     } else if (view === "third") {
-      currentPage = ThirdAll; // Assuming this represents Third's 전체 view
+      currentPage = ThirdAll; // Assuming this represents Third's 전체 view filterPage=false;
+      filterAssetPage = false;
+      filterTargetPage = false;
     }
   }
   /*****************LEFTDATA**************************************/

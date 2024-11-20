@@ -51,7 +51,7 @@ export const register = async (name, email, password, department) => {
         user_pw: password,
         user_name: name,
         user_depart: department,
-        user_rolltype: 1,
+        user_rolltype: 7,
       },
       { withCredentials: true },
     );

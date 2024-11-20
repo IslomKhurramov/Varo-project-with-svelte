@@ -347,7 +347,12 @@
 
                   <!-- 점검플랜 -->
                   <tr>
-                    <th class="text-center">점검플랜</th>
+                    <th
+                      class="text-center"
+                      style="  border-top-left-radius: 10px;  
+                    border-top-right-radius: 10px;  
+                  ">점검플랜</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -423,7 +428,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -467,7 +472,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -476,7 +481,12 @@
                   </tr>
                   <!-- 조치내역 -->
                   <tr>
-                    <th class="text-center">조치내역</th>
+                    <th
+                      class="text-center"
+                      style="
+                    border-bottom-left-radius: 10px; 
+                    border-bottom-right-radius: 10px;">조치내역</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -512,7 +522,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -553,7 +563,7 @@
     width: 246px;
   }
   .modal-open-wrap .iconCard {
-    width: 250px;
+    width: 255px;
   }
   .status-container {
     max-height: 120px; /* Set the maximum height for the content */
@@ -596,7 +606,9 @@
     animation: svelte-s7onsa-fadeIn 0.3s ease;
     z-index: 100;
   }
-
+  .modal-open-wrap th {
+    vertical-align: middle;
+  }
   /* Modal backdrop */
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
@@ -624,6 +636,9 @@
       transform 0.2s ease,
       box-shadow 0.3s ease;
     width: 320px;
+  }
+  .modal-open-wrap table th {
+    vertical-align: middle;
   }
   .hoverCard:hover {
     cursor: pointer;

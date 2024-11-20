@@ -378,7 +378,7 @@
                       </li>
                     {/each}
                   {:else}
-                    <p>No data available</p>
+                    <p>데이터 없음e</p>
                   {/if}
                 </ul>
               </div>
@@ -528,7 +528,7 @@
                       </li>
                     {/each}
                   {:else}
-                    <p>No data available</p>
+                    <p>데이터 없음</p>
                   {/if}
                 </ul>
               </div>
@@ -592,7 +592,7 @@
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >
               <td class="text-center line-height">{vuln.ccr_item_result}</td>
-              <td class="text-center">
+              <td>
                 <div class="status-container line-height">
                   {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
                 </div>
@@ -653,7 +653,7 @@
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >
               <td class="text-center line-height">{vuln.ccr_item_result}</td>
-              <td class="text-center">
+              <td>
                 <div class="status-container line-height">
                   {@html vuln.ccr_item_status.replace(/\n/g, "<br/>")}
                 </div>
@@ -708,7 +708,12 @@
 
                   <!-- 점검플랜 -->
                   <tr>
-                    <th class="text-center">점검플랜</th>
+                    <th
+                      class="text-center"
+                      style="  border-top-left-radius: 10px;  
+                    border-top-right-radius: 10px;  
+                  ">점검플랜</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -784,7 +789,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -828,7 +833,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -837,7 +842,12 @@
                   </tr>
                   <!-- 조치내역 -->
                   <tr>
-                    <th class="text-center">조치내역</th>
+                    <th
+                      class="text-center"
+                      style="
+                    border-bottom-left-radius: 10px; 
+                    border-bottom-right-radius: 10px;">조치내역</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -873,7 +883,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -900,7 +910,12 @@
 
                   <!-- 점검플랜 -->
                   <tr>
-                    <th class="text-center">점검플랜</th>
+                    <th
+                      class="text-center"
+                      style="  border-top-left-radius: 10px;  
+                    border-top-right-radius: 10px;  
+                  ">점검플랜</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -976,7 +991,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -1020,7 +1035,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -1029,7 +1044,12 @@
                   </tr>
                   <!-- 조치내역 -->
                   <tr>
-                    <th class="text-center">조치내역</th>
+                    <th
+                      class="text-center"
+                      style="
+                    border-bottom-left-radius: 10px; 
+                    border-bottom-right-radius: 10px;">조치내역</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -1065,7 +1085,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -1118,7 +1138,7 @@
     width: 270px;
   }
   .modal-open-wrap .iconCard {
-    width: 280px;
+    width: 255px;
   }
   .active-row {
     background-color: rgba(242, 242, 242, 1);
@@ -1138,6 +1158,9 @@
   }
   .line-height {
     line-height: 23px;
+  }
+  .modal-open-wrap th {
+    vertical-align: middle;
   }
   .no-assets {
     text-align: center; /* Center the text */
@@ -1207,6 +1230,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+  .modal-open-wrap table th {
+    vertical-align: middle;
   }
   .text2 {
     padding: 0px;

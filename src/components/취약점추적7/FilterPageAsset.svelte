@@ -203,7 +203,8 @@
                       : "Unknown"}
                   </li>
                   <li>
-                    <span>관련시스템 : </span>{plan.system_count || "no data"}대
+                    <span>관련시스템 : </span>{plan.system_count ||
+                      "데이터 없음"}대
                   </li>
                 </ul>
               </div>
@@ -345,7 +346,12 @@
 
                   <!-- 점검플랜 -->
                   <tr>
-                    <th class="text-center">점검플랜</th>
+                    <th
+                      class="text-center"
+                      style="  border-top-left-radius: 10px;  
+                    border-top-right-radius: 10px;  
+                  ">점검플랜</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -421,7 +427,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -465,7 +471,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -474,7 +480,12 @@
                   </tr>
                   <!-- 조치내역 -->
                   <tr>
-                    <th class="text-center">조치내역</th>
+                    <th
+                      class="text-center"
+                      style="
+                    border-bottom-left-radius: 10px; 
+                    border-bottom-right-radius: 10px;">조치내역</th
+                    >
                     {#each $ModalData as modal, index}
                       <td>
                         <div class="graphCardWrap">
@@ -510,7 +521,7 @@
                             {/each}
                           {:else}
                             <div class="graphCardWrap">
-                              <div class="iconCard">no data</div>
+                              <div class="iconCard">데이터 없음</div>
                             </div>
                           {/if}
                         </div>
@@ -548,6 +559,9 @@
 <style>
   .active-row {
     background-color: rgba(242, 242, 242, 1);
+  }
+  .modal-open-wrap table th {
+    vertical-align: middle;
   }
   .no-data-message {
     text-align: center; /* Center the text */
@@ -783,7 +797,7 @@
     width: 270px;
   }
   .modal-open-wrap .iconCard {
-    width: 280px;
+    width: 255px;
   }
   .modal-open-wrap th,
   .modal-open-wrap td {

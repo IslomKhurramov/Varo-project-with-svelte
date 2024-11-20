@@ -60,7 +60,7 @@
       </tr>
     {:else}
       <tr>
-        <td colspan="2">No data available</td>
+        <td colspan="2">데이터 없음</td>
       </tr>
     {/if}
   </table>

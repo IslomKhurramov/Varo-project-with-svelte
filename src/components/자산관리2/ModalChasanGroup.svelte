@@ -172,7 +172,7 @@
                     <option value={index}>{groupTitle}</option>
                   {/each}
                 {:else}
-                  <option disabled>No data available</option>
+                  <option disabled>데이터 없음</option>
                 {/if}
               </select>
             </p>

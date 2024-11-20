@@ -104,6 +104,7 @@
 
   const fixApproveHandler = async (data) => {
     try {
+      console.log("fixApproveHandler:", data);
       const result = await setFixApprove(data);
       await successAlert(result);
 
@@ -116,7 +117,10 @@
 
   const fixApproveAssetHandler = async (data, approved) => {
     try {
+      console.log("fixApproveAssetHandler data:", data);
+      console.log("fixApproveAssetHandler approved:", approved);
       const approved_targets = data.map((ele) => ele.ccr_index);
+      console.log("fixApproveAssetHandler approved_targets:", approved_targets);
       const result = await setFixApprove({
         plan_index: data[0].ccp_index,
         asset_target_uuid: selectedSendData?.asset_target_uuid,
@@ -135,6 +139,7 @@
 
   const fixDoneApproveHandler = async (data) => {
     try {
+      console.log("fixDoneApproveHandler data:", data);
       const result = await setFixDoneApprove(data);
       successAlert(result);
 
@@ -148,6 +153,12 @@
   const fixDoneApproveAssetHandler = async (data, approved) => {
     try {
       const approved_targets = data.map((ele) => ele.ccr_index);
+      console.log("fixDoneApproveAssetHandler data:", data);
+      console.log("fixDoneApproveAssetHandler approved:", approved);
+      console.log(
+        "fixDoneApproveAssetHandler approved_targets:",
+        approved_targets,
+      );
       const result = await setFixDoneApprove({
         plan_index: data[0].ccp_index,
         asset_target_uuid: selectedSendData?.asset_target_uuid,
@@ -275,8 +286,8 @@
             </a>
           {/if}
         </section>
-        {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
-          {#if setView == "plan" || setView == "plan_accept"}
+        <!-- {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
+          {#if setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -353,7 +364,7 @@
             </section>
           {/if}
 
-          {#if setView == "result" || setView == "result_accept"}
+          {#if setView == "result_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -428,10 +439,10 @@
               {/if}
             </section>
           {/if}
-        {/if}
+        {/if} -->
 
-        {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && data?.length !== 0}
-          {#if setView == "plan" || setView == "plan_accept"}
+        {#if isAgenUser}
+          {#if setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -470,29 +481,29 @@
                 </button>
               {/if}
 
-              {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixApproveAssetHandler(data, "1");
-                  }}
-                >
-                  일괄승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixApproveAssetHandler(data, "0");
-                  }}
-                >
-                  일괄반려
-                </button>
-              {/if}
+              <!-- {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid} -->
+              <button
+                class="btn btnBlue"
+                on:click={() => {
+                  fixApproveAssetHandler(data, "1");
+                }}
+              >
+                일괄승인
+              </button>
+              <button
+                type="button"
+                class="btn btnBlue"
+                on:click={() => {
+                  fixApproveAssetHandler(data, "0");
+                }}
+              >
+                일괄반려
+              </button>
+              <!-- {/if} -->
             </section>
           {/if}
 
-          {#if setView == "result" || setView == "result_accept"}
+          {#if setView == "result_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
                 <button
@@ -529,26 +540,24 @@
                 </button>
               {/if}
 
-              {#if selectedSendData?.plan_index}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveAssetHandler(data, "1");
-                  }}
-                >
-                  일괄승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveAssetHandler(data, "0");
-                  }}
-                >
-                  일괄반려
-                </button>
-              {/if}
+              <button
+                type="button"
+                class="btn btnBlue"
+                on:click={() => {
+                  fixDoneApproveAssetHandler(data, "1");
+                }}
+              >
+                일괄승인
+              </button>
+              <button
+                type="button"
+                class="btn btnBlue"
+                on:click={() => {
+                  fixDoneApproveAssetHandler(data, "0");
+                }}
+              >
+                일괄반려
+              </button>
             </section>
           {/if}
         {/if}
@@ -562,10 +571,7 @@
         >
           <table class="tableList hdBorder">
             <colgroup>
-              {#if isAgenUser && selectedSendData?.plan_index}
-                <col style="width:33px;" />
-              {/if}
-              {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+              {#if isAgenUser && (setView == "plan_accept" || setView == "result_accept")}
                 <col style="width:33px;" />
               {/if}
               <col style="width:90px;" />
@@ -584,29 +590,7 @@
             </colgroup>
             <thead>
               <tr>
-                {#if isAgenUser && selectedSendData?.plan_index}
-                  <th class="text-center">
-                    <div class="checkboxWrap">
-                      <label class="checkbox-label">
-                        <input
-                          type="checkbox"
-                          name="target"
-                          bind:checked={theadChecked}
-                          on:change={(e) => {
-                            if (e.target.checked)
-                              selectedItems = data?.map(
-                                (ele) => ele?.ccr_index,
-                              );
-                            else selectedItems = [];
-                          }}
-                        />
-                        <span></span>
-                      </label>
-                    </div>
-                  </th>
-                {/if}
-
-                {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+                {#if isAgenUser && (setView == "plan_accept" || setView == "result_accept")}
                   <th class="text-center">
                     <div class="checkboxWrap">
                       <label class="checkbox-label">
@@ -658,28 +642,7 @@
                       search.plan_index = item?.ccp_index;
                     }}
                   >
-                    {#if isAgenUser && selectedSendData?.plan_index}
-                      <!-- svelte-ignore a11y-click-events-have-key-events -->
-                      <td
-                        class="text-center"
-                        on:click={(e) => e.stopPropagation()}
-                      >
-                        <div class="checkboxWrap">
-                          <label class="checkbox-label">
-                            <input
-                              type="checkbox"
-                              name="target"
-                              on:click={(e) => e.stopPropagation()}
-                              on:change={() => toggleSelection(item?.ccr_index)}
-                              checked={selectedItems.includes(item?.ccr_index)}
-                            />
-                            <span></span>
-                          </label>
-                        </div>
-                      </td>
-                    {/if}
-
-                    {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
+                    {#if isAgenUser && (setView == "plan_accept" || setView == "result_accept")}
                       <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <td
                         class="text-center"

@@ -314,7 +314,7 @@
                 asset_target_uuid: "",
                 step_vuln: "1",
               };
-              // setView = "plan";
+
               selectedSendData = {
                 plan_index: "",
                 asset_target_uuid: "",
@@ -329,6 +329,7 @@
                 assets = await getVulnsOfAsset(search);
                 assetsMenuData = assets?.asset_asc;
                 tableData = assets?.vulns;
+                setView = "plan";
               } else {
                 sortAssets();
               }

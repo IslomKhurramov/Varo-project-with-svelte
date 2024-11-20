@@ -8,7 +8,7 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import NewArticle from "../NewArticle.svelte";
+  import NewArticle1 from "../NewArticle1.svelte";
   // ///////////////////////////////////////////////////////////////////////
   import { userData } from "../../../stores/user.store";
   import { decryptData } from "../../../services/login/loginService";
@@ -30,12 +30,12 @@
   let selectedData = null;
   let showNewMember = false;
 
-  // onMount(async () => {
-  //   const art_index = new URLSearchParams(window.location.search).get("id");
-  //   if (art_index) {
-  //     await getArticleDetailData(art_index);
-  //   }
-  // });
+  onMount(async () => {
+    const art_index = new URLSearchParams(window.location.search).get("id");
+    if (art_index) {
+      await getArticleDetailData(art_index);
+    }
+  });
 
   async function getAllArticlesData(
     page = 1,
@@ -102,11 +102,25 @@
   onMount(() => {
     getAllArticlesData(currentPage);
   });
+
+  let fakeData = [];
+  for (let i = 0; i <= 100; i++) {
+    fakeData.push({
+      cs_index: 6,
+      cs_category: "MANUAL",
+      cs_support_os: "",
+      cs_codetype: "MANUAL",
+      cs_filename: "varo_agent_manual_v1.0.docx",
+      cs_version: "0.8",
+      cs_provied_date: "2024-04-11",
+      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
+    });
+  }
 </script>
 
 <main class="table-container" style="border-radius: 10px;">
   {#if showNewMember}
-    <NewArticle on:close={handleNewMemberClose} />
+    <NewArticle1 on:close={handleNewMemberClose} />
   {:else if selectedData}
     <SecondMenuDetails
       {selectedData}
@@ -116,8 +130,8 @@
       }}
     />
   {:else}
-    <div style="background-color: #fff; height:100%;">
-      <section class="tableWrap">
+    <div>
+      <div class="tableWrap_2">
         <div class="tableListWrap">
           <table class="tableList hdBorder">
             <colgroup>
@@ -177,45 +191,50 @@
             </tbody>
           </table>
         </div>
-        {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
-          <div class="buttonContainer">
-            <button
-              type="button"
-              class="btn btnBlue btnSave"
-              on:click={() => {
-                showNewMember = true;
-              }}
-            >
-              게시물추가
-            </button>
+        <div>
+          {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+            <div class="buttonContainer">
+              <button
+                type="button"
+                class="btn btnBlue btnSave"
+                on:click={() => {
+                  showNewMember = true;
+                }}
+              >
+                게시물추가
+              </button>
+            </div>
+          {/if}
+          <!-- Pagination -->
+          <div class="pagination_box">
+            <nav class="pagination">
+              <button
+                on:click={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lsaquo;
+              </button>
+
+              {#each displayedPages as page}
+                <button
+                  class:selected={currentPage === page}
+                  on:click={() => goToPage(page)}
+                >
+                  {page}
+                </button>
+              {/each}
+
+              <button
+                on:click={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &rsaquo;
+              </button>
+            </nav>
+            <div />
           </div>
-        {/if}
-        <!-- Pagination -->
-        <nav class="pagination">
-          <button
-            on:click={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            &lsaquo;
-          </button>
-
-          {#each displayedPages as page}
-            <button
-              class:selected={currentPage === page}
-              on:click={() => goToPage(page)}
-            >
-              {page}
-            </button>
-          {/each}
-
-          <button
-            on:click={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            &rsaquo;
-          </button>
-        </nav>
-      </section>
+        </div>
+      </div>
     </div>
   {/if}
 </main>
@@ -229,24 +248,25 @@
     padding: 20px;
     margin: 10px 0;
     /* width: 100%; */
-    height: calc(100vh - 134px);
+    height: calc(100vh - 140px);
   }
-  .tableWrap {
+  .tableWrap_2 {
     background-color: #fff;
-    /* height: 85vh; */
-    border-radius: 5px;
-  }
-  .tableWrap {
-    height: 1076px;
-    overflow-y: auto;
     display: flex;
     flex-flow: column;
-    justify-content: flex-start;
+    justify-content: space-between;
+    height: 80vh;
+    border-radius: 5px;
+    margin-top: 10px;
   }
+  th,
+  td {
+    font-size: 16px;
+  }
+
   .tableListWrap {
     overflow-y: auto;
     max-height: 65vh;
-    padding-bottom: 50px;
   }
 
   thead {
@@ -263,15 +283,12 @@
   }
 
   .buttonContainer {
-    margin-top: 50px;
     display: flex;
-    align-items: center;
+    margin-top: 33px;
+    align-items: flex-end;
     margin-left: 10px;
   }
-  td,
-  th {
-    font-size: 16px;
-  }
+
   .btnSave {
     width: 150px;
     background-color: #0067ff;
@@ -283,17 +300,18 @@
     font-size: 16px;
     transition: background-color 0.3s ease;
   }
-  .tableWrap {
-    height: 1076px;
-    overflow-y: auto;
-    display: flex;
-    flex-flow: column;
-    justify-content: flex-start;
-  }
 
   .btnSave:hover {
     color: #fff;
     background-color: #4989ff;
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
   }
 
   .pagination {
@@ -303,7 +321,7 @@
     margin-top: 20px;
     padding: 10px 0;
     background-color: #fff;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
   }
 
   .pagination button {

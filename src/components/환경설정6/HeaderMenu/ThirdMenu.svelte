@@ -131,7 +131,7 @@
     />
   {:else}
     <div>
-      <section class="tableWrap">
+      <div class="tableWrap_2">
         <div class="tableListWrap">
           <table class="tableList hdBorder">
             <colgroup>
@@ -191,45 +191,50 @@
             </tbody>
           </table>
         </div>
-        {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
-          <div class="buttonContainer">
-            <button
-              type="button"
-              class="btn btnBlue btnSave"
-              on:click={() => {
-                showNewMember = true;
-              }}
-            >
-              게시물추가
-            </button>
+        <div>
+          {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+            <div class="buttonContainer">
+              <button
+                type="button"
+                class="btn btnBlue btnSave"
+                on:click={() => {
+                  showNewMember = true;
+                }}
+              >
+                게시물추가
+              </button>
+            </div>
+          {/if}
+          <!-- Pagination -->
+          <div class="pagination_box">
+            <nav class="pagination">
+              <button
+                on:click={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lsaquo;
+              </button>
+
+              {#each displayedPages as page}
+                <button
+                  class:selected={currentPage === page}
+                  on:click={() => goToPage(page)}
+                >
+                  {page}
+                </button>
+              {/each}
+
+              <button
+                on:click={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &rsaquo;
+              </button>
+            </nav>
+            <div />
           </div>
-        {/if}
-        <!-- Pagination -->
-        <nav class="pagination">
-          <button
-            on:click={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            &lsaquo;
-          </button>
-
-          {#each displayedPages as page}
-            <button
-              class:selected={currentPage === page}
-              on:click={() => goToPage(page)}
-            >
-              {page}
-            </button>
-          {/each}
-
-          <button
-            on:click={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            &rsaquo;
-          </button>
-        </nav>
-      </section>
+        </div>
+      </div>
     </div>
   {/if}
 </main>
@@ -243,11 +248,14 @@
     padding: 20px;
     margin: 10px 0;
     /* width: 100%; */
-    height: calc(100vh - 134px);
+    height: calc(100vh - 140px);
   }
-  .tableWrap {
+  .tableWrap_2 {
     background-color: #fff;
-    height: 85vh;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    height: 80vh;
     border-radius: 5px;
     margin-top: 10px;
   }
@@ -258,16 +266,7 @@
 
   .tableListWrap {
     overflow-y: auto;
-    /* height: 100%;*/
     max-height: 65vh;
-    /* padding-bottom: 50px; */
-  }
-  .tableWrap {
-    height: 1076px;
-    overflow-y: auto;
-    display: flex;
-    flex-flow: column;
-    justify-content: flex-start;
   }
 
   thead {
@@ -285,9 +284,8 @@
 
   .buttonContainer {
     display: flex;
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
+    margin-top: 33px;
+    align-items: flex-end;
     margin-left: 10px;
   }
 
@@ -308,6 +306,14 @@
     background-color: #4989ff;
   }
 
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
   .pagination {
     display: flex;
     justify-content: center;
@@ -315,7 +321,7 @@
     margin-top: 20px;
     padding: 10px 0;
     background-color: #fff;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
   }
 
   .pagination button {

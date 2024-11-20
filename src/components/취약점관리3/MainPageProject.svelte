@@ -38,7 +38,7 @@
     3: "조치계획승인",
     4: "조치계획반려",
     5: "조치결과등록",
-    6: "조치결과승은",
+    6: "조치결과승인",
     7: "조치결과반려",
   };
 
@@ -318,6 +318,30 @@
               }}
             >
               조치결과승인
+            </a>
+            <a
+              href="javascript:void(0);"
+              class={setView == "조치완료" ? "active" : ""}
+              on:click={async () => {
+                try {
+                  loading = true;
+                  currentPageNum = 1;
+                  setView = "조치완료";
+                  selectedItems = [];
+                  theadChecked = false;
+
+                  search.step_vuln = "5";
+
+                  const data = await getVulnsOfAsset(search);
+                  tableData = data?.vulns;
+                  loading = false;
+                } catch (err) {
+                  errorAlert(err?.message);
+                  loading = false;
+                }
+              }}
+            >
+              조치완료
             </a>
           {/if}
         </section>

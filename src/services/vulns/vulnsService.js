@@ -21,6 +21,8 @@ export const getVulnsOfPlan = async (data = undefined) => {
 
 export const getVulnsOfAsset = async (data) => {
   try {
+    console.log("getVulnsOfAsset: data:", data);
+
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
       data,

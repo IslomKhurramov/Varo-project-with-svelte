@@ -201,15 +201,12 @@
         }
       }
 
-      console.log("assetInsertData:", assetInsertData);
-
       const response = await setNewSystemCommand(assetInsertData);
 
       await successAlert(response.CODE);
 
       navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
-      console.log("error:", error);
       errorAlert(error?.message);
     }
   };

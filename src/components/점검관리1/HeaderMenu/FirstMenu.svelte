@@ -61,18 +61,6 @@
         formData.append("result_files", file);
       });
 
-      for (let [key, value] of formData) {
-        if (value instanceof File) {
-          console.log(`${key}:`, {
-            name: value.name,
-            size: value.size,
-            type: value.type,
-          });
-        } else {
-          console.log(`${key}: ${value}`);
-        }
-      }
-
       const response = await setUploadPlanResult(formData);
 
       await successAlert(response.CODE);

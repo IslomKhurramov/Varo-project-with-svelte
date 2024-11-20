@@ -151,7 +151,6 @@
       getNotify();
     }
   }
-  $: console.log("user info", $userData);
 </script>
 
 <Router>

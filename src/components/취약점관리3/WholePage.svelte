@@ -315,7 +315,7 @@
             <div
               value={item.ccr_index}
               name={item}
-              class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"} ${item?.cfr_fix_status__cvs_index == 6 && "blue"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
+              class={`menu-item ${item?.ccr_index === targetData?.ccr_index ? "active" : ""} ${item?.fi_fix_status__cvs_index == 2 && "yellow"} ${item?.fi_fix_status__cvs_index == 3 && "green"}  ${item?.fi_fix_status__cvs_index == 4 && "orange"}  ${item?.cfr_fix_status__cvs_index == 7 && "red"}`}
               on:click={() => {
                 targetData = item;
               }}
@@ -533,6 +533,89 @@
                           style="font-size: 16px;"
                           type="text"
                           bind:value={sendSetFixDoneApprove["approved_comment"]}
+                        />
+                      </td>
+                    </tr>
+                  {/if}
+
+                  {#if isAgentUser && setView == "조치완료"}
+                    <tr>
+                      <th>조치방법</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_result?.[0]
+                            ?.cfr_fix_method__cvf_desc}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치일정</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
+                        />
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          readonly
+                          value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치내역</th>
+                      <td>
+                        <textarea readonly
+                          >{targetData?.fix_result?.[0]?.cfr_fix_etc}
+                        </textarea>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>증적자료</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          value={targetData?.fix_result?.[0]?.cfr_evidence_file
+                            .split("/")
+                            .pop() + " ( 다운로드 )"}
+                          readonly
+                          on:click={() => {
+                            sampleClick(
+                              targetData?.fix_result?.[0]?.cfr_index,
+                              targetData?.fix_result?.[0]?.cfr_evidence_file,
+                            );
+                          }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치수행자</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          value={targetData?.fix_result?.[0]
+                            ?.user_index__user_name}
+                          readonly
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>조치계획승인</th>
+                      <td>
+                        <input
+                          style="font-size: 16px;"
+                          type="text"
+                          value={targetData?.fix_result?.[0]
+                            ?.cfr_fix_status__cvs_desc}
+                          readonly
                         />
                       </td>
                     </tr>
@@ -782,7 +865,7 @@
                   >
                     의견등록
                   </button>
-                {:else}
+                {:else if isAgentUser && setView == "plan"}
                   <button
                     type="button"
                     class="btn btnBlue btnAction btnSave w220 h50"

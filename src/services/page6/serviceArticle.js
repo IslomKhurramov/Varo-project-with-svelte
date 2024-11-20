@@ -191,8 +191,6 @@ export const downloadArticleFile = async (file_path, file_name) => {
       responseType: "blob", // Important! Set the response type to blob
     });
 
-    console.log("response:", response);
-
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const a = document.createElement("a");
     a.href = url;

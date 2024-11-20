@@ -15,7 +15,7 @@
   let searchFilters;
   let logData = null;
   let currentPageNum = 1;
-  let totalPages;
+  // let totalPages;
   let pageNumbers = [];
   const itemsPerPage = 15;
 
@@ -39,27 +39,29 @@
     }
   });
 
+  let totalRecords = 0;
+  let totalPages = 1;
+  let visiblePages = 5; // Number of page buttons to show
+
   const searchDataHandler = async () => {
     search.page_cnt = currentPageNum.toString();
     const response = await getAuditNLog(search);
-    if (response && Array.isArray(response)) {
+    if (response) {
       logData = response;
-      // If response length is less than itemsPerPage, we're on the last page
-      if (response.length < itemsPerPage) {
-        totalPages = currentPageNum;
-      } else {
-        // Keep current totalPages if data length equals itemsPerPage
-        totalPages =
-          response.length === itemsPerPage
-            ? Math.max(currentPageNum, totalPages || 1)
-            : currentPageNum;
-      }
+      totalRecords = response.total_rec_cnt;
+      totalPages = Math.ceil(totalRecords / itemsPerPage);
       updatePageNumbers();
     }
   };
 
   const updatePageNumbers = () => {
-    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    let start = Math.max(1, currentPageNum - Math.floor(visiblePages / 2));
+    let end = Math.min(totalPages, start + visiblePages - 1);
+
+    // Adjust start if end is maxed out
+    start = Math.max(1, end - visiblePages + 1);
+
+    pageNumbers = Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
   const goToPage = async (pageNum) => {
@@ -68,6 +70,9 @@
       await searchDataHandler();
     }
   };
+
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
 
   const resetFilters = async () => {
     currentPageNum = 1;
@@ -91,9 +96,11 @@
     }
   }
 
-  $: {
-    console.log("logData:", logData);
-  }
+  const getRowNumber = (index) => {
+    return totalRecords - ((currentPageNum - 1) * itemsPerPage + index);
+  };
+
+  console.log("logData:", logData);
 </script>
 
 <article class="contentArea">
@@ -180,12 +187,11 @@
           </tr>
         </thead>
         <tbody>
-          {#if logData && logData.length !== 0}
-            {#each logData as data, index}
+          {#if logData?.data && logData?.data?.length !== 0}
+            {#each logData?.data as data, index}
               <tr>
                 <td class="text-center" style="font-size: 16px;">
-                  {logData.length -
-                    ((currentPageNum - 1) * itemsPerPage + index)}
+                  {getRowNumber(index)}
                 </td>
                 <td class="text-center" style="font-size: 16px;"
                   >{data?.ccp_index}</td
@@ -218,8 +224,16 @@
   <div class="pagination_box">
     <nav class="pagination">
       <button
+        on:click={goToFirstPage}
+        disabled={currentPageNum === 1}
+        title="First Page"
+      >
+        &laquo;
+      </button>
+      <button
         on:click={() => goToPage(currentPageNum - 1)}
         disabled={currentPageNum === 1}
+        title="Previous Page"
       >
         &lsaquo;
       </button>
@@ -236,8 +250,16 @@
       <button
         on:click={() => goToPage(currentPageNum + 1)}
         disabled={currentPageNum === totalPages}
+        title="Next Page"
       >
         &rsaquo;
+      </button>
+      <button
+        on:click={goToLastPage}
+        disabled={currentPageNum === totalPages}
+        title="Last Page"
+      >
+        &raquo;
       </button>
     </nav>
   </div>

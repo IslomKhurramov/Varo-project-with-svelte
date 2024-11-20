@@ -567,7 +567,7 @@
       <div class="flex col detail">
         <div
           class="tableListWrap nofirstth"
-          style="    height: calc(-306px + 100vh);overflow: scroll;overflow-x: hidden;"
+          style="    height: calc(-361px + 100vh);overflow: scroll;overflow-x: hidden;"
         >
           <table class="tableList hdBorder">
             <colgroup>
@@ -766,6 +766,15 @@
             </tbody>
           </table>
         </div>
+        <div class="pagination_box">
+          <nav class="pagination">
+            <button> &lsaquo; </button>
+
+            <button class={"selected"}> 1 </button>
+
+            <button> &rsaquo; </button>
+          </nav>
+        </div>
       </div>
     </div>
   </div>
@@ -789,5 +798,34 @@
   table td,
   th {
     font-size: 16px;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background-color: #fff;
+  }
+
+  .pagination button {
+    border: none !important;
+    padding: 8px 12px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .pagination button.selected {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .pagination button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination button:hover:not([disabled]) {
+    background-color: #d4d4d4;
   }
 </style>

@@ -1,3 +1,5 @@
+<!-- MAIN PAGE PROJECT FILE -->
+
 <script>
   import { onMount } from "svelte";
   import {
@@ -22,6 +24,7 @@
   export let loading;
   export let search;
   export let currentPageNum;
+  export let totalRecords;
 
   let theadChecked = false;
   let isAgenUser = ["1", "3", "5"].includes(
@@ -114,29 +117,72 @@
     }
   }
 
-  let itemsPerPage = 15;
+  let itemsPerPage = search["list_cnt"];
   let totalPages = 0;
+  let visiblePages = 5;
+  let pageNumbers = [];
 
   $: {
     if (data) {
-      totalPages = Math.ceil(data.length / itemsPerPage);
+      totalPages = Math.ceil(totalRecords / itemsPerPage);
+      updatePageNumbers();
     }
   }
 
-  $: paginatedDatas = data?.slice(
-    (currentPageNum - 1) * itemsPerPage,
-    currentPageNum * itemsPerPage,
-  );
+  const updatePageNumbers = () => {
+    let start = Math.max(1, currentPageNum - Math.floor(visiblePages / 2));
+    let end = Math.min(totalPages, start + visiblePages - 1);
 
-  $: pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    // Adjust start if end is maxed out
+    start = Math.max(1, end - visiblePages + 1);
 
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages) {
-      currentPageNum = page;
+    pageNumbers = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  const goToPage = async (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      currentPageNum = pageNum;
+      searchDataHandler();
     }
-  }
+  };
 
-  $: baseIndex = data?.length - (currentPageNum - 1) * itemsPerPage;
+  const searchDataHandler = async () => {
+    try {
+      loading = true;
+      search.page_cnt = currentPageNum.toString();
+      const response = await getVulnsOfAsset(search);
+      loading = false;
+      if (response) {
+        tableData = response?.vulns;
+        totalRecords = response?.total_rec_cnt;
+        totalPages = Math.ceil(totalRecords / itemsPerPage);
+        updatePageNumbers();
+      }
+    } catch (err) {
+      loading = false;
+      errorAlert(err?.message);
+    }
+  };
+
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
+
+  // const getRowNumber = (index) => {
+  //   return totalRecords - ((currentPageNum - 1) * itemsPerPage + index);
+  // };
+
+  const getRowNumber = (index) => {
+    // Assuming totalRecords is available from the API response
+    const startNumber = totalRecords - (currentPageNum - 1) * itemsPerPage;
+    return startNumber - index;
+  };
+
+  $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
+
+  $: {
+    console.log("data:", data);
+    console.log("currentPageNum:", currentPageNum);
+  }
 </script>
 
 <section class="content">
@@ -153,6 +199,7 @@
               try {
                 loading = true;
                 currentPageNum = 1;
+                search = { ...search, page_cnt: currentPageNum };
                 setView = "plan";
                 selectedItems = [];
                 theadChecked = false;
@@ -160,6 +207,7 @@
 
                 const data = await getVulnsOfAsset(search);
                 tableData = data?.vulns;
+                totalRecords = data?.total_rec_cnt;
                 loading = false;
               } catch (err) {
                 errorAlert(err?.message);
@@ -176,6 +224,7 @@
               try {
                 loading = true;
                 currentPageNum = 1;
+                search = { ...search, page_cnt: currentPageNum };
                 setView = "plan_accept";
                 selectedItems = [];
                 theadChecked = false;
@@ -184,6 +233,7 @@
 
                 const data = await getVulnsOfAsset(search);
                 tableData = data?.vulns;
+                totalRecords = data?.total_rec_cnt;
                 loading = false;
               } catch (err) {
                 errorAlert(err?.message);
@@ -201,6 +251,7 @@
                 try {
                   loading = true;
                   currentPageNum = 1;
+                  search = { ...search, page_cnt: currentPageNum };
                   setView = "result";
                   selectedItems = [];
                   theadChecked = false;
@@ -209,6 +260,7 @@
 
                   const data = await getVulnsOfAsset(search);
                   tableData = data?.vulns;
+                  totalRecords = data?.total_rec_cnt;
                   loading = false;
                 } catch (err) {
                   errorAlert(err?.message);
@@ -225,6 +277,7 @@
                 try {
                   loading = true;
                   currentPageNum = 1;
+                  search = { ...search, page_cnt: currentPageNum };
                   setView = "result_accept";
                   selectedItems = [];
                   theadChecked = false;
@@ -233,6 +286,7 @@
 
                   const data = await getVulnsOfAsset(search);
                   tableData = data?.vulns;
+                  totalRecords = data?.total_rec_cnt;
                   loading = false;
                 } catch (err) {
                   errorAlert(err?.message);
@@ -249,6 +303,7 @@
                 try {
                   loading = true;
                   currentPageNum = 1;
+                  search = { ...search, page_cnt: currentPageNum };
                   setView = "조치완료";
                   selectedItems = [];
                   theadChecked = false;
@@ -258,6 +313,7 @@
                   tableData = [];
                   const data = await getVulnsOfAsset(search);
                   if (data) tableData = data?.vulns;
+                  totalRecords = data?.total_rec_cnt;
                   loading = false;
                 } catch (err) {
                   errorAlert(err?.message);
@@ -638,8 +694,8 @@
               </tr>
             </thead>
             <tbody>
-              {#if paginatedDatas?.length !== 0}
-                {#each paginatedDatas as item, index}
+              {#if data?.length !== 0}
+                {#each data as item, index}
                   <tr
                     on:click={() => {
                       wholePage = true;
@@ -799,63 +855,43 @@
         </div>
         <div class="pagination_box">
           <nav class="pagination">
-            <!-- Previous button -->
+            <button
+              on:click={goToFirstPage}
+              disabled={currentPageNum == 1}
+              title="First Page"
+            >
+              &laquo;
+            </button>
             <button
               on:click={() => goToPage(currentPageNum - 1)}
-              disabled={currentPageNum === 1}
+              disabled={currentPageNum == 1}
+              title="Previous Page"
             >
               &lsaquo;
             </button>
 
-            <!-- First page -->
-            {#if totalPages > 0}
+            {#each pageNumbers as pageNum}
               <button
-                class={1 === currentPageNum ? "selected" : ""}
-                on:click={() => goToPage(1)}
-              >
-                1
-              </button>
-            {/if}
-
-            <!-- Left ellipsis -->
-            {#if currentPageNum > 4}
-              <button class="dots" disabled>...</button>
-            {/if}
-
-            <!-- Pages around current page -->
-            {#each pageNumbers.filter((num) => {
-              const offset = 2; // Show 2 pages before and after current page
-              return num !== 1 && num !== totalPages && num >= currentPageNum - offset && num <= currentPageNum + offset;
-            }) as pageNum}
-              <button
-                class={pageNum === currentPageNum ? "selected" : ""}
+                class={pageNum == currentPageNum ? "selected" : ""}
                 on:click={() => goToPage(pageNum)}
               >
                 {pageNum}
               </button>
             {/each}
 
-            <!-- Right ellipsis -->
-            {#if currentPageNum < totalPages - 3}
-              <button class="dots" disabled>...</button>
-            {/if}
-
-            <!-- Last page -->
-            {#if totalPages > 1}
-              <button
-                class={totalPages === currentPageNum ? "selected" : ""}
-                on:click={() => goToPage(totalPages)}
-              >
-                {totalPages}
-              </button>
-            {/if}
-
-            <!-- Next button -->
             <button
               on:click={() => goToPage(currentPageNum + 1)}
-              disabled={currentPageNum === totalPages}
+              disabled={currentPageNum == totalPages}
+              title="Next Page"
             >
               &rsaquo;
+            </button>
+            <button
+              on:click={goToLastPage}
+              disabled={currentPageNum == totalPages}
+              title="Last Page"
+            >
+              &raquo;
             </button>
           </nav>
         </div>

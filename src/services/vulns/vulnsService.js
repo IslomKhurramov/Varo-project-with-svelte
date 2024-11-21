@@ -21,6 +21,7 @@ export const getVulnsOfPlan = async (data = undefined) => {
 
 export const getVulnsOfAsset = async (data) => {
   try {
+    console.log("=getVulnsOfAsset data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
       data,
@@ -30,6 +31,8 @@ export const getVulnsOfAsset = async (data) => {
     );
 
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    console.log("getVulnsOfAsset response:", response);
 
     return response.data?.CODE;
   } catch (error) {

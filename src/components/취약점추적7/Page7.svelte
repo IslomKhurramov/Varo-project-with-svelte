@@ -40,6 +40,7 @@
   import FilterPage from "./FilterPage.svelte";
   import FilterPageAsset from "./FilterPageAsset.svelte";
   import FilterTarget from "./FilterTarget.svelte";
+  import { errorAlert } from "../../shared/sweetAlert";
   // Create a writable store for selectedPlans
 
   let currentPage = ProjectAll;
@@ -152,11 +153,15 @@
     }
   }
   /*****************LEFTDATA**************************************/
-  onMount(() => {
-    getLeftDatas();
-    planData();
-    assetData();
-    thirdData();
+  onMount(async () => {
+    try {
+      await getLeftDatas();
+      await planData();
+      await assetData();
+      await thirdData();
+    } catch (err) {
+      await errorAlert(err?.message);
+    }
   });
 
   async function getLeftDatas() {
@@ -165,6 +170,8 @@
       console.log("response", response);
       if (response.RESULT === "OK") {
         leftTrackData.set(Object.values(response.CODE));
+      } else {
+        errorAlert(response.CODE);
       }
     } catch (err) {
       await errorAlert(err?.message);

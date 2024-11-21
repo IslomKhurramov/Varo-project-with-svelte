@@ -520,6 +520,30 @@
       </table>
     </div>
   </section>
+  <div class="pagination_box">
+    <nav class="pagination">
+      <button
+        on:click={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lsaquo;
+      </button>
+      {#each displayedPages as _, page (page)}
+        <button
+          class:selected={currentPage === page + 1}
+          on:click={() => goToPage(page + 1)}
+        >
+          {page + 1}
+        </button>
+      {/each}
+      <button
+        on:click={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
+  </div>
   <div
     style="display: flex; flex-direction:row; width:100%; justify-content:space-between; align-items:center"
   >
@@ -549,30 +573,6 @@
       <option value="100">100개 보기</option>
       <option value="전체">전체 보기</option>
     </select>
-  </div>
-  <div class="pagination_box">
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
-      {#each displayedPages as _, page (page)}
-        <button
-          class:selected={currentPage === page + 1}
-          on:click={() => goToPage(page + 1)}
-        >
-          {page + 1}
-        </button>
-      {/each}
-      <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        &rsaquo;
-      </button>
-    </nav>
   </div>
 </article>
 

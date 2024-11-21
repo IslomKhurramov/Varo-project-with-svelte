@@ -200,6 +200,9 @@
       if (response.success) {
         showModalChange = false;
         successAlert("그룹이 성공적으로 변경되었습니다!");
+        const asset = $allAssetList.find(
+          (asset) => asset.ass_uuid === uuid_asset,
+        );
         if (asset) {
           asset.asset_group = [selectedGroupIndex]; // Modify the group to the new one
 

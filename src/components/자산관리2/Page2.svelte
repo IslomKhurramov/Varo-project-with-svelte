@@ -49,8 +49,16 @@
   let selectedUUID = [];
   let selected = [];
   /*************************GetAllAssetList*****************************************/
+  onMount(async () => {
+    try {
+      assetGroupList();
+    } catch (err) {
+      await errorAlert(err?.message);
+    }
+  });
   async function assetGroupList() {
     try {
+      console.log("error aler");
       const response = await getAssetGroup();
 
       if (response.RESULT === "OK") {
@@ -258,7 +266,11 @@
   };
 
   onMount(async () => {
-    searchFilters = await getPlanFilter();
+    try {
+      searchFilters = await getPlanFilter();
+    } catch (err) {
+      errorAlert(err?.message);
+    }
   });
 
   const searchDataHandler = async () => {
@@ -723,7 +735,7 @@
   }
   .modal-open-wrap {
     display: block;
-    z-index: 99;
+    z-index: 9999;
     position: fixed;
     top: 0;
     left: 0;
@@ -733,7 +745,7 @@
   }
   .modal-open-wrap {
     display: block;
-    z-index: 99;
+    z-index: 9999;
     position: fixed;
     top: 0;
     left: 0;

@@ -215,7 +215,7 @@
                 <td class="text-center" style="font-size: 16px;"
                   >{data?.his_type}</td
                 >
-                <td class="text-center" style="font-size: 16px;"
+                <td style="font-size: 16px; line-height: 23px;"
                   >{data?.his_orig_data}</td
                 >
                 <td class="text-center" style="font-size: 16px;"

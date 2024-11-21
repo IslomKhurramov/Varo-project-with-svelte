@@ -185,6 +185,7 @@
   }
 
   const resetFilters = async () => {
+    selectedSendData = null;
     vulnerabilityStatusValue = "";
     actionStatusValue = "";
     search = {
@@ -644,6 +645,9 @@
                   on:click={() => {
                     currentView === "default";
                     wholePage = false;
+                    if (!activePlan) {
+                      search = { ...search, plan_index: "" };
+                    }
                   }}
                 >
                   돌아가기

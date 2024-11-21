@@ -128,10 +128,11 @@
                   {#each data?.vulnerability_fix_notifications as notify}
                     <tr>
                       <td class="text-center" style="font-size: 16px;"
-                        >{notify?.ccr_index__ccr_item_no ?? "-"}</td
+                        >{notify?.ccr_index__ccr_item_no__ccc_item_no ??
+                          "-"}</td
                       >
                       <td class="text-center" style="font-size: 16px;"
-                        >{notify?.cfi_fix_status ?? "-"}</td
+                        >{notify?.cfi_fix_status__cvs_desc ?? "-"}</td
                       >
                       <td class="text-center" style="font-size: 16px;"
                         >{notify?.user_index__user_name ?? 0}</td

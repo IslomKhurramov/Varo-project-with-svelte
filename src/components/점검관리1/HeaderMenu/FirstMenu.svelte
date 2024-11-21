@@ -150,7 +150,7 @@
 <article class="contentArea mt-40">
   <h4 class="title border">수동등록</h4>
   <div class="formControlWrap fileUploadWrap col">
-    <div class="formControl">
+    <div class="formControl" style="margin: 10px 0;">
       <label style="font-size: 16px;">점검결과파일</label>
       <div class="upload-section">
         <label for="file-upload" class="file-label" style="font-size: 16px;">
@@ -190,7 +190,7 @@
       </div>
     </div>
 
-    <div class="formControl">
+    <div class="formControl" style="margin: 10px 0;">
       <label style="font-size: 16px;">네트워크설정파일</label>
       <div class="upload-section">
         <label for="file-upload" class="file-label" style="font-size: 16px;">
@@ -230,7 +230,7 @@
       </div>
     </div>
 
-    <div class="formControl">
+    <div class="formControl" style="margin: 10px 0;">
       <label style="font-size: 16px;">정보보호시스템</label>
       <div class="upload-section">
         <label for="file-upload" class="file-label" style="font-size: 16px;">

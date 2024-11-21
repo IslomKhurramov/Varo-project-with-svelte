@@ -17,7 +17,9 @@
   onMount(async () => {
     try {
       planList = await getPlanLists();
-    } catch (err) {}
+    } catch (err) {
+      errorAlert(err?.message);
+    }
   });
 
   const getReportData = async () => {
@@ -123,6 +125,7 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
+                disabled={!selectedPlan}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -136,7 +139,11 @@
           </td>
           <td class="text-center">
             <div class="flex justify-center">
-              <button type="button" class="btn btnGray w140">보고서삭제</button>
+              <button
+                type="button"
+                class="btn btnGray w140"
+                disabled={!selectedPlan}>보고서삭제</button
+              >
             </div>
           </td>
         </tr>
@@ -184,6 +191,7 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
+                disabled={!selectedPlan}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -197,7 +205,11 @@
           </td>
           <td class="text-center">
             <div class="flex justify-center">
-              <button type="button" class="btn btnGray w140">
+              <button
+                type="button"
+                class="btn btnGray w140"
+                disabled={!selectedPlan}
+              >
                 보고서삭제
               </button>
             </div>
@@ -221,6 +233,7 @@
               <button
                 type="button"
                 class="btn btnPrimary w140"
+                disabled={!selectedPlan}
                 on:click={() =>
                   setMakeFullReport({
                     plan_index: selectedPlan,
@@ -234,7 +247,11 @@
           </td>
           <td class="text-center">
             <div class="flex justify-center">
-              <button type="button" class="btn btnGray w140">
+              <button
+                type="button"
+                class="btn btnGray w140"
+                disabled={!selectedPlan}
+              >
                 보고서삭제
               </button>
             </div>

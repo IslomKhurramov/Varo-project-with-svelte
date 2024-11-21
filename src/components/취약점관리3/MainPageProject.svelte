@@ -686,7 +686,7 @@
                 <th class="text-center">위험도</th>
                 <th class="text-center">조치현황</th>
                 <th class="text-center">조치분류상태</th>
-                <th class="text-center">운영담당자</th>
+                <th class="text-center">조치담당자</th>
                 <th class="text-center">담당자연락처</th>
                 {#if isAgenUser}
                   <th class="text-center"> 승인 </th>

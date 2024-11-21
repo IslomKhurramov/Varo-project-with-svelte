@@ -1,3 +1,4 @@
+<!-- PAGE 3 FILE -->
 <script>
   import { navigate } from "svelte-routing";
   import {
@@ -32,11 +33,14 @@
   let loading = true;
   let assetsMenuData = [];
   let data = [];
+  let totalRecords = 0;
 
   let search = {
     plan_index: "",
     asset_target_uuid: "",
     step_vuln: "1",
+    page_cnt: "1",
+    list_cnt: "15",
   };
 
   // DATA
@@ -44,7 +48,7 @@
   let assets = [];
   let targetData = null;
 
-  let currentPageNum = 1;
+  let currentPageNum = search["page_cnt"] ?? 1;
 
   const selectPage = async (page, menu) => {
     currentPage = page;
@@ -67,11 +71,14 @@
       loading = true;
 
       plans = await getVulnsOfAsset(search);
+
       tableData = plans?.vulns;
+      totalRecords = plans?.total_rec_cnt;
       loading = false;
 
       assets = await getVulnsOfAsset(search);
       tableData = assets?.vulns;
+      totalRecords = assets?.total_rec_cnt;
     } catch (err) {
       await errorAlert(err?.message);
       loading = false;
@@ -81,8 +88,11 @@
   const getPlanDataSearch = async () => {
     try {
       loading = true;
+      currentPageNum = 1;
+      search = { ...search, page_cnt: currentPageNum };
       plans = await getVulnsOfAsset(search);
       tableData = plans?.vulns;
+      totalRecords = plans?.total_rec_cnt;
 
       loading = false;
       activePlan = search["plan_index"];
@@ -275,6 +285,7 @@
             try {
               loading = true;
               currentPageNum = 1;
+              search = { ...search, page_cnt: currentPageNum };
               activePlan = null;
               toggleList("project");
 
@@ -285,6 +296,7 @@
               };
               plans = await getVulnsOfAsset(search);
               tableData = plans?.vulns;
+              totalRecords = plans?.total_rec_cnt;
               setView = "plan";
               selectedSendData = {
                 plan_index: "",
@@ -311,6 +323,7 @@
             try {
               loading = true;
               currentPageNum = 1;
+              search = { ...search, page_cnt: currentPageNum };
               toggleList("asset");
               // activeMenu = null;
               search = {
@@ -333,6 +346,7 @@
                 assets = await getVulnsOfAsset(search);
                 assetsMenuData = assets?.asset_asc;
                 tableData = assets?.vulns;
+                totalRecords = assets?.total_rec_cnt;
                 setView = "plan";
               } else {
                 sortAssets();
@@ -388,6 +402,7 @@
                     setView = "plan";
                     search.step_vuln = "1";
                     currentPageNum = 1;
+                    search = { ...search, page_cnt: currentPageNum };
                     if (search.plan_index != plan.plan_index) {
                       search.plan_index = plan.plan_index;
                     } else {
@@ -450,11 +465,16 @@
                                     };
                                     assets = await getVulnsOfAsset(search);
                                     tableData = assets?.vulns;
+                                    totalRecords = assets?.total_rec_cnt;
                                     selectedSendData = {
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
                                     };
                                     currentPageNum = 1;
+                                    search = {
+                                      ...search,
+                                      page_cnt: currentPageNum,
+                                    };
                                     loading = false;
                                   }}
                                 >
@@ -520,6 +540,7 @@
                       };
                       assets = await getVulnsOfAsset(search);
                       tableData = assets?.vulns;
+                      totalRecords = assets?.total_rec_cnt;
                       selectedSendData = {
                         plan_index: "",
                         asset_target_uuid: asset.ast_uuid,
@@ -648,6 +669,7 @@
             bind:search
             bind:data
             bind:currentPageNum
+            bind:totalRecords
           />
         {/if}
 

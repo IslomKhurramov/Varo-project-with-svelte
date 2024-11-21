@@ -1,3 +1,4 @@
+<!-- FOUTH MENU FILE -->
 <script>
   import { getPlanLists } from "../../../services/page1/newInspection";
   import {
@@ -100,7 +101,7 @@
     return totalRecords - ((currentPageNum - 1) * itemsPerPage + index);
   };
 
-  console.log("logData:", logData);
+  $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
 </script>
 
 <article class="contentArea">
@@ -109,7 +110,10 @@
       <select
         id="project"
         bind:value={search.plan_index}
-        on:change={searchDataHandler}
+        on:change={() => {
+          currentPageNum = 1;
+          searchDataHandler();
+        }}
       >
         <option value="" selected>전체</option>
 
@@ -122,7 +126,10 @@
       <select
         id="target"
         bind:value={search.order_user}
-        on:change={searchDataHandler}
+        on:change={() => {
+          currentPageNum = 1;
+          searchDataHandler();
+        }}
       >
         <option value="" selected>수행자</option>
         {#if searchFilters?.users && searchFilters?.users?.length !== 0}
@@ -138,7 +145,10 @@
             class="datepicker"
             placeholder="시작일시"
             bind:value={search.search_start_date}
-            on:change={searchDataHandler}
+            on:change={() => {
+              currentPageNum = 1;
+              searchDataHandler();
+            }}
           />
         </div>
         <img src="./assets/images/icon/dash.svg" />
@@ -148,7 +158,10 @@
             class="datepicker"
             placeholder="종료일시"
             bind:value={search.search_end_date}
-            on:change={searchDataHandler}
+            on:change={() => {
+              currentPageNum = 1;
+              searchDataHandler();
+            }}
           />
         </div>
       </div>
@@ -191,7 +204,7 @@
             {#each logData?.data as data, index}
               <tr>
                 <td class="text-center" style="font-size: 16px;">
-                  {getRowNumber(index)}
+                  {baseIndex - index}
                 </td>
                 <td class="text-center" style="font-size: 16px;"
                   >{data?.ccp_index}</td

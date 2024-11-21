@@ -8,17 +8,17 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import { userData } from "../../../stores/user.store";
-  import { decryptData } from "../../../services/login/loginService";
+  // import { userData } from "../../../stores/user.store";
+  // import { decryptData } from "../../../services/login/loginService";
   import NewArticle1 from "../NewArticle1.svelte";
 
   let userRoleTypeIndex = null;
 
   // ///////////////////////////////////////////////////////////////////////
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
   // ///////////////////////////////////////////////////////////////////////
 
   let projectArray = [];
@@ -186,7 +186,7 @@
             <p>총 데이터: <strong>{totalItems}</strong>개</p>
           </div>
 
-          {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+          <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
             <div class="buttonContainer">
               <button
                 type="button"
@@ -198,7 +198,7 @@
                 게시물추가
               </button>
             </div>
-          {/if}
+          <!-- {/if} -->
           <!-- Pagination -->
           <div class="pagination_box">
             <nav class="pagination">

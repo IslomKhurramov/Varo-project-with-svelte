@@ -11,10 +11,9 @@
   let port = Number();
   let clientName = "타이거씨엔에스";
   let agentConnectInterval = Number();
-  let ReportGenerationCriteria = 1000;
-  let NumberPageLists = 20;
-  let riskLevel = "중";
-  let mailServerOption = "";
+  let high_level_point_3 = Number();
+  let medium_level_point_2 = Number();
+  let low_level_point_1 = Number();
   let remoteMailServer = {
     ip: "",
     port: Number(),
@@ -30,6 +29,9 @@
       if (projectData?.RESULT === "OK") {
         const data = projectData.CODE[0];
         serverIP = data.server_ipaddr || serverIP;
+        high_level_point_3 = data.checklist_high_level_point || high_level_point_3;
+        medium_level_point_2 = data.checklist_medium_level_point || medium_level_point_2;
+        low_level_point_1 = data.checklist_low_level_point || low_level_point_1;
         port = parseInt(data.server_port) || port;
         agentConnectInterval =
           parseInt(data.connection_interval) || agentConnectInterval;
@@ -57,6 +59,9 @@
         mailserver_port: remoteMailServer.port,
         mailserver_id: remoteMailServer.id,
         mailserver_pw: remoteMailServer.password,
+        high_level_point: high_level_point_3,
+        medium_level_point: medium_level_point_2,
+        low_level_point: low_level_point_1,
       });
       if (response.RESULT === "OK") {
         await successAlert(response.CODE);
@@ -98,15 +103,23 @@
       <div class="riskLevels">
         <div class="riskLevelItem">
           <label>상</label>
-          <input type="number" placeholder="3" />
+          <input
+            type="number"
+            bind:value={high_level_point_3}
+            placeholder="3"
+          />
         </div>
         <div class="riskLevelItem">
           <label>중</label>
-          <input type="number" placeholder="2" />
+          <input
+            type="number"
+            bind:value={medium_level_point_2}
+            placeholder="2"
+          />
         </div>
         <div class="riskLevelItem">
           <label>하</label>
-          <input type="number" placeholder="1" />
+          <input type="number" bind:value={low_level_point_1} placeholder="1" />
         </div>
       </div>
     </div>

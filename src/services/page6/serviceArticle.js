@@ -23,6 +23,9 @@ export const setSystemBasicSetup = async ({
   mailserver_port,
   mailserver_id,
   mailserver_pw,
+  high_level_point,
+  medium_level_point,
+  low_level_point,
 }) => {
   try {
     const response = await axios.post(
@@ -35,6 +38,9 @@ export const setSystemBasicSetup = async ({
         mailserver_port,
         mailserver_id,
         mailserver_pw,
+        high_level_point,
+        medium_level_point,
+        low_level_point,
       },
       {
         withCredentials: true,
@@ -106,14 +112,8 @@ export const getArticleDetail = async (art_index) => {
   }
 };
 
-export const createArticle = async ({ title, content, category, file }) => {
+export const createArticle = async (formData) => {
   try {
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("category", category);
-    if (file) formData.append("file", file);
-
     const response = await axios.post(
       `${serverApi}/api/createArticle/`,
       formData,

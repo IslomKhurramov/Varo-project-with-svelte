@@ -72,12 +72,15 @@
     targetList();
     assetList();
   });
+
   $: {
     // Only apply filtering when $allAssetList is available
     if ($allAssetList && $allAssetList.length > 0) {
-      filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
+      // console.log("this function");
+      filteredAssets = filterAssets();
     }
-    assetList();
+    // console.log("this function");
+    // assetList();
   }
 
   /**************UnActivate**************************************/
@@ -234,8 +237,6 @@
         // Update the parent with the new list of assets
         updateFilteredAssets(updatedAssets);
 
-        // Update the parent with the new list of assets
-        updateFilteredAssets(updatedAssets);
         assetList();
         filterAssets();
       } else {
@@ -249,6 +250,7 @@
       filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
     }
   }
+
   $: {
     assetGroupList();
     if ($allAssetList && $allAssetList.length > 0) {
@@ -271,7 +273,7 @@
       </div>
     </div>
     <div class="graphCardWrap col3">
-      {#each filteredAssets as asset}
+      {#each filteredAssets as asset, index}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article
           class="graphCard hoverCard"

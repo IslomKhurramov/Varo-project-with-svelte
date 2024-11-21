@@ -25,7 +25,7 @@
   export let plan_index = "";
   let displayedPages = [];
 
-  let totalPages = 1;
+  let totalPages = 0;
   let target = "점검대상";
   /************SORTINGACENDINGVERSION*************************/
   // Default sorting parameters
@@ -312,23 +312,25 @@
     fetchProgramList();
   }
   /**********************************************************/
-
   $: {
-    const maxPagesToShow = 5;
+    const maxPagesToShow = 3;
     displayedPages = [];
 
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) displayedPages.push(i);
-    } else {
-      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-      if (endPage - startPage + 1 < maxPagesToShow) {
-        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        displayedPages.push(i);
+    if (totalPages > 0) {
+      if (currentPage <= totalPages - maxPagesToShow) {
+        for (let i = currentPage; i < currentPage + maxPagesToShow; i++) {
+          if (i > 0) displayedPages.push(i);
+        }
+        if (currentPage + maxPagesToShow - 1 < totalPages) {
+          displayedPages.push(totalPages);
+        }
+      } else {
+        for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++) {
+          if (i > 0) displayedPages.push(i);
+        }
+        if (totalPages - maxPagesToShow > 0) {
+          displayedPages.unshift(1);
+        }
       }
     }
   }
@@ -502,7 +504,9 @@
         <tbody>
           {#each $programList.list as data, index}
             <tr on:click={() => autoDownload(data)}>
-              <td class="text-center">{index + 1}</td>
+              <td class="text-center">
+                {(currentPage - 1) * listCount + index + 1}
+              </td>
               <td class="text-center">{data.cs_category}</td>
               <td class="text-center">{data.cs_support_os || "N/A"}</td>
               <td class="text-center">{data.cs_filename}</td>
@@ -538,6 +542,7 @@
     </div>
     <select bind:value={listCount}>
       <option value="15">15개 보기</option>
+      <option value="2">30개 보기</option>
 
       <option value="30">30개 보기</option>
       <option value="50">50개 보기</option>
@@ -553,7 +558,7 @@
       >
         &lsaquo;
       </button>
-      {#each Array(totalPages) as _, page (page)}
+      {#each displayedPages as _, page (page)}
         <button
           class:selected={currentPage === page + 1}
           on:click={() => goToPage(page + 1)}

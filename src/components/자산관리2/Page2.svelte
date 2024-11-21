@@ -62,17 +62,12 @@
     }
   }
   onMount(() => {
-    assetGroupList();
+    assetGroupList(); // Only fetch asset groups
+    // Don’t call filterAssets here, just populate with initial data
     if ($allAssetList && $allAssetList.length > 0) {
-      filteredAssets = [...$allAssetList]; // Copy all assets initially
+      filteredAssets = [...$allAssetList]; // Set initial assets if available
     }
   });
-  $: {
-    // Only apply filtering when $allAssetList is available
-    if ($allAssetList && $allAssetList.length > 0) {
-      filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
-    }
-  }
 
   function closeSwiper() {
     showSwiperComponent = false;
@@ -131,11 +126,7 @@
 
     return filteredAssets;
   }
-  $: {
-    if ($allAssetList && $allAssetList.length > 0) {
-      filterAssets(); // Call filterAssets to ensure it has the latest data
-    }
-  }
+
   function updateFilteredAssets(updatedAssets) {
     filteredAssets = updatedAssets;
   }
@@ -238,6 +229,7 @@
     showSwiperComponent = false;
     filterAssets(); // Apply filtering
   }
+
   /**********************************************************************/
   function toggleGetLogHeader() {
     if (!showGetPlanHeader) {
@@ -522,7 +514,7 @@
                     <button
                       class="asset_button"
                       on:click|stopPropagation={() =>
-                        selectPage(AssetManagement)}
+                        selectPage(AssetManagement, group)}
                     >
                       자산관리
                     </button>

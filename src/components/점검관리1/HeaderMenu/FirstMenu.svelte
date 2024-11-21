@@ -165,6 +165,7 @@
           accept=".json"
           class="file-input"
           multiple
+          disabled={!selectedPlan}
           bind:this={jsonInput}
           on:change={(event) => {
             jsonFiles = Array.from(event.target.files);
@@ -205,6 +206,7 @@
           accept=".txt"
           class="file-input"
           multiple
+          disabled={!selectedPlan}
           bind:this={txtInput}
           on:change={(event) => {
             txtFiles = Array.from(event.target.files);
@@ -245,6 +247,7 @@
           accept=".xls,.xlsx"
           class="file-input"
           multiple
+          disabled={!selectedPlan}
           bind:this={excelInput}
           on:change={(event) => {
             excelFiles = Array.from(event.target.files);

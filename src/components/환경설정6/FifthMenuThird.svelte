@@ -7,14 +7,15 @@
   let logData = [];
   let error = null;
   let loading = true;
+  let displayedPages = [];
   export const search = {
     plan_index: "",
     asset_name: "",
     order_user: "",
     search_start_date: "",
     search_end_date: "",
-    page_cnt: 1,
-    list_cnt: 5,
+    page_cnt: 1, // Current page
+    list_cnt: 15, // Items per page
   };
 
   let itemsPerPage = search.list_cnt;
@@ -25,22 +26,44 @@
   const searchDataHandler = async () => {
     try {
       const response = await getAuditNLog(search);
+      console.log("API Response:", response);
 
-      logData = response || response?.CODE || [];
-      totalItems =
-        response?.total_count || response?.CODE?.total_count || logData.length;
-      totalPages = Math.ceil(totalItems / itemsPerPage);
+      logData = (response?.data || []).reverse(); // Teskari tartibda ko'rsatish
+      totalItems = response?.total_rec_cnt || 0; // Correct total count
+      totalPages = Math.ceil(totalItems / itemsPerPage); // Calculate total pages
+      console.log("Total Items:", totalItems, "Total Pages:", totalPages);
     } catch (err) {
       error = err.message;
       await errorAlert(error);
     }
   };
 
+  $: {
+    const maxPagesToShow = 3; // Ko'rinadigan sahifalar soni
+    displayedPages = [];
+
+    if (totalPages > 0) {
+      if (currentPage <= totalPages - maxPagesToShow) {
+        // Agar oxirgi sahifaga yaqinlashmagan bo'lsa
+        for (let i = currentPage; i < currentPage + maxPagesToShow; i++) {
+          displayedPages.push(i);
+        }
+        displayedPages.push(totalPages); // Oxirgi sahifani qo'shish
+      } else {
+        // Oxirgi sahifalar yaqinida bo'lsa
+        for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++) {
+          displayedPages.push(i);
+        }
+        displayedPages.unshift(1); // Birinchi sahifani ko'rsatish
+      }
+    }
+  }
+
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
-      currentPage = page;
-      search.page_cnt = currentPage;
-      searchDataHandler();
+      currentPage = page; // Update current page
+      search.page_cnt = currentPage; // Update page number in the search object
+      searchDataHandler(); // Fetch new data for the current page
     }
   };
 
@@ -62,7 +85,7 @@
   </div>
 {/if}
 
-<section class="tableWrap" style="height: calc(-100px + 100vh);">
+<section class="tableWrap_4">
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
@@ -80,74 +103,55 @@
       </colgroup>
       <thead>
         <tr>
-          <th class="text-center" style="font-size: 16px;">순번</th>
-          <th class="text-center" style="font-size: 16px;">명령대상</th>
-          <th class="text-center" style="font-size: 16px;">일시</th>
-          <th class="text-center" style="font-size: 16px;">수행자</th>
-          <th class="text-center" style="font-size: 16px;">스케쥴링</th>
-          <th class="text-center" style="font-size: 16px;">반복주기</th>
-          <th class="text-center" style="font-size: 16px;">수행횟수</th>
-          <th class="text-center" style="font-size: 16px;">수행결과</th>
-          <th class="text-center" style="font-size: 16px;">등등</th>
-          <th class="text-center" style="font-size: 16px;">…</th>
-          <th class="text-center" style="font-size: 16px;">…</th>
+          <th class="text-center">순번</th>
+          <th class="text-center">명령대상</th>
+          <th class="text-center">일시</th>
+          <th class="text-center">수행자</th>
+          <th class="text-center">스케쥴링</th>
+          <th class="text-center">반복주기</th>
+          <th class="text-center">수행횟수</th>
+          <th class="text-center">수행결과</th>
+          <th class="text-center">등등</th>
+          <th class="text-center">…</th>
+          <th class="text-center">…</th>
         </tr>
       </thead>
       <tbody>
         {#each logData as data, index}
           <tr>
-            <!-- 순번: Tartib raqami -->
-            <td class="text-center" style="font-size: 16px;">{index + 1}</td>
-
-            <!-- 명령대상: Buyruq obyekti -->
+            <td class="text-center" style="font-size: 16px;">
+              {totalItems - ((currentPage - 1) * itemsPerPage + index)}
+            </td>
             <td style="font-size: 16px;" class="cursor-pointer text-center">
               {data.asset_name || "N/A"}
             </td>
-
-            <!-- 일시: Vaqt -->
             <td style="font-size: 16px;" class="text-center line-height">
               {moment(data.his_create_time).format("YYYY.MM.DD")}
             </td>
-
-            <!-- 수행자: Buyruqni bergan foydalanuvchi -->
             <td
               class="text-center cursor-pointer line-height"
               style="font-size: 16px;"
             >
               {data.his_order_user || "N/A"}
             </td>
-
-            <!-- 스케쥴링: Turi -->
             <td style="font-size: 16px;" class="text-center line-height">
               {data.his_type || "N/A"}
             </td>
-
-            <!-- 반복주기: Asl ma'lumot -->
             <td class="text-center" style="font-size: 16px;">
               <span>{data.his_orig_data || "N/A"}</span>
             </td>
-
-            <!-- 수행횟수: Yangi ma'lumot -->
             <td class="text-center" style="font-size: 16px;">
               <span>{data.his_new_data || "N/A"}</span>
             </td>
-
-            <!-- 수행결과: To'liq ma'lumot -->
             <td class="text-center" style="font-size: 16px;">
               <span>{data.his_full_data || "N/A"}</span>
             </td>
-
-            <!-- 등등: Log turi -->
             <td class="text-center" style="font-size: 16px;">
               <span>{data.logging_type_index_id}</span>
             </td>
-
-            <!-- …: CCP indeksi -->
             <td class="text-center" style="font-size: 16px;">
               <span>{data.ccp_index}</span>
             </td>
-
-            <!-- …: Natija indeksi -->
             <td class="text-center" style="font-size: 16px;">
               <span>{data.result_index}</span>
             </td>
@@ -156,30 +160,35 @@
       </tbody>
     </table>
   </div>
-  <nav class="pagination">
-    <button
-      on:click={() => goToPage(currentPage - 1)}
-      disabled={currentPage === 1}
-    >
-      &lsaquo;
-    </button>
 
-    {#each Array.from({ length: totalPages }, (_, i) => i + 1) as page}
+  <div class="total-count">
+    <p>총 데이터: <strong>{totalItems}</strong>개</p>
+  </div>
+
+  <div class="pagination_box">
+    <nav class="pagination">
       <button
-        class:selected={currentPage === page}
-        on:click={() => goToPage(page)}
+        on:click={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
       >
-        {page}
+        &lsaquo;
       </button>
-    {/each}
-
-    <button
-      on:click={() => goToPage(currentPage + 1)}
-      disabled={currentPage === totalPages}
-    >
-      &rsaquo;
-    </button>
-  </nav>
+      {#each displayedPages as page}
+        <button
+          class:selected={currentPage === page}
+          on:click={() => goToPage(page)}
+        >
+          {page}
+        </button>
+      {/each}
+      <button
+        on:click={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &rsaquo;
+      </button>
+    </nav>
+  </div>
 </section>
 
 <style>
@@ -219,17 +228,19 @@
     }
   }
 
-  .tableWrap {
+  .tableWrap_4 {
     background-color: #fff;
-    height: 85vh;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    height: 78vh;
     border-radius: 5px;
+    margin-top: 10px;
   }
 
   .tableListWrap {
     overflow-y: auto;
-    height: 100%;
-    padding-bottom: 50px;
-    cursor: pointer;
+    max-height: 65vh;
   }
 
   thead {
@@ -239,11 +250,29 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
+  .total-count {
+    text-align: left;
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
   .pagination {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    margin-top: 150px;
+    padding: 10px 0;
+    background-color: #fff;
+    margin-bottom: 40px;
   }
 
   .pagination button {
@@ -265,14 +294,5 @@
 
   .pagination button:hover:not([disabled]) {
     background-color: #d4d4d4;
-  }
-
-  tr:hover {
-    cursor: pointer;
-    background-color: #f4f4f4;
-    transition-duration: 0.3s;
-  }
-  .line-height {
-    line-height: 23px;
   }
 </style>

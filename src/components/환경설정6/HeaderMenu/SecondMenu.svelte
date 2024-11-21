@@ -8,18 +8,18 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import NewArticle1 from "../NewArticle1.svelte";
-  // ///////////////////////////////////////////////////////////////////////
   import { userData } from "../../../stores/user.store";
   import { decryptData } from "../../../services/login/loginService";
+  import NewArticle from "../NewArticle.svelte";
 
   let userRoleTypeIndex = null;
 
+  // ///////////////////////////////////////////////////////////////////////
   userData.subscribe((data) => {
     userRoleTypeIndex = data.userInfo.user_roletype_role_index;
   });
   let user_roletype_role_index = decryptData(userRoleTypeIndex);
-  // //////////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////
 
   let projectArray = [];
   let error = null;
@@ -29,13 +29,7 @@
   let displayedPages = [];
   let selectedData = null;
   let showNewMember = false;
-
-  onMount(async () => {
-    const art_index = new URLSearchParams(window.location.search).get("id");
-    if (art_index) {
-      await getArticleDetailData(art_index);
-    }
-  });
+  let totalItems = 0;
 
   async function getAllArticlesData(
     page = 1,
@@ -45,8 +39,11 @@
     try {
       const response = await getAllArticles({ page, limit, category });
       if (response.RESULT === "OK") {
-        projectArray = response.CODE.articles;
+        projectArray = response.CODE.articles
+          .slice()
+          .sort((a, b) => b.art_index - a.art_index);
         totalPages = response.CODE.pagination.total_pages;
+        totalItems = response.CODE.pagination.total_count;
       }
     } catch (err) {
       error = err.message;
@@ -66,7 +63,30 @@
     }
   }
 
-  // Pagination logic
+  // Pagination logikasi
+  $: {
+    const maxPagesToShow = 3;
+    displayedPages = [];
+
+    if (totalPages > 0) {
+      if (currentPage <= totalPages - maxPagesToShow) {
+        for (let i = currentPage; i < currentPage + maxPagesToShow; i++) {
+          if (i > 0) displayedPages.push(i);
+        }
+        if (currentPage + maxPagesToShow - 1 < totalPages) {
+          displayedPages.push(totalPages);
+        }
+      } else {
+        for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++) {
+          if (i > 0) displayedPages.push(i);
+        }
+        if (totalPages - maxPagesToShow > 0) {
+          displayedPages.unshift(1);
+        }
+      }
+    }
+  }
+
   function goToPage(page) {
     if (page >= 1 && page <= totalPages) {
       currentPage = page;
@@ -74,53 +94,23 @@
     }
   }
 
-  $: {
-    const maxPagesToShow = 5;
-    displayedPages = [];
-
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) displayedPages.push(i);
-    } else {
-      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-      if (endPage - startPage + 1 < maxPagesToShow) {
-        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        displayedPages.push(i);
-      }
-    }
-  }
-
   function handleNewMemberClose() {
     showNewMember = false;
-    getAllArticlesData();
-  }
-
-  onMount(() => {
     getAllArticlesData(currentPage);
-  });
-
-  let fakeData = [];
-  for (let i = 0; i <= 100; i++) {
-    fakeData.push({
-      cs_index: 6,
-      cs_category: "MANUAL",
-      cs_support_os: "",
-      cs_codetype: "MANUAL",
-      cs_filename: "varo_agent_manual_v1.0.docx",
-      cs_version: "0.8",
-      cs_provied_date: "2024-04-11",
-      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
-    });
   }
+
+  onMount(async () => {
+    getAllArticlesData(currentPage);
+    const art_index = new URLSearchParams(window.location.search).get("id");
+    if (art_index) {
+      await getArticleDetailData(art_index);
+    }
+  });
 </script>
 
 <main class="table-container" style="border-radius: 10px;">
   {#if showNewMember}
-    <NewArticle1 on:close={handleNewMemberClose} />
+    <NewArticle on:close={handleNewMemberClose} />
   {:else if selectedData}
     <SecondMenuDetails
       {selectedData}
@@ -160,7 +150,7 @@
                   }}
                 >
                   <td class="text-center">
-                    {index + 1 + (currentPage - 1) * itemsPerPage}
+                    {totalItems - ((currentPage - 1) * itemsPerPage + index)}
                   </td>
                   <td>{data.title}</td>
                   <td class="text-center">{data.writer__user_name}</td>
@@ -192,6 +182,9 @@
           </table>
         </div>
         <div>
+          <div class="total-count">
+            <p>총 데이터: <strong>{totalItems}</strong>개</p>
+          </div>
           {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
             <div class="buttonContainer">
               <button
@@ -214,7 +207,6 @@
               >
                 &lsaquo;
               </button>
-
               {#each displayedPages as page}
                 <button
                   class:selected={currentPage === page}
@@ -223,7 +215,6 @@
                   {page}
                 </button>
               {/each}
-
               <button
                 on:click={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
@@ -231,7 +222,6 @@
                 &rsaquo;
               </button>
             </nav>
-            <div />
           </div>
         </div>
       </div>
@@ -304,6 +294,14 @@
   .btnSave:hover {
     color: #fff;
     background-color: #4989ff;
+  }
+
+  .total-count {
+    text-align: left;
+    margin-top: 15px;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #555;
   }
 
   .pagination_box {

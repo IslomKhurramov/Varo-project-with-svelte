@@ -39,7 +39,7 @@
           itemStatus: user.user_roletype__role_type,
           itemResult: user.user_activate ? "1" : "0",
           user_index: user.user_index,
-        }));
+        })).reverse();
       }
     } catch (err) {
       error = err.message;
@@ -146,7 +146,8 @@
                 }}
                 style="cursor: pointer;"
               >
-                <td class="text-center" style="font-size: 16px;">{index + 1}</td
+                <td class="text-center" style="font-size: 16px;"
+                  >{projectArray.length - index}</td
                 >
                 <td style="font-size: 16px;" class="cursor-pointer text-center">
                   {data.hostname}
@@ -211,8 +212,10 @@
           </tbody>
         </table>
       </div>
+      <div class="total-count">
+        <p>총 데이터: <strong>{projectArray.length}</strong>개</p>
+      </div>
       <div class="buttonContainer formControl">
-        <label></label>
         <button
           type="button"
           class="btn btnBlue btnSave"
@@ -318,6 +321,14 @@
   .btnSave:hover {
     color: #fff;
     background-color: #4989ff;
+  }
+
+  .total-count {
+    text-align: left;
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #555;
   }
   /***************************/
 </style>

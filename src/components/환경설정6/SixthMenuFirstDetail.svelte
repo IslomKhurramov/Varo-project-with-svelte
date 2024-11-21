@@ -12,6 +12,17 @@
   let sortField = ""; // Current sorting field
   let sortAscending = true; // Sorting direction
 
+  let displayedPages = [
+    { hostname: "윈도우에이전트" },
+    { hostname: "리눅스에이전트" },
+    { hostname: "수동점검프로그램" },
+    { hostname: "수동점검 스크립트" },
+    { hostname: "네트워크장비정보수집 프로그램" },
+    { hostname: "매뉴얼" },
+    { hostname: "가이드라인" },
+    { hostname: "수동점검용 엑셀파일 템플릿" },
+  ];
+
   async function fetchProgramList() {
     try {
       const params = {
@@ -59,19 +70,6 @@
   }
 
   onMount(fetchProgramList);
-  let fakeData = [];
-  for (let i = 0; i <= 100; i++) {
-    fakeData.push({
-      cs_index: 6,
-      cs_category: "MANUAL",
-      cs_support_os: "",
-      cs_codetype: "MANUAL",
-      cs_filename: "varo_agent_manual_v1.0.docx",
-      cs_version: "0.8",
-      cs_provied_date: "2024-04-11",
-      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
-    });
-  }
 </script>
 
 <section style="background-color: #fff; height: calc(-254px + 100vh);">

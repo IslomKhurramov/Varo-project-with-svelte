@@ -785,6 +785,9 @@
                         <select
                           style="font-size: 16px; width:70px"
                           class="xs"
+                          disabled={["plan", "result", "조치완료"].includes(
+                            setView,
+                          )}
                           on:change={(e) => {
                             if (setView == "plan" || setView == "plan_accept") {
                               const data = {
@@ -836,7 +839,8 @@
                           </option>
                           <option
                             value="반려"
-                            selected={setView == "plan"
+                            selected={setView == "plan" ||
+                            setView == "plan_accept"
                               ? item?.cfi_fix_status__cvs_index == 4 ||
                                 item?.cfi_fix_status__cvs_index == 7
                               : item?.cfi_fix_status__cvs_index == 4 ||

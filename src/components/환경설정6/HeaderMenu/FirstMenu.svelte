@@ -73,396 +73,162 @@
   });
 </script>
 
-<main class="table-container" style="border-radius: 10px;">
-  <!-- <div class="table-container_1 contentArea">
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>서버</label>
-        <div class="inputGroup">
-          <div class="inputWithLabel">
-            <span>IP</span>
-            <input
-              type="text"
-              bind:value={serverIP}
-              placeholder="000.000.0.00"
-            />
-          </div>
-          <div class="inputWithLabel">
-            <span>PORT</span>
-            <input type="number" bind:value={port} placeholder="PORT" />
-          </div>
+<main class="table-container">
+  <div class="formContainer">
+    <div class="inputRow">
+      <label>서버 아이피</label>
+      <input type="text" bind:value={serverIP} placeholder="000.000.0.00" />
+    </div>
+    <div class="inputRow">
+      <label>서버 포트</label>
+      <input type="number" bind:value={port} placeholder="PORT" />
+    </div>
+    <div class="inputRow">
+      <label>에이전트 연결주기</label>
+      <input
+        type="number"
+        bind:value={agentConnectInterval}
+        placeholder="에이전트연결주기"
+      />
+    </div>
+
+    <!-- 위험도 Section -->
+    <div class="inputRow">
+      <label>위험도</label>
+      <div class="riskLevels">
+        <div class="riskLevelItem">
+          <label>상</label>
+          <input type="number" placeholder="3" />
         </div>
-      </div>
-    </div>
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>에이전트연결주기</label>
-        <input
-          type="number"
-          bind:value={agentConnectInterval}
-          placeholder="에이전트연결주기"
-        />
-      </div>
-    </div>
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>위험도</label>
-        <div class="riskLevelGroup">
-          <span>상</span>
-          <div class="riskLevelItem">
-            <input type="number" placeholder="3" disabled />
-          </div>
-          <spam>중</spam>
-          <div class="riskLevelItem">
-            <input type="number" placeholder="2" disabled />
-          </div>
-          <span>하</span>
-          <div class="riskLevelItem">
-            <input type="number" placeholder="1" disabled />
-          </div>
+        <div class="riskLevelItem">
+          <label>중</label>
+          <input type="number" placeholder="2" />
+        </div>
+        <div class="riskLevelItem">
+          <label>하</label>
+          <input type="number" placeholder="1" />
         </div>
       </div>
     </div>
 
-    <div class="formControlWrap">
-      <div class="formControl">
-        <label>메일서버설정</label>
-        <div class="mailServerGroup">
-          <div class="mailServerBottom">
-            <span>메일서버주소</span>
-            <input
-              type="text"
-              bind:value={remoteMailServer.ip}
-              placeholder="아이피"
-            />
-            <span>메일서버포트</span>
-            <input
-              type="text"
-              bind:value={remoteMailServer.port}
-              placeholder="포트"
-            />
-          </div>
-          <div class="mailServerBottom">
-            <span>아이디</span>
-            <input
-              type="text"
-              bind:value={remoteMailServer.id}
-              placeholder="아이디"
-            />
-            <span>패스워드</span>
-             bind:value={remoteMailServer.password} -->
-  <!-- <input type="password" placeholder="패스워드" />
-          </div>
-        </div>
-      </div>
-      <div class="buttonContainer formControl">
-        <label></label>
-        <button
-          type="button"
-          class="btn btnBlue btnSave"
-          on:click={setSystemBasicSetupData}
-        >
-          저장하기
-        </button>
-      </div>
+    <div class="inputRow">
+      <label>메일서버 주소</label>
+      <input
+        type="text"
+        bind:value={remoteMailServer.ip}
+        placeholder="아이피"
+      />
     </div>
-  </div> -->
-
-  <div class="tableCont">
-    <article class="contentArea" style="position: relative; margin-top:40px;">
-      <table class="tableForm">
-        <colgroup>
-          <col style="width:130px;" />
-          <col />
-        </colgroup>
-        <tbody>
-          <tr>
-            <th>서버</th>
-            <td>
-              <div class="td_cont">
-                <div>
-                  <span>IP</span>
-                  <input
-                    type="text"
-                    bind:value={serverIP}
-                    placeholder="000.000.0.00"
-                  />
-                </div>
-                <div>
-                  <span>PORT</span>
-                  <input type="number" bind:value={port} placeholder="PORT" />
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th> 에이전트연결주기</th>
-            <td
-              ><input
-                type="number"
-                bind:value={agentConnectInterval}
-                placeholder="에이전트연결주기"
-              />
-            </td>
-          </tr>
-          <tr>
-            <th>에이전트연결주기</th>
-            <td>
-              <div class="second_row">
-                <div>
-                  <span>상</span>
-                  <input type="number" placeholder="3" disabled />
-                </div>
-                <div>
-                  <span>중</span>
-                  <input type="number" placeholder="2" disabled />
-                </div>
-                <div>
-                  <span>하</span>
-                  <input type="number" placeholder="1" disabled />
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>메일서버설정</th>
-            <td>
-              <div class="last_cont">
-                <div class="mailServerBottom">
-                  <span>메일서버주소</span>
-                  <input
-                    type="text"
-                    bind:value={remoteMailServer.ip}
-                    placeholder="아이피"
-                  />
-                </div>
-                <div class="mailServerBottom">
-                  <span>메일서버포트</span>
-                  <input
-                    type="text"
-                    bind:value={remoteMailServer.port}
-                    placeholder="포트"
-                  />
-                </div>
-
-                <div class="mailServerBottom">
-                  <span>아이디</span>
-                  <input
-                    type="text"
-                    bind:value={remoteMailServer.id}
-                    placeholder="아이디"
-                  />
-                </div>
-                <div class="mailServerBottom">
-                  <span>패스워드</span>
-                  <!-- bind:value={remoteMailServer.password} -->
-                  <input type="password" placeholder="패스워드" />
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr> </tr>
-        </tbody>
-      </table>
-      <div style="display: flex; width:100%; justify-content:center;">
-        <button
-          type="button"
-          class="btn btnBlue btnSave"
-          style="margin-top: 15px;"
-          on:click={setSystemBasicSetupData}
-        >
-          저장하기
-        </button>
-      </div>
-    </article>
+    <div class="inputRow">
+      <label>메일서버 포트</label>
+      <input
+        type="text"
+        bind:value={remoteMailServer.port}
+        placeholder="포트"
+      />
+    </div>
+    <div class="inputRow">
+      <label>아이디</label>
+      <input
+        type="text"
+        bind:value={remoteMailServer.id}
+        placeholder="아이디"
+      />
+    </div>
+    <div class="inputRow">
+      <label>패스워드</label>
+      <input type="password" placeholder="패스워드" />
+    </div>
+    <div class="buttonContainer">
+      <button
+        type="button"
+        class="btn btnBlue btnSave"
+        on:click={setSystemBasicSetupData}
+      >
+        저장하기
+      </button>
+    </div>
   </div>
 </main>
 
 <style>
-  .tableForm input {
-    font-size: 16px;
-    height: 50px;
+  .table-container {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    margin-top: 10px;
+    height: 80vh;
   }
-  .contentArea {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    height: fit-content;
-    margin-top: 40px;
-    margin-left: 45px;
-    width: fit-content;
-  }
-  .tableForm tr:not(:last-child) th,
-  .tableForm tr:not(:last-child) td {
-    padding: 15px;
-  }
-  .td_cont span input {
-    font-size: 16px;
-  }
-  .second_row input {
-    width: 60px;
-    align-items: center;
-    font-size: 16px;
-  }
-  .last_cont {
+
+  .formContainer {
+    max-width: 50%;
     display: flex;
     flex-direction: column;
-    padding: 10px;
-  }
-  .second_row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-  }
-  .td_cont div,
-  .second_row div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-    font-size: 16px;
-  }
-  .td_cont {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    font-size: 16px;
-  }
-  th {
-    background-color: #ffffff;
-    color: #333;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .tableForm {
-    width: 42%;
-    /* height: 650px; */
-  }
-  td,
-  th {
-    font-size: 16px;
-  }
-  tr {
-    border: 1px solid #f2f2f2;
-  }
-  td {
-    margin-left: 10px;
-  }
-  /****************************************/
-  .table-container {
-    /* background-color: #ffffff; */
-    display: flex;
-
-    border-radius: 10px;
-    /* width: 100%; */
-    height: calc(100vh - 134px);
-  }
-  .tableCont {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
+    gap: 20px;
     margin-top: 10px;
   }
 
-  .table-container_1 {
-    margin: 20px 0;
-    border-radius: 10px;
-    padding-right: 20px;
-    /* width: 100%; */
-  }
-
-  .formControlWrap {
-    margin-bottom: 20px;
-  }
-
-  .formControl {
+  .inputRow {
     display: flex;
     align-items: center;
-  }
-
-  .formControl label {
-    width: 150px;
-    margin-right: 20px;
-    font-weight: bold;
-  }
-
-  .formControl input {
-    width: 30%;
-    padding: 8px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-
-  .riskLevelGroup {
-    display: flex;
     gap: 20px;
-    width: 100%;
-    align-items: center;
+  }
+
+  .inputRow label {
+    width: 150px;
+    font-weight: 600;
+    font-size: 14px;
     margin-left: 20px;
   }
 
-  .formControl .riskLevelGroup input {
+  .inputRow input {
+    flex: 1;
+    width: 100%;
+    padding: 17px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  /* 위험도 Section Styling */
+  .riskLevels {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .riskLevelItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .riskLevelItem label {
+    width: 60px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .riskLevelItem input {
     width: 50%;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
     border: 1px solid #cccccc;
     border-radius: 5px;
-  }
-
-  .inputGroup {
-    display: flex;
-  }
-
-  .inputWithLabel {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    gap: 10px;
-    align-items: center;
-  }
-  .inputWithLabel input {
-    width: 80%;
-  }
-
-  .inputWithLabel span {
-    /* font-weight: bold; */
-    font-size: 14px;
-  }
-
-  .mailServerBottom {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: center;
-    font-size: 16px;
-  }
-
-  .mailServerBottom input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-
-  .mailServerBottom span {
-    width: 100px;
-    /* font-weight: bold; */
     font-size: 16px;
   }
 
   .buttonContainer {
-    text-align: center;
-    margin-top: 30px;
     display: flex;
-    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
   }
 
   .btnSave {
-    width: 200px;
+    padding: 15px 40px;
     background-color: #0067ff;
     color: #fff;
-    padding: 12px 30px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -471,7 +237,6 @@
   }
 
   .btnSave:hover {
-    color: #fff;
     background-color: #4989ff;
   }
 </style>

@@ -178,11 +178,6 @@
   };
 
   $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
-
-  $: {
-    console.log("data:", data);
-    console.log("currentPageNum:", currentPageNum);
-  }
 </script>
 
 <section class="content">

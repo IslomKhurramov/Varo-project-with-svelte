@@ -344,7 +344,7 @@
                 <td class="text-center" style="font-size: 16px;">
                   <div class="flex gap-4" style="justify-content: center;">
                     <select
-                      style="font-size: 16px; width: 70px;"
+                      style="font-size: 16px; width: 100px;"
                       class="xs"
                       on:click={(e) => e.stopPropagation()}
                       on:change={(e) => {

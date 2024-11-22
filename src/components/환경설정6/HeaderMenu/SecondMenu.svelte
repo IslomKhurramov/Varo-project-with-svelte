@@ -19,6 +19,7 @@
     userRoleTypeIndex = data.userInfo.user_roletype_role_index;
   });
   let user_roletype_role_index = decryptData(userRoleTypeIndex);
+
   // ///////////////////////////////////////////////////////////////////////
 
   let projectArray = [];
@@ -127,9 +128,9 @@
             <colgroup>
               <col style="width:3%;" />
               <col style="width:30%;" />
-              <col style="width:10%;" />
+              <col style="width:7%;" />
               <col style="width:6%;" />
-              <col style="width:10%;" />
+              <col style="width:18%;" />
               <col style="width:5%;" />
             </colgroup>
             <thead>

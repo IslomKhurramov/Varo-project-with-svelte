@@ -50,146 +50,89 @@
   }
 </script>
 
-<main class="table-container" style="margin: 0; border-radius: 10px">
-  <article class="contentArea" style="position: relative; width:33%;">
-    <table class="tableForm">
-      <colgroup>
-        <col style="width:130px;" />
-        <col />
-      </colgroup>
-      <tbody>
-        <tr>
-          <th>현재비밀번호</th>
-          <td>
-            <div class="inputGroup">
-              <input
-                type="password"
-                placeholder="현재비밀번호"
-                bind:value={currentPassword}
-              />
-            </div></td
-          >
-        </tr>
-        <tr>
-          <th>비밀번호변경</th>
-          <td>
-            <div class="inputGroup">
-              <input
-                type="password"
-                placeholder="비밀번호변경#1"
-                bind:value={newPassword1}
-              />
-            </div></td
-          >
-        </tr>
-        <tr>
-          <th>비밀번호변경</th>
-          <td>
-            <div class="inputGroup">
-              <input
-                type="password"
-                placeholder="비밀번호변경#2"
-                bind:value={newPassword2}
-              />
-            </div></td
-          >
-        </tr>
-
-        <tr>
-          <th></th>
-          <td>
-            <div class="formControl">
-              <label></label>
-              <div class="inputGroup">
-                <div class="buttons">
-                  <div class="buttonGroup">
-                    <button class="btn modify-btn" on:click={handleEdit}>
-                      수정하기
-                    </button>
-                    <button
-                      class="btn close-btn"
-                      on:click={() => dispatch("close")}
-                    >
-                      다시 놓기
-                    </button>
-                    <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </article>
+<main class="table-container">
+  <div class="formContainer">
+    <div class="inputRow">
+      <label>현재비밀번호</label>
+      <input
+        type="password"
+        placeholder="현재비밀번호"
+        bind:value={currentPassword}
+      />
+    </div>
+    <div class="inputRow">
+      <label>비밀번호변경</label>
+      <input
+        type="password"
+        placeholder="비밀번호변경#1"
+        bind:value={newPassword1}
+      />
+    </div>
+    <div class="inputRow">
+      <label>비밀번호변경</label>
+      <input
+        type="password"
+        placeholder="비밀번호변경#2"
+        bind:value={newPassword2}
+      />
+    </div>
+    <div class="inputRow">
+      <label></label>
+      <div class="inputGroup">
+        <div class="buttons">
+          <div class="buttonGroup">
+            <button class="btn modify-btn" on:click={handleEdit}>
+              수정하기
+            </button>
+            <button class="btn close-btn" on:click={() => dispatch("close")}>
+              다시 놓기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <style>
   .table-container {
-    width: 100%;
-    height: calc(100vh - 280px);
-    background-color: #ffffff;
-  }
-  .contentArea {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    height: fit-content;
-    margin-left: 20px;
-    margin-top: 10px;
-    width: fit-content;
-  }
-  th,
-  td {
-    font-size: 16px;
-  }
-  .table-container_1 {
-    margin: 20px 0;
+    padding: 20px;
     border-radius: 10px;
-    width: 50%;
+    background-color: #fff;
+    margin-top: 10px;
+    height: 80vh;
   }
 
-  .formControlWrap {
+  .formContainer {
+    max-width: 50%;
     display: flex;
     flex-direction: column;
-    row-gap: 13px;
-  }
-
-  .formControl {
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .formControl label {
-    width: 150px;
-    margin-right: 20px;
-    font-weight: bold;
+    gap: 40px;
     margin-top: 10px;
   }
 
-  .formControl input {
-    width: 50%;
+  .inputRow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .inputRow label {
+    width: 150px;
+    font-weight: 600;
+    font-size: 16px;
+    margin-left: 20px;
+  }
+
+  .inputRow input {
     flex: 1;
-    padding: 8px;
+    width: 100%;
+    padding: 17px;
     border: 1px solid #cccccc;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-
-  .formControl input:focus {
-    border-color: #0067ff;
-    outline: none;
-  }
-
-  .inputGroup {
-    display: flex;
-    flex: 1;
-    gap: 10px;
-  }
-  .inputGroup input {
-    flex: 1;
     font-size: 16px;
-    margin: 5px;
-    height: 50px;
   }
+
   .buttons {
     width: 100%;
     display: flex;
@@ -230,6 +173,16 @@
   .close-btn:hover {
     background-color: #1976d2;
   }
+
+  .delete-btn {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .delete-btn:hover {
+    background-color: #e53935;
+  }
+
   .btn-info {
     background-color: #17a2b8;
     color: white;

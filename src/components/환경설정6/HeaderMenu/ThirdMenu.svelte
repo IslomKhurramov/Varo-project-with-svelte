@@ -127,9 +127,9 @@
             <colgroup>
               <col style="width:3%;" />
               <col style="width:30%;" />
-              <col style="width:10%;" />
+              <col style="width:7%;" />
               <col style="width:6%;" />
-              <col style="width:10%;" />
+              <col style="width:15%;" />
               <col style="width:5%;" />
             </colgroup>
             <thead>

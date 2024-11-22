@@ -86,161 +86,120 @@
   function handleList() {
     dispatch("close");
   }
-
 </script>
 
-<main class="table-container" style="margin: 0; border-radius: 10px">
-  <article class="contentArea" style="position: relative; width:33%;">
-    <table class="tableForm">
-      <colgroup>
-        <col style="width:130px;" />
-        <col />
-      </colgroup>
-      <tbody>
-        <tr>
-          <th> 사용자이름 </th>
-          <td>
-            <div class="inputGroup">
-              <input
-                type="text"
-                placeholder={selectedData?.hostname}
-                bind:value={default_user_name}
-              />
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th> 이메일(변경불가) </th>
-
-          <td>
-            <div class="inputGroup">
-              <input
-                type="email"
-                placeholder={selectedData?.itemTitle}
-                on:input={handleInputChange}
-              />
-              <button
-                style="height: 49px;"
-                class="btn close-btn"
-                on:click={findUser}
-              >
-                이메일 중복확인
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th> 부서 </th>
-
-          <td>
-            <div class="inputGroup">
-              <input
-                type="number"
-                placeholder={selectedData?.itemResult}
-                bind:value={default_user_level}
-              />
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th>유저권한</th>
-          <td>
-            <div class="inputGroup">
-              <input
-                type="text"
-                placeholder={selectedData?.itemCriteria}
-                bind:value={default_user_depart}
-              />
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th></th>
-          <td>
-            <div class="formControl">
-              <label></label>
-              <div class="inputGroup">
-                <div class="buttons">
-                  <div class="buttonGroup">
-                    <button
-                      class="btn modify-btn"
-                      on:click={() => {
-                        if (selectedData && selectedData.user_index) {
-                          handleUserEdit(selectedData.user_index);
-                        } else {
-                          errorAlert("변경할 사용자를 선택하지 않았습니다.");
-                        }
-                      }}>수정하기</button
-                    >
-                    <button class="btn close-btn">다시 놓기</button>
-                    <button
-                      class="btn delete-btn"
-                      on:click={() => {
-                        if (selectedData && selectedData.user_index) {
-                          setUserDeleteData(selectedData.user_index);
-                        } else {
-                          errorAlert("삭제할 사용자를 선택하지 않았습니다.");
-                        }
-                      }}>삭제하기</button
-                    >
-                    <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </article>
+<main class="table-container">
+  <div class="formContainer">
+    <div class="inputRow">
+      <label>사용자이름</label>
+      <input
+        type="text"
+        placeholder={selectedData?.hostname}
+        bind:value={default_user_name}
+      />
+    </div>
+    <div class="inputRow">
+      <label>이메일(변경불가)</label>
+      <input
+        type="email"
+        placeholder={selectedData?.itemTitle}
+        on:input={handleInputChange}
+      />
+      <button style="height: 49px;" class="btn close-btn" on:click={findUser}>
+        이메일 중복확인
+      </button>
+    </div>
+    <div class="inputRow">
+      <label>부서</label>
+      <input
+        type="text"
+        placeholder={selectedData?.itemCriteria}
+        bind:value={default_user_depart}
+      />
+    </div>
+    <div class="inputRow">
+      <label>유저권한</label>
+      <input
+        type="number"
+        placeholder={selectedData?.itemResult}
+        bind:value={default_user_level}
+      />
+    </div>
+    <div class="inputRow">
+      <label></label>
+      <div class="buttons">
+        <div class="buttonGroup">
+          <button
+            class="btn modify-btn"
+            on:click={() => {
+              if (selectedData && selectedData.user_index) {
+                handleUserEdit(selectedData.user_index);
+              } else {
+                errorAlert("변경할 사용자를 선택하지 않았습니다.");
+              }
+            }}>수정하기</button
+          >
+          <!-- <button class="btn close-btn">다시 놓기</button> -->
+          <button
+            class="btn delete-btn"
+            on:click={() => {
+              if (selectedData && selectedData.user_index) {
+                setUserDeleteData(selectedData.user_index);
+              } else {
+                errorAlert("삭제할 사용자를 선택하지 않았습니다.");
+              }
+            }}>삭제하기</button
+          >
+          <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <style>
-  .contentArea {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    height: fit-content;
-    margin-left: 20px;
-    margin-top: 10px;
-    width: fit-content;
-  }
   .table-container {
-    width: 100%;
-    height: calc(100vh - 280px);
-    background-color: #ffffff;
-  }
-  th,
-  td {
-    font-size: 16px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    margin-top: 10px;
+    height: 80vh;
   }
 
-  .formControl {
+  .formContainer {
+    max-width: 50%;
     display: flex;
-    align-items: flex-start;
-  }
-
-  .formControl label {
-    width: 150px;
-    margin-right: 20px;
-    font-weight: bold;
+    flex-direction: column;
+    gap: 40px;
     margin-top: 10px;
   }
 
-  .inputGroup {
+  .inputRow {
     display: flex;
-    flex: 1;
-    gap: 10px;
     align-items: center;
+    gap: 20px;
   }
 
-  .inputGroup input {
-    flex: 1;
+  .inputRow label {
+    width: 150px;
+    font-weight: 600;
     font-size: 16px;
-    margin: 5px;
-    height: 50px;
+    margin-left: 20px;
   }
+
+  .inputRow input {
+    flex: 1;
+    width: 100%;
+    padding: 17px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
   .buttons {
     width: 100%;
     display: flex;
+    margin-left: 35px;
   }
 
   .buttonGroup {

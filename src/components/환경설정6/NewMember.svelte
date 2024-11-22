@@ -8,8 +8,8 @@
   let email = "";
   let password = "";
   let department = "";
-  let userRole = 1; // Default role type
-  let find_user = ""; // For checking duplicate emails
+  let userRole = 1;
+  let find_user = "";
   let errorMessage = "";
 
   const dispatch = createEventDispatcher();
@@ -33,7 +33,6 @@
     }
   };
 
-  // Register a new user
   const registerUser = async () => {
     try {
       if (!name || !email || !password || !department) {
@@ -43,7 +42,7 @@
       const response = await register(name, email, password, department);
       if (response.RESULT === "OK") {
         await successAlert("회원가입이 성공적으로 완료되었습니다.");
-        handleList(); // Close the form after successful registration
+        handleList();
       } else {
         throw new Error("회원가입에 실패했습니다.");
       }
@@ -61,28 +60,27 @@
 <main class="table-container" style="border-radius: 10px;">
   <div class="table-container_1">
     <div class="formControlWrap">
-      <!-- Name -->
       <div class="formControl">
         <label>사용자 이름</label>
         <div class="inputGroup">
           <input type="text" placeholder="사용자 이름" bind:value={name} />
         </div>
       </div>
-      <!-- Password -->
+
       <div class="formControl">
         <label>비밀번호</label>
         <div class="inputGroup">
           <input type="password" placeholder="비밀번호" bind:value={password} />
         </div>
       </div>
-      <!-- Department -->
+
       <div class="formControl">
         <label>부서</label>
         <div class="inputGroup">
           <input type="text" placeholder="부서" bind:value={department} />
         </div>
       </div>
-      <!-- Email -->
+
       <div class="formControl">
         <label>이메일</label>
         <div class="inputGroup">
@@ -96,7 +94,6 @@
           </button>
         </div>
       </div>
-      <!-- Actions -->
       <div class="formControl">
         <label></label>
         <div class="inputGroup">
@@ -143,7 +140,7 @@
   .formControlWrap {
     display: flex;
     flex-direction: column;
-    row-gap: 13px;
+    row-gap: 40px;
   }
 
   .formControl {
@@ -165,6 +162,13 @@
     border: 1px solid #cccccc;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+  }
+
+  .formControlWrap input {
+    border: 1px solid #cccccc;
+    height: 60px;
+    font-size: 15px;
+    color: #101010;
   }
 
   .formControl input:focus {

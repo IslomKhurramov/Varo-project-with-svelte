@@ -107,11 +107,11 @@
   );
 
   // Fetch the checklist data once
-  onMount(() => {
-    if (!allChecklistArray.length) {
-      fetchChecklistData();
-    }
-  });
+  // onMount(() => {
+  //   if (!allChecklistArray.length) {
+  //     fetchChecklistData();
+  //   }
+  // });
   /*****************************************************************************/
 
   async function createNewChecklistGroup() {
@@ -339,9 +339,14 @@
 
   onMount(async () => {
     try {
-      await fetchChecklistData(); // Wait for the data to be fetched
+      const responseERR = await fetchChecklistData(); // Wait for the data to be fetched
+      console.log("444444", responseERR);
+
       filterData(); // Run the filter after the data is fetched
-    } catch (error) {}
+    } catch (error) {
+      console.log("error part", error);
+      errorAlert(error?.message);
+    }
   });
   /************************************************************************/
   // Run filterData every time `selectedCategory` or `allChecklistArray` updates
@@ -509,7 +514,7 @@
         class="prMenuList"
         style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
       >
-        {#each [...allChecklistArray].sort((a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate)) as checkList (checkList.ccg_index)}
+        {#each [...allChecklistArray].sort((a, b) => new Date(b.ccg_createdate) - new Date(a.ccg_createdate)) as checkList (checkList?.ccg_index)}
           <li class={activeMenu === checkList ? "active" : ""}>
             <a
               href="#"

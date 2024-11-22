@@ -165,7 +165,7 @@
   /***********************************************************/
   const addNewGroup = async () => {
     if (!newGroupName.trim()) {
-      alert("Group name cannot be empty.");
+      errorAlert("그룹 이름은 비워둘 수 없습니다.");
       return;
     }
 
@@ -280,7 +280,7 @@
   /**********************************************************************/
   async function saveAssetToExcel() {
     if (selectedUUID.length === 0) {
-      alert("No assets selected.");
+      errorAlert("선택된 자산이 없습니다.");
       return;
     }
 
@@ -322,7 +322,7 @@
   /******************************************************************************/
   async function downloadReport() {
     if (selectedUUID.length === 0) {
-      alert("No assets selected.");
+      errorAlert("선택된 자산이 없습니다.");
       return;
     }
 
@@ -365,7 +365,7 @@
   /*************************************************************************/
   async function downloadTotalReport() {
     if (selectedUUID.length === 0) {
-      alert("No assets selected.");
+      errorAlert("선택된 자산이 없습니다.");
       return;
     }
 
@@ -551,9 +551,9 @@
                     class="editable_input"
                   />
                   <div class="modal-buttons">
-                    <button class="primary-button" on:click={addNewGroup}
-                      >저장</button
-                    >
+                    <button class="primary-button" on:click={addNewGroup}>
+                      저장하기
+                    </button>
                     <button class="secondary-button" on:click={cancelNewGroup}
                       >취소</button
                     >

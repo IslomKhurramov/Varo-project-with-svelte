@@ -213,9 +213,9 @@
             </div>
           </div>
           <div class="flex align-center btnWrap gap-6">
-            <button class="btn w140 btnPrimaryFontGray" type="submit"
-              >저장</button
-            >
+            <button class="btn w140 btnPrimaryFontGray" type="submit">
+              저장하기
+            </button>
 
             <button
               class="btn w140 btnPrimaryFontGray"

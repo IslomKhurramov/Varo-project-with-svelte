@@ -368,16 +368,12 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
     const response = await axios.post(
       `${serverApi}/api/setAssetForNewGroup/`,
       formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      },
+
       {
         withCredentials: true,
       },
     );
-
+    console.log("response.......", response);
     if (response.data.RESULT === "OK") {
       return { success: true };
     } else {

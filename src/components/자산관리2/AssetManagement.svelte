@@ -118,6 +118,7 @@
       alert("Please select a target asset group.");
       return; // Early return if validation fails
     }
+    console.log("addingAssetForm", addingAssetForm);
 
     try {
       const response = await setAssetForNewGroup(addingAssetForm);

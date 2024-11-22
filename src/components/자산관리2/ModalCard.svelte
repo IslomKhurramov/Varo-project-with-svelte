@@ -357,9 +357,9 @@
       {/each}
     </article>
     <div class="button-group">
-      <button class="btn submit" type="submit">Submit</button>
+      <button class="btn submit" type="submit">저장하기</button>
       <button class="btn cancel" type="button" on:click|preventDefault={cancel}>
-        Cancel
+        취소
       </button>
     </div>
   </div>

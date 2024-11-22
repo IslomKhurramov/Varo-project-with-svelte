@@ -267,13 +267,14 @@
   /**************************FETCHGETTARGETLIST******************/
   async function fetchTargetList() {
     try {
+      console.log("Fetching target list for plan_index:", plan_index);
       const response = await getTargetList(plan_index);
 
       if (response) {
         targetList.set(response.CODE);
       }
 
-      console.log("fetched data", $targetList);
+      console.log("fetched targetList", $targetList);
     } catch (err) {
       console.error(`Error fetching data: ${err.message}`);
     }
@@ -420,6 +421,7 @@
     style="max-height:63vh; overflow-y: auto; overflow-x:hidden "
   >
     <div class="tableListWrap">
+      <p style="margin-bottom: 5px;">점검 프로그램 다운로드</p>
       <table class="tableList hdBorder">
         <colgroup>
           <col style="width:60px;" />
@@ -547,22 +549,29 @@
   <div
     style="display: flex; flex-direction:row; width:100%; justify-content:space-between; align-items:center"
   >
-    <div class="downloadSection">
-      <select class="targetDropdown" bind:value={target}>
-        <option value="점검대상" disabled selected>점검대상</option>
-        {#each $targetList as target}
-          <option value={target.cct_index__cct_target}>
-            {target.cct_index__cct_target}
-          </option>
-        {/each}
-      </select>
-      <button
-        style="width: 120px;"
-        class="btn btnPrimary downloadBtn"
-        on:click={manualDownload}
-      >
-        다운로드
-      </button>
+    <div style="display: flex; flex-direction:column; gap:5px; width:90%;">
+      <p>인터뷰/수작업용 엑셀 다운로드</p>
+      <div class="downloadSection">
+        <select class="targetDropdown" bind:value={target}>
+          <option value="점검대상" disabled selected>점검대상</option>
+          {#if $targetList.lengt > 0}
+            {#each $targetList as target}
+              <option value={target.cct_index__cct_target}>
+                {target.cct_index__cct_target}
+              </option>
+            {/each}
+          {:else}
+            <option value="">프로젝트를 선택해주세요</option>
+          {/if}
+        </select>
+        <button
+          style="width: 180px;"
+          class="btn btnPrimary downloadBtn"
+          on:click={manualDownload}
+        >
+          다운로드
+        </button>
+      </div>
     </div>
     <select bind:value={listCount}>
       <option value="15">15개 보기</option>
@@ -585,7 +594,7 @@
     display: flex;
     flex-direction: row;
     gap: 12px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     align-items: center;
     background-color: #f8f9fa; /* Light background */
     border: 1px solid #e3e3e3; /* Subtle border */

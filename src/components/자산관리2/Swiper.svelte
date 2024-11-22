@@ -105,8 +105,7 @@
         throw new Error();
       }
     } catch (error) {
-      errorMessage = `Failed to update asset information: ${error.message}`;
-      successMessage = "";
+      console.log(error.message);
     }
   };
   /******************************************************/
@@ -269,11 +268,13 @@
   /*****************************************************************/
   /******************************************************************/
   async function assetGroupChange() {
-    if (uuid_asset === "") {
-      errorAlert("자산을 선택해주세요");
-      return; // Exit if no asset is selected
+    if (!asset_group_index) {
+      errorAlert("어느 그룹에서 변경할지 선택해주세요");
+      return;
     }
-
+    console.log("uuid_asset", uuid_asset);
+    console.log("asset_group_index", asset_group_index);
+    console.log("selectedGroupIndex", selectedGroupIndex);
     try {
       const response = await setAssetGroupChange(
         uuid_asset,
@@ -540,11 +541,12 @@
 
               <select
                 id="group-select"
-                style="margin-top: 15px;"
+                style="margin-top: 15px;height: 53px;"
                 on:change={handleGroupChange}
               >
                 {#each $allAssetGroupList as group}
                   <option
+                    style="height: 53px;"
                     value={group.asg_index}
                     selected={group.asg_index == selectedGroupIndex}
                   >
@@ -554,9 +556,9 @@
               </select>
 
               <div class="modal-buttons">
-                <button class="primary-button" on:click={assetGroupChange}
-                  >저장</button
-                >
+                <button class="primary-button" on:click={assetGroupChange}>
+                  저장하기
+                </button>
                 <button
                   class="secondary-button"
                   on:click={() => (showModal = false)}>취소</button
@@ -571,6 +573,9 @@
 </main>
 
 <style>
+  .group-select option {
+    height: 53px;
+  }
   .swiper-container {
     position: sticky;
     top: 10px;

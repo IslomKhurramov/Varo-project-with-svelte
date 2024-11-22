@@ -221,7 +221,7 @@
                 class="text-center"
                 style="word-break: normal; white-space: pre-wrap; overflow-wrap: break-word;"
               >
-                {data.ccg_support_part.replace(/\|/g, ",")}
+                {data?.ccg_support_part?.replace(/\|/g, ",")}
               </td>
 
               <td class="text-center">{formatDate(data.ccg_createdate)}</td>

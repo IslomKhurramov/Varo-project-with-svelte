@@ -185,7 +185,7 @@
           on:click={() => submitNewSystemCommand("JSON", jsonFiles)}
           disabled={!selectedPlan || !jsonFiles.length}
         >
-          저장
+          저장하기
         </button>
       </div>
     </div>
@@ -225,7 +225,7 @@
           on:click={() => submitNewSystemCommand("TXT", txtFiles)}
           disabled={!selectedPlan || !txtFiles.length}
         >
-          저장
+          저장하기
         </button>
       </div>
     </div>
@@ -265,7 +265,7 @@
           on:click={() => submitNewSystemCommand("EXCEL", excelFiles)}
           disabled={!selectedPlan || !excelFiles.length}
         >
-          저장
+          저장하기
         </button>
       </div>
     </div>

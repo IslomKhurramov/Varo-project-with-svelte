@@ -1054,7 +1054,7 @@
 
 <style>
   .modal-open-wrap table ul {
-    width: 270px;
+    width: 250px;
   }
   .modal-open-wrap table th {
     vertical-align: middle;

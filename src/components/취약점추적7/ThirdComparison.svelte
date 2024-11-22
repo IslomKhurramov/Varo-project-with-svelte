@@ -693,7 +693,7 @@
         on:swiper={(swiper) => console.log(swiper)}
       >
         {#if secondTable}
-          {#each $comparedVulnsTarget1 as vuln, index}
+          {#each $comparedVulnsTarget2 as vuln, index}
             <SwiperSlide>
               <p class="header_title">
                 [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
@@ -895,7 +895,7 @@
             </SwiperSlide>
           {/each}
         {:else}
-          {#each $comparedVulnsTarget2 as vuln, index}
+          {#each $comparedVulnsTarget1 as vuln, index}
             <SwiperSlide>
               <p class="header_title">
                 [{vuln.ast_uuid__ass_uuid__ast_hostname}] [{vuln.ccr_item_no__ccc_item_no}]
@@ -1135,7 +1135,7 @@
 
 <style>
   .modal-open-wrap table ul {
-    width: 270px;
+    width: 250px;
   }
   .modal-open-wrap .iconCard {
     width: 255px;

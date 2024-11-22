@@ -576,7 +576,7 @@
     vertical-align: middle;
   }
   .modal-open-wrap table ul {
-    width: 270px;
+    width: 250px;
   }
   .modal-open-wrap .iconCard {
     width: 255px;

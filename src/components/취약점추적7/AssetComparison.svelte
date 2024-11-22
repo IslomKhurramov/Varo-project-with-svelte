@@ -1123,7 +1123,7 @@
     background-color: rgba(242, 242, 242, 1);
   }
   .modal-open-wrap table ul {
-    width: 270px;
+    width: 250px;
   }
   .modal-open-wrap .iconCard {
     width: 255px;

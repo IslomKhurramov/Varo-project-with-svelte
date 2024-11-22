@@ -187,8 +187,9 @@
 
   let selectedGroupIndex = "";
   async function assetGroupChange() {
-    if (uuid_asset === "") {
-      errorAlert("자산을 선택해주세요");
+    if (!asset_group_index) {
+      errorAlert("어느 그룹에서 변경할지 선택해주세요");
+      return;
     }
     try {
       const response = await setAssetGroupChange(

@@ -51,7 +51,7 @@
   /*************************GetAllAssetList*****************************************/
   onMount(async () => {
     try {
-      assetGroupList();
+      await assetGroupList();
     } catch (err) {
       await errorAlert(err?.message);
     }
@@ -69,8 +69,8 @@
       loading = false;
     }
   }
-  onMount(() => {
-    assetGroupList(); // Only fetch asset groups
+  onMount(async () => {
+    await assetGroupList(); // Only fetch asset groups
     // Don’t call filterAssets here, just populate with initial data
     if ($allAssetList && $allAssetList.length > 0) {
       filteredAssets = [...$allAssetList]; // Set initial assets if available
@@ -147,7 +147,20 @@
     }
     activeMenu = selectedGroup;
   }
-
+  let selectedGroupName = "";
+  function selectPage(page, group) {
+    currentPage = page;
+    if (group === "전체") {
+      activeMenu = "전체";
+      selectedGroup = "전체"; // Explicitly set "전체" for filtering and dropdown
+    } else {
+      activeMenu = group.asg_index; // Correctly set the active menu
+      selectedGroup = group.asg_index; // Use group index for filtering
+      selectedGroupName = group.asg_title;
+    }
+    showSwiperComponent = false;
+    filterAssets(); // Apply filtering
+  }
   function resetFilters() {
     // Reset filters to their default values
     assetHost = "전체";
@@ -176,28 +189,35 @@
 
         // Create the new group object
         const newGroup = {
-          asg_index: response.new_asg_index,
+          // asg_index: response.new_asg_index,
           asg_title: newGroupName,
         };
 
+        console.log("response", response);
         // Force a reactivity update by using `update` and add the new group
         allAssetGroupList.update((currentGroups) => {
           return [...currentGroups, newGroup]; // Reassign with a new array
         });
-
         // Set the selectedGroup to the new group immediately
-        selectedGroup = newGroup.asg_index;
-        activeMenu = newGroup.asg_index;
-
+        // selectedGroup = newGroup.asg_index;
+        // activeMenu = newGroup.asg_index;
+        await assetGroupList();
         // Optionally, call `selectPage` or any method to show the new group in the UI
-        selectPage(AssetCardsPage, newGroup);
+        const lastCreatedGroup =
+          $allAssetGroupList[$allAssetGroupList.length - 1];
+        if (lastCreatedGroup) {
+          selectedGroup = lastCreatedGroup.asg_index; // Set the selected group to the last created group
+          activeMenu = lastCreatedGroup.asg_index; // Optionally set the active menu to the last created group
 
+          // Optionally, call `selectPage` or any method to show the new group in the UI
+          selectPage(AssetCardsPage, lastCreatedGroup);
+          console.log("lastCreatedGroup:", lastCreatedGroup); // Check if it's set properly
+        }
         // Clear the new group name and hide the input
         newGroupName = "";
         isAddingNewGroup = false;
 
-        // Re-run the `onMount` method or any other update if needed
-        assetGroupList(); // Re-fetch and update the list of asset groups
+        console.log("selectedGroup from function", selectedGroup);
       } else {
         throw new Error("Failed to save group.");
       }
@@ -223,20 +243,6 @@
   /*****************************************/
 
   /************************************************************************/
-  let selectedGroupName = "";
-  function selectPage(page, group) {
-    currentPage = page;
-    if (group === "전체") {
-      activeMenu = "전체";
-      selectedGroup = "전체"; // Explicitly set "전체" for filtering and dropdown
-    } else {
-      activeMenu = group; // Correctly set the active menu
-      selectedGroup = group.asg_index; // Use group index for filtering
-      selectedGroupName = group.asg_title;
-    }
-    showSwiperComponent = false;
-    filterAssets(); // Apply filtering
-  }
 
   /**********************************************************************/
   function toggleGetLogHeader() {
@@ -506,10 +512,10 @@
           </li>
 
           {#each [...$allAssetGroupList].sort((a, b) => b.asg_count - a.asg_count) as group}
-            <li class={activeMenu === group ? "active" : ""}>
+            <li class={activeMenu === group.asg_index ? "active" : ""}>
               <a
                 on:click={() => {
-                  activeMenu = group;
+                  activeMenu = group.asg_index; // Use `asg_index` for comparison
                   selectPage(AssetCardsPage, group);
                 }}
                 title="{group.asg_title}({group.asg_count})"
@@ -772,7 +778,7 @@
   .editable_input {
     height: 40px;
     width: 360px;
-    margin-bottom: 50px;
+    margin-bottom: 27px;
   }
   .modal-buttons {
     display: flex;

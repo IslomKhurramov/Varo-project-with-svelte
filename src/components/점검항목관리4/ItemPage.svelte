@@ -226,11 +226,7 @@
 
               <td class="text-center">{formatDate(data.ccg_createdate)}</td>
               <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td
-                class="text-center delete-column"
-                style="display: flex; justify-content: center"
-                on:click|stopPropagation
-              >
+              <td class="text-center delete-column" on:click|stopPropagation>
                 <!-- Show the button but make it invisible if not needed -->
                 <button
                   class="btn btnRed"
@@ -412,6 +408,23 @@
 </div>
 
 <style>
+  td.delete-column {
+    position: relative;
+    text-align: center; /* Centers horizontally */
+    vertical-align: middle; /* Centers vertically */
+    line-height: normal; /* Ensures line height doesn't affect centering */
+  }
+
+  td.delete-column button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(
+      -50%,
+      -50%
+    ); /* Moves the button exactly to the center */
+  }
+
   .no-data-message {
     text-align: center; /* Center the text */
     font-style: italic; /* Italicize the text for emphasis */
@@ -500,7 +513,7 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
   .table1 {
-    height: 300px;
+    max-height: 382px;
   }
 
   .table2 {

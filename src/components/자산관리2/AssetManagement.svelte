@@ -115,7 +115,7 @@
   const handleSubmit = async () => {
     // Validate required fields
     if (!newRegGroupIndex) {
-      alert("Please select a target asset group.");
+      alert("대상 자산 그룹을 선택하세요.");
       return; // Early return if validation fails
     }
     console.log("addingAssetForm", addingAssetForm);

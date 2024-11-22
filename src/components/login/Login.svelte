@@ -22,7 +22,7 @@
   let emailSignUp = "";
   let passwordSignUp = "";
   let confirmPasswordSignUp = "";
-  let department = "";
+  let department = "default";
   let successMessageSignUp = "";
 
   //FUNCTION SighUp
@@ -212,7 +212,7 @@
                 emailSignUp = "";
                 passwordSignUp = "";
                 confirmPasswordSignUp = "";
-                department = "";
+                department = "default";
                 successMessageSignUp = "";
                 tabMenu = "signup";
               }}>회원가입</a

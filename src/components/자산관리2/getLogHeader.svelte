@@ -8,26 +8,30 @@
   <div>
     <select
       id="project"
-      bind:value={search.plan_index}
+      bind:value={search.asset_name}
       on:change={searchDataHandler}
     >
-      <option value="" selected disabled>프로젝트명</option>
-      {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
-        {#each searchFilters?.plans as plan}
-          <option value={plan.ccp_index}>{plan.ccp_title}</option>
+      <option value="" selected>전체</option>
+      {#if searchFilters?.assets && searchFilters?.assets?.length !== 0}
+        {#each searchFilters?.assets as plan}
+          <option value={plan.ast_uuid__ass_uuid}
+            >{plan.ast_uuid__ass_uuid__ast_hostname}</option
+          >
         {/each}
       {/if}
     </select>
-    <select
+    <!-- <select
       id="project"
       bind:value={search.asset_name}
       on:change={searchDataHandler}
     >
       <option value="" selected disabled>자산명</option>
-
-      <option>자산명</option>
-      <option>Plan</option>
-    </select>
+      {#if searchFilters?.asset && searchFilters?.asset?.length !== 0}
+        {#each searchFilters?.asset?.assets as plan}
+          <option {plan.assets}>{plan.assets}</option>
+        {/each}
+      {/if}
+    </select> -->
     <select
       id="target"
       bind:value={search.order_user}

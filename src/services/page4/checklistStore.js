@@ -36,3 +36,4 @@ export async function fetchChecklistData() {
 }
 
 export const filteredChecklistData = writable([]);
+export const slides = writable([]);

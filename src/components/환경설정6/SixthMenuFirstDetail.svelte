@@ -239,7 +239,13 @@
   * {
     font-size: 16px;
   }
-
+  .tableList .hdBorder th,
+  .tableList .hdBorder td {
+    font-size: 16px;
+  }
+  .tableListWrap .hdBorder td {
+    font-size: 16px;
+  }
   .tableWrap_5 {
     background-color: #fff;
     display: flex;

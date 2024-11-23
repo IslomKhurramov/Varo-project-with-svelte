@@ -261,26 +261,79 @@
   $: if (showGetPlanHeader) {
   }
   /**********************************************************************/
-  export let searchFilters;
-  let logData = [];
-  export const search = {
+  let searchFilters;
+  let logData = null;
+  let currentPageNum = 1;
+  // let totalPages;
+  let pageNumbers = [];
+  const itemsPerPage = 15;
+  let search = {
     plan_index: "",
     asset_name: "",
     order_user: "",
     search_start_date: "",
     search_end_date: "",
+    his_type: "asset",
+    page_cnt: "1",
+    list_cnt: itemsPerPage.toString(),
   };
 
   onMount(async () => {
     try {
       searchFilters = await getPlanFilter();
+      await searchDataHandler();
     } catch (err) {
-      errorAlert(err?.message);
+      await errorAlert(err?.message);
     }
   });
-
+  $: console.log("getPlanfilter", searchFilters);
   const searchDataHandler = async () => {
-    logData = await getAuditNLog(search);
+    search.page_cnt = currentPageNum.toString();
+    const response = await getAuditNLog(search);
+    if (response) {
+      logData = response;
+      totalRecords = response.total_rec_cnt;
+      totalPages = Math.ceil(totalRecords / itemsPerPage);
+      updatePageNumbers();
+    }
+  };
+  let totalRecords = 0;
+  let totalPages = 1;
+  let visiblePages = 10; // Number of page buttons to show
+
+  const updatePageNumbers = () => {
+    let start = Math.max(1, currentPageNum - Math.floor(visiblePages / 2));
+    let end = Math.min(totalPages, start + visiblePages - 1);
+
+    // Adjust start if end is maxed out
+    start = Math.max(1, end - visiblePages + 1);
+
+    pageNumbers = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  const goToPage = async (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      currentPageNum = pageNum;
+      await searchDataHandler();
+    }
+  };
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
+  $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
+
+  const resetFiltersLog = async () => {
+    currentPageNum = 1;
+    search = {
+      plan_index: "",
+      asset_name: "",
+      order_user: "",
+      search_start_date: "",
+      search_end_date: "",
+      his_type: "asset",
+      page_cnt: "1",
+      list_cnt: itemsPerPage.toString(),
+    };
+    await searchDataHandler();
   };
 
   /**********************************************************************/
@@ -652,41 +705,50 @@
                 class="btn btnPrimary padding_button"
                 ><img src="./assets/images/reset.png" alt="search" />초기화
               </button>
+            {:else}
+              <button
+                on:click={resetFiltersLog}
+                class="btn btnPrimary padding_button"
+                ><img src="./assets/images/reset.png" alt="search" />초기화
+              </button>
             {/if}
-            <button
-              on:click={saveAssetToExcel}
-              class="btn btnPrimary padding_button"
-              ><img
-                src="./assets/images/icon/download.svg"
-                class="excel-img"
-                alt="download"
-              />엑셀저장</button
-            >
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <button
-              on:click={() => (showModal = true)}
-              class="btn btnPrimary padding_button">등록현황</button
-            >
+            {#if !showGetPlanHeader}
+              <button
+                on:click={saveAssetToExcel}
+                class="btn btnPrimary padding_button"
+                ><img
+                  src="./assets/images/icon/download.svg"
+                  class="excel-img"
+                  alt="download"
+                />엑셀저장</button
+              >
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <button
+                on:click={() => (showModal = true)}
+                class="btn btnPrimary padding_button">등록현황</button
+              >
+
+              <button
+                class="btn btnPrimary padding_button"
+                on:click={downloadReport}>요약보고서</button
+              >
+              <button
+                class="btn btnPrimary padding_button"
+                on:click={downloadTotalReport}
+                >상세보고서
+              </button>
+              {#if showSwiperComponent}
+                <button
+                  class="btn btnPrimary padding_button"
+                  on:click={closeSwiper}>돌아가기</button
+                >
+              {/if}
+            {/if}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <button
               on:click={toggleGetLogHeader}
               class="btn btnPrimary padding_button">이력관리</button
             >
-            <button
-              class="btn btnPrimary padding_button"
-              on:click={downloadReport}>요약보고서</button
-            >
-            <button
-              class="btn btnPrimary padding_button"
-              on:click={downloadTotalReport}
-              >상세보고서
-            </button>
-            {#if showSwiperComponent}
-              <button
-                class="btn btnPrimary padding_button"
-                on:click={closeSwiper}>돌아가기</button
-              >
-            {/if}
           </div>
         </section>
       </article>
@@ -704,6 +766,14 @@
           {updateFilteredAssets}
           bind:showSwiperComponent
           {assetGroupList}
+          {currentPage}
+          {currentPageNum}
+          {pageNumbers}
+          {goToFirstPage}
+          {goToLastPage}
+          {goToPage}
+          {totalPages}
+          {baseIndex}
         />
       {:else}
         <AssetCardsPage

@@ -8,17 +8,18 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import { userData } from "../../../stores/user.store";
-  import { decryptData } from "../../../services/login/loginService";
+  // import { userData } from "../../../stores/user.store";
+  // import { decryptData } from "../../../services/login/loginService";
   import NewArticle1 from "../NewArticle1.svelte";
 
   let userRoleTypeIndex = null;
 
   // ///////////////////////////////////////////////////////////////////////
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
+
   // ///////////////////////////////////////////////////////////////////////
 
   let projectArray = [];
@@ -65,27 +66,24 @@
 
   // Pagination logikasi
   $: {
-    const maxPagesToShow = 3;
+    const maxPagesToShow = 10;
     displayedPages = [];
 
     if (totalPages > 0) {
-      if (currentPage <= totalPages - maxPagesToShow) {
-        for (let i = currentPage; i < currentPage + maxPagesToShow; i++) {
-          if (i > 0) displayedPages.push(i);
-        }
-        if (currentPage + maxPagesToShow - 1 < totalPages) {
-          displayedPages.push(totalPages);
-        }
-      } else {
-        for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++) {
-          if (i > 0) displayedPages.push(i);
-        }
-        if (totalPages - maxPagesToShow > 0) {
-          displayedPages.unshift(1);
-        }
-      }
+      let start = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let end = Math.min(totalPages, start + maxPagesToShow - 1);
+
+      start = Math.max(1, end - maxPagesToShow + 1);
+
+      displayedPages = Array.from(
+        { length: end - start + 1 },
+        (_, i) => start + i,
+      );
     }
   }
+
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
 
   function goToPage(page) {
     if (page >= 1 && page <= totalPages) {
@@ -129,7 +127,7 @@
               <col style="width:30%;" />
               <col style="width:7%;" />
               <col style="width:6%;" />
-              <col style="width:15%;" />
+              <col style="width:18%;" />
               <col style="width:5%;" />
             </colgroup>
             <thead>
@@ -185,29 +183,41 @@
           <div class="total-count">
             <p>총 데이터: <strong>{totalItems}</strong>개</p>
           </div>
-
-          {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
-            <div class="buttonContainer">
-              <button
-                type="button"
-                class="btn btnBlue btnSave"
-                on:click={() => {
-                  showNewMember = true;
-                }}
-              >
-                게시물추가
-              </button>
-            </div>
-          {/if}
+          <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
+          <div class="buttonContainer">
+            <button
+              type="button"
+              class="btn btnBlue btnSave"
+              on:click={() => {
+                showNewMember = true;
+              }}
+            >
+              게시물추가
+            </button>
+          </div>
+          <!-- {/if} -->
           <!-- Pagination -->
           <div class="pagination_box">
             <nav class="pagination">
+              <!-- First Page Button -->
+              <button
+                on:click={goToFirstPage}
+                disabled={currentPage === 1}
+                title="First Page"
+              >
+                &laquo;
+              </button>
+
+              <!-- Previous Page Button -->
               <button
                 on:click={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
+                title="Previous Page"
               >
                 &lsaquo;
               </button>
+
+              <!-- Page Numbers -->
               {#each displayedPages as page}
                 <button
                   class:selected={currentPage === page}
@@ -216,11 +226,23 @@
                   {page}
                 </button>
               {/each}
+
+              <!-- Next Page Button -->
               <button
                 on:click={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
+                title="Next Page"
               >
                 &rsaquo;
+              </button>
+
+              <!-- Last Page Button -->
+              <button
+                on:click={goToLastPage}
+                disabled={currentPage === totalPages}
+                title="Last Page"
+              >
+                &raquo;
               </button>
             </nav>
           </div>

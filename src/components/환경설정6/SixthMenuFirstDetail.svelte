@@ -3,9 +3,8 @@
   import { getProgramList } from "../../services/page6/serviceArticle";
   import { errorAlert } from "../../shared/sweetAlert";
   import { dataArray } from "../../services/page7/trace.store";
-  import { P } from "flowbite-svelte";
 
-  let itemsPerPage = 2; // Har sahifada ko'rinadigan elementlar soni
+  let itemsPerPage = 15; // Har sahifada ko'rinadigan elementlar soni
   let currentPage = 1; // Joriy sahifa
   let totalItems = 0; // Umumiy elementlar soni
   let totalPages = 0; // Umumiy sahifalar soni
@@ -91,11 +90,18 @@
 
 <section class="tableWrap_5">
   <div class="tableWrap">
-    <table class="tableList">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col style="width:3%;" />
+        <col style="width:30%;" />
+        <col style="width:7%;" />
+        <col style="width:18%;" />
+        <col style="width:6%;" />
+      </colgroup>
       <thead>
         <tr>
-          <th>순번</th>
-          <th on:click={() => toggleSort("order_usage")}
+          <th class="text-center">순번</th>
+          <th class="text-center" on:click={() => toggleSort("order_usage")}
             >용도<svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 576 512"
@@ -113,7 +119,7 @@
               />
             </svg></th
           >
-          <th on:click={() => toggleSort("order_version")}
+          <th class="text-center" on:click={() => toggleSort("order_version")}
             >버전 <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 576 512"
@@ -131,8 +137,8 @@
               />
             </svg></th
           >
-          <th>파일명</th>
-          <th on:click={() => toggleSort("order_cdate")}
+          <th class="text-center">파일명</th>
+          <th class="text-center" on:click={() => toggleSort("order_cdate")}
             >날짜 <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 576 512"
@@ -155,13 +161,13 @@
       <tbody>
         {#each $dataArray as data, index}
           <tr>
-            <td>
+            <td class="text-center">
               {totalItems - ((currentPage - 1) * itemsPerPage + index)}
             </td>
-            <td>{data.cs_category || "N/A"}</td>
-            <td>{data.cs_version || "N/A"}</td>
+            <td class="text-center">{data.cs_category || "N/A"}</td>
+            <td class="text-center">{data.cs_version || "N/A"}</td>
             <td>{data.cs_filename || "N/A"}</td>
-            <td>{data.cs_provied_date || "N/A"}</td>
+            <td class="text-center">{data.cs_provied_date || "N/A"}</td>
           </tr>
         {/each}
       </tbody>
@@ -246,7 +252,7 @@
 
   .tableWrap {
     background-color: #fff;
-    max-height: 70vh;
+    max-height: 78vh;
     border-radius: 5px;
     overflow-y: auto;
   }

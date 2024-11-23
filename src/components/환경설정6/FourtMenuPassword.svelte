@@ -5,16 +5,17 @@
     setUserUpdate,
   } from "../../services/page6/serviceArticle";
   export let selectedData;
+  export let getUserListsData;
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
 
   let find_user = "";
   let errorMessage = "";
   let error = null;
-  let default_user_name = "";
-  let default_user_email = "";
-  let default_user_depart = "";
-  let default_user_level = "";
+  let default_user_name = selectedData?.hostname || "";
+  let default_user_email = selectedData?.itemTitle || "";
+  let default_user_depart = selectedData?.itemCriteria || "";
+  let default_user_level = selectedData?.itemResult || "";
 
   const dispatch = createEventDispatcher();
 
@@ -24,6 +25,8 @@
       const result = await getUserExist(find_user);
 
       await successAlert(result);
+      getUserListsData();
+      handleList();
     } catch (err) {
       errorMessage = err?.message;
       await errorAlert(errorMessage);
@@ -38,6 +41,7 @@
       if (response.RESULT === "OK") {
         await successAlert();
         selectedData = null;
+        getUserListsData();
       } else {
         await errorAlert("삭제에 실패했습니다.");
       }
@@ -64,6 +68,7 @@
 
       if (response.RESULT === "OK") {
         await successAlert(response.CODE);
+        getUserListsData();
       } else if (response.RESULT === "ERROR") {
         await errorAlert(response.CODE);
 
@@ -102,6 +107,7 @@
       <label>이메일(변경불가)</label>
       <input
         type="email"
+        value={default_user_email}
         placeholder={selectedData?.itemTitle}
         on:input={handleInputChange}
       />
@@ -158,7 +164,7 @@
               }
             }}>삭제하기</button
           >
-          <!-- <button class="btn btn-info" on:click={handleList}>목록</button> -->
+          <button class="btn btn-info" on:click={handleList}>목록</button>
         </div>
       </div>
     </div>

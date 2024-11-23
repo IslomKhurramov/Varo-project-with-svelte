@@ -1,12 +1,15 @@
 <script>
   export let projectIndex;
   export let selectedData;
+  export let getUserListsData;
   import FourtMenuInformation from "./FourtMenuInformation.svelte";
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
+  import { createEventDispatcher } from "svelte";
 
   let currentPage = FourtMenuPassword;
   let tabMenu = "사용자관리";
   let setView = "plan_accept";
+  const dispatch = createEventDispatcher();
 
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -50,7 +53,17 @@
   </section>
 
   {#if currentPage}
-    <svelte:component this={currentPage} bind:projectIndex bind:selectedData />
+    <svelte:component
+      this={currentPage}
+      bind:projectIndex
+      bind:selectedData
+      {getUserListsData}
+      on:close={() => {
+        selectedData = null; // Tanlangan ma'lumotlarni tozalash
+        getUserListsData(); // Ro'yxatni yangilash
+        dispatch("close"); // Asosiy komponentga qaytish uchun signal
+      }}
+    />
   {/if}
 </div>
 

@@ -94,6 +94,7 @@
             >
               다시 놓기
             </button>
+            <button class="btn btn-info" on:click={handleList}>목록</button>
           </div>
         </div>
       </div>

@@ -119,7 +119,7 @@
 
   let itemsPerPage = search["list_cnt"];
   let totalPages = 0;
-  let visiblePages = 5;
+  let visiblePages = 10;
   let pageNumbers = [];
 
   $: {

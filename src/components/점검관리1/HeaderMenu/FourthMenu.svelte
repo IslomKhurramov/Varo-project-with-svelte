@@ -42,7 +42,7 @@
 
   let totalRecords = 0;
   let totalPages = 1;
-  let visiblePages = 5; // Number of page buttons to show
+  let visiblePages = 10; // Number of page buttons to show
 
   const searchDataHandler = async () => {
     search.page_cnt = currentPageNum.toString();
@@ -96,10 +96,6 @@
       searchDataHandler();
     }
   }
-
-  const getRowNumber = (index) => {
-    return totalRecords - ((currentPageNum - 1) * itemsPerPage + index);
-  };
 
   $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
 </script>

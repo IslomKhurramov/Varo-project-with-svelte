@@ -14,8 +14,11 @@
     order_user: "",
     search_start_date: "",
     search_end_date: "",
-    page_cnt: 1, // Current page
-    list_cnt: 15, // Items per page
+    category: "",
+    his_type: "",
+    logging_type: "1",
+    page_cnt: 1, 
+    list_cnt: 15,
   };
 
   let itemsPerPage = search.list_cnt;
@@ -28,42 +31,42 @@
       const response = await getAuditNLog(search);
       console.log("API Response:", response);
 
-      logData = (response?.data || []).reverse(); // Teskari tartibda ko'rsatish
-      totalItems = response?.total_rec_cnt || 0; // Correct total count
-      totalPages = Math.ceil(totalItems / itemsPerPage); // Calculate total pages
+      logData = (response?.data || []).reverse(); 
+      totalItems = response?.total_rec_cnt || 0;
+      totalPages = Math.ceil(totalItems / itemsPerPage);
       console.log("Total Items:", totalItems, "Total Pages:", totalPages);
     } catch (err) {
       error = err.message;
       await errorAlert(error);
     }
   };
-
   $: {
-    const maxPagesToShow = 3; // Ko'rinadigan sahifalar soni
+    const maxPagesToShow = 10;
     displayedPages = [];
 
     if (totalPages > 0) {
-      if (currentPage <= totalPages - maxPagesToShow) {
-        // Agar oxirgi sahifaga yaqinlashmagan bo'lsa
-        for (let i = currentPage; i < currentPage + maxPagesToShow; i++) {
-          displayedPages.push(i);
-        }
-        displayedPages.push(totalPages); // Oxirgi sahifani qo'shish
-      } else {
-        // Oxirgi sahifalar yaqinida bo'lsa
-        for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++) {
-          displayedPages.push(i);
-        }
-        displayedPages.unshift(1); // Birinchi sahifani ko'rsatish
-      }
+      let start = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let end = Math.min(totalPages, start + maxPagesToShow - 1);
+
+    
+      start = Math.max(1, end - maxPagesToShow + 1);
+
+     
+      displayedPages = Array.from(
+        { length: end - start + 1 },
+        (_, i) => start + i,
+      );
     }
   }
 
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
+
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
-      currentPage = page; // Update current page
-      search.page_cnt = currentPage; // Update page number in the search object
-      searchDataHandler(); // Fetch new data for the current page
+      currentPage = page; 
+      search.page_cnt = currentPage;
+      searchDataHandler();
     }
   };
 
@@ -89,31 +92,23 @@
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
-        <col style="width:4%;" />
+        <col style="width:3%;" />
+        <col style="width:5%;" />
+        <col style="width:15%;" />
         <col style="width:8%;" />
-        <col style="width:8%;" />
-        <col style="width:10%;" />
-        <col style="width:8%;" />
-        <col style="width:10%;" />
+        <col style="width:6%;" />
         <col style="width:5%;" />
         <col style="width:40%;" />
-        <col style="width:4%;" />
-        <col style="width:4%;" />
-        <col style="width:4%;" />
       </colgroup>
       <thead>
         <tr>
           <th class="text-center">순번</th>
-          <th class="text-center">명령대상</th>
-          <th class="text-center">일시</th>
+          <th class="text-center">로그타입</th>
+          <th class="text-center">수행내용</th>
           <th class="text-center">수행자</th>
-          <th class="text-center">스케쥴링</th>
-          <th class="text-center">반복주기</th>
-          <th class="text-center">수행횟수</th>
-          <th class="text-center">수행결과</th>
-          <th class="text-center">등등</th>
-          <th class="text-center">…</th>
-          <th class="text-center">…</th>
+          <th class="text-center">수행일</th>
+          <th class="text-center">점검프로젝트</th>
+          <th class="text-center">상세내용</th>
         </tr>
       </thead>
       <tbody>
@@ -122,38 +117,26 @@
             <td class="text-center" style="font-size: 16px;">
               {totalItems - ((currentPage - 1) * itemsPerPage + index)}
             </td>
-            <td style="font-size: 16px;" class="cursor-pointer text-center">
-              {data.asset_name || "N/A"}
+            <td style="font-size: 16px;" class="text-center">
+              {data.his_type || "N/A"}
             </td>
-            <td style="font-size: 16px;" class="text-center line-height">
-              {moment(data.his_create_time).format("YYYY.MM.DD")}
+            <td style="font-size: 16px;" class="line-height">
+              {data.his_orig_data || "N/A"}
             </td>
             <td
-              class="text-center cursor-pointer line-height"
+              class="text-center line-height"
               style="font-size: 16px;"
             >
               {data.his_order_user || "N/A"}
             </td>
-            <td style="font-size: 16px;" class="text-center line-height">
-              {data.his_type || "N/A"}
-            </td>
             <td class="text-center" style="font-size: 16px;">
-              <span>{data.his_orig_data || "N/A"}</span>
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span>{data.his_new_data || "N/A"}</span>
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span>{data.his_full_data || "N/A"}</span>
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span>{data.logging_type_index_id}</span>
+              {moment(data.his_udate).format("YYYY.MM.DD")}
             </td>
             <td class="text-center" style="font-size: 16px;">
               <span>{data.ccp_index}</span>
             </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span>{data.result_index}</span>
+            <td style="font-size: 16px;">
+              <span>{data.his_full_data || "N/A"}</span>
             </td>
           </tr>
         {/each}
@@ -161,33 +144,60 @@
     </table>
   </div>
 
-  <div class="total-count">
-    <p>총 데이터: <strong>{totalItems}</strong>개</p>
-  </div>
+  <div>
+    <div class="total-count">
+      <p class="data_total">총 데이터: <strong>{totalItems}</strong>개</p>
+    </div>
 
-  <div class="pagination_box">
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
-      {#each displayedPages as page}
+    <div class="pagination_box">
+      <nav class="pagination">
+        <!-- First Page Button -->
         <button
-          class:selected={currentPage === page}
-          on:click={() => goToPage(page)}
+          on:click={goToFirstPage}
+          disabled={currentPage === 1}
+          title="First Page"
         >
-          {page}
+          &laquo;
         </button>
-      {/each}
-      <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        &rsaquo;
-      </button>
-    </nav>
+
+        <!-- Previous Page Button -->
+        <button
+          on:click={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          title="Previous Page"
+        >
+          &lsaquo;
+        </button>
+
+        <!-- Page Numbers -->
+        {#each displayedPages as page}
+          <button
+            class:selected={currentPage === page}
+            on:click={() => goToPage(page)}
+          >
+            {page}
+          </button>
+        {/each}
+
+        <!-- Next Page Button -->
+        <button
+          on:click={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          title="Next Page"
+        >
+          &rsaquo;
+        </button>
+
+        <!-- Last Page Button -->
+        <button
+          on:click={goToLastPage}
+          disabled={currentPage === totalPages}
+          title="Last Page"
+        >
+          &raquo;
+        </button>
+      </nav>
+    </div>
   </div>
 </section>
 
@@ -256,6 +266,11 @@
     margin-left: 20px;
     font-size: 16px;
     color: #555;
+  }
+
+  .data_total {
+    display: flex;
+    align-items: flex-end;
   }
 
   .pagination_box {

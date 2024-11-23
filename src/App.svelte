@@ -154,7 +154,7 @@
 </script>
 
 <Router>
-  {#if $userData.isLoggedIn}
+  <!-- {#if $userData.isLoggedIn} -->
     <body>
       <div id="wrap">
         <Header bind:activeMenu />
@@ -217,9 +217,9 @@
         </div>
       </div>
     </body>
-  {:else}
+  <!-- {:else} -->
     <Route path="/login" component={Login} />
-  {/if}
+  <!-- {/if} -->
 </Router>
 
 <style>

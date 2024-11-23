@@ -84,7 +84,14 @@
             <button class="btn modify-btn" on:click={handleEdit}>
               수정하기
             </button>
-            <button class="btn close-btn" on:click={() => dispatch("close")}>
+            <button
+              class="btn close-btn"
+              on:click={() => {
+                currentPassword = "";
+                newPassword1 = "";
+                newPassword2 = "";
+              }}
+            >
               다시 놓기
             </button>
           </div>

@@ -455,7 +455,13 @@
 
   {#if showModal}
     <div class="dialog2" open on:close={() => (showModal = false)}>
-      <ModalCard {cancel} {selectedAsset} />
+      <ModalCard
+        {cancel}
+        {selectedAsset}
+        {updateFilteredAssets}
+        {filterAssets}
+        {filteredAssets}
+      />
     </div>
   {/if}
 {:else}
@@ -475,6 +481,7 @@
       {updateFilteredAssets}
       {assetGroupList}
       {assetList}
+      {selectedUUID}
     />
   </div>
 {/if}

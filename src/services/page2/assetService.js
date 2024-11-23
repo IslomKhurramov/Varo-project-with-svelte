@@ -295,10 +295,10 @@ export const setAssetTargetRegister = async (payload) => {
   try {
     const response = await axios.post(
       `${serverApi}/api/setAssetTargetRegister/`,
-      { payload },
+      payload,
       {
         withCredentials: true,
-      }, // Send the entire payload object
+      },
     );
 
     if (response.data && response.data.RESULT === "OK") {
@@ -359,20 +359,20 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
       formData.append("asset_file", asset_file);
     }
 
-    asset_lists
+    // Join UUIDs into a comma-separated string
+    const assetListString = asset_lists
       .filter((uuid) => uuid && uuid.trim() !== "")
-      .forEach((asset) => {
-        formData.append("asset_lists", asset);
-      });
+      .join(",");
+    formData.append("asset_lists", assetListString);
 
     const response = await axios.post(
       `${serverApi}/api/setAssetForNewGroup/`,
       formData,
-
       {
         withCredentials: true,
       },
     );
+
     console.log("response.......", response);
     if (response.data.RESULT === "OK") {
       return { success: true };

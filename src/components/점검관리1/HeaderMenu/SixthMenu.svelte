@@ -262,6 +262,10 @@
       currentPage = page;
       fetchProgramList();
     }
+    if (page < 1 || page > totalPages) return; // Prevent out-of-bound navigation
+    currentPage = page;
+    console.log(`Navigating to page: ${page}`);
+    // Add additional logic to fetch data for the selected page
   }
 
   /**************************FETCHGETTARGETLIST******************/
@@ -507,7 +511,9 @@
           {#each $programList.list as data, index}
             <tr on:click={() => autoDownload(data)}>
               <td class="text-center">
-                {(currentPage - 1) * listCount + index + 1}
+                {$programList.list.length -
+                  index +
+                  (currentPage - 1) * listCount.length}
               </td>
               <td class="text-center">{data.cs_category}</td>
               <td class="text-center">{data.cs_support_os || "N/A"}</td>
@@ -524,12 +530,25 @@
   </section>
   <div class="pagination_box">
     <nav class="pagination">
+      <!-- First Page Button -->
+      <button
+        on:click={() => goToPage(1)}
+        disabled={currentPage === 1}
+        title="First Page"
+      >
+        &laquo;
+      </button>
+
+      <!-- Previous Page Button -->
       <button
         on:click={() => goToPage(currentPage - 1)}
         disabled={currentPage === 1}
+        title="Previous Page"
       >
         &lsaquo;
       </button>
+
+      <!-- Page Numbers -->
       {#each displayedPages as _, page (page)}
         <button
           class:selected={currentPage === page + 1}
@@ -538,11 +557,23 @@
           {page + 1}
         </button>
       {/each}
+
+      <!-- Next Page Button -->
       <button
         on:click={() => goToPage(currentPage + 1)}
         disabled={currentPage === totalPages}
+        title="Next Page"
       >
         &rsaquo;
+      </button>
+
+      <!-- Last Page Button -->
+      <button
+        on:click={() => goToPage(totalPages)}
+        disabled={currentPage === totalPages}
+        title="Last Page"
+      >
+        &raquo;
       </button>
     </nav>
   </div>

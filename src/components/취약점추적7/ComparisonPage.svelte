@@ -8,12 +8,23 @@
     leftTrackData,
     ModalData,
   } from "../../services/page7/trace.store";
+  import { successAlert, errorAlert } from "../../shared/sweetAlert";
+
   let currentModalIndex = 0;
   let firstProjectId = "";
   let secondProjectId = "";
   let showModalProjectComparison = false;
   let secondTable = false;
   async function comparePlan() {
+    if (firstProjectId === "" || secondProjectId === "") {
+      errorAlert("두 자산을 모두 선택해주세요..");
+      return;
+    }
+
+    if (firstProjectId === secondProjectId) {
+      errorAlert("비교를 위해서는 선택한 자산이 달라야 합니다..");
+      return;
+    }
     try {
       const response = await compareByPlan(firstProjectId, secondProjectId);
 

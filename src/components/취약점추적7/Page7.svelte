@@ -71,7 +71,7 @@
   $: if (filterPage) {
     currentPage = FilterPage;
     activeMenu = null;
-  } else {
+  } else if (activeView === "project") {
     currentPage = ProjectAll;
     actionStatusValue = "";
     selectedDate = "";
@@ -84,7 +84,7 @@
   $: if (filterAssetPage) {
     currentPage = FilterPageAsset;
     activeMenu = null;
-  } else {
+  } else if (activeView === "asset") {
     currentPage = AssetAll;
     actionStatusValue = "";
     selectedDate = "";
@@ -96,7 +96,7 @@
   $: if (filterTargetPage) {
     currentPage = FilterTarget;
     activeMenu = null;
-  } else {
+  } else if (activeView === "third") {
     currentPage = ThirdAll;
     actionStatusValue = "";
     selectedDate = "";
@@ -105,6 +105,13 @@
     selectedAssetForfilter = "";
     activeMenu = "전체";
   }
+  // $: {
+  //   if (!filterPage && !filterAssetPage && !filterTargetPage) {
+  //     // If no filter flags are active, set default to ProjectAll
+  //     currentPage = ProjectAll;
+  //     activeMenu = "전체";
+  //   }
+  // }
 
   function selectAsset(asset) {
     // Set selectedAsset based on the asset's asg_index
@@ -869,9 +876,29 @@
               {#if filterPage || filterAssetPage || filterTargetPage}
                 <button
                   on:click={() => {
-                    (filterPage = false),
-                      (filterAssetPage = false),
-                      (filterTargetPage = false);
+                    // Reset filter flags
+                    filterPage = false;
+                    filterAssetPage = false;
+                    filterTargetPage = false;
+
+                    // Reset the currentPage based on the filter flag that was active
+                    if (filterPage) {
+                      currentPage = ProjectAll; // Go back to ProjectAll
+                    } else if (filterAssetPage) {
+                      currentPage = AssetAll; // Go back to AssetAll
+                    } else if (filterTargetPage) {
+                      currentPage = ThirdAll; // Go back to ThirdAll
+                    }
+
+                    // Optionally, reset other filters
+                    actionStatusValue = "";
+                    selectedDate = "";
+                    selectedProject = "";
+                    selectedOperator = "";
+                    selectedAssetForfilter = "";
+
+                    // Reset activeMenu to default
+                    activeMenu = "전체";
                   }}
                   type="button"
                   class="btn btnPrimary"

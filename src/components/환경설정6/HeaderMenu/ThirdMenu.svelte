@@ -181,7 +181,12 @@
         </div>
         <div>
           <div class="total-count">
-            <p>총 데이터: <strong>{totalItems}</strong>개</p>
+            <div class="data_total">
+              <p>총 데이터:</p>
+              <div>
+                <strong>{totalItems}</strong>개
+              </div>
+            </div>
           </div>
           <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
           <div class="buttonContainer">
@@ -320,11 +325,18 @@
   }
 
   .total-count {
+    display: flex;
+    gap: 5px;
     text-align: left;
-    margin-top: 15px;
+    margin-top: 10px;
     margin-left: 20px;
     font-size: 16px;
     color: #555;
+  }
+
+  .data_total {
+    display: flex;
+    gap: 5px;
   }
 
   .pagination_box {

@@ -3,8 +3,9 @@
   import { getProgramList } from "../../services/page6/serviceArticle";
   import { errorAlert } from "../../shared/sweetAlert";
   import { dataArray } from "../../services/page7/trace.store";
+  import { P } from "flowbite-svelte";
 
-  let itemsPerPage = 15; // Har sahifada ko'rinadigan elementlar soni
+  let itemsPerPage = 2; // Har sahifada ko'rinadigan elementlar soni
   let currentPage = 1; // Joriy sahifa
   let totalItems = 0; // Umumiy elementlar soni
   let totalPages = 0; // Umumiy sahifalar soni
@@ -39,9 +40,6 @@
           totalItems = 0;
           totalPages = 0;
         }
-
-        console.log("Fetched Data:", data);
-        console.log("Total Items:", totalItems, "Total Pages:", totalPages);
       } else {
         throw new Error(response.MESSAGE || "Error fetching data");
       }
@@ -50,27 +48,21 @@
       await errorAlert(error);
     }
   }
+  // Pagination logikasi
   $: {
-    const maxPagesToShow = 3; // Ko'rinadigan sahifalar soni
+    const maxPagesToShow = 10;
     displayedPages = [];
 
     if (totalPages > 0) {
-      if (currentPage + maxPagesToShow - 1 < totalPages) {
-        // Agar oxirgi sahifaga yetmagan bo'lsa
-        for (let i = currentPage; i < currentPage + maxPagesToShow; i++) {
-          displayedPages.push(i);
-        }
-        displayedPages.push(totalPages); // Oxirgi sahifani qo'shish
-      } else {
-        // Agar oxirgi sahifaga yaqin bo'lsa
-        for (
-          let i = Math.max(1, totalPages - maxPagesToShow + 1);
-          i <= totalPages;
-          i++
-        ) {
-          displayedPages.push(i);
-        }
-      }
+      let start = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let end = Math.min(totalPages, start + maxPagesToShow - 1);
+
+      start = Math.max(1, end - maxPagesToShow + 1);
+
+      displayedPages = Array.from(
+        { length: end - start + 1 },
+        (_, i) => start + i,
+      );
     }
   }
 
@@ -80,6 +72,9 @@
       fetchProgramList(); // Yangi ma'lumotlarni yuklang
     }
   };
+
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
 
   function toggleSort(field) {
     if (sortField === field) {
@@ -172,33 +167,65 @@
       </tbody>
     </table>
   </div>
-  <div class="total-count">
-    <p>총 데이터: <strong>{totalItems}</strong>개</p>
-  </div>
+  <div>
+    <div class="total-count">
+      <div class="data_total">
+        <p>총 데이터:</p>
+        <div>
+          <strong>{totalItems}</strong>개
+        </div>
+      </div>
+    </div>
 
-  <div class="pagination_box">
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
-      {#each displayedPages as page}
+    <div class="pagination_box">
+      <nav class="pagination">
+        <!-- First Page Button -->
         <button
-          class:selected={currentPage === page}
-          on:click={() => goToPage(page)}
+          on:click={goToFirstPage}
+          disabled={currentPage === 1}
+          title="First Page"
         >
-          {page}
+          &laquo;
         </button>
-      {/each}
-      <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        &rsaquo;
-      </button>
-    </nav>
+
+        <!-- Previous Page Button -->
+        <button
+          on:click={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          title="Previous Page"
+        >
+          &lsaquo;
+        </button>
+
+        <!-- Page Numbers -->
+        {#each displayedPages as page}
+          <button
+            class:selected={currentPage === page}
+            on:click={() => goToPage(page)}
+          >
+            {page}
+          </button>
+        {/each}
+
+        <!-- Next Page Button -->
+        <button
+          on:click={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          title="Next Page"
+        >
+          &rsaquo;
+        </button>
+
+        <!-- Last Page Button -->
+        <button
+          on:click={goToLastPage}
+          disabled={currentPage === totalPages}
+          title="Last Page"
+        >
+          &raquo;
+        </button>
+      </nav>
+    </div>
   </div>
 </section>
 
@@ -232,11 +259,18 @@
   }
 
   .total-count {
+    display: flex;
+    gap: 5px;
     text-align: left;
     margin-top: 10px;
     margin-left: 20px;
     font-size: 16px;
     color: #555;
+  }
+
+  .data_total {
+    display: flex;
+    gap: 5px;
   }
 
   .pagination {

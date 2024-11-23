@@ -17,7 +17,7 @@
     category: "",
     his_type: "",
     logging_type: "1",
-    page_cnt: 1, 
+    page_cnt: 1,
     list_cnt: 15,
   };
 
@@ -31,7 +31,7 @@
       const response = await getAuditNLog(search);
       console.log("API Response:", response);
 
-      logData = (response?.data || []).reverse(); 
+      logData = (response?.data || []).reverse();
       totalItems = response?.total_rec_cnt || 0;
       totalPages = Math.ceil(totalItems / itemsPerPage);
       console.log("Total Items:", totalItems, "Total Pages:", totalPages);
@@ -48,10 +48,8 @@
       let start = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
       let end = Math.min(totalPages, start + maxPagesToShow - 1);
 
-    
       start = Math.max(1, end - maxPagesToShow + 1);
 
-     
       displayedPages = Array.from(
         { length: end - start + 1 },
         (_, i) => start + i,
@@ -64,7 +62,7 @@
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
-      currentPage = page; 
+      currentPage = page;
       search.page_cnt = currentPage;
       searchDataHandler();
     }
@@ -123,10 +121,7 @@
             <td style="font-size: 16px;" class="line-height">
               {data.his_orig_data || "N/A"}
             </td>
-            <td
-              class="text-center line-height"
-              style="font-size: 16px;"
-            >
+            <td class="text-center line-height" style="font-size: 16px;">
               {data.his_order_user || "N/A"}
             </td>
             <td class="text-center" style="font-size: 16px;">
@@ -146,7 +141,12 @@
 
   <div>
     <div class="total-count">
-      <p class="data_total">총 데이터: <strong>{totalItems}</strong>개</p>
+      <div class="data_total">
+        <p>총 데이터:</p>
+        <div>
+          <strong>{totalItems}</strong>개
+        </div>
+      </div>
     </div>
 
     <div class="pagination_box">
@@ -261,6 +261,8 @@
   }
 
   .total-count {
+    display: flex;
+    gap: 5px;
     text-align: left;
     margin-top: 10px;
     margin-left: 20px;
@@ -270,7 +272,7 @@
 
   .data_total {
     display: flex;
-    align-items: flex-end;
+    gap: 5px;
   }
 
   .pagination_box {

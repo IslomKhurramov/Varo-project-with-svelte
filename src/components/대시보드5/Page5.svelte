@@ -465,4 +465,10 @@
     background-color: #f4f4f4;
     transition-duration: 0.3s;
   }
+
+  td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>

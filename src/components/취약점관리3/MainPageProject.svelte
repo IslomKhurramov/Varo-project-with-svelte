@@ -119,7 +119,7 @@
 
   let itemsPerPage = search["list_cnt"];
   let totalPages = 0;
-  let visiblePages = 5;
+  let visiblePages = 10;
   let pageNumbers = [];
 
   $: {
@@ -178,11 +178,6 @@
   };
 
   $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
-
-  $: {
-    console.log("data:", data);
-    console.log("currentPageNum:", currentPageNum);
-  }
 </script>
 
 <section class="content">

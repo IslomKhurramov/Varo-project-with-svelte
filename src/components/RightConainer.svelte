@@ -27,6 +27,7 @@
   let currentPage = null;
   let projectIndex = null;
   let tabMenu = null;
+  let filteredData = null;
 
   let search = {
     page_cnt: "1",
@@ -55,7 +56,9 @@
 
   // Function to filter based on the selected criteria
   function filterProjects() {
-    projectData.data = projectData?.data?.filter((project) => {
+    if (!projectData?.data) return;
+
+    filteredData = projectData.data.filter((project) => {
       return (
         (selectedStatus === "" ||
           project.ccp_b_finalized.toString() == selectedStatus) &&
@@ -70,7 +73,8 @@
           (selectedAgentStatus === "0" && project.uploaded_result <= 0))
       );
     });
-    currentPageNum = 1; // Reset to first page when filtering
+
+    updatePageNumbers();
   }
 
   function doesProjectMatchOS(project, os) {
@@ -111,31 +115,39 @@
     // projectIndex = plan_index;
   };
 
-  function downloadCSV() {
-    const csvRows = [];
-    const headers = Object.keys(projectData?.data?.[0]);
-    csvRows.push(headers.join(",")); // Add headers
-
-    for (const row of projectData?.data) {
-      const values = headers.map((header) => {
-        const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
-        return `"${escaped}"`; // Wrap in quotes
+  async function downloadCSV() {
+    try {
+      const data = await getAllPlanLists({
+        page_cnt: "1",
+        list_cnt: "10000000000000",
       });
-      csvRows.push(values.join(","));
+      const csvRows = [];
+      const headers = Object.keys(data?.data?.[0]);
+      csvRows.push(headers.join(",")); // Add headers
+
+      for (const row of data?.data) {
+        const values = headers.map((header) => {
+          const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
+          return `"${escaped}"`; // Wrap in quotes
+        });
+        csvRows.push(values.join(","));
+      }
+
+      const csvString = csvRows.join("\n");
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      // Create a link to download the file
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "table_data.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      errorAlert(err?.message);
     }
-
-    const csvString = csvRows.join("\n");
-    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    // Create a link to download the file
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "table_data.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   }
 
   async function resetFilters() {
@@ -147,6 +159,7 @@
       page_cnt: "1",
       list_cnt: "15",
     };
+    filteredData = null; // Reset filtered data
     try {
       await searchDataHandler();
     } catch (err) {
@@ -184,9 +197,12 @@
   }
 
   function sortProjects() {
-    if (!sortField || !projectData?.data) return;
+    if (!sortField) return;
 
-    projectData.data = [...projectData?.data].sort((a, b) => {
+    const dataToSort = filteredData || projectData?.data;
+    if (!dataToSort) return;
+
+    const sortedData = [...dataToSort].sort((a, b) => {
       let aVal = a[sortField];
       let bVal = b[sortField];
 
@@ -202,6 +218,8 @@
       const comparison = aVal > bVal ? 1 : -1;
       return sortAscending ? comparison : -comparison;
     });
+
+    filteredData = sortedData;
   }
 
   let currentPageNum = 1;
@@ -214,9 +232,9 @@
   const searchDataHandler = async () => {
     search.page_cnt = currentPageNum.toString();
     const response = await getAllPlanLists(search);
-    console.log("response:", response);
     if (response) {
       projectData = response;
+      filteredData = null; // Reset filtered data when new data is fetched
       totalRecords = response.total_rec_cnt;
       totalPages = Math.ceil(totalRecords / itemsPerPage);
       updatePageNumbers();
@@ -246,6 +264,10 @@
       currentPageNum = pageNum;
       await searchDataHandler();
     }
+    selectedStatus = "";
+    selectedScheduleRange = "";
+    selectedOS = "";
+    filteredData = null;
   };
 
   const goToFirstPage = () => goToPage(1);
@@ -475,9 +497,9 @@
                 </tr>
               </thead>
               <tbody>
-                {#if projectData?.data && projectData?.data?.length !== 0}
+                {#if (filteredData || projectData?.data) && (filteredData || projectData?.data)?.length !== 0}
                   <!-- svelte-ignore a11y-click-events-have-key-events -->
-                  {#each projectData?.data as project, index}
+                  {#each filteredData || projectData?.data as project, index}
                     <tr
                       on:click={() => {
                         currentPage = ProjectDetail;

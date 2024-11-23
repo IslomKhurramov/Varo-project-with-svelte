@@ -12,7 +12,7 @@
   let showAssetReg = true;
   let showCopyReg = false;
   export let filteredAssets = [];
-
+  export let filterAssets;
   export let selectedGroup;
   let assetHost = "전체";
   let asset_ostype = "전체";
@@ -133,6 +133,7 @@
           document.querySelector('input[type="file"]').value = "";
           uploadedFile = null;
         }
+        filterAssets();
       } else {
         console.log(response);
         throw new Error("Failed to register asset");
@@ -165,6 +166,7 @@
   const toggleCardsVisibility = () => {
     showCards = !showCards;
   };
+  $: console.log("selected asstes", selectedAssets);
 </script>
 
 <form

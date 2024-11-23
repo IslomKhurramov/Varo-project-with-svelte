@@ -14,6 +14,8 @@
     selectedDataTarget1,
     selectedDataTarget2,
   } from "../../services/page7/trace.store";
+  import { successAlert, errorAlert } from "../../shared/sweetAlert";
+
   import { AccordionItem, Accordion } from "flowbite-svelte";
   // import "flowbite/dist/flowbite.css";
   import { get } from "svelte/store";
@@ -144,6 +146,18 @@
   }
 
   async function compareTarget() {
+    if (
+      Object.keys(relatedItemDetails).length === 0 ||
+      Object.keys(relatedItemDetails2).length === 0
+    ) {
+      errorAlert("두 자산을 모두 선택해주세요..");
+      return;
+    }
+
+    if (relatedItemDetails === relatedItemDetails2) {
+      errorAlert("비교를 위해서는 선택한 자산이 달라야 합니다..");
+      return;
+    }
     try {
       const response = await compareTraceByTarget(
         relatedItemDetails,

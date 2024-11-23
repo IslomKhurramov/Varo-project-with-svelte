@@ -18,6 +18,8 @@
   } from "../../services/page7/trace.store";
   import { writable } from "svelte/store";
   import { get } from "svelte/store";
+  import { successAlert, errorAlert } from "../../shared/sweetAlert";
+
   export const comparedPlanData1 = writable([]);
   export const comparedPlanData2 = writable([]);
   let showModalProjectComparison = false;
@@ -127,6 +129,16 @@
   }
   /************************************************************/
   async function compareAsset() {
+    if (firstTargetId === "" || secondTargetId === "") {
+      errorAlert("두 자산을 모두 선택해주세요..");
+      return;
+    }
+
+    if (firstTargetId === secondTargetId) {
+      errorAlert("비교를 위해서는 선택한 자산이 달라야 합니다..");
+      return;
+    }
+
     try {
       const response = await compareTraceByAsset(firstTargetId, secondTargetId);
 

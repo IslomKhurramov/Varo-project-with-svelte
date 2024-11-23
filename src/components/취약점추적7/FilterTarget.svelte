@@ -243,7 +243,6 @@
           <col style="width: 120px;" />
           <col style="width: 120px;" />
           <col style="width: 120px;" />
-          <col style="width: 120px;" />
         </colgroup>
 
         <thead>
@@ -257,8 +256,7 @@
             <th class="text-center">조치현황</th>
             <th class="text-center">조치분류상태 </th>
             <th class="text-center">운영담당자</th>
-            <th class="text-center">담당자 </th>
-            <th class="text-center">연락처</th>
+            <th class="text-center">담당자연락처 </th>
           </tr>
         </thead>
         {#each $filteredTableDataForTarget as vuln, index}
@@ -300,7 +298,6 @@
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_operator_phone}</td
               >
-              <td class="text-center line-height">{vuln.ccr_item_result}</td>
             </tr>
           </tbody>
         {/each}

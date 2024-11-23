@@ -629,7 +629,7 @@
                   resetEditAndModalState();
                 }}
               >
-                구하다
+                저장하기
               </button>
               <button
                 style="padding: 15px;"
@@ -778,7 +778,7 @@
               >
               <button
                 class="secondary-button"
-                on:click={() => (showModal = false)}>Cancel</button
+                on:click={() => (showModal = false)}>취소</button
               >
             </div>
           </div>

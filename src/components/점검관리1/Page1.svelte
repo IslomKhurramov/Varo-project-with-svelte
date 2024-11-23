@@ -26,11 +26,15 @@
   let selectedProjectIndex = null;
   let tabMenu = null;
 
+  let search = {
+    page_cnt: "1",
+    list_cnt: "10000000000000",
+  };
+
   onMount(async () => {
     try {
       loading = true;
-      projectData = await getAllPlanLists();
-      projectArray = Object.values(projectData); // Convert object to array
+      projectData = await getAllPlanLists(search);
     } catch (err) {
       error = err.message;
       await errorAlert(error);
@@ -42,8 +46,7 @@
   const dataRefetch = async () => {
     try {
       loading = true;
-      projectData = await getAllPlanLists();
-      projectArray = Object.values(projectData); // Convert object to array
+      projectData = await getAllPlanLists(search);
     } catch (error) {
       error = err.message;
       await errorAlert(error);
@@ -108,8 +111,8 @@
       class="prMenuList"
       style="overflow-y: scroll;height: 92%; overlow-x:hidden;"
     >
-      {#if projectArray && projectArray?.length !== 0}
-        {#each projectArray as project, index}
+      {#if projectData?.data && projectData?.data?.length !== 0}
+        {#each projectData?.data as project, index}
           <li class={activeMenu === project.ccp_index ? "active" : ""}>
             {#if project?.ccp_index_parent == 0}
               <a
@@ -128,7 +131,7 @@
             {/if}
             {#if activeMenu === project.ccp_index || parentIndex === project.ccp_index}
               <ul class="submenu" style="background: none;padding-left: 10px;">
-                {#each projectArray as data}
+                {#each projectData?.data as data}
                   {#if project.ccp_index == data?.ccp_index_parent}
                     <li class="active">
                       <a

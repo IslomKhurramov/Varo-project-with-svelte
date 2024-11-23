@@ -97,10 +97,6 @@
     }
   }
 
-  const getRowNumber = (index) => {
-    return totalRecords - ((currentPageNum - 1) * itemsPerPage + index);
-  };
-
   $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
 </script>
 

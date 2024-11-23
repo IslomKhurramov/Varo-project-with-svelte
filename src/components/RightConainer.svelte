@@ -28,8 +28,10 @@
   let projectIndex = null;
   let tabMenu = null;
 
-  let detailPage = false;
-  let selectedProjectIndex = null;
+  let search = {
+    page_cnt: "1",
+    list_cnt: "15",
+  };
 
   // Filter state for each select input
   let selectedStatus = "";
@@ -39,9 +41,10 @@
 
   onMount(async () => {
     try {
-      projectData = await getAllPlanLists();
-      projectArray = Object.values(projectData);
-      filteredProjects = projectArray;
+      // projectData = await getAllPlanLists(search);
+      // projectArray = Object.values(projectData);
+      // filteredProjects = projectArray;
+      await searchDataHandler();
     } catch (err) {
       error = err.message;
       errorAlert(err?.message);
@@ -52,7 +55,7 @@
 
   // Function to filter based on the selected criteria
   function filterProjects() {
-    filteredProjects = projectArray.filter((project) => {
+    projectData.data = projectData?.data?.filter((project) => {
       return (
         (selectedStatus === "" ||
           project.ccp_b_finalized.toString() == selectedStatus) &&
@@ -102,25 +105,6 @@
     return true; // Default, show all if no range selected
   }
 
-  // Function to download Excel
-  function downloadExcel() {
-    const wb = utils.book_new();
-    const ws = utils.json_to_sheet(projectArray);
-    utils.book_append_sheet(wb, ws, "Projects");
-    writeFile(wb, "projects.xlsx");
-  }
-
-  // Function to download Program
-  function downloadProgram() {
-    const fileUrl = "/path/to/program.zip"; // Update this with the actual path to the file
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = "program.zip"; // Specify the file name
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); // Clean up after the click event
-  }
-
   const selectPage = (page, menu) => {
     currentPage = page;
     tabMenu = menu;
@@ -129,10 +113,10 @@
 
   function downloadCSV() {
     const csvRows = [];
-    const headers = Object.keys(filteredProjects[0]);
+    const headers = Object.keys(projectData?.data?.[0]);
     csvRows.push(headers.join(",")); // Add headers
 
-    for (const row of filteredProjects) {
+    for (const row of projectData?.data) {
       const values = headers.map((header) => {
         const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
         return `"${escaped}"`; // Wrap in quotes
@@ -155,13 +139,16 @@
   }
 
   async function resetFilters() {
+    currentPageNum = 1;
     selectedStatus = "";
     selectedScheduleRange = "";
     selectedOS = "";
+    search = {
+      page_cnt: "1",
+      list_cnt: "15",
+    };
     try {
-      projectData = await getAllPlanLists();
-      projectArray = Object.values(projectData);
-      filteredProjects = projectArray;
+      await searchDataHandler();
     } catch (err) {
       error = err.message;
     } finally {
@@ -174,9 +161,7 @@
       if (!plan_index) return false;
       const response = await setFinalPlanSecurityPoint(plan_index);
 
-      projectData = await getAllPlanLists();
-      projectArray = Object.values(projectData);
-      filteredProjects = projectArray;
+      await searchDataHandler();
 
       successAlert(response);
     } catch (err) {
@@ -199,9 +184,9 @@
   }
 
   function sortProjects() {
-    if (!sortField || !filteredProjects) return;
+    if (!sortField || !projectData?.data) return;
 
-    filteredProjects = [...filteredProjects].sort((a, b) => {
+    projectData.data = [...projectData?.data].sort((a, b) => {
       let aVal = a[sortField];
       let bVal = b[sortField];
 
@@ -220,29 +205,59 @@
   }
 
   let currentPageNum = 1;
-  let itemsPerPage = 10;
-  let totalPages = 0;
+  let pageNumbers = [];
+  const itemsPerPage = 15;
+  let totalRecords = 0;
+  let totalPages = 1;
+  let visiblePages = 10; // Number of page buttons to show
 
-  $: {
-    if (filteredProjects) {
-      totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+  const searchDataHandler = async () => {
+    search.page_cnt = currentPageNum.toString();
+    const response = await getAllPlanLists(search);
+    console.log("response:", response);
+    if (response) {
+      projectData = response;
+      totalRecords = response.total_rec_cnt;
+      totalPages = Math.ceil(totalRecords / itemsPerPage);
+      updatePageNumbers();
     }
-  }
+  };
 
-  $: paginatedProjects = filteredProjects?.slice(
-    (currentPageNum - 1) * itemsPerPage,
-    currentPageNum * itemsPerPage,
-  );
+  const updatePageNumbers = () => {
+    let start = Math.max(1, currentPageNum - Math.floor(visiblePages / 2));
+    let end = Math.min(totalPages, start + visiblePages - 1);
+
+    // Adjust start if end is maxed out
+    start = Math.max(1, end - visiblePages + 1);
+
+    pageNumbers = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  // $: {
+  //   if (projectData) {
+  //     totalRecords = projectData.length;
+  //     totalPages = Math.ceil(totalRecords / itemsPerPage);
+  //     updatePageNumbers();
+  //   }
+  // }
+
+  const goToPage = async (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      currentPageNum = pageNum;
+      await searchDataHandler();
+    }
+  };
+
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
 
   $: pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages) {
-      currentPageNum = page;
-    }
-  }
+  $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
 
-  $: baseIndex = filteredProjects?.length - (currentPageNum - 1) * itemsPerPage;
+  $: {
+    console.log("projectData:", projectData);
+  }
 </script>
 
 <div
@@ -460,9 +475,9 @@
                 </tr>
               </thead>
               <tbody>
-                {#if paginatedProjects && paginatedProjects?.length !== 0}
+                {#if projectData?.data && projectData?.data?.length !== 0}
                   <!-- svelte-ignore a11y-click-events-have-key-events -->
-                  {#each paginatedProjects as project, index}
+                  {#each projectData?.data as project, index}
                     <tr
                       on:click={() => {
                         currentPage = ProjectDetail;
@@ -674,8 +689,16 @@
           <div class="pagination_box">
             <nav class="pagination">
               <button
+                on:click={goToFirstPage}
+                disabled={currentPageNum === 1}
+                title="First Page"
+              >
+                &laquo;
+              </button>
+              <button
                 on:click={() => goToPage(currentPageNum - 1)}
                 disabled={currentPageNum === 1}
+                title="Previous Page"
               >
                 &lsaquo;
               </button>
@@ -692,8 +715,16 @@
               <button
                 on:click={() => goToPage(currentPageNum + 1)}
                 disabled={currentPageNum === totalPages}
+                title="Next Page"
               >
                 &rsaquo;
+              </button>
+              <button
+                on:click={goToLastPage}
+                disabled={currentPageNum === totalPages}
+                title="Last Page"
+              >
+                &raquo;
               </button>
             </nav>
           </div>

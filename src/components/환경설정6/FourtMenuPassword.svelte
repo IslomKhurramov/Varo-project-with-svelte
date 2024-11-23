@@ -139,7 +139,15 @@
               }
             }}>수정하기</button
           >
-          <!-- <button class="btn close-btn">다시 놓기</button> -->
+          <button
+            class="btn close-btn"
+            on:click={() => {
+              default_user_name = "";
+              default_user_email = "";
+              default_user_depart = "";
+              default_user_level = "";
+            }}>다시 놓기</button
+          >
           <button
             class="btn delete-btn"
             on:click={() => {

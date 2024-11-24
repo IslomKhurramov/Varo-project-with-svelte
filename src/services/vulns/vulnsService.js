@@ -60,6 +60,7 @@ export const setFixPlanRegister = async (data) => {
 
 export const setFixApprove = async (data) => {
   try {
+    console.log("setFixApprove:", data);
     const response = await axios.post(`${serverApi}/api/setFixApprove/`, data, {
       withCredentials: true,
     });
@@ -74,6 +75,7 @@ export const setFixApprove = async (data) => {
 
 export const setFixDoneApprove = async (data) => {
   try {
+    console.log("setFixDoneApprove:", data);
     const response = await axios.post(
       `${serverApi}/api/setFixDoneApprove/`,
       data,

@@ -495,18 +495,30 @@
                     <tr>
                       <th>조치일정</th>
                       <td>
-                        <input
-                          style="font-size: 16px;"
-                          type="text"
-                          readonly
-                          value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
-                        />
-                        <input
-                          style="font-size: 16px;"
-                          type="text"
-                          readonly
-                          value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
-                        />
+                        <div
+                          class="dateWrap"
+                          style="justify-content: space-between;"
+                        >
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="text"
+                              readonly
+                              value={targetData?.fix_result?.[0]
+                                ?.cfr_fix_startdate}
+                            />
+                          </div>
+                          <img src="./assets/images/icon/dash.svg" />
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="text"
+                              readonly
+                              value={targetData?.fix_result?.[0]
+                                ?.cfr_fix_enddate}
+                            />
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     <tr>
@@ -591,18 +603,30 @@
                     <tr>
                       <th>조치일정</th>
                       <td>
-                        <input
-                          style="font-size: 16px;"
-                          type="text"
-                          readonly
-                          value={targetData?.fix_result?.[0]?.cfr_fix_startdate}
-                        />
-                        <input
-                          style="font-size: 16px;"
-                          type="text"
-                          readonly
-                          value={targetData?.fix_result?.[0]?.cfr_fix_enddate}
-                        />
+                        <div
+                          class="dateWrap"
+                          style="justify-content: space-between;"
+                        >
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="text"
+                              readonly
+                              value={targetData?.fix_result?.[0]
+                                ?.cfr_fix_startdate}
+                            />
+                          </div>
+                          <img src="./assets/images/icon/dash.svg" />
+                          <div class="date">
+                            <input
+                              style="font-size: 16px;"
+                              type="text"
+                              readonly
+                              value={targetData?.fix_result?.[0]
+                                ?.cfr_fix_enddate}
+                            />
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     <tr>

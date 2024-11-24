@@ -180,19 +180,15 @@
           <col />
           <col />
           <col />
-          <col />
-          <col />
         </colgroup>
         <thead>
           <tr>
-            <th class="text-center">번호</th>
+            <th class="text-center">순번</th>
+            <th class="text-center">명령</th>
+            <th class="text-center">명령내역</th>
             <th class="text-center">프로젝트명</th>
-            <th class="text-center">자산명</th>
-            <th class="text-center">분류코드</th>
-            <th class="text-center">로그내용</th>
-            <th class="text-center">수행자</th>
             <th class="text-center">날짜</th>
-            <th class="text-center">비고</th>
+            <th class="text-center">수행자</th>
           </tr>
         </thead>
         <tbody>
@@ -203,26 +199,21 @@
                   {baseIndex - index}
                 </td>
                 <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_orig_data.split(":")[0]}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_orig_data.split(":")[1]}</td
+                >
+                <td class="text-center" style="font-size: 16px;"
                   >{data?.ccp_index}</td
-                >
-                <td class="text-center" style="font-size: 16px;"
-                  >{data?.ast_uuid}</td
-                >
-                <td class="text-center" style="font-size: 16px;"
-                  >{data?.his_type}</td
-                >
-                <td style="font-size: 16px; line-height: 23px;"
-                  >{data?.his_orig_data}</td
-                >
-                <td class="text-center" style="font-size: 16px;"
-                  >{data?.his_order_user}</td
                 >
                 <td class="text-center" style="font-size: 16px;"
                   >{moment(data?.his_udate).format("YYYY-MM-DD hh:mm:ss")}</td
                 >
-                <td class="text-center" style="font-size: 16px;">
-                  <Tooltip text={data?.his_full_data}>비고</Tooltip>
-                </td>
+
+                <td class="text-center" style="font-size: 16px;"
+                  >{data?.his_order_user}</td
+                >
               </tr>
             {/each}
           {/if}

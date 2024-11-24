@@ -29,12 +29,11 @@
   const searchDataHandler = async () => {
     try {
       const response = await getAuditNLog(search);
-      console.log("API Response:", response);
 
-      logData = (response?.data || []).reverse();
+      logData = response.data.sort((a, b) => b.his_index - a.his_index);
       totalItems = response?.total_rec_cnt || 0;
       totalPages = Math.ceil(totalItems / itemsPerPage);
-      console.log("Total Items:", totalItems, "Total Pages:", totalPages);
+
     } catch (err) {
       error = err.message;
     }
@@ -109,45 +108,42 @@
         </tr>
       </thead>
       <tbody>
-        {#each logData as data, index}
+        {#if logData.length > 0}
+          {#each logData as data, index}
+            <tr>
+              <td class="text-center" style="font-size: 16px;">
+                {totalItems - ((currentPage - 1) * itemsPerPage + index)}
+              </td>
+              <td style="font-size: 16px;" class="text-center">
+                {data.his_type || "N/A"}
+              </td>
+              <td style="font-size: 16px;" class="line-height">
+                {data.his_orig_data || "N/A"}
+              </td>
+              <td class="text-center line-height" style="font-size: 16px;">
+                {data.his_order_user || "N/A"}
+              </td>
+              <td class="text-center" style="font-size: 16px;">
+                {moment(data.his_udate).format("YYYY.MM.DD")}
+              </td>
+              <td class="text-center" style="font-size: 16px;">
+                <span>{data.ccp_index}</span>
+              </td>
+              <td style="font-size: 16px;">
+                <span>{data.his_full_data || "N/A"}</span>
+              </td>
+            </tr>
+          {/each}
+        {:else}
           <tr>
-            <td class="text-center" style="font-size: 16px;">
-              {totalItems - ((currentPage - 1) * itemsPerPage + index)}
-            </td>
-            <td style="font-size: 16px;" class="text-center">
-              {data.his_type || "N/A"}
-            </td>
-            <td style="font-size: 16px;" class="line-height">
-              {data.his_orig_data || "N/A"}
-            </td>
-            <td class="text-center line-height" style="font-size: 16px;">
-              {data.his_order_user || "N/A"}
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              {moment(data.his_udate).format("YYYY.MM.DD")}
-            </td>
-            <td class="text-center" style="font-size: 16px;">
-              <span>{data.ccp_index}</span>
-            </td>
-            <td style="font-size: 16px;">
-              <span>{data.his_full_data || "N/A"}</span>
-            </td>
+            <td colspan="7" class="no-data-message"> 데이터가 없습니다 </td>
           </tr>
-        {/each}
+        {/if}
       </tbody>
     </table>
   </div>
 
   <div>
-    <div class="total-count">
-      <div class="data_total">
-        <p>총 데이터:</p>
-        <div>
-          <strong>{totalItems}</strong>개
-        </div>
-      </div>
-    </div>
-
     <div class="pagination_box">
       <nav class="pagination">
         <!-- First Page Button -->
@@ -259,19 +255,12 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
-  .total-count {
-    display: flex;
-    gap: 5px;
-    text-align: left;
-    margin-top: 10px;
-    margin-left: 20px;
-    font-size: 16px;
+  .no-data-message {
+    text-align: center;
+    font-size: 18px;
     color: #555;
-  }
-
-  .data_total {
-    display: flex;
-    gap: 5px;
+    height: 50px;
+    line-height: 50px;
   }
 
   .pagination_box {

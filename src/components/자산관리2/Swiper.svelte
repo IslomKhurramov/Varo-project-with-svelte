@@ -408,6 +408,12 @@
   function closeModalEdit() {
     currentPage = FirstMenu; // This will unmount ModalEdit when called
   }
+
+  $: if (filteredAssets) {
+    setTimeout(() => {
+      swiperInstance?.update();
+    }, 0);
+  }
 </script>
 
 <main style="height: 100%;">
@@ -435,6 +441,7 @@
                   ? 'active'
                   : ''}"
                 on:click={() => handleAssetClick(asset.ass_uuid, asset)}
+                style="min-width: {itemWidth}px;"
               >
                 {asset.ast_hostname}
               </div>

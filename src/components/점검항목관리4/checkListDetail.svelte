@@ -174,8 +174,11 @@
           >
         {/if}
       </div>
-      <div class="tableListWrap table2">
-        <table class="tableList hdBorder" style="height: 70vh;">
+      <div
+        class="tableListWrap table2"
+        style="margin-bottom: 20px; height:78vh;"
+      >
+        <table class="tableList hdBorder font-size: 16px;">
           {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
             <colgroup>
               <col style="width:50px;" />
@@ -216,6 +219,8 @@
             {#if $filteredChecklistData.length > 0}
               {#each $filteredChecklistData as item, index}
                 <tr
+                  class="height"
+                  style="height: 98px;"
                   on:click={() => {
                     selectedItem = item;
                     selectedItemNumber = item.ccc_item_no;
@@ -267,6 +272,14 @@
   .tableListWrap .hdBorder td {
     font-size: 16px;
   }
+  .tableListWrap table tbody tr.height {
+    height: 98px !important;
+  }
+  .tableListWrap table {
+    border-collapse: separate; /* Or 'collapse', depending on your design */
+    table-layout: fixed; /* Fix column widths for consistent row heights */
+  }
+
   .deleteBtn {
     background-color: #007bff;
     color: white;

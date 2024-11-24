@@ -388,8 +388,7 @@
                   </div>
                 </div>
                 <h4 class="name">
-                  {asset.asset_group?.[0]?.asg_index__asg_title ||
-                    "Unknown Group"}
+                  {asset.asset_group?.[0]?.asg_index__asg_title || "그룹미지정"}
                 </h4>
               </div>
               <span class="date">
@@ -417,6 +416,18 @@
                     ? "설치됨"
                     : "설치 안됨"}
                 </li>
+                {#if asset.asset_group?.length > 1}
+                  <!-- Display related groups if there are more than one -->
+                  <li>
+                    <span>관련 그룹:</span>
+
+                    {#each asset.asset_group.slice(1) as group, groupIndex}
+                      {group.asg_index__asg_title || "이름 없음"}
+                      {#if groupIndex < asset.asset_group.slice(1).length - 1},
+                      {/if}
+                    {/each}
+                  </li>
+                {/if}
               </ul>
 
               {#if asset.asset_target_registered === "YES"}

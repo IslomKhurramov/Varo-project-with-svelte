@@ -174,14 +174,6 @@
     </table>
   </div>
   <div>
-    <div class="total-count">
-      <div class="data_total">
-        <p>총 데이터:</p>
-        <div>
-          <strong>{totalItems}</strong>개
-        </div>
-      </div>
-    </div>
 
     <div class="pagination_box">
       <nav class="pagination">
@@ -268,21 +260,6 @@
     top: 0;
     z-index: 10;
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-  }
-
-  .total-count {
-    display: flex;
-    gap: 5px;
-    text-align: left;
-    margin-top: 10px;
-    margin-left: 20px;
-    font-size: 16px;
-    color: #555;
-  }
-
-  .data_total {
-    display: flex;
-    gap: 5px;
   }
 
   .pagination {

@@ -21,17 +21,20 @@
 
   const findUser = async () => {
     try {
-      if (!find_user) throw new Error("이메일 입력하지 않았습니다");
-      const result = await getUserExist(find_user);
+      if (!default_user_email) {
+        throw new Error("이메일 입력하지 않았습니다");
+      }
 
-      await successAlert(result);
-      getUserListsData();
-      handleList();
+      const result = await getUserExist(default_user_email);
+
+      if (result.RESULT === "OK") {
+        await successAlert(result.CODE);
+      } else if (result?.RESULT === "ERROR") {
+        await errorAlert(result.CODE);
+      }
     } catch (err) {
-      errorMessage = err?.message;
-      await errorAlert(errorMessage);
-    } finally {
-      find_user = "";
+      console.error("Xatolik:", err.message);
+      await errorAlert(err?.message || "알 수 없는 오류가 발생했습니다.");
     }
   };
 
@@ -107,7 +110,7 @@
       <label>이메일(변경불가)</label>
       <input
         type="email"
-        value={default_user_email}
+        bind:value={default_user_email}
         placeholder={selectedData?.itemTitle}
         on:input={handleInputChange}
       />
@@ -144,15 +147,6 @@
                 errorAlert("변경할 사용자를 선택하지 않았습니다.");
               }
             }}>수정하기</button
-          >
-          <button
-            class="btn close-btn"
-            on:click={() => {
-              default_user_name = "";
-              default_user_email = "";
-              default_user_depart = "";
-              default_user_level = "";
-            }}>다시 놓기</button
           >
           <button
             class="btn delete-btn"

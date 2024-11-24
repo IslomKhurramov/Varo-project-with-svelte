@@ -12,14 +12,14 @@
     decryptData,
     setPasswordReset,
   } from "../../../services/login/loginService";
-  import { userData } from "../../../stores/user.store";
+  // import { userData } from "../../../stores/user.store";
 
   let userRoleTypeIndex = null;
 
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
   // //////////////////////////////////////////////////////////////////////
 
   let error = null;
@@ -174,18 +174,18 @@
                 <td class="text-center" style="font-size: 12px;">
                   <!-- {#if parseInt(user_roletype_role_index) === 0} -->
                   <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9} -->
-                    <select
-                      bind:value={data.itemResult}
-                      on:change={(e) => handleStatusChange(data.user_index, e)}
-                      on:click={(e) => e.stopPropagation()}
-                      name="agent_status"
-                      id="agent_status"
-                    >
-                      <option value="1">활성</option>
-                      <option value="0">비활성</option>
-                    </select>
+                  <select
+                    bind:value={data.itemResult}
+                    on:change={(e) => handleStatusChange(data.user_index, e)}
+                    on:click={(e) => e.stopPropagation()}
+                    name="agent_status"
+                    id="agent_status"
+                  >
+                    <option value="1">활성</option>
+                    <option value="0">비활성</option>
+                  </select>
                   <!-- {:else} -->
-                    <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
+                  <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
                   <!-- {/if} -->
                 </td>
 
@@ -214,26 +214,16 @@
         </table>
       </div>
 
-      <div>
-        <div class="total-count">
-          <div class="data_total">
-            <p>총 데이터:</p>
-            <div>
-              <strong>{projectArray.length}</strong>개
-            </div>
-          </div>
-        </div>
-        <div class="buttonContainer formControl">
-          <button
-            type="button"
-            class="btn btnBlue btnSave"
-            on:click={() => {
-              showNewMember = true;
-            }}
-          >
-            사용자추가
-          </button>
-        </div>
+      <div class="buttonContainer formControl">
+        <button
+          type="button"
+          class="btn btnBlue btnSave"
+          on:click={() => {
+            showNewMember = true;
+          }}
+        >
+          사용자추가
+        </button>
       </div>
     </section>
   {/if}
@@ -247,7 +237,6 @@
     background-color: #ffffff;
     padding: 20px;
     margin: 10px 0;
-    /* width: 100%; */
     height: calc(100vh - 134px);
   }
   .tableWrap_3 {
@@ -330,20 +319,6 @@
   .btnSave:hover {
     color: #fff;
     background-color: #4989ff;
-  }
-
-  .total-count {
-    display: flex;
-    gap: 5px;
-    text-align: left;
-    margin-top: 10px;
-    margin-left: 20px;
-    font-size: 16px;
-    color: #555;
-  }
-  .data_total {
-    display: flex;
-    gap: 5px;
   }
 
   /***************************/

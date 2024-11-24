@@ -9,7 +9,6 @@
 
   let serverIP = "000.000.0.00";
   let port = Number();
-  let clientName = "타이거씨엔에스";
   let agentConnectInterval = Number();
   let high_level_point_3 = Number();
   let medium_level_point_2 = Number();

@@ -37,7 +37,6 @@
       console.log("Total Items:", totalItems, "Total Pages:", totalPages);
     } catch (err) {
       error = err.message;
-      await errorAlert(error);
     }
   };
   $: {

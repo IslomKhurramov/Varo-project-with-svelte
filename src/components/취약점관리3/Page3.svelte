@@ -219,11 +219,6 @@
       );
     }
   }
-
-  $: {
-    console.log("search:", search);
-    console.log("selectedSendData:", selectedSendData);
-  }
 </script>
 
 {#if loading}

@@ -181,14 +181,6 @@
   $: {
     baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
   }
-
-  $: {
-    console.log("selectedSendData:", selectedSendData);
-    console.log("baseIndex:", baseIndex);
-    console.log("totalRecords:", totalRecords);
-    console.log("currentPageNum:", currentPageNum);
-    console.log("itemsPerPage:", itemsPerPage);
-  }
 </script>
 
 <section class="content">

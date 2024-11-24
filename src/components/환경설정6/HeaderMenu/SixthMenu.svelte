@@ -54,7 +54,7 @@
   }
   .table-container {
     background-color: #ffffff;
-    padding: 20px;
+    /* padding: 20px; */
     margin: 10px 0;
     /* width: 100%; */
     /* height: calc(100vh - 134px); */

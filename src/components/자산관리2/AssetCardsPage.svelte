@@ -461,6 +461,7 @@
         {updateFilteredAssets}
         {filterAssets}
         {filteredAssets}
+        {assetList}
       />
     </div>
   {/if}

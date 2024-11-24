@@ -6,6 +6,7 @@
 
   export let cancel;
   export let selectedAsset;
+  export let assetList;
   let isDbmsChecked = false;
   let isNetworkChecked = false;
   let isWebChecked = false;
@@ -178,7 +179,7 @@
 
       if (response.RESULT === "OK") {
         successAlert("성공적으로 등록되었습니다");
-        window.location.reload();
+        await assetList();
         cancel();
       } else {
         throw new Error(`API error: ${response.CODE}`);

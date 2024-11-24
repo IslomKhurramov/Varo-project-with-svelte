@@ -173,7 +173,7 @@
 
                 <td class="text-center" style="font-size: 12px;">
                   <!-- {#if parseInt(user_roletype_role_index) === 0} -->
-                  {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9}
+                  <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9} -->
                     <select
                       bind:value={data.itemResult}
                       on:change={(e) => handleStatusChange(data.user_index, e)}
@@ -184,9 +184,9 @@
                       <option value="1">활성</option>
                       <option value="0">비활성</option>
                     </select>
-                  {:else}
+                  <!-- {:else} -->
                     <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
-                  {/if}
+                  <!-- {/if} -->
                 </td>
 
                 <td

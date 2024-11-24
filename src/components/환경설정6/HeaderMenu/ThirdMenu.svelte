@@ -8,17 +8,17 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import { userData } from "../../../stores/user.store";
-  import { decryptData } from "../../../services/login/loginService";
+  // import { userData } from "../../../stores/user.store";
+  // import { decryptData } from "../../../services/login/loginService";
   import NewArticle1 from "../NewArticle1.svelte";
 
   let userRoleTypeIndex = null;
 
   // ///////////////////////////////////////////////////////////////////////
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
 
   // ///////////////////////////////////////////////////////////////////////
 
@@ -180,15 +180,9 @@
           </table>
         </div>
         <div>
-          <div class="total-count">
-            <div class="data_total">
-              <p>총 데이터:</p>
-              <div>
-                <strong>{totalItems}</strong>개
-              </div>
-            </div>
-          </div>
-          {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+          <!-- Pagination -->
+          <div class="pagination_box">
+            <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
             <div class="buttonContainer">
               <button
                 type="button"
@@ -200,9 +194,8 @@
                 게시물추가
               </button>
             </div>
-          {/if}
-          <!-- Pagination -->
-          <div class="pagination_box">
+            <!-- {/if} -->
+
             <nav class="pagination">
               <!-- First Page Button -->
               <button
@@ -250,6 +243,8 @@
                 &raquo;
               </button>
             </nav>
+
+            <div></div>
           </div>
         </div>
       </div>
@@ -302,9 +297,9 @@
 
   .buttonContainer {
     display: flex;
-    margin-top: 33px;
     align-items: flex-end;
     margin-left: 10px;
+    margin-bottom: 40px;
   }
 
   .btnSave {
@@ -324,26 +319,11 @@
     background-color: #4989ff;
   }
 
-  .total-count {
-    display: flex;
-    gap: 5px;
-    text-align: left;
-    margin-top: 10px;
-    margin-left: 20px;
-    font-size: 16px;
-    color: #555;
-  }
-
-  .data_total {
-    display: flex;
-    gap: 5px;
-  }
-
   .pagination_box {
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
   }
 
@@ -351,7 +331,6 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    margin-top: 20px;
     padding: 10px 0;
     background-color: #fff;
     margin-bottom: 40px;

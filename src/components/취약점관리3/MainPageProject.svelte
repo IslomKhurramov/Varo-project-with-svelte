@@ -366,14 +366,15 @@
                 <button
                   class="btn btnBlue"
                   on:click={() => {
-                    const data = {
+                    const items = data?.map((item) => item.ccr_index);
+                    const send_data = {
                       plan_index: selectedSendData?.plan_index,
                       asset_target_uuid: selectedSendData?.asset_target_uuid,
                       approved: "1",
-                      approved_targets: "ALL",
+                      approved_targets: items,
                       approved_comment: "",
                     };
-                    fixApproveHandler(data);
+                    fixApproveHandler(send_data);
                   }}
                 >
                   일괄승인
@@ -382,14 +383,15 @@
                   type="button"
                   class="btn btnBlue"
                   on:click={() => {
-                    const data = {
+                    const items = data?.map((item) => item.ccr_index);
+                    const send_data = {
                       plan_index: selectedSendData?.plan_index,
                       asset_target_uuid: selectedSendData?.asset_target_uuid,
                       approved: "0",
-                      approved_targets: "ALL",
+                      approved_targets: items,
                       approved_comment: "",
                     };
-                    fixApproveHandler(data);
+                    fixApproveHandler(send_data);
                   }}
                 >
                   일괄반려
@@ -442,14 +444,15 @@
                   type="button"
                   class="btn btnBlue"
                   on:click={() => {
-                    const data = {
+                    const items = data?.map((item) => item.ccr_index);
+                    const send_data = {
                       plan_index: selectedSendData?.plan_index,
                       asset_target_uuid: selectedSendData?.asset_target_uuid,
                       approved: "1",
-                      approved_targets: "ALL",
+                      approved_targets: items,
                       approved_comment: "",
                     };
-                    fixDoneApproveHandler(data);
+                    fixDoneApproveHandler(send_data);
                   }}
                 >
                   일괄승인
@@ -458,14 +461,15 @@
                   type="button"
                   class="btn btnBlue"
                   on:click={() => {
-                    const data = {
+                    const items = data?.map((item) => item.ccr_index);
+                    const send_data = {
                       plan_index: selectedSendData?.plan_index,
                       asset_target_uuid: selectedSendData?.asset_target_uuid,
                       approved: "0",
-                      approved_targets: "ALL",
+                      approved_targets: items,
                       approved_comment: "",
                     };
-                    fixDoneApproveHandler(data);
+                    fixDoneApproveHandler(send_data);
                   }}
                 >
                   일괄반려
@@ -623,7 +627,7 @@
               <col style="width:80px;" />
               <col style="width:70px;" />
               <col style="width:100px;" />
-              {#if isAgenUser}
+              {#if isAgenUser && !["plan", "result"].includes(setView)}
                 <col style="width:90px;" />
               {/if}
             </colgroup>
@@ -683,7 +687,8 @@
                 <th class="text-center">조치분류상태</th>
                 <th class="text-center">조치담당자</th>
                 <th class="text-center">담당자연락처</th>
-                {#if isAgenUser}
+
+                {#if isAgenUser && !["plan", "result"].includes(setView)}
                   <th class="text-center"> 승인 </th>
                 {/if}
               </tr>
@@ -769,7 +774,7 @@
                     <td class="text-center">
                       {item.ast_uuid__ass_uuid__ast_operator_phone}
                     </td>
-                    {#if isAgenUser}
+                    {#if isAgenUser && !["plan", "result"].includes(setView)}
                       <!-- svelte-ignore a11y-click-events-have-key-events -->
                       <td
                         class="text-center"

@@ -60,7 +60,7 @@
   }
 </script>
 
-<section style="background-color: #fff;">
+<section style="background-color: #fff; padding: 20px">
   <div class="tableWrap">
     <div class="tableListWrap">
       <table class="tableList hdBorder">
@@ -125,53 +125,12 @@
   </div>
 </section>
 
-<!-- <select style="margin-top:10px; margin-left:10px" bind:value={listCount}>
-    <option value="15">15개 보기</option>
-
-    <option value="30">30개 보기</option>
-    <option value="50">50개 보기</option>
-    <option value="100">100개 보기</option>
-    <option value="전체">전체 보기</option>
-  </select> -->
-<!-- <div class="pagination_box">
-    <nav class="pagination">
-      <button
-        on:click={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        &lsaquo;
-      </button>
-      {#each Array(totalPages) as _, page (page)}
-        <button
-          class:selected={currentPage === page + 1}
-          on:click={() => goToPage(page + 1)}
-        >
-          {page + 1}
-        </button>
-      {/each}
-      <button
-        on:click={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        &rsaquo;
-      </button>
-    </nav>
-  </div> -->
-
 <style>
   /*******************/
   * {
     font-size: 16px;
   }
-  .pagination_box {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-  .upload-btn,
-  .btnSave {
+  .upload-btn {
     background-color: #4caf50;
     color: white;
     border: none;
@@ -187,11 +146,8 @@
     border-radius: 5px;
     overflow-y: auto;
   }
-  .tableList {
-  }
 
-  .upload-btn:hover,
-  .btnSave:hover {
+  .upload-btn:hover {
     background-color: #45a049;
   }
   .file-name-input {
@@ -208,10 +164,7 @@
   .tableWrap {
     background-color: #fff;
   }
-  .parent_table {
-    padding: 20px;
-    height: 100%;
-  }
+
   thead {
     position: sticky;
     top: 0;
@@ -219,44 +172,10 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 60px;
-  }
-
-  .pagination button {
-    border: none !important;
-    padding: 8px 12px;
-    margin: 0 4px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-
-  .pagination button.selected {
-    background-color: #007bff;
-    color: #fff;
-  }
-
-  .pagination button[disabled] {
-    cursor: not-allowed;
-  }
-
-  .pagination button:hover:not([disabled]) {
-    background-color: #d4d4d4;
-  }
-
   tr:hover {
     cursor: pointer;
     background-color: #f4f4f4;
     transition-duration: 0.3s;
-  }
-
-  .btn_dean {
-    display: flex;
-    gap: 10px;
-    width: 250px;
   }
 
   .btn:hover {

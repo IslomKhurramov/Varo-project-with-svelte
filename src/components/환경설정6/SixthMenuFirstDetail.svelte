@@ -387,7 +387,7 @@
 
 <article
   class="contentArea"
-  style="background-color: #fff; height:100%; padding: 0px 10px 10px 10px;"
+  style="background-color: #fff; height:100%;"
 >
   <section
     class="tableWrap"

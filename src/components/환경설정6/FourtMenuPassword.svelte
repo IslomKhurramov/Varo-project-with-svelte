@@ -10,12 +10,11 @@
   import { createEventDispatcher } from "svelte";
 
   let find_user = "";
-  let errorMessage = "";
   let error = null;
   let default_user_name = selectedData?.hostname || "";
   let default_user_email = selectedData?.itemTitle || "";
   let default_user_depart = selectedData?.itemCriteria || "";
-  let default_user_level = selectedData?.itemResult || "";
+  let default_user_level = selectedData?.itemLevel || "";
 
   const dispatch = createEventDispatcher();
 
@@ -34,7 +33,6 @@
         await errorAlert(result.CODE);
       }
     } catch (err) {
-      console.error("Xatolik:", err.message);
       await errorAlert(err?.message || "알 수 없는 오류가 발생했습니다.");
     }
   };
@@ -132,7 +130,7 @@
       <label>유저권한</label>
       <input
         type="number"
-        placeholder={selectedData?.itemResult}
+        placeholder={selectedData?.itemLevel}
         bind:value={default_user_level}
       />
     </div>

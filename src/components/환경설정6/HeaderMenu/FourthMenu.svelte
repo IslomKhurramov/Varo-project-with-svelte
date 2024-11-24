@@ -37,6 +37,7 @@
           itemTitle: user.user_email,
           itemCriteria: user.user_depart,
           itemStatus: user.user_roletype__role_type,
+          itemLevel: user.user_roletype__role_index,
           itemResult: user.user_activate ? "1" : "0",
           user_index: user.user_index,
         })).reverse();
@@ -109,6 +110,7 @@
   {:else if selectedData}
     <FourthMenuDetail
       {selectedData}
+      {projectArray}
       {getUserListsData}
       on:close={() => {
         selectedData = null;

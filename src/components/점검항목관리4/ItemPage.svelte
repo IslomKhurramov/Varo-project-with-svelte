@@ -7,6 +7,7 @@
   } from "../../services/page4/getAllCheckList";
   import {
     checklistStore,
+    fetchChecklistData,
     filteredChecklistData,
   } from "../../services/page4/checklistStore";
   import { confirmDelete, successAlert } from "../../shared/sweetAlert";
@@ -69,7 +70,7 @@
 
       if (deleteItem.success) {
         successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`);
-
+        await fetchChecklistData();
         // Update filteredChecklistData by removing deleted items
         filteredChecklistData.update((data) =>
           data.filter((item) => !arrayIndexes.includes(item.ccc_index)),

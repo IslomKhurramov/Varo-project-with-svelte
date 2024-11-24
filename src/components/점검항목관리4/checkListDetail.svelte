@@ -2,7 +2,10 @@
   import Modal from "../../shared/Modal.svelte";
   import ModalEditItem from "./ModalEditItem.svelte";
   import { setDeleteChecklistItem } from "../../services/page4/getAllCheckList";
-  import { filteredChecklistData } from "../../services/page4/checklistStore";
+  import {
+    fetchChecklistData,
+    filteredChecklistData,
+  } from "../../services/page4/checklistStore";
   import { successAlert } from "../../shared/sweetAlert";
 
   export let selectedCategory;
@@ -79,7 +82,7 @@
 
       if (deleteItem.success) {
         successAlert(`선택한 항목이 성공적으로 삭제되었습니다!`);
-
+        await fetchChecklistData();
         // Update the filteredChecklistData store
         filteredChecklistData.update((data) =>
           data.filter((item) => !selectedItems.includes(item.ccc_index)),

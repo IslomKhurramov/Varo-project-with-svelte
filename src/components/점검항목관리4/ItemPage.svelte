@@ -19,27 +19,29 @@
   export let lastCreatedChecklistId;
   export let showDataTbale2;
   export let selectedRisk;
+  export let slides = [];
   export let showEdit;
   let selectedItem = null;
   let selected = [];
   let showModal = false;
   export let isNewlyCreatedChecklist = false;
   let selectedGroup = null;
-
+  $: filteredChecklistData;
   /**********************************************************************/
-  $: if (selectedChecklist) {
-    // Get the checklist data for the selected category
-    let checklistData = selectedChecklist[selectedCategory] || [];
+  $: {
+    if (selectedChecklist) {
+      let checklistData = selectedChecklist[selectedCategory] || [];
 
-    // If selectedRisk is not "위험도" (which means "all"), filter by ccc_item_level
-    if (selectedRisk !== "위험도") {
-      checklistData = checklistData.filter(
-        (item) => item.ccc_item_level === selectedRisk,
-      );
+      // If selectedRisk is not "위험도", filter by ccc_item_level
+      if (selectedRisk !== "위험도") {
+        checklistData = checklistData.filter(
+          (item) => item.ccc_item_level === selectedRisk,
+        );
+      }
+
+      // Update the filteredChecklistData store with the newly filtered data
+      filteredChecklistData.set(checklistData);
     }
-
-    // Set the filtered data in the store
-    filteredChecklistData.set(checklistData);
   }
 
   // Extract ccc_index from selected items
@@ -72,7 +74,23 @@
         filteredChecklistData.update((data) =>
           data.filter((item) => !arrayIndexes.includes(item.ccc_index)),
         );
+        slides = slides.filter(
+          (slide) => !selectedItems.includes(slide.ccc_index),
+        );
 
+        // Ensure the next slide is selected if slides are available
+        if (slides.length > 0) {
+          let nextIndex = slides.findIndex(
+            (slide) => slide.ccc_item_no === selectedItem?.ccc_item_no,
+          );
+
+          // If the selected item was the last one, move to the previous slide
+          if (nextIndex === slides.length - 1) {
+            nextIndex = Math.max(0, nextIndex - 1);
+          }
+          // Update the selectedItem to the next available slide
+          selectedItem = slides[nextIndex];
+        }
         // Clear the selected array
         selected = [];
       }
@@ -80,6 +98,7 @@
       alert("Error occurred while deleting items.");
     }
   }
+
   /************************************************************************/
   // Mark the newly created checklist as new
   $: if (
@@ -157,6 +176,7 @@
       alert("An error occurred while deleting the project."); // Provide user feedback
     }
   }
+  $: console.log("selectedItem", selectedItem);
 
   function handleProjectData(data) {
     selectedChecklist = data;

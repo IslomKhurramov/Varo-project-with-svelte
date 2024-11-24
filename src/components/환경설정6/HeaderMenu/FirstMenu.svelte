@@ -9,6 +9,7 @@
 
   let serverIP = "000.000.0.00";
   let port = Number();
+  let clientName = "타이거씨엔에스";
   let agentConnectInterval = Number();
   let high_level_point_3 = Number();
   let medium_level_point_2 = Number();
@@ -28,8 +29,10 @@
       if (projectData?.RESULT === "OK") {
         const data = projectData.CODE[0];
         serverIP = data.server_ipaddr || serverIP;
-        high_level_point_3 = data.checklist_high_level_point || high_level_point_3;
-        medium_level_point_2 = data.checklist_medium_level_point || medium_level_point_2;
+        high_level_point_3 =
+          data.checklist_high_level_point || high_level_point_3;
+        medium_level_point_2 =
+          data.checklist_medium_level_point || medium_level_point_2;
         low_level_point_1 = data.checklist_low_level_point || low_level_point_1;
         port = parseInt(data.server_port) || port;
         agentConnectInterval =
@@ -101,7 +104,7 @@
       <label>위험도</label>
       <div class="riskLevels">
         <div class="riskLevelItem">
-          <label>상</label>
+          <p>상</p>
           <input
             type="number"
             bind:value={high_level_point_3}
@@ -109,7 +112,7 @@
           />
         </div>
         <div class="riskLevelItem">
-          <label>중</label>
+          <span>중</span>
           <input
             type="number"
             bind:value={medium_level_point_2}
@@ -117,7 +120,7 @@
           />
         </div>
         <div class="riskLevelItem">
-          <label>하</label>
+          <span>하</span>
           <input type="number" bind:value={low_level_point_1} placeholder="1" />
         </div>
       </div>
@@ -164,12 +167,16 @@
 </main>
 
 <style>
+  * {
+    font-size: 16px;
+  }
   .table-container {
+    overflow-y: auto;
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
     margin-top: 10px;
-    height: 80vh;
+    height: calc(100vh - 200px);
   }
 
   .formContainer {
@@ -189,7 +196,7 @@
   .inputRow label {
     width: 150px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     margin-left: 20px;
   }
 
@@ -205,30 +212,54 @@
   /* 위험도 Section Styling */
   .riskLevels {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    gap: 10;
+    flex: 1; /* Take up the remaining space */
   }
 
   .riskLevelItem {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; /* Align label and input horizontally */
+    align-items: center; /* Center items vertically */
+    flex: 1; /* Ensure equal width for each risk level item */
+    min-width: 100px; /* Ensure a minimum width for small screens */
+    gap: 10;
   }
 
-  .riskLevelItem label {
-    width: 60px;
+  .riskLevelItem span {
     font-size: 16px;
     font-weight: 600;
-    text-align: right;
+    white-space: nowrap; /* Prevent text wrapping */
+    margin: 0 10px;
+  }
+
+  .riskLevelItem p {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap; /* Prevent text wrapping */
+    margin-right: 10px;
   }
 
   .riskLevelItem input {
-    width: 50%;
+    flex: 1;
     padding: 10px;
-    text-align: center;
     border: 1px solid #cccccc;
     border-radius: 5px;
     font-size: 16px;
+    text-align: center; /* Center text inside input */
+    box-sizing: border-box;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .riskLevels {
+      flex-direction: column; /* Stack risk level items vertically */
+      gap: 15px;
+    }
+
+    .riskLevelItem {
+      flex-direction: row; /* Keep label and input side-by-side */
+      align-items: center;
+      min-width: unset; /* Allow items to shrink naturally */
+    }
   }
 
   .buttonContainer {

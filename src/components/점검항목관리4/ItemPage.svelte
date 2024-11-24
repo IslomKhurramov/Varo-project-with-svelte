@@ -292,7 +292,7 @@
         >
       {/if}
     </div>
-    <div class="tableListWrap table2" style="margin-bottom: 20px; height:45vh;">
+    <div class="tableListWrap table2" style="margin-bottom: 20px; height:50vh;">
       <table class="tableList hdBorder font-size: 16px;">
         {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <colgroup>
@@ -534,7 +534,7 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Shadow effect for separation */
   }
   .table1 {
-    max-height: 382px;
+    height: 235px;
   }
 
   .table2 {

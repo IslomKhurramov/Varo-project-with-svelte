@@ -843,7 +843,6 @@
                 초기화
               </button>
 
-              <button type="button" class="btn btnPrimary"> 엑셀저장 </button>
               {#if activeView === "project"}
                 <!-- For project comparison -->
                 <button
@@ -872,6 +871,7 @@
                   비교
                 </button>
               {/if}
+              <!-- <button type="button" class="btn btnPrimary"> 엑셀저장 </button> -->
 
               {#if filterPage || filterAssetPage || filterTargetPage}
                 <button
@@ -934,6 +934,9 @@
   }
   * {
     font-size: 16px;
+  }
+  .btn {
+    width: 111px;
   }
   .arrowIcon {
     display: inline-block;

@@ -266,6 +266,7 @@
   function handleGroupChange(event) {
     selectedGroupIndex = event.target.value;
   }
+  $: console.log("filteredqassets", filteredAssets);
 </script>
 
 {#if !showSwiperComponent}
@@ -392,7 +393,7 @@
                 </h4>
               </div>
               <span class="date">
-                {formatDate(asset.ast_lastconnect) || "Unknown Date"}
+                {formatDate(asset.ast_cdate) || "Unknown Date"}
               </span>
             </div>
             <div class="text flex col justify-between">
@@ -525,6 +526,19 @@
 {/if}
 
 <style>
+  .name {
+    line-height: 18px;
+  }
+  .graphCard .graph {
+    width: 110px;
+    background-color: #f5f6fa;
+    padding: 15px 20px;
+    gap: 14px;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
   .modal-buttons {
     display: flex;
     justify-content: space-between;

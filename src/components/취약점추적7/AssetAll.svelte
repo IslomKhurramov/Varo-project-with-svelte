@@ -7,54 +7,7 @@
       return "#00ff00"; // Green
     else return "#0067ff"; // Red
   }
-  export let asset;
-  let filteredAssets = [
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 12,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 1500,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 85,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-    {
-      ast_security_point: 900,
-      ast_uuid__ast_target__cct_target: "Web Server",
-      asg_index__asg_title: "Finance Servers",
-      ast_os: "Windows Server 2019",
-      ast_hostname: "2024.04.04",
-      ast_ipaddr: "2000대",
-      ast_agent_installed: true,
-    },
-  ];
+
   $: recentAssets = filteredAssets.slice(-5);
 </script>
 
@@ -118,7 +71,7 @@
                   <ul>
                     <li>
                       <span>프로젝트명 : </span>{plan.ccp_title ||
-                        "Unknown Project"}
+                        "데이터 없음"}
                     </li>
                     <li>
                       <span>점검일시 : </span>
@@ -130,16 +83,16 @@
                             hour: "2-digit",
                             minute: "2-digit",
                           })
-                        : "Unknown"}
+                        : "데이터 없음"}
                     </li>
                     <li>
                       <span>관련시스템 : </span>
-                      {plan.system_count || "Unknown System"}대
+                      {plan.system_count || "데이터 없음"}대
                     </li>
                     <li>
                       <span>최다자산 : </span>
                       {plan.most_vulnerable_asset
-                        ?.ast_uuid__ass_uuid__ast_hostname || "No Asset"}
+                        ?.ast_uuid__ass_uuid__ast_hostname || "데이터 없음"}
                     </li>
                     <li><span>취약점수 : </span>{plan.vuln_count || 0}건</li>
                     <li><span>조치개수 : </span>{plan.count || 0}건</li>

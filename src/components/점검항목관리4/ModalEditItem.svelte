@@ -17,7 +17,7 @@
   let activeAsset = null;
   let scrollAmount = 0;
   let itemWidth = 146;
-  let menuWidth = 100;
+  let menuWidth = 1260;
   let menuWrapper;
   let swiperInstance;
 
@@ -81,18 +81,14 @@
   }
 
   const handleScroll = (direction) => {
-    menuWrapper = document.getElementById("menuWrapper");
-    if (!menuWrapper) return;
-    const maxScroll = menuWrapper.scrollWidth - menuWidth;
-
     if (direction === "prev") {
       scrollAmount -= itemWidth;
       if (scrollAmount < 0) scrollAmount = 0;
     } else if (direction === "next") {
       scrollAmount += itemWidth;
+      const maxScroll = menuWrapper.scrollWidth - menuWidth;
       if (scrollAmount > maxScroll) scrollAmount = maxScroll;
     }
-
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
 

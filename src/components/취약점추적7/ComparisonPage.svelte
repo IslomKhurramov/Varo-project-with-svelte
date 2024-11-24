@@ -259,11 +259,11 @@
                   <li>
                     <span>취약 : </span>{$comparisonPlan.first_plan
                       .vulnerability_summary.vulnerability_count ||
-                      "Unknown OS"}건
+                      "데이터 없음"}건
                   </li>
                   <li>
                     <span>프로젝트명 : </span>{$comparisonPlan.first_plan
-                      .ccp_title || "Unknown OS"}
+                      .ccp_title || "데이터 없음"}
                   </li>
                   <li>
                     <span>점검일시 : </span>
@@ -281,7 +281,7 @@
                   </li>
                   <li>
                     <span>관련시스템 : </span>{$comparisonPlan.first_plan
-                      .system_count || "Unknown IP"}대
+                      .system_count || "데이터 없음"}대
                   </li>
                   <li style="margin-top: 15px;">
                     <span>[취약점 요약]</span>
@@ -307,11 +307,11 @@
                   <li>
                     <span>취약점수 : </span>{$comparisonPlan.first_plan
                       .vulnerability_summary.vulnerability_count ||
-                      "Unknown Hostname"}
+                      "데이터 없음"}
                   </li>
                   <li>
                     <span>조치개수 : </span>{$comparisonPlan.second_plan
-                      .vulnerability_summary.fixed_count || "Unknown IP"}
+                      .vulnerability_summary.fixed_count || "데이터 없음"}
                   </li>
                 </ul>
                 <ul>
@@ -407,11 +407,11 @@
                   <li>
                     <span>취약 : </span>{$comparisonPlan.second_plan
                       .vulnerability_summary.vulnerability_count ||
-                      "Unknown OS"}건
+                      "데이터 없음"}건
                   </li>
                   <li>
                     <span>프로젝트명 : </span>{$comparisonPlan.second_plan
-                      .ccp_title || "Unknown OS"}
+                      .ccp_title || "데이터 없음"}
                   </li>
                   <li>
                     <span>점검일시 : </span>
@@ -429,7 +429,7 @@
                   </li>
                   <li>
                     <span>관련시스템 : </span>{$comparisonPlan.second_plan
-                      .system_count || "Unknown IP"}건
+                      .system_count || "데이터 없음"}건
                   </li>
                   <li style="margin-top: 15px;">
                     <span>[취약점 요약]</span>
@@ -437,7 +437,7 @@
                   <li>
                     <span>최다자산 : </span>{$comparisonPlan.second_plan
                       .vulnerability_summary.most_vulnerable_asset ||
-                      "No Target"}
+                      "데이터 없음"}
                   </li>
                   {#if $comparisonPlan.first_plan.vulnerability_summary.most_common_item !== null}
                     <li>
@@ -455,11 +455,11 @@
                   <li>
                     <span>취약점수 : </span>{$comparisonPlan.second_plan
                       .vulnerability_summary.vulnerability_count ||
-                      "Unknown Hostname"}
+                      "데이터 없음"}
                   </li>
                   <li>
                     <span>조치개수 : </span>{$comparisonPlan.second_plan
-                      .vulnerability_summary.fixed_count || "Unknown IP"}
+                      .vulnerability_summary.fixed_count || "데이터 없음"}
                   </li>
                 </ul>
                 <ul>

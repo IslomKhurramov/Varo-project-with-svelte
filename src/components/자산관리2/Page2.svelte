@@ -713,7 +713,7 @@
               </button>
             {/if}
             {#if !showGetPlanHeader}
-              <button
+              <!-- <button
                 on:click={saveAssetToExcel}
                 class="btn btnPrimary padding_button"
                 ><img
@@ -721,7 +721,7 @@
                   class="excel-img"
                   alt="download"
                 />엑셀저장</button
-              >
+              > -->
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <button
                 on:click={() => (showModal = true)}

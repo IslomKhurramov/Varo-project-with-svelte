@@ -249,10 +249,11 @@
   /************************************************************************/
   let isCategoryManuallySelected = false; // Track if the category is manually selected
   async function handleCategorySelection(event) {
-    selectedCategory = event.target.value;
     isCategoryManuallySelected = true;
-    await tick(); // Wait for `selectedCategory` to update fully
+    selectedCategory = event.target.value;
+    console.log("selectedCategory111", selectedCategory);
     filterData(); // Run the filter function immediately after
+    await tick(); // Wait for `selectedCategory` to update fully
   }
 
   function handleChecklistSelect(checkList) {
@@ -263,78 +264,71 @@
     };
   }
   // Reactive statement to trigger filterData on any of the dependencies change
-  $: selectedRisk,
-    selectedCategory,
-    selectedChecklist,
-    allChecklistArray,
-    filterData();
-
+  // $: selectedRisk,
+  //   selectedCategory,
+  //   selectedChecklist,
+  //   allChecklistArray,
+  //   filterData();
   function filterData() {
-    if (selectedChecklist) {
-      let filteredData = [];
-
-      // If a category is manually selected
-      if (isCategoryManuallySelected) {
-        // Check if the selected category has data
-        if (
-          selectedCategory &&
-          selectedChecklist[selectedCategory] &&
-          selectedChecklist[selectedCategory].length > 0
-        ) {
-          filteredData = selectedChecklist[selectedCategory];
-        } else if (selectedCategory) {
-          // If the selected category has no data
-          console.log("No data available for the selected category.");
-        }
-      } else {
-        // If no category is selected (default case), find the first available category with data
-        const categories = [
-          "UNIX",
-          "WINDOWS",
-          "PC",
-          "NETWORK",
-          "DBMS",
-          "WEB",
-          "WAS",
-          "CLOUD",
-          "SECURITY",
-        ];
-        for (let category of categories) {
-          if (
-            selectedChecklist[category] &&
-            selectedChecklist[category].length > 0
-          ) {
-            filteredData = selectedChecklist[category];
-            selectedCategory = category; // Set to the first category with data
-            console.log(
-              `Switched to ${category} as it contains available data.`,
-            );
-            break; // Exit loop once we find valid data
-          }
-        }
-      }
-
-      // Apply risk level filter if selectedRisk is valid
-      if (selectedRisk && selectedRisk !== "위험도") {
-        filteredData = filteredData.filter(
-          (item) => item.ccc_item_level === selectedRisk,
-        );
-      }
-
-      // Update slides and selected item
-      slides = filteredData;
-      selectedItem = slides.length > 0 ? slides[0] : null; // Select first item if available
-      showSlide = slides.length > 0; // Show slides if there's data
-
-      // Initialize Swiper if there are slides to show
-      if (showSlide) {
-        initializeSwiper();
-      }
-    } else {
-      // Handle case where the selected checklist is not defined
+    if (!selectedChecklist) {
+      // If no checklist is selected, reset the slides and exit
       slides = [];
       selectedItem = null;
       showSlide = false;
+      return;
+    }
+
+    let filteredData = [];
+
+    if (isCategoryManuallySelected) {
+      // If the category was manually selected, filter by that category
+      if (selectedCategory && selectedChecklist[selectedCategory]) {
+        filteredData = selectedChecklist[selectedCategory];
+      } else {
+        console.log("No data available for the selected category.");
+      }
+    } else {
+      // If no manual selection, find the first category with data
+      const categories = [
+        "UNIX",
+        "WINDOWS",
+        "PC",
+        "NETWORK",
+        "DBMS",
+        "WEB",
+        "WAS",
+        "CLOUD",
+        "SECURITY",
+      ];
+
+      for (let category of categories) {
+        if (
+          selectedChecklist[category] &&
+          selectedChecklist[category].length > 0
+        ) {
+          filteredData = selectedChecklist[category];
+          selectedCategory = category; // Automatically set to this category
+          console.log(`Switched to ${category} as it contains available data.`);
+          break;
+        }
+      }
+    }
+
+    // Apply risk level filter if necessary
+    if (selectedRisk && selectedRisk !== "위험도") {
+      filteredData = filteredData.filter(
+        (item) => item.ccc_item_level === selectedRisk,
+      );
+    }
+
+    // Update slides and selected item
+    slides = filteredData;
+    selectedItem = slides.length > 0 ? slides[0] : null; // Select the first item if available
+    showSlide = slides.length > 0; // Show slides if there's data
+
+    // Initialize Swiper if there are slides
+    if (showSlide) {
+      initializeSwiper();
     }
   }
 
@@ -440,57 +434,6 @@
     generalCopy = true;
     showModal = true;
   }
-  // async function deleteLastCreatedChecklist() {
-  //   try {
-  //     if (!lastCreatedChecklistId) {
-  //       alert("마지막으로 생성된 체크리스트가 없습니다."); // Alert if no checklist to delete
-  //       return;
-  //     }
-
-  //     // Find the last created checklist
-  //     const lastCreatedChecklist = allChecklistArray.find(
-  //       (checklist) => checklist.ccg_index === lastCreatedChecklistId,
-  //     );
-
-  //     if (!lastCreatedChecklist) {
-  //       alert("마지막으로 생성된 체크리스트를 찾을 수 없습니다."); // Alert if not found
-  //       return;
-  //     }
-
-  //     // Confirm deletion
-  //     const isConfirmed = await confirmDeleteLast(
-  //       lastCreatedChecklist.ccg_group,
-  //     );
-  //     if (!isConfirmed) return;
-
-  //     // Call the delete API
-  //     const response = await setDeleteChecklistGroup(lastCreatedChecklistId);
-
-  //     if (response.success) {
-  //       // Remove the deleted checklist from the arrays
-  //       allChecklistArray = allChecklistArray.filter(
-  //         (checklist) => checklist.ccg_index !== lastCreatedChecklistId,
-  //       );
-  //       createdChecklists = createdChecklists.filter(
-  //         (checklist) => checklist.ccg_index !== lastCreatedChecklistId,
-  //       );
-
-  //       // Reset state related to the last created checklist
-  //       lastCreatedChecklistId = null;
-  //       selectedChecklist = null;
-  //       activeMenu = null;
-
-  //       // Success message
-  //       successAlert(
-  //         "마지막으로 생성된 체크리스트가 성공적으로 삭제되었습니다!",
-  //       );
-  //     } else {
-  //       throw new Error("체크리스트 삭제에 실패했습니다.");
-  //     }
-  //   } catch (error) {
-  //     alert(`체크리스트 삭제 중 오류가 발생했습니다: ${error.message}`);
-  //   }
-  // }
 </script>
 
 <section>

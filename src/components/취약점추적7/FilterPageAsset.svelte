@@ -188,7 +188,7 @@
               <div class="text flex col justify-between">
                 <ul>
                   <li>
-                    <span>프로젝트명 : </span>{plan.ccp_title || "Unknown OS"}
+                    <span>프로젝트명 : </span>{plan.ccp_title || "데이터 없음"}
                   </li>
                   <li>
                     <span>점검일시 : </span>
@@ -200,7 +200,7 @@
                           hour: "2-digit",
                           minute: "2-digit",
                         })
-                      : "Unknown"}
+                      : "데이터 없음"}
                   </li>
                   <li>
                     <span>관련시스템 : </span>{plan.system_count ||

@@ -196,7 +196,6 @@
       setTimeout(() => {
         menuItem.focus(); // Focus on the selected item after scrolling
       }, 300);
-    } else {
     }
   }
 
@@ -391,8 +390,6 @@
     }
   }
 
-  // This function will handle the horizontal scroll on next and prev clicks
-  // Function to handle horizontal scroll
   const handleScroll = (direction) => {
     if (direction === "prev") {
       scrollAmount -= itemWidth;
@@ -404,6 +401,28 @@
     }
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
+  // Handle filtering and scrolling the correct slide into view
+  $: {
+    if (filteredAssets && filteredAssets.length > 0 && selectedAsset) {
+      const currentIndex = filteredAssets.findIndex(
+        (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
+      );
+
+      // If the selected asset is still part of filteredAssets, update the Swiper
+      if (currentIndex !== -1) {
+        // Update Swiper
+        setTimeout(() => {
+          swiperInstance.update(); // Ensure Swiper knows the slides are updated
+          swiperInstance.slideTo(currentIndex, 500); // Smooth scroll to the updated slide
+        }, 0);
+
+        // Focus on the asset after Swiper has updated
+        setTimeout(() => {
+          focusOnAsset(selectedAsset.ass_uuid);
+        }, 500); // Wait for the slide transition to finish before focusing
+      }
+    }
+  }
 
   function closeModalEdit() {
     currentPage = FirstMenu; // This will unmount ModalEdit when called

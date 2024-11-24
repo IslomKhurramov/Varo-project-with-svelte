@@ -389,47 +389,11 @@
   class="contentArea"
   style="background-color: #fff; height:100%; padding: 0px 10px 10px 10px;"
 >
-  <section class="filterWrap">
-    <div>
-      <select
-        id="project"
-        bind:value={plan_index}
-        on:change={searchDataHandler}
-      >
-        <option value="" selected>전체</option>
-
-        {#if searchFilters?.plans && searchFilters?.plans?.length !== 0}
-          {#each searchFilters?.plans as plan}
-            <option value={plan.ccp_index}>{plan.ccp_title}</option>
-          {/each}
-        {/if}
-      </select>
-      <!-- <select
-        id="target"
-        bind:value={search.order_user}
-        on:change={searchDataHandler}
-      >
-        <option value="" selected>최신버전</option>
-        {#if searchFilters?.users && searchFilters?.users?.length !== 0}
-          {#each searchFilters?.users as user}
-            <option value={user.user_name}>{user.user_name}</option>
-          {/each}
-        {/if}
-      </select> -->
-      <!-- 
-      <button type="button" class="btn btnPrimary">
-        <img src="./assets/images/reset.png" alt="search" />
-        초기화
-      </button> -->
-    </div>
-  </section>
-
   <section
     class="tableWrap"
-    style="max-height:55vh; overflow-y: auto; overflow-x:hidden "
+    style="max-height:58vh; overflow-y: auto; overflow-x:hidden "
   >
     <div class="tableListWrap">
-      <p style="margin-bottom: 5px;">점검 프로그램 다운로드</p>
       <table class="tableList hdBorder">
         <colgroup>
           <col style="width:60px;" />
@@ -535,26 +499,7 @@
 
   <section class="section-container">
     <!-- First Div -->
-    <div class="left-section">
-      <p>인터뷰/수작업용 엑셀 다운로드</p>
-      <div class="downloadSection">
-        <select class="targetDropdown" bind:value={target}>
-          <option value="점검대상" disabled selected>점검대상</option>
-          {#if targetListShow}
-            {#each $targetList as target}
-              <option value={target.cct_index__cct_target}>
-                {target.cct_index__cct_target}
-              </option>
-            {/each}
-          {:else}
-            <option value="">프로젝트를 선택해주세요</option>
-          {/if}
-        </select>
-        <button class="downloadBtn" on:click={manualDownload}>
-          다운로드
-        </button>
-      </div>
-    </div>
+    <div class="left-section"></div>
 
     <!-- Second Div (Centered Pagination) -->
     <div class="pagination_box">
@@ -612,67 +557,6 @@
 </article>
 
 <style>
-  .downloadSection {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    /* margin-top: 20px; */
-    align-items: center;
-    background-color: #f8f9fa; /* Light background */
-    border: 1px solid #e3e3e3; /* Subtle border */
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1); /* Smooth shadow */
-    padding: 20px;
-    border-radius: 10px; /* Rounded corners */
-    width: fit-content;
-    justify-content: space-between;
-    /* width: 30%; */
-  }
-
-  .targetDropdown {
-    width: 493px;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: #ffffff;
-    color: #495057;
-    transition:
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .targetDropdown:focus {
-    border-color: #0067ff;
-    box-shadow: 0 0 6px rgba(0, 103, 255, 0.5);
-    outline: none;
-  }
-
-  .downloadBtn {
-    width: 100px;
-    padding: 12px 20px;
-    font-size: 14px;
-    color: #ffffff;
-    background-color: #0067ff; /* Primary color */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition:
-      background-color 0.3s ease,
-      transform 0.2s ease;
-  }
-
-  .downloadBtn:hover {
-    background-color: #004bb7; /* Slightly darker hover color */
-  }
-
-  .downloadBtn:active {
-    transform: scale(0.98); /* Subtle click animation */
-  }
-
-  .downloadSection:hover {
-    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
-  }
-
   .pagination_box {
     display: flex;
     flex-direction: row;
@@ -747,33 +631,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px; /* Space between the heading and content */
-  }
-
-  .downloadSection {
-    display: flex;
-    gap: 12px; /* Space between dropdown and button */
-    align-items: center;
-    background-color: #f8f9fa;
-    border: 1px solid #e3e3e3;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .targetDropdown {
-    width: 300px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: #fff;
-    color: #495057;
-  }
-
-  .targetDropdown:focus {
-    border-color: #0067ff;
-    box-shadow: 0 0 6px rgba(0, 103, 255, 0.5);
-    outline: none;
   }
 
   /* Pagination Section (Centered) */

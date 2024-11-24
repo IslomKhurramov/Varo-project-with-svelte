@@ -12,14 +12,14 @@
     decryptData,
     setPasswordReset,
   } from "../../../services/login/loginService";
-  // import { userData } from "../../../stores/user.store";
+  import { userData } from "../../../stores/user.store";
 
   let userRoleTypeIndex = null;
 
-  // userData.subscribe((data) => {
-  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  // });
-  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  userData.subscribe((data) => {
+    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  });
+  let user_roletype_role_index = decryptData(userRoleTypeIndex);
   // //////////////////////////////////////////////////////////////////////
 
   let error = null;
@@ -175,20 +175,20 @@
 
                 <td class="text-center" style="font-size: 12px;">
                   <!-- {#if parseInt(user_roletype_role_index) === 0} -->
-                  <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9} -->
-                  <select
-                    bind:value={data.itemResult}
-                    on:change={(e) => handleStatusChange(data.user_index, e)}
-                    on:click={(e) => e.stopPropagation()}
-                    name="agent_status"
-                    id="agent_status"
-                  >
-                    <option value="1">활성</option>
-                    <option value="0">비활성</option>
-                  </select>
-                  <!-- {:else} -->
-                  <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
-                  <!-- {/if} -->
+                  {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9}
+                    <select
+                      bind:value={data.itemResult}
+                      on:change={(e) => handleStatusChange(data.user_index, e)}
+                      on:click={(e) => e.stopPropagation()}
+                      name="agent_status"
+                      id="agent_status"
+                    >
+                      <option value="1">활성</option>
+                      <option value="0">비활성</option>
+                    </select>
+                  {:else}
+                    <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
+                  {/if}
                 </td>
 
                 <td

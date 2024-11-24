@@ -1,45 +1,44 @@
 <script>
-  import { getUserExist } from "../../services/login/loginService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
   import { register } from "../../services/page1/authService";
+  import { getUserExist } from "../../services/login/loginService";
 
   let name = "";
-  let email = "";
   let password = "";
   let department = "";
   let userRole = 1;
-  let find_user = "";
+  let user_email = "";
   let errorMessage = "";
 
   const dispatch = createEventDispatcher();
 
-  // Check if email already exists
   const findUser = async () => {
     try {
-      if (!find_user) throw new Error("이메일 입력하지 않았습니다");
-      const result = await getUserExist(find_user);
+      if (!user_email) {
+        throw new Error("이메일 입력하지 않았습니다");
+      }
 
-      if (result?.RESULT === "OK") {
-        await successAlert("사용 가능한 이메일입니다.");
-      } else {
-        throw new Error("이미 등록된 이메일입니다.");
+      const result = await getUserExist(user_email);
+
+      if (result.RESULT === "OK") {
+        await successAlert(result.CODE);
+      } else if (result?.RESULT === "ERROR") {
+        await errorAlert(result.CODE); 
       }
     } catch (err) {
-      errorMessage = err?.message;
-      await errorAlert(errorMessage);
-    } finally {
-      find_user = ""; // Reset the email field
+      console.error("Xatolik:", err.message);
+      await errorAlert(err?.message || "알 수 없는 오류가 발생했습니다.");
     }
   };
 
   const registerUser = async () => {
     try {
-      if (!name || !email || !password || !department) {
+      if (!name || !user_email || !password || !department) {
         throw new Error("모든 필드를 입력하세요.");
       }
 
-      const response = await register(name, email, password, department);
+      const response = await register(name, user_email, password, department);
       if (response.RESULT === "OK") {
         await successAlert("회원가입이 성공적으로 완료되었습니다.");
         handleList();
@@ -86,8 +85,8 @@
         <div class="inputGroup">
           <input
             type="email"
-            placeholder="admin@admin.com"
-            bind:value={email}
+            placeholder="exempl@gmail.com"
+            bind:value={user_email}
           />
           <button class="btn close-btn" on:click={findUser}>
             이메일 중복확인
@@ -101,17 +100,6 @@
             <div class="buttonGroup">
               <button class="btn modify-btn" on:click={registerUser}>
                 등록하기
-              </button>
-              <button
-                class="btn close-btn"
-                on:click={() => {
-                  name = "";
-                  email = "";
-                  password = "";
-                  department = "";
-                }}
-              >
-                다시 놓기
               </button>
               <button class="btn btn-info" on:click={handleList}> 목록 </button>
             </div>

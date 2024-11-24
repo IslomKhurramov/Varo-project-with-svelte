@@ -16,7 +16,7 @@ export const getUserExist = async (user_email) => {
 
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
 
-    return response.data?.CODE;
+    return response.data;
   } catch (error) {
     throw error;
   }

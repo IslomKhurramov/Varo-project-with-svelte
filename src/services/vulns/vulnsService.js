@@ -21,7 +21,6 @@ export const getVulnsOfPlan = async (data = undefined) => {
 
 export const getVulnsOfAsset = async (data) => {
   try {
-    console.log("=getVulnsOfAsset data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
       data,
@@ -31,8 +30,6 @@ export const getVulnsOfAsset = async (data) => {
     );
 
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
-
-    console.log("getVulnsOfAsset response:", response);
 
     return response.data?.CODE;
   } catch (error) {
@@ -60,6 +57,8 @@ export const setFixPlanRegister = async (data) => {
 
 export const setFixApprove = async (data) => {
   try {
+    console.log("setFixApprove:", data);
+    throw new Error("TESTIN");
     const response = await axios.post(`${serverApi}/api/setFixApprove/`, data, {
       withCredentials: true,
     });
@@ -74,6 +73,8 @@ export const setFixApprove = async (data) => {
 
 export const setFixDoneApprove = async (data) => {
   try {
+    console.log("setFixDoneApprove:", data);
+    throw new Error("TESTIN");
     const response = await axios.post(
       `${serverApi}/api/setFixDoneApprove/`,
       data,

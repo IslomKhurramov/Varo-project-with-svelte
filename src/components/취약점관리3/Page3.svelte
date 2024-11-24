@@ -414,7 +414,7 @@
                     toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
                     selectedSendData = {
-                      plan_index: "",
+                      plan_index: plan?.plan_index,
                       asset_target_uuid: "",
                     };
                   }}
@@ -543,7 +543,6 @@
                       tableData = assets?.vulns;
                       totalRecords = assets?.total_rec_cnt;
                       selectedSendData = {
-                        plan_index: "",
                         asset_target_uuid: asset.ast_uuid,
                       };
                       loading = false;
@@ -627,16 +626,19 @@
                 <img src="./assets/images/reset.png" alt="search" />
                 초기화
               </button>
-              <button
-                type="button"
-                class="btn btnPrimary"
-                on:click={downloadCSV}
-              >
-                <img
-                  src="./assets/images/icon/download.svg"
-                  class="excel-img"
-                /> 엑셀 다운로드
-              </button>
+              {#if !wholePage}
+                <button
+                  type="button"
+                  class="btn btnPrimary"
+                  on:click={downloadCSV}
+                >
+                  <!-- svelte-ignore a11y-missing-attribute -->
+                  <img
+                    src="./assets/images/icon/download.svg"
+                    class="excel-img"
+                  /> 엑셀 다운로드
+                </button>
+              {/if}
 
               {#if wholePage}
                 <button

@@ -41,9 +41,10 @@
     try {
       const response = await setUserDelete(user_index);
       if (response.RESULT === "OK") {
-        await successAlert();
+        await successAlert(response.CODE);
         selectedData = null;
         getUserListsData();
+        handleList();
       } else {
         await errorAlert("삭제에 실패했습니다.");
       }

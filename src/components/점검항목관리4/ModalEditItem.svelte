@@ -288,7 +288,7 @@
         </tbody>
       </table>
       {#if closeShowModal}
-        <button class="btn modify-btn" on:click={closeShowModal}>Close</button>
+        <button class="btn modify-btn" on:click={closeShowModal}>취소</button>
       {/if}
     </div>
     {#if selectedChecklist && selectedChecklist.ccg_provide === 0}

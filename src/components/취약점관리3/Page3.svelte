@@ -137,6 +137,7 @@
   }
 
   const resetFilters = async () => {
+    activeMenu = null;
     selectedSendData = null;
     vulnerabilityStatusValue = "";
     actionStatusValue = "";
@@ -217,6 +218,11 @@
         actionStatusValue,
       );
     }
+  }
+
+  $: {
+    console.log("search:", search);
+    console.log("selectedSendData:", selectedSendData);
   }
 </script>
 
@@ -531,7 +537,11 @@
             <div>
               <select
                 bind:value={search["plan_index"]}
-                on:change={getPlanDataSearch}
+                on:change={() => {
+                  search = { ...search, asset_target_uuid: "" };
+                  selectedSendData = null;
+                  getPlanDataSearch();
+                }}
               >
                 <option value="" selected>프로젝트</option>
                 {#if plans && plans?.plans && plans?.plans?.length !== 0}
@@ -643,6 +653,8 @@
             bind:currentView
             bind:search
             bind:tableData
+            bind:selectedSendData
+            bind:showProject
           />
         {/if}
       </article>

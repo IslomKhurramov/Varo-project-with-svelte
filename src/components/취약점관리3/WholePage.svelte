@@ -30,6 +30,8 @@
   export let currentView;
   export let search;
   export let tableData;
+  export let selectedSendData;
+  export let showProject;
 
   let isAgentUser = ["1", "3", "5"].includes(
     decryptData($userData?.userInfo?.user_roletype_role_index),
@@ -85,41 +87,6 @@
     sendPlanRegisterData["fix_method"] = options?.[0]?.cvf_index;
   });
 
-  const fixPlanRegister = async () => {
-    try {
-      if (
-        !sendPlanRegisterData["fix_start_date"] ||
-        !sendPlanRegisterData["fix_end_date"]
-      )
-        throw new Error("조치일정을 확인해 주세요!");
-
-      if (!sendPlanRegisterData["fix_user_index"])
-        throw new Error("조치담당자를 확인해 주세요!");
-
-      sendPlanRegisterData.asset_uuid = targetData?.ast_uuid;
-      sendPlanRegisterData.ccr_index = targetData?.ccr_index;
-
-      const response = await setFixPlanRegister(sendPlanRegisterData);
-
-      await refetchData();
-      successAlert(response);
-
-      sendPlanRegisterData = {
-        asset_uuid: "",
-        ccr_index: "",
-        fix_method: "",
-        fix_level: "",
-        fix_start_date: "",
-        fix_end_date: "",
-        fix_comment: "",
-        fix_user_index: "",
-        fix_step_status: "2",
-      };
-    } catch (err) {
-      errorAlert(err?.message);
-    }
-  };
-
   const refetchData = async () => {
     try {
       const data = await getVulnsOfAsset(search);
@@ -146,6 +113,15 @@
   const fixApproveHandler = async (data) => {
     try {
       const result = await setFixApprove(data);
+      if (
+        (showProject &&
+          !selectedSendData?.plan_index &&
+          !selectedSendData?.asset_target_uuid) ||
+        (!showProject && !selectedSendData?.asset_target_uuid)
+      ) {
+        search = { ...search, plan_index: "" };
+      }
+
       await refetchData();
       await successAlert(result);
     } catch (err) {
@@ -169,6 +145,16 @@
         formData.append(key, sendFixDone[key]);
       }
       const result = await setFixDoneRegister(formData);
+
+      if (
+        (showProject &&
+          !selectedSendData?.plan_index &&
+          !selectedSendData?.asset_target_uuid) ||
+        (!showProject && !selectedSendData?.asset_target_uuid)
+      ) {
+        search = { ...search, plan_index: "" };
+      }
+
       await refetchData();
       await successAlert(result);
     } catch (err) {
@@ -197,14 +183,68 @@
 
       const result = await setFixDoneApprove(sendSetFixDoneApprove);
 
+      if (
+        (showProject &&
+          !selectedSendData?.plan_index &&
+          !selectedSendData?.asset_target_uuid) ||
+        (!showProject && !selectedSendData?.asset_target_uuid)
+      ) {
+        search = { ...search, plan_index: "" };
+      }
+
       await refetchData();
       await successAlert(result);
+
       sendSetFixDoneApprove = {
         asset_target_uuid: "",
         plan_index: "",
         approved: "",
         approved_targets: "",
         approved_comment: "",
+      };
+    } catch (err) {
+      errorAlert(err?.message);
+    }
+  };
+
+  const fixPlanRegister = async () => {
+    try {
+      if (
+        !sendPlanRegisterData["fix_start_date"] ||
+        !sendPlanRegisterData["fix_end_date"]
+      )
+        throw new Error("조치일정을 확인해 주세요!");
+
+      if (!sendPlanRegisterData["fix_user_index"])
+        throw new Error("조치담당자를 확인해 주세요!");
+
+      sendPlanRegisterData.asset_uuid = targetData?.ast_uuid;
+      sendPlanRegisterData.ccr_index = targetData?.ccr_index;
+
+      const response = await setFixPlanRegister(sendPlanRegisterData);
+
+      if (
+        (showProject &&
+          !selectedSendData?.plan_index &&
+          !selectedSendData?.asset_target_uuid) ||
+        (!showProject && !selectedSendData?.asset_target_uuid)
+      ) {
+        search = { ...search, plan_index: "" };
+      }
+
+      await refetchData();
+      successAlert(response);
+
+      sendPlanRegisterData = {
+        asset_uuid: "",
+        ccr_index: "",
+        fix_method: "",
+        fix_level: "",
+        fix_start_date: "",
+        fix_end_date: "",
+        fix_comment: "",
+        fix_user_index: "",
+        fix_step_status: "2",
       };
     } catch (err) {
       errorAlert(err?.message);

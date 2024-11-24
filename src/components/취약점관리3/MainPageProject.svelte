@@ -117,7 +117,7 @@
     }
   }
 
-  let itemsPerPage = search["list_cnt"];
+  let itemsPerPage = 15;
   let totalPages = 0;
   let visiblePages = 10;
   let pageNumbers = [];
@@ -177,11 +177,17 @@
     return startNumber - index;
   };
 
-  $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
+  let baseIndex = 0;
+  $: {
+    baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
+  }
 
   $: {
     console.log("selectedSendData:", selectedSendData);
-    console.log("setView:", setView);
+    console.log("baseIndex:", baseIndex);
+    console.log("totalRecords:", totalRecords);
+    console.log("currentPageNum:", currentPageNum);
+    console.log("itemsPerPage:", itemsPerPage);
   }
 </script>
 

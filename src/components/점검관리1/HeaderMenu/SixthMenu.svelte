@@ -606,7 +606,6 @@
     </div>
     <select bind:value={listCount}>
       <option value="15">15개 보기</option>
-      <option value="2">30개 보기</option>
 
       <option value="30">30개 보기</option>
       <option value="50">50개 보기</option>

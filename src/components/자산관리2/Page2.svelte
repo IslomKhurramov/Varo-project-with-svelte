@@ -737,18 +737,18 @@
                 on:click={downloadTotalReport}
                 >상세보고서
               </button>
-              {#if showSwiperComponent}
-                <button
-                  class="btn btnPrimary padding_button"
-                  on:click={closeSwiper}>돌아가기</button
-                >
-              {/if}
             {/if}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <button
               on:click={toggleGetLogHeader}
               class="btn btnPrimary padding_button">이력관리</button
             >
+            {#if showSwiperComponent}
+              <button
+                class="btn btnPrimary padding_button"
+                on:click={closeSwiper}>돌아가기</button
+              >
+            {/if}
           </div>
         </section>
       </article>

@@ -2,6 +2,7 @@
 <script>
   import { navigate } from "svelte-routing";
   import {
+    getExcelSave,
     getFixDoneLists,
     getVulnsOfAsset,
     getVulnsOfPlan,
@@ -102,64 +103,15 @@
     }
   };
 
-  function downloadCSV(data) {
-    // ***************
-
-    const transformed = [];
-
-    for (const key in tableData) {
-      let currentResult = null;
-      let fixPlan = {};
-      let fixResult = {};
-
-      tableData[key].forEach((item) => {
-        if (item.result) {
-          currentResult = item?.result;
-        } else {
-          if (item.fix_plan) {
-            fixPlan = item.fix_plan;
-          }
-          if (item.fix_result) {
-            fixResult = item.fix_result;
-          }
-        }
+  async function downloadCSV(data) {
+    try {
+      await getExcelSave({
+        asset_target_uuid: "ALL",
+        vlun_step: search["step_vuln"] ?? 1,
       });
-
-      if (currentResult) {
-        transformed.push({
-          ...currentResult,
-          fix_plan: Object.keys(fixPlan).length > 0 ? fixPlan : {},
-          fix_result: Object.keys(fixResult).length > 0 ? fixResult : {},
-        });
-      }
+    } catch (err) {
+      errorAlert(err?.message);
     }
-
-    // ***************
-    const csvRows = [];
-    const headers = Object.keys(transformed[0]);
-
-    csvRows.push(headers.join(",")); // Add headers
-
-    for (const row of transformed) {
-      const values = headers.map((header) => {
-        const escaped = ("" + row[header]).replace(/"/g, '\\"'); // Escape quotes
-        return `"${escaped}"`; // Wrap in quotes
-      });
-      csvRows.push(values.join(","));
-    }
-
-    const csvString = csvRows.join("\n");
-    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    // Create a link to download the file
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "table_data.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   }
 
   let firstClick = true;
@@ -414,7 +366,7 @@
                     toggleAccordion(plan.plan_index);
                     selectPage(MainPageProject, plan);
                     selectedSendData = {
-                      plan_index: "",
+                      plan_index: plan?.plan_index,
                       asset_target_uuid: "",
                     };
                   }}
@@ -543,7 +495,6 @@
                       tableData = assets?.vulns;
                       totalRecords = assets?.total_rec_cnt;
                       selectedSendData = {
-                        plan_index: "",
                         asset_target_uuid: asset.ast_uuid,
                       };
                       loading = false;
@@ -627,16 +578,19 @@
                 <img src="./assets/images/reset.png" alt="search" />
                 초기화
               </button>
-              <button
-                type="button"
-                class="btn btnPrimary"
-                on:click={downloadCSV}
-              >
-                <img
-                  src="./assets/images/icon/download.svg"
-                  class="excel-img"
-                /> 엑셀 다운로드
-              </button>
+              {#if !wholePage}
+                <button
+                  type="button"
+                  class="btn btnPrimary"
+                  on:click={downloadCSV}
+                >
+                  <!-- svelte-ignore a11y-missing-attribute -->
+                  <img
+                    src="./assets/images/icon/download.svg"
+                    class="excel-img"
+                  /> 엑셀 다운로드
+                </button>
+              {/if}
 
               {#if wholePage}
                 <button

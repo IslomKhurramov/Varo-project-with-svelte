@@ -276,10 +276,6 @@
   $: pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   $: baseIndex = totalRecords - (currentPageNum - 1) * itemsPerPage;
-
-  $: {
-    console.log("projectData:", projectData);
-  }
 </script>
 
 <div

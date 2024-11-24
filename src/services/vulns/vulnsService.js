@@ -21,7 +21,6 @@ export const getVulnsOfPlan = async (data = undefined) => {
 
 export const getVulnsOfAsset = async (data) => {
   try {
-    console.log("=getVulnsOfAsset data:", data);
     const response = await axios.post(
       `${serverApi}/api/getVulnsOfAsset/`,
       data,
@@ -31,8 +30,6 @@ export const getVulnsOfAsset = async (data) => {
     );
 
     if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
-
-    console.log("getVulnsOfAsset response:", response);
 
     return response.data?.CODE;
   } catch (error) {
@@ -179,6 +176,45 @@ export const getFixEviDownload = async (cfr_index, filename) => {
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getExcelSave = async (data) => {
+  try {
+    const response = await axios.post(`${serverApi}/api/getExcelSave/`, data, {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    let file_name = "data";
+
+    switch (data?.vlun_step) {
+      case "1":
+        file_name = "조치계획";
+        break;
+      case "2":
+        file_name = "조치계획승인";
+        break;
+      case "3":
+        file_name = "조치결과";
+        break;
+      case "4":
+        file_name = "조치결과승인";
+        break;
+      case "5":
+        file_name = "조치완료";
+        break;
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+
+    a.download = `${file_name}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   } catch (error) {
     throw error;
   }

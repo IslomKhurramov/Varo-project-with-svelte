@@ -117,7 +117,7 @@
     <h3 class="title">관련프로젝트</h3>
     <div
       class="tableListWrap nofirstth"
-      style="max-height:312px; overflow-y:auto; font-size:16px; position:sticky;"
+      style="height:259px; overflow-y:auto; font-size:16px; position:sticky;"
     >
       <table class="tableList hdBorder">
         <colgroup>

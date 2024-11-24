@@ -266,6 +266,7 @@
   function handleGroupChange(event) {
     selectedGroupIndex = event.target.value;
   }
+  $: console.log("filteredqassets", filteredAssets);
 </script>
 
 {#if !showSwiperComponent}
@@ -388,35 +389,49 @@
                   </div>
                 </div>
                 <h4 class="name">
-                  {asset.asset_group?.[0]?.asg_index__asg_title ||
-                    "Unknown Group"}
+                  {asset.asset_group?.[0]?.asg_index__asg_title || "그룹미지정"}
                 </h4>
               </div>
               <span class="date">
-                {formatDate(asset.ast_lastconnect) || "Unknown Date"}
+                {formatDate(asset.ast_cdate) || "데이터 없음"}
               </span>
             </div>
             <div class="text flex col justify-between">
               <ul>
                 <li>
-                  <span>운영체제 : </span>{asset.ast_os || "Unknown OS"}
+                  <span>운영체제 : </span>{asset.ast_os || "데이터 없음"}
                 </li>
                 <li>
-                  <span>자산명 : </span>{asset.ast_hostname ||
-                    "Unknown Hostname"}
+                  <span>자산명 : </span>{asset.ast_hostname || "데이터 없음"}
                 </li>
                 <li>
-                  <span>아이피주소 : </span>{asset.ast_ipaddr || "Unknown IP"}
+                  <span>아이피주소 : </span>{asset.ast_ipaddr || "데이터 없음"}
                 </li>
                 <li>
                   <span>점검대상 : </span>{asset.asset_point_history?.[0]
-                    ?.ast_uuid__ast_target__cct_target || "No Target"}
+                    ?.ast_uuid__ast_target__cct_target || "타겟 없음"}
                 </li>
                 <li>
                   <span>에이전트설치여부 : </span>{asset.ast_agent_installed
                     ? "설치됨"
                     : "설치 안됨"}
                 </li>
+                {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 0}
+                  <li>
+                    <span>관련 그룹:</span>
+
+                    {#each asset.asset_group.slice(1) as group, groupIndex}
+                      {group.asg_index__asg_title || "제목 없음"}
+                      {#if groupIndex < asset.asset_group.slice(1).length - 1},
+                      {/if}
+                    {/each}
+                  </li>
+                {:else if asset.asset_group === "NO_ASSESSMENT"}
+                  <li>
+                    <span>관련 그룹:</span>
+                    없음
+                  </li>
+                {/if}
               </ul>
 
               {#if asset.asset_target_registered === "YES"}
@@ -503,10 +518,12 @@
       </select>
 
       <div class="modal-buttons">
-        <button class="primary-button" on:click={assetGroupChange}>OK</button>
+        <button class="primary-button" on:click={assetGroupChange}
+          >저장하기</button
+        >
         <button
           class="secondary-button"
-          on:click={() => (showModalChange = false)}>Cancel</button
+          on:click={() => (showModalChange = false)}>취소</button
         >
       </div>
     </div>
@@ -514,6 +531,19 @@
 {/if}
 
 <style>
+  .name {
+    line-height: 18px;
+  }
+  .graphCard .graph {
+    width: 110px;
+    background-color: #f5f6fa;
+    padding: 15px 20px;
+    gap: 14px;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
   .modal-buttons {
     display: flex;
     justify-content: space-between;

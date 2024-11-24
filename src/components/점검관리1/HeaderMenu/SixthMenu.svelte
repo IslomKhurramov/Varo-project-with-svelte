@@ -269,6 +269,7 @@
   }
 
   /**************************FETCHGETTARGETLIST******************/
+  let targetListShow = false;
   async function fetchTargetList() {
     try {
       console.log("Fetching target list for plan_index:", plan_index);
@@ -286,6 +287,7 @@
   $: {
     if (plan_index) {
       fetchTargetList();
+      targetListShow = true;
     }
   }
   /********************************************************************/
@@ -383,6 +385,7 @@
       cs_description: "클라이언트 프로그램 사용자 매뉴얼",
     });
   }
+  $: console.log("plan data", $targetList);
 </script>
 
 <article class="contentArea" style="background-color: #fff; height:100%">
@@ -585,7 +588,7 @@
       <div class="downloadSection">
         <select class="targetDropdown" bind:value={target}>
           <option value="점검대상" disabled selected>점검대상</option>
-          {#if $targetList.lengt > 0}
+          {#if targetListShow}
             {#each $targetList as target}
               <option value={target.cct_index__cct_target}>
                 {target.cct_index__cct_target}

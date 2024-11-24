@@ -360,9 +360,6 @@
                           bind:value={sendFixDone["fixed_method"]}
                           style="font-size: 16px;"
                         >
-                          <option value={""}>
-                            조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                          </option>
                           {#if options?.length !== 0}
                             {#each options as option}
                               <option value={option?.cvf_index}
@@ -735,9 +732,6 @@
                           bind:value={sendPlanRegisterData["fix_method"]}
                           style="font-size: 16px;"
                         >
-                          <option value={""}>
-                            조치예정 / 조치완료 / 예외처리 / 대체적용 / 기타
-                          </option>
                           {#if options?.length !== 0}
                             {#each options as option}
                               <option value={option?.cvf_index}
@@ -755,9 +749,6 @@
                           bind:value={sendPlanRegisterData["fix_level"]}
                           style="font-size: 16px;"
                         >
-                          <option value={""}>
-                            긴급 / 단기 / 중기 / 장기
-                          </option>
                           <option value="긴급">긴급</option>
                           <option value="단기">단기</option>
                           <option value="중기">중기</option>

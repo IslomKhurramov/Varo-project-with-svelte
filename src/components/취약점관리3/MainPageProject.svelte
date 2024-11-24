@@ -320,7 +320,7 @@
             </a>
           {/if}
         </section>
-        {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
+        <!-- {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
           {#if setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
@@ -598,6 +598,125 @@
                   일괄반려
                 </button>
               {/if}
+            </section>
+          {/if}
+        {/if} -->
+
+        {#if isAgenUser}
+          {#if setView == "plan_accept"}
+            <section class="flex btnWrap gap-4">
+              {#if selectedItems?.length !== 0}
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "1",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목승인
+                </button>
+                <button
+                  type="button"
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "0",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목반려
+                </button>
+              {/if}
+
+              <button
+                class="btn btnBlue"
+                on:click={() => {
+                  fixApproveAssetHandler(data, "1");
+                }}
+              >
+                일괄승인
+              </button>
+              <button
+                type="button"
+                class="btn btnBlue"
+                on:click={() => {
+                  fixApproveAssetHandler(data, "0");
+                }}
+              >
+                일괄반려
+              </button>
+            </section>
+          {/if}
+
+          {#if setView == "result_accept" || setView == "조치완료"}
+            <section class="flex btnWrap gap-4">
+              {#if selectedItems?.length !== 0}
+                <button
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "1",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목승인
+                </button>
+                <button
+                  class="btn btnBlue"
+                  on:click={() => {
+                    fixDoneApproveHandler({
+                      plan_index: data[0].ccp_index,
+                      asset_target_uuid: selectedSendData?.asset_target_uuid,
+                      approved: "0",
+                      approved_targets: selectedItems,
+                      approved_comment: "",
+                    });
+                    selectedItems = [];
+                    theadChecked = false;
+                  }}
+                >
+                  선택항목반려
+                </button>
+              {/if}
+
+              <button
+                type="button"
+                class="btn btnBlue"
+                on:click={() => {
+                  fixDoneApproveAssetHandler(data, "1");
+                }}
+              >
+                일괄승인
+              </button>
+              <button
+                type="button"
+                class="btn btnBlue"
+                on:click={() => {
+                  fixDoneApproveAssetHandler(data, "0");
+                }}
+              >
+                일괄반려
+              </button>
             </section>
           {/if}
         {/if}

@@ -95,7 +95,28 @@
 
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
-  $: console.log("SELECTED FROM CHILD", selectedItem);
+
+  // Update selectedItem and move to the next slide after the slides are updated
+  $: if (slides.length > 0 && selectedItem) {
+    const currentIndex = slides.findIndex(
+      (slide) => slide.ccc_item_no === selectedItem.ccc_item_no,
+    );
+
+    // If selectedItem was deleted or moved, select the next available slide
+    if (currentIndex === -1 || currentIndex === slides.length - 1) {
+      // Move to the next item or first item if we are at the last
+      selectedItem = slides[Math.min(currentIndex + 1, slides.length - 1)];
+    }
+
+    // Update the active slide
+    if (swiperInstance && selectedItem) {
+      const slideIndex = slides.findIndex(
+        (slide) => slide.ccc_item_no === selectedItem.ccc_item_no,
+      );
+      swiperInstance.slideTo(slideIndex);
+    }
+  }
+
   function handleSlideclick(slide) {
     activeAsset = slide;
     selectedSlide = slide;
@@ -111,13 +132,15 @@
   >
     <div
       class="menu-container"
-      style="position: sticky;  z-index:99;  background-color:white;"
+      style="position: sticky; z-index:99; background-color:white;"
     >
       <button
         class="arrow-btn"
         id="prevBtn"
-        on:click={() => handleScroll("prev")}>◀</button
+        on:click={() => handleScroll("prev")}
       >
+        ◀
+      </button>
 
       <div
         class="menu-wrapper-container"
@@ -153,8 +176,10 @@
       <button
         id="nextBtn"
         class="arrow-btn"
-        on:click={() => handleScroll("next")}>▶</button
+        on:click={() => handleScroll("next")}
       >
+        ▶
+      </button>
     </div>
   </section>
 {/if}

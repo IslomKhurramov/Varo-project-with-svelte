@@ -85,9 +85,37 @@
           data.filter((item) => !selectedItems.includes(item.ccc_index)),
         );
 
-        // Clear the selected items and reset selectedItem
+        // Update the slides array after deletion
+        slides = slides.filter(
+          (slide) => !selectedItems.includes(slide.ccc_index),
+        );
+
+        // Move to the next slide if there are slides available
+        if (slides.length > 0) {
+          // Find the next slide
+          let nextIndex = slides.findIndex(
+            (slide) => slide.ccc_item_no === selectedItem?.ccc_item_no,
+          );
+
+          // If the selected item was the last one, move to the previous slide
+          if (nextIndex === slides.length - 1) {
+            nextIndex = Math.max(0, nextIndex - 1);
+          }
+
+          // Update the selectedItem to the next available slide
+          selectedItem = slides[nextIndex];
+
+          // If there are no slides left, reset selectedItem
+          if (slides.length === 0) {
+            selectedItem = null;
+          }
+        } else {
+          // If no slides are left, reset selectedItem
+          selectedItem = null;
+        }
+
+        // Clear the selected items
         selected = [];
-        selectedItem = null; // Reset selectedItem to null
       }
     } catch (error) {
       alert("Error occurred while deleting items.");

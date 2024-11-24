@@ -244,7 +244,7 @@
               </button>
             </nav>
 
-            <div></div>
+            <div class="buttonContainer1"></div>
           </div>
         </div>
       </div>
@@ -295,13 +295,6 @@
     transition-duration: 0.3s;
   }
 
-  .buttonContainer {
-    display: flex;
-    align-items: flex-end;
-    margin-left: 10px;
-    margin-bottom: 40px;
-  }
-
   .btnSave {
     width: 150px;
     background-color: #0067ff;
@@ -327,13 +320,24 @@
     align-items: center;
   }
 
+  .buttonContainer {
+    display: flex;
+    margin-left: 10px;
+    margin-bottom: 40px;
+  }
+
   .pagination {
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
     padding: 10px 0;
     background-color: #fff;
     margin-bottom: 40px;
+  }
+
+  .buttonContainer1 {
+    display: flex;
+    margin-right: 10px;
+    margin-bottom: 40px;
+    width: 150px;
   }
 
   .pagination button {

@@ -8,17 +8,17 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert } from "../../../shared/sweetAlert";
   import SecondMenuDetails from "../SecondMenuDetails.svelte";
-  import { userData } from "../../../stores/user.store";
-  import { decryptData } from "../../../services/login/loginService";
+  // import { userData } from "../../../stores/user.store";
+  // import { decryptData } from "../../../services/login/loginService";
   import NewArticle from "../NewArticle.svelte";
 
   let userRoleTypeIndex = null;
 
   // ///////////////////////////////////////////////////////////////////////
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
 
   // ///////////////////////////////////////////////////////////////////////
 
@@ -180,15 +180,9 @@
           </table>
         </div>
         <div>
-          <div class="total-count">
-            <div class="data_total">
-              <p>총 데이터:</p>
-              <div>
-                <strong>{totalItems}</strong>개
-              </div>
-            </div>
-          </div>
-          {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+          <!-- Pagination -->
+          <div class="pagination_box">
+            <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
             <div class="buttonContainer">
               <button
                 type="button"
@@ -200,9 +194,8 @@
                 게시물추가
               </button>
             </div>
-          {/if}
-          <!-- Pagination -->
-          <div class="pagination_box">
+            <!-- {/if} -->
+
             <nav class="pagination">
               <!-- First Page Button -->
               <button
@@ -250,6 +243,8 @@
                 &raquo;
               </button>
             </nav>
+
+            <div class="buttonContainer1"></div>
           </div>
         </div>
       </div>
@@ -300,13 +295,6 @@
     transition-duration: 0.3s;
   }
 
-  .buttonContainer {
-    display: flex;
-    margin-top: 33px;
-    align-items: flex-end;
-    margin-left: 10px;
-  }
-
   .btnSave {
     width: 150px;
     background-color: #0067ff;
@@ -324,37 +312,32 @@
     background-color: #4989ff;
   }
 
-  .total-count {
-    display: flex;
-    gap: 5px;
-    text-align: left;
-    margin-top: 10px;
-    margin-left: 20px;
-    font-size: 16px;
-    color: #555;
-  }
-
-  .data_total {
-    display: flex;
-    gap: 5px;
-  }
-
   .pagination_box {
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+  }
+
+  .buttonContainer {
+    display: flex;
+    margin-left: 10px;
+    margin-bottom: 40px;
   }
 
   .pagination {
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    margin-top: 20px;
     padding: 10px 0;
     background-color: #fff;
     margin-bottom: 40px;
+  }
+
+  .buttonContainer1 {
+    display: flex;
+    margin-right: 10px;
+    margin-bottom: 40px;
+    width: 150px;
   }
 
   .pagination button {

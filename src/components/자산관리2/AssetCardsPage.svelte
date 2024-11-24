@@ -416,7 +416,7 @@
                     ? "설치됨"
                     : "설치 안됨"}
                 </li>
-                {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 0}
+                {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 1}
                   <li>
                     <span>관련 그룹:</span>
 
@@ -427,6 +427,11 @@
                     {/each}
                   </li>
                 {:else if asset.asset_group === "NO_ASSESSMENT"}
+                  <li>
+                    <span>관련 그룹:</span>
+                    그룹에 등록되지 않았습니다
+                  </li>
+                {:else if Array.isArray(asset.asset_group) && asset.asset_group.length === 1}
                   <li>
                     <span>관련 그룹:</span>
                     없음
@@ -610,7 +615,13 @@
     padding-bottom: 20px;
     overflow-x: hidden;
   }
-
+  .circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 107px;
+  }
   .dialog2 {
     width: 100%;
     height: auto;

@@ -29,6 +29,7 @@
 
       if (result.RESULT === "OK") {
         await successAlert(result.CODE);
+        getUserListsData();
       } else if (result?.RESULT === "ERROR") {
         await errorAlert(result.CODE);
       }
@@ -72,6 +73,7 @@
       if (response.RESULT === "OK") {
         await successAlert(response.CODE);
         getUserListsData();
+        handleList();
       } else if (response.RESULT === "ERROR") {
         await errorAlert(response.CODE);
 

@@ -23,7 +23,7 @@
   let displayedPages = [];
 
   let totalPages = 0;
-  let target = "점검대상";
+  let target = "11";
   /************SORTINGACENDINGVERSION*************************/
   // Default sorting parameters
   let orderUsage = "";
@@ -87,101 +87,13 @@
       console.error(`Error fetching data: ${err.message}`);
     }
   }
-  /********************MANUAL DOWNLOAD***********************************/
-  async function manualDownload() {
-    if ($targetList && $targetList.length > 0) {
-      // Validate $targetList
-      if (
-        !$targetList ||
-        !Array.isArray($targetList) ||
-        $targetList.length === 0
-      ) {
-        errorAlert("대상 목록이 비어 있거나 제대로 로드되지 않았습니다..");
-        return;
-      }
 
-      // Validate target
-      if (!target) {
-        errorAlert("타겟이 선택되지 않았습니다.");
-        return;
-      }
-      try {
-        const response = await axios.post(
-          `${serverApi}/api/getDownloadManualProgram/`,
-          { target: target },
-          { ccp_index: plan_index },
-          { responseType: "blob" },
-        );
-
-        const contentType = response.headers["content-type"];
-        let fileExtension = "bin"; // Default extension for binary files
-
-        // Check content type and determine the appropriate file extension
-        if (contentType.includes("pdf")) {
-          fileExtension = "pdf";
-        } else if (
-          contentType.includes("excel") ||
-          contentType.includes("spreadsheetml")
-        ) {
-          fileExtension = "xlsx";
-        } else if (
-          contentType.includes("word") ||
-          contentType.includes("msword")
-        ) {
-          fileExtension = "docx";
-        } else if (contentType.includes("csv")) {
-          fileExtension = "csv";
-        } else if (contentType.includes("image")) {
-          if (contentType.includes("jpeg") || contentType.includes("jpg")) {
-            fileExtension = "jpg";
-          } else if (contentType.includes("png")) {
-            fileExtension = "png";
-          } else if (contentType.includes("gif")) {
-            fileExtension = "gif";
-          }
-        } else if (contentType.includes("text")) {
-          fileExtension = "txt";
-        } else if (contentType.includes("zip")) {
-          fileExtension = "zip";
-        } else {
-          fileExtension = "bin"; // For unknown or unsupported formats, use a generic binary file
-        }
-
-        const blob = new Blob([response.data], {
-          type: contentType || "application/octet-stream",
-        });
-
-        // Create a download link
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-
-        // Set the filename with the appropriate extension
-        const fileName = `report.${fileExtension}`;
-        a.download = fileName;
-
-        // Simulate a click to trigger the download
-        document.body.appendChild(a);
-        a.click();
-
-        // Cleanup
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        target = "";
-      } catch (error) {
-        alert("An error occurred while downloading the report.");
-        throw error;
-      }
-    } else {
-      errorAlert("Please select a atrget");
-    }
-  }
   /*********************AUTO DOWNLOAD**************************************/
   async function autoDownload(data) {
     try {
       const response = await axios.post(
         `${serverApi}/api/getDownloadAutoProgram/`,
-        { cs_index: data.cs_index },
+        { cs_index: target },
         { ccp_index: plan_index },
         { responseType: "blob" },
       );
@@ -240,7 +152,7 @@
       // Cleanup
       a.remove();
       window.URL.revokeObjectURL(url);
-      target = "";
+      target = "11";
     } catch (error) {
       alert("An error occurred while downloading the report.");
       throw error;
@@ -269,7 +181,7 @@
   let targetListShow = false;
   async function fetchTargetList() {
     try {
-      // console.log("Fetching target list for plan_index:", plan_index);
+      console.log("Fetching target list for plan_index:", plan_index);
       const response = await getTargetList(plan_index);
 
       if (response) {
@@ -352,23 +264,38 @@
     logData = await fetchTargetList(plan_index);
   };
 
-  const resetFilters = async () => {
-    search = {
-      plan_index: projectIndex,
-      asset_name: "",
-      order_user: "",
-      search_start_date: "",
-      search_end_date: "",
-    };
-    await searchDataHandler();
-  };
+  // const resetFilters = async () => {
+  //   search = {
+  //     plan_index: projectIndex,
+  //     asset_name: "",
+  //     order_user: "",
+  //     search_start_date: "",
+  //     search_end_date: "",
+  //   };
+  //   await searchDataHandler();
+  // };
 
   $: {
     if (projectIndex && !logData) {
       search = { ...search, plan_index: projectIndex };
+
       searchDataHandler();
     }
   }
+  let fakeData = [];
+  for (let i = 0; i <= 100; i++) {
+    fakeData.push({
+      cs_index: 6,
+      cs_category: "MANUAL",
+      cs_support_os: "",
+      cs_codetype: "MANUAL",
+      cs_filename: "varo_agent_manual_v1.0.docx",
+      cs_version: "0.8",
+      cs_provied_date: "2024-04-11",
+      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
+    });
+  }
+  $: console.log("plan data", $targetList);
 </script>
 
 <article class="contentArea" style="background-color: #fff; height:100%;">

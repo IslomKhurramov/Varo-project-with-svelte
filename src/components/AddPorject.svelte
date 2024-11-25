@@ -41,7 +41,7 @@
   let actionStartDate = "";
   let actionEndDate = "";
   let conductorInfo = "";
-  let recheckplanIndex = null;
+  let recheckplanIndex = "0";
   let plan_execute_interval_value = 0;
 
   // SECOND DATA
@@ -96,7 +96,7 @@
         plan_end_date: moment(endDate).format("YYYY-MM-DD h:mm:ss"),
         plan_execution_type: parseInt(schedule),
         plan_execute_interval_value:
-          plan_execute_interval_value == 0 ? null : plan_execute_interval_value,
+          plan_execute_interval_value == 0 ? 0 : plan_execute_interval_value,
         plan_execute_interval_term: schedule == 0 ? "hours" : repeatCycle,
         fix_date_setup: parseInt(actionSchedule),
         fix_start_date: actionStartDate,
@@ -115,6 +115,8 @@
       }
 
       const response = await setNewPlan(formData);
+
+      await successAlert(response.CODE);
 
       navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
@@ -271,7 +273,7 @@
             <div class="formControl">
               <label style="font-size: 16px;">이전플랜</label>
               <select bind:value={recheckplanIndex} style="font-size: 16px;">
-                <option value="" selected disabled>이전 점검플랜명</option>
+                <option value="0" selected disabled>이전 점검플랜명</option>
 
                 {#if planList}
                   {#each planList as plan}

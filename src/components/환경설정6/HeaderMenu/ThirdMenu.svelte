@@ -11,6 +11,7 @@
   import { userData } from "../../../stores/user.store";
   import { decryptData } from "../../../services/login/loginService";
   import NewArticle1 from "../NewArticle1.svelte";
+  export let tabMenu;
 
   let userRoleTypeIndex = null;
 

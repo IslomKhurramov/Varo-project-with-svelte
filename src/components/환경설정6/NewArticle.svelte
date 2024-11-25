@@ -3,7 +3,7 @@
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
 
-  export let selectedData;
+  export let selectedData = {};
 
   let title = selectedData?.title || "";
   let content = selectedData?.content || "";

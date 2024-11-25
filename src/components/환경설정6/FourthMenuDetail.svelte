@@ -1,13 +1,21 @@
 <script>
-  export let projectIndex;
-  export let selectedData;
-  export let getUserListsData;
   import FourtMenuInformation from "./FourtMenuInformation.svelte";
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
   import { createEventDispatcher } from "svelte";
 
+  export let projectIndex = null;
+  export let selectedData;
+  export let getUserListsData;
+  export let projectArray;
+  function check() {
+    console.log(projectIndex);
+    console.log(selectedData);
+    console.log(getUserListsData);
+    console.log(projectArray);
+  }
+
   let currentPage = FourtMenuPassword;
-  let tabMenu = "사용자관리";
+  export let tabMenu = "사용자관리";
   let setView = "plan_accept";
   const dispatch = createEventDispatcher();
 
@@ -55,9 +63,7 @@
   {#if currentPage}
     <svelte:component
       this={currentPage}
-      bind:projectIndex
-      bind:selectedData
-      {getUserListsData}
+      {...{ projectArray, projectIndex, selectedData, getUserListsData }}
       on:close={() => {
         selectedData = null; // Tanlangan ma'lumotlarni tozalash
         getUserListsData(); // Ro'yxatni yangilash

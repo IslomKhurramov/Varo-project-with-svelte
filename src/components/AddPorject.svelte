@@ -33,6 +33,7 @@
   let schedule = "0";
   let repeatCycle = "";
   let inspectionInformation = "";
+  let inputFile;
 
   let assetGroup = [];
 
@@ -104,6 +105,8 @@
         fix_conductor_info: parseInt(conductorInfo),
         assessment_command: inspectionInformation,
       };
+
+      console.log("submitNewPlan:", sendData);
 
       if (parseInt(selectedType) === 0)
         sendData.asset_group_index = parseInt(selectedCheckList);
@@ -207,6 +210,8 @@
           throw new Error("주기를 0 보다 큰 숫자를 입력해 주세요!");
         }
       }
+
+      console.log("submitNewSystemCommand:", assetInsertData);
 
       const response = await setNewSystemCommand(assetInsertData);
 
@@ -466,13 +471,17 @@
 
         <div class="formControlWrap">
           <div class="formControl">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label style="font-size: 16px;">
               점검정보
+              <!-- svelte-ignore a11y-missing-attribute -->
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <a
                 class="downloadBtn"
                 on:click={sampleClick}
                 style="font-size: 16px;"
               >
+                <!-- svelte-ignore a11y-missing-attribute -->
                 샘플다운로드 <img src="./assets/images/icon/download.svg" />
               </a>
             </label>
@@ -480,16 +489,26 @@
               <label
                 for="file-upload"
                 class="file-label"
-                style="font-size: 16px;">엑셀파일업로드</label
+                style="font-size: 16px;"
+                >{inspectionInformation
+                  ? "엑셀파일업로드됨"
+                  : "엑셀파일업로드"}</label
               >
               <input
                 type="file"
                 id="file-upload"
                 accept=".xls,.xlsx"
                 class="file-input"
+                bind:this={inputFile}
                 on:change={(event) => handleFileUpload(event)}
               />
-              <button id="upload-btn" class="upload-btn btn btnPrimary">
+              <button
+                id="upload-btn"
+                class="upload-btn btn btnPrimary"
+                on:click={() => {
+                  inputFile.click();
+                }}
+              >
                 Upload
               </button>
             </div>
@@ -660,7 +679,7 @@
                 <option value="batchscript">Batchscript</option>
               </select>
             </div>
-            <div class="formControl noLabel">
+            <div class="formControl noLabel" style="margin-top: 10px;">
               <textarea rows="5" bind:value={assetInsertData.command_str}
               ></textarea>
             </div>

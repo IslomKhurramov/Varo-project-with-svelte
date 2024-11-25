@@ -6,6 +6,17 @@
   import { selectedPlan } from "../../services/page7/trace.store";
   import { selectedAssetTableData } from "../../services/page7/trace.store";
 
+  /*************************/
+  export let selectedAsset;
+  export let trace_ccc_index;
+  export let trace_cct_index;
+
+  /****************************/
+  function check() {
+    console.log(selectedAsset);
+    console.log(trace_ccc_index);
+    console.log(trace_cct_index);
+  }
   // $: console.log("Vulns data:", $selectedAssetTableData[0]?.vulns);
   let showModalProject = false;
   let selectedData = [];
@@ -210,7 +221,7 @@
           <!-- Only show the icon if index is less than 5 -->
           {#if index < 4}
             <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="images/icons/arrowhead.png" class="icon" />
+            <img src="assets/images/icon/arrowhead.png" class="icon" />
           {/if}
         </div>
       {/each}

@@ -7,6 +7,18 @@
       return "#00ff00"; // Green
     else return " #0067ff"; // Red
   }
+
+  /*************************/
+  export let selectedAsset;
+  export let trace_ccc_index;
+  export let trace_cct_index;
+
+  /****************************/
+  function check() {
+    console.log(selectedAsset);
+    console.log(trace_ccc_index);
+    console.log(trace_cct_index);
+  }
 </script>
 
 <div class="containerAsset">

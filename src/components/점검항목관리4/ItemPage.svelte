@@ -13,6 +13,35 @@
   import { confirmDelete, successAlert } from "../../shared/sweetAlert";
   import { onMount, onDestroy } from "svelte";
 
+  /*************************/
+  export let filteredData;
+  export let searchResult;
+  export let isSearchActive;
+  export let activeMenu;
+  export let showSlide;
+  export let swiperContainer;
+  export let showModalSecond;
+  export let selectedSlide;
+  export let cleanSearch;
+  export let showModalModalEditItem;
+  export let selectedItem;
+
+  /****************************/
+  function check() {
+    console.log(filteredData);
+    console.log(searchResult);
+    console.log(isSearchActive);
+    console.log(activeMenu);
+    console.log(showSlide);
+    console.log(swiperContainer);
+    console.log(showModalSecond);
+    console.log(selectedSlide);
+    console.log(handleFilter);
+    console.log(cleanSearch);
+    console.log(selectedItem);
+    console.log(showModalModalEditItem);
+  }
+
   export let allChecklistArray;
   export let selectedCategory = "UNIX";
 
@@ -22,7 +51,7 @@
   export let selectedRisk;
   export let slides = [];
   export let showEdit;
-  let selectedItem = null;
+  let selectedItem2 = null;
   let selected = [];
   let showModal = false;
   export let isNewlyCreatedChecklist = false;
@@ -82,7 +111,7 @@
         // Ensure the next slide is selected if slides are available
         if (slides.length > 0) {
           let nextIndex = slides.findIndex(
-            (slide) => slide.ccc_item_no === selectedItem?.ccc_item_no,
+            (slide) => slide.ccc_item_no === selectedItem2?.ccc_item_no,
           );
 
           // If the selected item was the last one, move to the previous slide
@@ -90,7 +119,7 @@
             nextIndex = Math.max(0, nextIndex - 1);
           }
           // Update the selectedItem to the next available slide
-          selectedItem = slides[nextIndex];
+          selectedItem2 = slides[nextIndex];
         }
         // Clear the selected array
         selected = [];
@@ -336,7 +365,7 @@
                 <tr
                   class="clickLine"
                   on:click={() => {
-                    selectedItem = item;
+                    selectedItem2 = item;
                     showModal = true;
                   }}
                 >
@@ -416,7 +445,7 @@
           on:click|stopPropagation
         >
           <ModalPopUpDetail
-            {selectedItem}
+            selectedItem={selectedItem2}
             {selectedCategory}
             {isNewlyCreatedChecklist}
             {closeShowModal}

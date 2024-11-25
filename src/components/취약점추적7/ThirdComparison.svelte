@@ -20,6 +20,17 @@
   // import "flowbite/dist/flowbite.css";
   import { get } from "svelte/store";
 
+  export let selectedAsset;
+  export let trace_ccc_index;
+  export let trace_cct_index;
+
+  /****************************/
+  function check() {
+    console.log(selectedAsset);
+    console.log(trace_ccc_index);
+    console.log(trace_cct_index);
+  }
+
   let showModalProjectComparison = false;
   let selectedData = [];
   let asset_name = "";

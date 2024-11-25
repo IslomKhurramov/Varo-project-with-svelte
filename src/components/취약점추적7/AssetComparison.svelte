@@ -20,6 +20,17 @@
   import { get } from "svelte/store";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
 
+  export let selectedAsset;
+  export let trace_ccc_index;
+  export let trace_cct_index;
+
+  /****************************/
+  function check() {
+    console.log(selectedAsset);
+    console.log(trace_ccc_index);
+    console.log(trace_cct_index);
+  }
+
   export const comparedPlanData1 = writable([]);
   export const comparedPlanData2 = writable([]);
   let showModalProjectComparison = false;

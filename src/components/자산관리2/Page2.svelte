@@ -788,6 +788,11 @@
           {goToPage}
           {totalPages}
           {baseIndex}
+          {assetHost}
+          {resetFilters}
+          {handleFilter}
+          {logData}
+          {asset_ostype}
         />
       {/if}
     </div>

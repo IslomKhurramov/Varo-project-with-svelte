@@ -11,6 +11,18 @@
   } from "../../services/page7/trace.store";
   import { onMount } from "svelte";
   import { modalDataService } from "../../services/page7/service";
+
+  export let selectedAsset;
+  export let trace_ccc_index;
+  export let trace_cct_index;
+
+  /****************************/
+  function check() {
+    console.log(selectedAsset);
+    console.log(trace_ccc_index);
+    console.log(trace_cct_index);
+  }
+
   let currentModalIndex = 0;
   let showModalProject = false;
   let asset_name = "";
@@ -214,7 +226,7 @@
           <!-- Only show the icon if index is less than 5 -->
           {#if index < 4}
             <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="images/icons/arrowhead.png" class="icon" />
+            <img src="assets/images/icon/arrowhead.png" class="icon" />
           {/if}
         </div>
       {/each}

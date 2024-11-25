@@ -67,7 +67,7 @@
         limit,
       };
 
-      console.log("Fetching data with params:", params);
+      // console.log("Fetching data with params:", params);
 
       const response = await getProgramList(
         params.orderUsage || "",
@@ -382,13 +382,10 @@
       cs_description: "클라이언트 프로그램 사용자 매뉴얼",
     });
   }
-  $: console.log("plan data", $targetList);
+  // $: console.log("plan data", $targetList);
 </script>
 
-<article
-  class="contentArea"
-  style="background-color: #fff; height:100%;"
->
+<article class="contentArea" style="background-color: #fff; height:100%;">
   <section
     class="tableWrap"
     style="max-height:58vh; overflow-y: auto; overflow-x:hidden "

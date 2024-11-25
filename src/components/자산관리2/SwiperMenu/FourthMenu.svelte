@@ -109,7 +109,6 @@
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
-  $: console.log("detailof asset", detailofAsset);
 </script>
 
 <main>

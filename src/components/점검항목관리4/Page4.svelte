@@ -251,7 +251,7 @@
   async function handleCategorySelection(event) {
     isCategoryManuallySelected = true;
     selectedCategory = event.target.value;
-    console.log("selectedCategory111", selectedCategory);
+    // console.log("selectedCategory111", selectedCategory);
     filterData(); // Run the filter function immediately after
     await tick(); // Wait for `selectedCategory` to update fully
   }
@@ -308,7 +308,7 @@
         ) {
           filteredData = selectedChecklist[category];
           selectedCategory = category; // Automatically set to this category
-          console.log(`Switched to ${category} as it contains available data.`);
+          // console.log(`Switched to ${category} as it contains available data.`);
           break;
         }
       }
@@ -335,11 +335,11 @@
   onMount(async () => {
     try {
       const responseERR = await fetchChecklistData(); // Wait for the data to be fetched
-      console.log("444444", responseERR);
+      // console.log("444444", responseERR);
 
       filterData(); // Run the filter after the data is fetched
     } catch (error) {
-      console.log("error part", error);
+      // console.log("error part", error);
       errorAlert(error?.message);
     }
   });
@@ -371,7 +371,7 @@
       }
 
       const response = await setUpdateGroupName(checklistId, editedName);
-      console.log("Edit Checklist Response:", response);
+      // console.log("Edit Checklist Response:", response);
 
       if (response.success) {
         // Update the checklist locally without refreshing
@@ -552,7 +552,7 @@
               on:click={() => {
                 showModal = true;
                 generalCopy = false; // Change to false if you want specific behavior
-                console.log("Open modal for selected checklist");
+                // console.log("Open modal for selected checklist");
               }}
             >
               복사
@@ -614,7 +614,7 @@
               style="padding: 15px;"
               class="btn btnPrimary"
               on:click={() => {
-                console.log("Closing modal");
+                // console.log("Closing modal");
                 showEdit = false;
                 showModalModalEditItem = false;
               }}
@@ -626,7 +626,7 @@
               style="padding: 15px;"
               class="btn btnPrimary"
               on:click={() => {
-                console.log("Going back to ItemPage");
+                // console.log("Going back to ItemPage");
                 selectPage(ItemPage);
 
                 resetEditAndModalState();

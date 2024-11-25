@@ -385,7 +385,6 @@
       cs_description: "클라이언트 프로그램 사용자 매뉴얼",
     });
   }
-  $: console.log("plan data", $targetList);
 </script>
 
 <article class="contentArea" style="background-color: #fff; height:100%">

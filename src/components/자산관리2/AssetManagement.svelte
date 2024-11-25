@@ -166,7 +166,6 @@
   const toggleCardsVisibility = () => {
     showCards = !showCards;
   };
-  $: console.log("selected asstes", selectedAssets);
 </script>
 
 <form

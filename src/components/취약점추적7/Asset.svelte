@@ -6,7 +6,7 @@
   import { selectedPlan } from "../../services/page7/trace.store";
   import { selectedAssetTableData } from "../../services/page7/trace.store";
 
-  $: console.log("Vulns data:", $selectedAssetTableData[0]?.vulns);
+  // $: console.log("Vulns data:", $selectedAssetTableData[0]?.vulns);
   let showModalProject = false;
   let selectedData = [];
   let asset_name = "";
@@ -21,7 +21,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProject = true;
     modalDataFunction(asset_name, chklist, target);
   }

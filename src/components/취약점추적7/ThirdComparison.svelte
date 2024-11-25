@@ -35,7 +35,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
   }
@@ -47,7 +47,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
   }
@@ -230,7 +230,7 @@
   let selectedRelatedItem2 = "관련 항목 선택";
   let relatedItemDetails2 = {};
 
-  $: console.log("related", relatedItemDetails);
+  // $: console.log("related", relatedItemDetails);
   // Reactive variable to get `targets_data` for the selected target
   $: relatedTargetsData =
     $leftTrackData[2].find((target) => target.cct_target === selectedTarget)
@@ -252,7 +252,7 @@
       (item) => item.ccc_item_no === selectedRelatedItem2,
     ) || {};
 
-  $: console.log("1:", relatedItemDetails2);
+  // $: console.log("1:", relatedItemDetails2);
 </script>
 
 <p class="header_title2">점검항목 그룹별 점검 결과</p>

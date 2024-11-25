@@ -177,7 +177,6 @@
       alert("An error occurred while deleting the project."); // Provide user feedback
     }
   }
-  $: console.log("selectedItem", selectedItem);
 
   function handleProjectData(data) {
     selectedChecklist = data;

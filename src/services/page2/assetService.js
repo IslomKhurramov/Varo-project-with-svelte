@@ -373,7 +373,7 @@ export const setAssetForNewGroup = async (addingAssetForm) => {
       },
     );
 
-    console.log("response.......", response);
+    // console.log("response.......", response);
     if (response.data.RESULT === "OK") {
       return { success: true };
     } else {

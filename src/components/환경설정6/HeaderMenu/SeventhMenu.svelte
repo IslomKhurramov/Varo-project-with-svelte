@@ -32,10 +32,10 @@
     const formData = new FormData();
     formData.append("file", inspectionInformation);
 
-    console.log("Uploading file:");
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value.name || value}`);
-    }
+    // console.log("Uploading file:");
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value.name || value}`);
+    // }
 
     try {
       // Show a loading indicator (optional)
@@ -88,7 +88,7 @@
         license.set(response.CODE);
       } else {
       }
-      console.log("traceByPlan", $license);
+      // console.log("traceByPlan", $license);
     } catch (err) {
       alert(`Error getting asset details: ${err.message}`);
     }
@@ -121,7 +121,7 @@
   // Function to handle file selection
   const handleFileSelect = (event) => {
     selectedFile = event.target.files[0]; // Capture the selected file
-    console.log("Selected file:", selectedFile);
+    // console.log("Selected file:", selectedFile);
 
     if (selectedFile) {
       fileName = selectedFile.name; // Store the file name
@@ -140,10 +140,10 @@
     formData.append("license_file", selectedFile); // Attach the selected file
 
     // Debug: Log the FormData contents to ensure file is appended correctly
-    console.log("FormData before sending:");
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value.name || value}`); // Log each key-value pair in FormData
-    });
+    // console.log("FormData before sending:");
+    // formData.forEach((value, key) => {
+    //   console.log(`${key}: ${value.name || value}`); // Log each key-value pair in FormData
+    // });
 
     try {
       // Send the formData to the backend API
@@ -158,7 +158,7 @@
         },
       );
 
-      console.log("Response from server:", response.data);
+      // console.log("Response from server:", response.data);
 
       // Check if the response indicates success
       if (response.data.RESULT === "OK") {

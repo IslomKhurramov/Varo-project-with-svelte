@@ -6,7 +6,7 @@ export const getAllCheckList = async () => {
     const response = await axios.get(`${serverApi}/api/getAllCheckList/`, {
       withCredentials: true,
     });
-    console.log("response", response);
+    // console.log("response", response);
     return response.data;
   } catch (error) {
     throw error;

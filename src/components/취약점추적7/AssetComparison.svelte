@@ -41,7 +41,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
   }
@@ -53,7 +53,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
   }
@@ -211,8 +211,8 @@
     else return "#ff0000"; // Red
   }
 
-  $: console.log("first data", $comparedPlanData1);
-  $: console.log("second data", $comparedPlanData2);
+  // $: console.log("first data", $comparedPlanData1);
+  // $: console.log("second data", $comparedPlanData2);
 
   import { onMount } from "svelte";
 

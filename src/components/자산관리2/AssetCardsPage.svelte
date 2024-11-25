@@ -269,7 +269,6 @@
   function handleGroupChange(event) {
     selectedGroupIndex = event.target.value;
   }
-  $: console.log("filteredAssets", filteredAssets);
 
   let selectedGroupName;
 
@@ -294,8 +293,6 @@
   $: if ($allAssetList && $allAssetList.length > 0) {
     filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
   }
-
-  $: console.log("selected name", selectedGroupName);
 </script>
 
 {#if !showSwiperComponent}

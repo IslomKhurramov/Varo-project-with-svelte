@@ -52,8 +52,6 @@
   $: assetDetails =
     $assetDeatilInfo.length > 0 ? $assetDeatilInfo[0].asset[0] : {};
 
-  $: console.log("assetdetails", $assetDeatilInfo);
-
   let formData = {
     ass_uuid: "",
     ast_group: "",

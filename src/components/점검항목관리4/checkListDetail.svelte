@@ -125,7 +125,6 @@
     }
   }
 
-  $: console.log("selected", selectedItem);
   // Mark the newly created checklist as new
   $: isNewlyCreatedChecklist =
     selectedChecklist && selectedChecklist.ccg_index === lastCreatedChecklistId;

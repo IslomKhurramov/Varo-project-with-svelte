@@ -6,8 +6,9 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert";
   import { navigate } from "svelte-routing";
-  export let selectPageMain;
+  export let selectPageMain = {};
   export let activeMenu;
+  export let tabMenu = {};
 
   let serverIP = "000.000.0.00";
   let port = Number();

@@ -3,7 +3,7 @@
   import FourtMenuPassword from "./FourtMenuPassword.svelte";
   import { createEventDispatcher } from "svelte";
 
-  export let projectIndex = null;
+  export let projectIndex = {};
   export let selectedData;
   export let getUserListsData;
   export let projectArray;

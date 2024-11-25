@@ -13,7 +13,7 @@
     setPasswordReset,
   } from "../../../services/login/loginService";
   import { userData } from "../../../stores/user.store";
-  export let tabMenu;
+    export let tabMenu;
 
   let userRoleTypeIndex = null;
 

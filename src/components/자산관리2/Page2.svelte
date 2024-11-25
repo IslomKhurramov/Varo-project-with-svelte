@@ -780,6 +780,14 @@
           bind:selected
           bind:selectedGroup
           {updateFilteredAssets}
+          {currentPage}
+          {currentPageNum}
+          {pageNumbers}
+          {goToFirstPage}
+          {goToLastPage}
+          {goToPage}
+          {totalPages}
+          {baseIndex}
         />
       {/if}
     </div>

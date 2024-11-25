@@ -17,7 +17,26 @@
   import axios from "axios";
   import { serverApi } from "../../lib/config";
   import Swiper from "./Swiper.svelte";
+  export let baseIndex;
+  export let totalPages;
+  export let goToPage;
+  export let goToLastPage;
+  export let goToFirstPage;
+  export let pageNumbers;
+  export let asset_ostype;
+  function check() {
+    console.log(baseIndex);
+    console.log(totalPages);
 
+    console.log(goToPage);
+
+    console.log(goToLastPage);
+
+    console.log(goToFirstPage);
+
+    console.log(asset_ostype);
+    console.log(pageNumbers);
+  }
   let showModal = false;
   let showModalChange = false;
   export let showSwiperComponent;

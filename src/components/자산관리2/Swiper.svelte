@@ -108,6 +108,21 @@
       console.log(error.message);
     }
   };
+
+  const resetScroll = () => {
+    if (menuWrapper) {
+      scrollAmount = 0;
+      menuWrapper.style.transform = `translateX(0px)`; // Set the scroll to the start
+    }
+    if (swiperInstance) {
+      swiperInstance.slideTo(0, 0); // Slide to the first slide (index 0) with no animation
+    }
+  };
+
+  $: if (filteredAssets.length > 0) {
+    // Reset the scroll position when slides change
+    resetScroll();
+  }
   /******************************************************/
   async function assetListDetail(uuid) {
     try {

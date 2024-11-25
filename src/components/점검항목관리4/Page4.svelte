@@ -264,11 +264,11 @@
     };
   }
   // Reactive statement to trigger filterData on any of the dependencies change
-  // $: selectedRisk,
-  //   selectedCategory,
-  //   selectedChecklist,
-  //   allChecklistArray,
-  //   filterData();
+  $: selectedRisk,
+    // selectedCategory,
+    selectedChecklist,
+    allChecklistArray,
+    filterData();
   function filterData() {
     if (!selectedChecklist) {
       // If no checklist is selected, reset the slides and exit

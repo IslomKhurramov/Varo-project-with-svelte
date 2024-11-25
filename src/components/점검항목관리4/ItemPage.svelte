@@ -292,7 +292,7 @@
         >
       {/if}
     </div>
-    <div class="tableListWrap table2" style="margin-bottom: 20px; height:50vh;">
+    <div class="tableListWrap table2" style="margin-bottom: 20px; height:53vh;">
       <table class="tableList hdBorder font-size: 16px;">
         {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
           <colgroup>

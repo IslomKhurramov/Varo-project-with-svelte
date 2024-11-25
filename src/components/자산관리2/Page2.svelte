@@ -785,6 +785,7 @@
           bind:showSwiperComponent
           bind:selectedUUID
           bind:selected
+          bind:selectedGroup
           {updateFilteredAssets}
         />
       {/if}

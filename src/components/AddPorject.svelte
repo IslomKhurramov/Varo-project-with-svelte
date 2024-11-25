@@ -15,6 +15,11 @@
 
   let loading = true;
   let error = null;
+  export let projectIndex = null;
+  export let currentPage = null;
+  export let plan_index = null;
+  export let dataRefetch = null;
+  export let tabMenu = null;
 
   let showTable = false;
   // Data for the form

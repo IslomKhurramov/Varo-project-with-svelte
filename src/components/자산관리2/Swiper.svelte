@@ -20,6 +20,7 @@
   } from "../../services/page2/assetService";
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import ModalEdit from "./SwiperMenu/ModalEdit.svelte";
+
   let showModalSecond = false;
   let selectedGroupIndex = "";
   let showModal = false;
@@ -284,9 +285,9 @@
       errorAlert("어느 그룹에서 변경할지 선택해주세요");
       return;
     }
-    console.log("uuid_asset", uuid_asset);
-    console.log("asset_group_index", asset_group_index);
-    console.log("selectedGroupIndex", selectedGroupIndex);
+    // console.log("uuid_asset", uuid_asset);
+    // console.log("asset_group_index", asset_group_index);
+    // console.log("selectedGroupIndex", selectedGroupIndex);
     try {
       const response = await setAssetGroupChange(
         uuid_asset,
@@ -463,7 +464,7 @@
         >
         <div class="menu-wrapper-container">
           <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
-            {#each filteredAssets.length > 0 ? filteredAssets : $allAssetList as asset}
+            {#each filteredAssets as asset}
               <div
                 value={asset.ass_uuid}
                 name={asset}

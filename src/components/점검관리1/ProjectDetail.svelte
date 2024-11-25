@@ -22,6 +22,7 @@
 
   export let projectIndex;
   export let dataRefetch;
+  export let plan_index = null; // Add default value
 
   let projectDetails = {};
   let assetsInfo = null;
@@ -78,6 +79,12 @@
     updateProjectDetails();
   }
 
+  const toInputDateTime = (dateString) => {
+    if (!dateString) return "";
+    const momentDate = moment(dateString);
+    return momentDate.isValid() ? momentDate.format("YYYY-MM-DDTHH:mm") : "";
+  };
+
   async function updateProjectDetails() {
     try {
       projectDetails = await getPlanDetailInformation(projectIndex);
@@ -91,12 +98,8 @@
         ccp_ruleset: projectDetails?.ccp_ruleset,
         asg_index: projectDetails?.asg_index,
         plan_planer_info: projectDetails?.plan_creator_user_index_id,
-        plan_start_date: moment(projectDetails?.plan_start_date).format(
-          "YYYY-MM-DD HH:mm:ss",
-        ),
-        plan_end_date: moment(projectDetails?.plan_end_date).format(
-          "YYYY-MM-DD HH:mm:ss",
-        ),
+        plan_start_date: toInputDateTime(projectDetails?.plan_start_date),
+        plan_end_date: toInputDateTime(projectDetails?.plan_end_date),
         plan_execution_type: projectDetails?.plan_execution_type ? 1 : 0,
         plan_execute_interval_value:
           projectDetails?.plan_execute_interval_value,

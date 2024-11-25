@@ -4,6 +4,24 @@
   import { onMount } from "svelte";
   import ModalCcEhistory from "../HeaderMenu/ModalCCEhistory.svelte";
 
+  /*************************/
+  export let activeAsset;
+  export let closeModalEdit;
+  export let formData;
+  export let handleSubmit;
+  export let showModalSecond;
+  export let assetDetails;
+  /****************************/
+  function check() {
+    console.log(activeAsset);
+    console.log(closeModalEdit);
+    console.log(formData);
+    console.log(handleSubmit);
+    console.log(showModalSecond);
+    console.log(assetDetails);
+  }
+  /***************************/
+
   let plantoSHow = [];
   let allVulns = [];
   let filteredVulns = [];

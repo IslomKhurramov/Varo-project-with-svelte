@@ -110,7 +110,7 @@
           <img src="./assets/images/login_logo.svg" />
           Login
         </h1>
-        <div class="form">
+        <form class="form" on:submit|preventDefault={handleLogin}>
           <div class="formControl">
             <label for="email" style="font-size: 16px;">Email</label>
             <input
@@ -137,6 +137,7 @@
               type="password"
               id="userPw"
               placeholder="Your password"
+              autocomplete="username"
               name="password"
               bind:value={password}
               required
@@ -149,7 +150,7 @@
               }}
             />
           </div>
-          <div class="findIdPw">
+          <div class="findIdPw" style="margin-bottom: 10px;">
             <a
               href="javascript:void(0);"
               style="font-size: 16px;"
@@ -188,7 +189,7 @@
           {#if errorMessage}
             <p style="font-size: 16px;" class="error">{errorMessage}</p>
           {/if}
-        </div>
+        </form>
 
         <div class="btnWrap">
           <a
@@ -280,73 +281,77 @@
               />
             </div>
             <div class="form">
-              <div class="formControl">
-                <label for="email" style="font-size: 16px;">Email</label>
-                <input
-                  style="font-size: 16px;"
-                  type="text"
-                  placeholder="email"
-                  id="email"
-                  name="email"
-                  bind:value={emailSignUp}
-                  required
-                  on:keydown={(event) => {
-                    if (event.key === "Enter") {
-                      if (
-                        department &&
-                        emailSignUp &&
-                        passwordSignUp &&
-                        confirmPasswordSignUp
-                      ) {
+              <form action="">
+                <div class="formControl">
+                  <label for="email" style="font-size: 16px;">Email</label>
+                  <input
+                    style="font-size: 16px;"
+                    type="text"
+                    placeholder="email"
+                    id="email"
+                    name="email"
+                    bind:value={emailSignUp}
+                    required
+                    on:keydown={(event) => {
+                      if (event.key === "Enter") {
+                        if (
+                          department &&
+                          emailSignUp &&
+                          passwordSignUp &&
+                          confirmPasswordSignUp
+                        ) {
+                          handleRegister();
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div class="formControl">
+                  <label for="userPw" style="font-size: 16px;">Password</label>
+                  <input
+                    style="font-size: 16px;"
+                    type="password"
+                    id="userPw"
+                    placeholder="Your password"
+                    name="password"
+                    autocomplete="password password"
+                    bind:value={passwordSignUp}
+                    required
+                    on:keydown={(event) => {
+                      if (event.key === "Enter") {
+                        if (
+                          department &&
+                          emailSignUp &&
+                          passwordSignUp &&
+                          confirmPasswordSignUp
+                        ) {
+                          handleRegister();
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div class="formControl">
+                  <label for="userPw2" style="font-size: 16px;"
+                    >Confirm Password</label
+                  >
+                  <input
+                    style="font-size: 16px;"
+                    type="password"
+                    id="userPw2"
+                    placeholder="Your password"
+                    name="password"
+                    autocomplete="confirm password"
+                    bind:value={confirmPasswordSignUp}
+                    required
+                    on:keydown={(event) => {
+                      if (event.key === "Enter") {
                         handleRegister();
                       }
-                    }
-                  }}
-                />
-              </div>
-              <div class="formControl">
-                <label for="userPw" style="font-size: 16px;">Password</label>
-                <input
-                  style="font-size: 16px;"
-                  type="password"
-                  id="userPw"
-                  placeholder="Your password"
-                  name="password"
-                  bind:value={passwordSignUp}
-                  required
-                  on:keydown={(event) => {
-                    if (event.key === "Enter") {
-                      if (
-                        department &&
-                        emailSignUp &&
-                        passwordSignUp &&
-                        confirmPasswordSignUp
-                      ) {
-                        handleRegister();
-                      }
-                    }
-                  }}
-                />
-              </div>
-              <div class="formControl">
-                <label for="userPw" style="font-size: 16px;"
-                  >Confirm Password</label
-                >
-                <input
-                  style="font-size: 16px;"
-                  type="password"
-                  id="userPw"
-                  placeholder="Your password"
-                  name="password"
-                  bind:value={confirmPasswordSignUp}
-                  required
-                  on:keydown={(event) => {
-                    if (event.key === "Enter") {
-                      handleRegister();
-                    }
-                  }}
-                />
-              </div>
+                    }}
+                  />
+                </div>
+              </form>
               <div class="findIdPw">
                 <a
                   href="javascript:void(0);"
@@ -388,7 +393,7 @@
               {/if}
             </div>
 
-            <div class="btnWrap" style="margin: 30px 0;">
+            <div class="btnWrap" style="margin: 10px 0 30px;">
               <a
                 on:click={handleRegister}
                 class="btn loginBtn"

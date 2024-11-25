@@ -7,6 +7,31 @@
     filteredChecklistData,
   } from "../../services/page4/checklistStore";
   import { successAlert } from "../../shared/sweetAlert";
+  /*************************/
+  export let allChecklistArray;
+  export let filteredData;
+  export let searchResult;
+  export let isSearchActive;
+  export let activeMenu;
+  export let showEdit;
+  export let showDataTbale2;
+  export let cleanSearch;
+
+  /****************************/
+  function check() {
+    console.log(filteredData);
+    console.log(searchResult);
+    console.log(isSearchActive);
+    console.log(activeMenu);
+    console.log(showSlide);
+    console.log(cleanSearch);
+    console.log(showModalSecond);
+    console.log(selectedSlide);
+    console.log(showDataTbale2);
+    console.log(showEdit);
+    console.log(selectedItem);
+    console.log(allChecklistArray);
+  }
 
   export let selectedCategory;
   export let selectedChecklist;
@@ -143,12 +168,15 @@
         {showSlide}
         {selectedChecklist}
         {swiperContainer}
-        {showModalSecond}
         {selectedSlide}
         {slides}
         {selectedItemNumber}
         {isNewlyCreatedChecklist}
         {deleteSelectedItem}
+        {allChecklistArray}
+        {showEdit}
+        {showDataTbale2}
+        {cleanSearch}
       />
     {:else}
       <div
@@ -253,11 +281,19 @@
               {/each}
             {:else}
               <tr>
-                <td
-                  colspan={isNewlyCreatedChecklist ? "8" : "7"}
-                  class="text-center no-data-message"
-                  >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
-                >
+                {#if selectedChecklist && selectedChecklist.ccg_provide === 0}
+                  <td
+                    colspan={isNewlyCreatedChecklist ? "9" : "8"}
+                    class="text-center no-data-message"
+                    >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+                  >
+                {:else}
+                  <td
+                    colspan={isNewlyCreatedChecklist ? "8" : "7"}
+                    class="text-center no-data-message"
+                    >{selectedCategory}에서 사용 가능한 데이터가 없습니다.</td
+                  >
+                {/if}
               </tr>
             {/if}
           </tbody>

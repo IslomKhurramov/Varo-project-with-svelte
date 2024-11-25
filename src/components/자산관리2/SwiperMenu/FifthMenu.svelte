@@ -2,9 +2,26 @@
   import { onMount } from "svelte"; // Import onMount for lifecycle management
   import { assetDeatilInfo } from "../../../services/page2/asset.store";
 
+  /*************************/
+  export let activeAsset;
+  export let closeModalEdit;
+  export let formData;
+  export let handleSubmit;
+  export let showModalSecond;
+  export let assetDetails;
+  /****************************/
+  function check() {
+    console.log(activeAsset);
+    console.log(closeModalEdit);
+    console.log(formData);
+    console.log(handleSubmit);
+    console.log(showModalSecond);
+    console.log(assetDetails);
+  }
+  /***************************/
+
   let currentData = [];
   let activeData = ""; // Set default active data
-  export let activeAsset;
   // Other filter states
   let selectedNetworkDate = "";
   let selectedProcessAppName = "";
@@ -19,7 +36,6 @@
       modelType: determineModelType(menu),
     }));
     activeData = menu; // Update the active data menu
-    console.log("Data set for", menu, ":", currentData); // Debugging log
     resetFilters(); // Assuming resetFilters() is defined elsewhere
   };
 
@@ -142,8 +158,6 @@
   })();
 
   onMount(() => {
-    console.log("Asset Detail Info:", $assetDeatilInfo);
-
     // Fetch the initial data for the active menu
     if ($assetDeatilInfo.length > 0) {
       const initialData = $assetDeatilInfo[0].asset || [];

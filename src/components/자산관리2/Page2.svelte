@@ -501,8 +501,12 @@
         // Check if the selected group was deleted and reset `selectedGroup` if necessary
         if (selectedGroup === selectedGroupDetails.asg_index) {
           selectedGroup = "전체"; // Reset to "전체" if the current group was deleted
-          activeMenu = "전체";
+          activeMenu = "전체"; // Set active menu to "전체"
+          selectPage = AssetCardsPage; // Reset current page view
         }
+
+        // Force re-filtering of assets and trigger update of filtered assets
+        filteredAssets = filterAssets();
 
         successAlert(
           `그룹 "${selectedGroupDetails.asg_title}"이(가) 성공적으로 삭제되었습니다.`,
@@ -546,7 +550,9 @@
               on:click={() => {
                 activeMenu = "전체";
                 selectedGroup = "전체";
-                selectPage(AssetCardsPage, "전체");
+
+                filterAssets();
+                allAssetList;
               }}
               title="전체"
             >
@@ -780,6 +786,19 @@
           bind:selected
           bind:selectedGroup
           {updateFilteredAssets}
+          {currentPage}
+          {currentPageNum}
+          {pageNumbers}
+          {goToFirstPage}
+          {goToLastPage}
+          {goToPage}
+          {totalPages}
+          {baseIndex}
+          {assetHost}
+          {resetFilters}
+          {handleFilter}
+          {logData}
+          {asset_ostype}
         />
       {/if}
     </div>

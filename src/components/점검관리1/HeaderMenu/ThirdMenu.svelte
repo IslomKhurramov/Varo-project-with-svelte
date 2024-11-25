@@ -9,6 +9,8 @@
   import { errorAlert, successAlert } from "../../../shared/sweetAlert.js";
 
   export let projectIndex;
+  export let plan_index = null;
+  export let dataRefetch = null;
 
   let selectedPlan = "";
   let planList = [];

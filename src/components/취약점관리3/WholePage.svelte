@@ -32,6 +32,8 @@
   export let tableData;
   export let selectedSendData;
   export let showProject;
+  export let WholePage = null;
+  export let plans = null;
 
   let isAgentUser = ["1", "3", "5"].includes(
     decryptData($userData?.userInfo?.user_roletype_role_index),

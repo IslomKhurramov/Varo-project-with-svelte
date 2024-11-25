@@ -3,6 +3,30 @@
   import Swiper, { Navigation, Pagination } from "swiper";
   import "swiper/swiper-bundle.min.css";
 
+  /*************************/
+  export let selected;
+
+  export let selectedItemNumber;
+  export let allChecklistArray;
+  export let showEdit;
+
+  export let showDataTbale2;
+  export let cleanSearch;
+  let closeShowModal;
+
+  /****************************/
+  function check() {
+    console.log(selected);
+    console.log(selectedItemNumber);
+    console.log(allChecklistArray);
+
+    console.log(showDataTbale2);
+    console.log(cleanSearch);
+
+    console.log(showEdit);
+    console.log(isNewlyCreatedChecklist);
+  }
+
   export let selectedItem;
   export let selectedCategory;
   export let showSlide;
@@ -10,7 +34,6 @@
   export let selectedSlide;
   export let isNewlyCreatedChecklist;
   export let slides = [];
-  export let closeShowModal;
   export let deleteSelectedItem;
   export let selectedChecklist;
 

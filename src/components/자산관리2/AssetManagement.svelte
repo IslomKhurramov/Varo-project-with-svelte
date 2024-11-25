@@ -7,7 +7,42 @@
   } from "../../services/page2/assetService";
   import { allAssetList } from "../../services/page2/asset.store";
   import { successAlert } from "../../shared/sweetAlert";
-  import { filter } from "d3";
+  /*************************/
+  export let baseIndex;
+  export let totalPages;
+  export let goToPage;
+  export let goToLastPage;
+  export let goToFirstPage;
+  export let pageNumbers;
+  export let currentPage;
+  export let currentPageNum;
+  export let logData;
+  export let handleFilter;
+  export let resetFilters;
+
+  export let updateFilteredAssets;
+  export let assetGroupList;
+
+  export let showSwiperComponent;
+  /****************************/
+  function check() {
+    console.log(baseIndex);
+    console.log(totalPages);
+    console.log(goToPage);
+    console.log(goToLastPage);
+    console.log(goToFirstPage);
+    console.log(currentPage);
+    console.log(currentPageNum);
+    console.log(asset_ostype);
+    console.log(pageNumbers);
+    console.log(logData);
+    console.log(handleFilter);
+    console.log(resetFilters);
+    console.log(updateFilteredAssets);
+    console.log(resetFilters);
+    console.log(showSwiperComponent);
+    console.log(assetGroupList);
+  }
 
   let showAssetReg = true;
   let showCopyReg = false;
@@ -21,7 +56,7 @@
   let uploadedFile = null;
   let newRegGroupIndex = "전체";
   /****************************************************/
-  async function assetGroupList() {
+  async function assetGroupList2() {
     try {
       const response = await getAssetGroup();
 
@@ -34,11 +69,11 @@
   }
 
   onMount(() => {
-    assetGroupList();
+    assetGroupList2();
   });
   /****************************************************/
   // Function to handle filtering based on selections
-  function handleFilter() {
+  function handleFilter2() {
     filteredAssets = $allAssetList.filter((asset) => {
       // Check if the asset belongs to the selected group
       const groupCondition =
@@ -61,16 +96,16 @@
   }
 
   // Optional: If you want to reset filters
-  function resetFilters() {
+  function resetFilters2() {
     newRegGroupIndex = "전체"; // Reset group selection
     assetHost = "전체"; // Reset hostname selection
     asset_ostype = "전체"; // Reset OSType selection
-    handleFilter(); // Apply the reset immediately
+    handleFilter2(); // Apply the reset immediately
   }
 
   // Call handleFilter on mount or whenever $allAssetList changes
   onMount(() => {
-    handleFilter();
+    handleFilter2();
   });
   /***************************************************/
 
@@ -118,7 +153,7 @@
       alert("대상 자산 그룹을 선택하세요.");
       return; // Early return if validation fails
     }
-    console.log("addingAssetForm", addingAssetForm);
+    // console.log("addingAssetForm", addingAssetForm);
 
     try {
       const response = await setAssetForNewGroup(addingAssetForm);
@@ -271,7 +306,7 @@
               >
                 {showCards ? "자산 숨기기" : "자산 보기"}
               </button>
-              <select bind:value={newRegGroupIndex} on:change={handleFilter}>
+              <select bind:value={newRegGroupIndex} on:change={handleFilter2}>
                 <option value="전체" selected>전체</option>
                 {#if $allAssetGroupList.length > 0}
                   {#each $allAssetGroupList as group}
@@ -282,7 +317,7 @@
               <select
                 style="margin"
                 bind:value={assetHost}
-                on:change={handleFilter}
+                on:change={handleFilter2}
               >
                 <option value="전체" selected>전체</option>
                 {#each $allAssetList as asset}
@@ -293,7 +328,7 @@
               </select>
 
               <!-- Select for ast_ostype -->
-              <select bind:value={asset_ostype} on:change={handleFilter}>
+              <select bind:value={asset_ostype} on:change={handleFilter2}>
                 <option value="전체" selected>전체</option>
                 {#each $allAssetList as asset}
                   {#if asset.ast_ostype !== ""}
@@ -306,7 +341,7 @@
 
               <button
                 class="btn btnPrimary"
-                on:click|preventDefault={resetFilters}
+                on:click|preventDefault={resetFilters2}
               >
                 <img src="./assets/images/reset.png" alt="search" />초기화
               </button>

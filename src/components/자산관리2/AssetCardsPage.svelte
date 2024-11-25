@@ -18,6 +18,37 @@
   import { serverApi } from "../../lib/config";
   import Swiper from "./Swiper.svelte";
 
+  /*************************/
+  export let baseIndex;
+  export let totalPages;
+  export let goToPage;
+  export let goToLastPage;
+  export let goToFirstPage;
+  export let pageNumbers;
+  export let asset_ostype;
+  export let currentPage;
+  export let currentPageNum;
+  export let logData;
+  export let handleFilter;
+  export let resetFilters;
+  export let assetHost;
+
+  /****************************/
+  function check() {
+    console.log(baseIndex);
+    console.log(totalPages);
+    console.log(goToPage);
+    console.log(goToLastPage);
+    console.log(goToFirstPage);
+    console.log(currentPage);
+    console.log(currentPageNum);
+    console.log(asset_ostype);
+    console.log(pageNumbers);
+    console.log(logData);
+    console.log(handleFilter);
+    console.log(resetFilters);
+    console.log(assetHost);
+  }
   let showModal = false;
   let showModalChange = false;
   export let showSwiperComponent;
@@ -275,14 +306,21 @@
   // Delay the calculation of selectedGroupName
   $: {
     setTimeout(() => {
-      if (
-        filteredAssets &&
-        filteredAssets.length > 0 &&
-        filteredAssets[0].asset_group
-      ) {
-        selectedGroupName = filteredAssets[0].asset_group.find(
-          (group) => group.asg_index === selectedGroup,
-        )?.asg_index__asg_title;
+      if (filteredAssets && filteredAssets.length > 0) {
+        const assetGroup = filteredAssets[0].asset_group;
+
+        // Handle "NETWORK" case separately
+        if (selectedGroup === "NETWORK" && !Array.isArray(assetGroup)) {
+          // Log or fix the structure of asset_group for "NETWORK" category
+          // console.warn("asset_group for NETWORK is not an array", assetGroup);
+          selectedGroupName = "그룹미지정";
+        } else if (Array.isArray(assetGroup)) {
+          selectedGroupName = assetGroup.find(
+            (group) => group.asg_index === selectedGroup,
+          )?.asg_index__asg_title;
+        } else {
+          selectedGroupName = "그룹미지정";
+        }
       } else {
         selectedGroupName = "그룹미지정"; // Default value if no matching group found
       }
@@ -553,7 +591,6 @@
       {updateFilteredAssets}
       {assetGroupList}
       {assetList}
-      {selectedUUID}
     />
   </div>
 {/if}

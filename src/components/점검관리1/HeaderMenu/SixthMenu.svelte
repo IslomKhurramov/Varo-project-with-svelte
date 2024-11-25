@@ -18,6 +18,7 @@
   import { programList } from "../../../services/page7/trace.store";
 
   export let projectIndex;
+  export let dataRefetch = null;
   /*********VARIABLE FOR DATA FROM BACKEND********/
 
   const targetList = writable([]);

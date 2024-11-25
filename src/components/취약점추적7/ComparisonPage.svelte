@@ -10,6 +10,17 @@
   } from "../../services/page7/trace.store";
   import { successAlert, errorAlert } from "../../shared/sweetAlert";
 
+  export let selectedAsset;
+  export let trace_ccc_index;
+  export let trace_cct_index;
+
+  /****************************/
+  function check() {
+    console.log(selectedAsset);
+    console.log(trace_ccc_index);
+    console.log(trace_cct_index);
+  }
+
   let currentModalIndex = 0;
   let firstProjectId = "";
   let secondProjectId = "";

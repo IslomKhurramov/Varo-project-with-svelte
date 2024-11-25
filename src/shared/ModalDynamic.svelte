@@ -2,8 +2,8 @@
   export let showModal;
   export let modalWidth;
   export let modalHeight;
-  export let showModalSecond;
-  export let showModalRegisteredAdmin;
+  export let showModalSecond = null;
+  export let showModalRegisteredAdmin = null;
   export let modalData;
 
   let dialog;

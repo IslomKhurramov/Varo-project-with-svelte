@@ -14,6 +14,8 @@
   import ResultUploadStatusPopup from "../ResultUploadStatusPopup.svelte";
 
   export let projectIndex;
+  export let plan_index = null;
+  export let dataRefetch = null;
 
   // inputs & files
   let jsonInput;

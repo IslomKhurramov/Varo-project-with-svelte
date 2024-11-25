@@ -269,14 +269,14 @@
   let targetListShow = false;
   async function fetchTargetList() {
     try {
-      console.log("Fetching target list for plan_index:", plan_index);
+      // console.log("Fetching target list for plan_index:", plan_index);
       const response = await getTargetList(plan_index);
 
       if (response) {
         targetList.set(response.CODE);
       }
 
-      console.log("fetched targetList", $targetList);
+      // console.log("fetched targetList", $targetList);
     } catch (err) {
       console.error(`Error fetching data: ${err.message}`);
     }
@@ -369,20 +369,6 @@
       searchDataHandler();
     }
   }
-  let fakeData = [];
-  for (let i = 0; i <= 100; i++) {
-    fakeData.push({
-      cs_index: 6,
-      cs_category: "MANUAL",
-      cs_support_os: "",
-      cs_codetype: "MANUAL",
-      cs_filename: "varo_agent_manual_v1.0.docx",
-      cs_version: "0.8",
-      cs_provied_date: "2024-04-11",
-      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
-    });
-  }
-  // $: console.log("plan data", $targetList);
 </script>
 
 <article class="contentArea" style="background-color: #fff; height:100%;">

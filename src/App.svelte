@@ -22,6 +22,7 @@
   import { logout } from "./services/page1/authService";
   import Page7 from "./components/취약점추적7/Page7.svelte";
 
+  export let name;
   let openNotification = false;
   let activeMenu = "점검관리";
   let nofiticationData = [];
@@ -143,7 +144,9 @@
   const getNotify = async () => {
     try {
       nofiticationData = await getUserAllMessages();
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
 
   $: {

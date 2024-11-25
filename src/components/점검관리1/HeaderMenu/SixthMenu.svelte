@@ -70,7 +70,7 @@
         limit,
       };
 
-      console.log("Fetching data with params:", params);
+      // console.log("Fetching data with params:", params);
 
       const response = await getProgramList(
         params.orderUsage || "",
@@ -272,14 +272,14 @@
   let targetListShow = false;
   async function fetchTargetList() {
     try {
-      console.log("Fetching target list for plan_index:", plan_index);
+      // console.log("Fetching target list for plan_index:", plan_index);
       const response = await getTargetList(plan_index);
 
       if (response) {
         targetList.set(response.CODE);
       }
 
-      console.log("fetched targetList", $targetList);
+      // console.log("fetched targetList", $targetList);
     } catch (err) {
       console.error(`Error fetching data: ${err.message}`);
     }

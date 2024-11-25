@@ -58,7 +58,6 @@
   });
   async function assetGroupList() {
     try {
-      console.log("error aler");
       const response = await getAssetGroup();
 
       if (response.RESULT === "OK") {
@@ -86,7 +85,6 @@
   }
 
   function filterAssets() {
-    console.log("worked");
     if (
       selectedGroup === "전체" &&
       asset_ostype === "전체" &&
@@ -775,8 +773,6 @@
       {:else}
         <AssetCardsPage
           {assetGroupList}
-          {searchedResult}
-          {showSearchResult}
           {filteredAssets}
           {filterAssets}
           bind:showSwiperComponent

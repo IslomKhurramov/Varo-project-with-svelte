@@ -12,7 +12,7 @@
   async function getLeftDatas() {
     try {
       const response = await getLeftTrackData();
-      console.log("response", response);
+      // console.log("response", response);
       if (response.RESULT === "OK") {
         leftTrackData.set(Object.values(response.CODE));
       }

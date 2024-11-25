@@ -58,7 +58,6 @@
   });
   async function assetGroupList() {
     try {
-      console.log("error aler");
       const response = await getAssetGroup();
 
       if (response.RESULT === "OK") {
@@ -86,7 +85,6 @@
   }
 
   function filterAssets() {
-    console.log("worked");
     if (
       selectedGroup === "전체" &&
       asset_ostype === "전체" &&
@@ -286,7 +284,6 @@
       await errorAlert(err?.message);
     }
   });
-  $: console.log("getPlanfilter", searchFilters);
   const searchDataHandler = async () => {
     search.page_cnt = currentPageNum.toString();
     const response = await getAuditNLog(search);
@@ -517,8 +514,6 @@
       errorAlert(error.message || "그룹 삭제 중 오류가 발생했습니다.");
     }
   }
-
-  $: console.log("selectedGroup", selectedGroup);
 </script>
 
 <div class="container">
@@ -778,13 +773,12 @@
       {:else}
         <AssetCardsPage
           {assetGroupList}
-          {searchedResult}
-          {showSearchResult}
           {filteredAssets}
           {filterAssets}
           bind:showSwiperComponent
           bind:selectedUUID
           bind:selected
+          bind:selectedGroup
           {updateFilteredAssets}
         />
       {/if}

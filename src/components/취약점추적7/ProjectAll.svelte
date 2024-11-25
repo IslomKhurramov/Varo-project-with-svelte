@@ -148,7 +148,7 @@
 
         <!-- Only show the icon if index is less than 5 -->
         {#if index < 4}
-          <img src="images/icons/arrowhead.png" class="icon" />
+          <img src="assets/images/icon/arrowhead.png" class="icon" />
         {/if}
       </div>
     {/each}

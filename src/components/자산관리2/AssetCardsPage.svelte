@@ -29,6 +29,7 @@
   export let filterAssets;
   export let updateFilteredAssets;
   export let assetGroupList;
+  export let selectedGroup;
   let allSelected;
   $: allAssetList.subscribe((data) => {
     allSelected = data.length === selected.length;
@@ -180,7 +181,9 @@
   }
   function handleAssetUuid(asset) {
     if (asset.asset_group && asset.asset_group.length > 0) {
-      asset_group_index = asset.asset_group[0].asg_index;
+      asset_group_index = filteredAssets[0].asset_group.find(
+        (group) => group.asg_index === selectedGroup,
+      )?.asg_index;
     }
     uuid_asset = asset.ass_uuid;
   }
@@ -266,7 +269,30 @@
   function handleGroupChange(event) {
     selectedGroupIndex = event.target.value;
   }
-  $: console.log("filteredqassets", filteredAssets);
+
+  let selectedGroupName;
+
+  // Delay the calculation of selectedGroupName
+  $: {
+    setTimeout(() => {
+      if (
+        filteredAssets &&
+        filteredAssets.length > 0 &&
+        filteredAssets[0].asset_group
+      ) {
+        selectedGroupName = filteredAssets[0].asset_group.find(
+          (group) => group.asg_index === selectedGroup,
+        )?.asg_index__asg_title;
+      } else {
+        selectedGroupName = "그룹미지정"; // Default value if no matching group found
+      }
+    }, 0); // Run after the current event loop
+  }
+
+  // Filtering logic
+  $: if ($allAssetList && $allAssetList.length > 0) {
+    filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
+  }
 </script>
 
 {#if !showSwiperComponent}
@@ -388,9 +414,13 @@
                     </span>
                   </div>
                 </div>
-                <h4 class="name">
-                  {asset.asset_group?.[0]?.asg_index__asg_title || "그룹미지정"}
-                </h4>
+                {#if selectedGroupName}
+                  <h4 class="name">
+                    {selectedGroupName}
+                  </h4>
+                {:else}
+                  <h4 class="name"></h4>
+                {/if}
               </div>
               <span class="date">
                 {formatDate(asset.ast_cdate) || "데이터 없음"}
@@ -417,14 +447,22 @@
                     : "설치 안됨"}
                 </li>
                 {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 1}
-                  <li>
+                  <li style="line-height: 23px;">
                     <span>관련 그룹:</span>
 
-                    {#each asset.asset_group.slice(1) as group, groupIndex}
-                      {group.asg_index__asg_title || "제목 없음"}
-                      {#if groupIndex < asset.asset_group.slice(1).length - 1},
-                      {/if}
-                    {/each}
+                    {#if asset.asset_group.length > 1}
+                      {#each asset.asset_group as group, groupIndex}
+                        <!-- Exclude the selected group from the remaining groups -->
+                        {#if group.asg_index !== selectedGroup}
+                          {group.asg_index__asg_title || "제목 없음"}
+
+                          <!-- Add a comma between titles except for the last one -->
+                          {#if groupIndex < asset.asset_group.length - 1}
+                            ,
+                          {/if}
+                        {/if}
+                      {/each}
+                    {/if}
                   </li>
                 {:else if asset.asset_group === "NO_ASSESSMENT"}
                   <li>
@@ -438,35 +476,48 @@
                   </li>
                 {/if}
               </ul>
-
-              {#if asset.asset_target_registered === "YES"}
-                <div class="flex flex-end">
-                  <button
-                    type="button"
-                    class="btn w140 btnGray hoverbtn"
-                    on:click|stopPropagation={() => {
-                      showModal = true;
-                      selectedAsset = asset;
-                    }}
-                  >
-                    점검대상지정
-                  </button>
-                </div>
-              {:else}
-                <div class="flex flex-end">
-                  <button
-                    type="button"
-                    class="btn w140 btnGray hoverbtn"
-                    on:click|stopPropagation={() => {
-                      showModal = true;
-                      selectedAsset = asset;
-                    }}
-                  >
-                    등록 해제
-                  </button>
-                </div>
-              {/if}
             </div>
+            {#if asset.asset_target_registered === "YES"}
+              <div
+                class="flex flex-end"
+                style="margin-top: 10px;     margin-top: 10px;
+    justify-content: flex-end;
+    display: flex
+;
+    align-items: end;"
+              >
+                <button
+                  type="button"
+                  class="btn w140 btnGray hoverbtn"
+                  on:click|stopPropagation={() => {
+                    showModal = true;
+                    selectedAsset = asset;
+                  }}
+                >
+                  점검대상지정
+                </button>
+              </div>
+            {:else}
+              <div
+                class="flex flex-end"
+                style="    margin-top: 10px;
+    justify-content: flex-end;
+    display: flex
+;
+    align-items: end;"
+              >
+                <button
+                  type="button"
+                  class="btn w140 btnGray hoverbtn"
+                  on:click|stopPropagation={() => {
+                    showModal = true;
+                    selectedAsset = asset;
+                  }}
+                >
+                  등록 해제
+                </button>
+              </div>
+            {/if}
           </div>
         </article>
       {/each}
@@ -515,7 +566,7 @@
         {#each $allAssetGroupList as group}
           <option
             value={group.asg_index}
-            selected={group.asg_index == selectedGroupIndex}
+            selected={group.asg_index == selectedGroup}
           >
             {group.asg_title}
           </option>
@@ -541,6 +592,7 @@
   }
   .graphCard .graph {
     width: 110px;
+    min-height: 180px;
     background-color: #f5f6fa;
     padding: 15px 20px;
     gap: 14px;

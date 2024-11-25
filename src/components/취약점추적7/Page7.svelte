@@ -116,13 +116,13 @@
   function selectAsset(asset) {
     // Set selectedAsset based on the asset's asg_index
     selectedAsset = asset.asg_index;
-    console.log("selectedAsset:", selectedAsset);
+    // console.log("selectedAsset:", selectedAsset);
     tableDataOfAsset(selectedAsset);
   }
   function selectPlan(plan) {
     plan_id = plan;
     planDataById(plan_id);
-    console.log("plan id", plan_id);
+    // console.log("plan id", plan_id);
   }
 
   function selectTarget(target_id1) {
@@ -130,7 +130,7 @@
   }
   function selectTarget2(target_id2) {
     trace_ccc_index = target_id2;
-    console.log("ides", trace_ccc_index, trace_cct_index);
+    // console.log("ides", trace_ccc_index, trace_cct_index);
     targetData(trace_cct_index, trace_ccc_index);
   }
 
@@ -174,7 +174,7 @@
   async function getLeftDatas() {
     try {
       const response = await getLeftTrackData();
-      console.log("response", response);
+      // console.log("response", response);
       if (response.RESULT === "OK") {
         leftTrackData.set(Object.values(response.CODE));
       } else {
@@ -203,7 +203,7 @@
   async function planData() {
     try {
       const response = await getAllTraceByPlan();
-      console.log("response", response);
+      // console.log("response", response);
       if (response.RESULT === "OK") {
         allTraceByPlan.set(Object.values(response.CODE));
       }
@@ -221,7 +221,7 @@
         traceByPlan.set(response.CODE);
       } else {
       }
-      console.log("traceByPlan", $traceByPlan);
+      // console.log("traceByPlan", $traceByPlan);
     } catch (err) {
       alert(`Error getting asset details: ${err.message}`);
     }
@@ -229,7 +229,7 @@
 
   async function planDataByCategory(selectedProject) {
     try {
-      console.log("Fetching data for selected project:", selectedProject);
+      // console.log("Fetching data for selected project:", selectedProject);
       const response = await getTraceByPlan(selectedProject);
 
       if (response && response.CODE) {
@@ -258,7 +258,7 @@
     return [];
   });
 
-  $: console.log("filterData", $filterData);
+  // $: console.log("filterData", $filterData);
   $: if (selectedProject) {
     planDataByCategory(selectedProject);
   }
@@ -288,13 +288,13 @@
       filteredTableDataForPlan.set(filtered);
     });
   }
-  $: console.log("filteredTableDataForPlan", $filteredTableDataForPlan);
+  // $: console.log("filteredTableDataForPlan", $filteredTableDataForPlan);
   /*************************************************************************/
   /*****************ASSETDATA**********************************************/
   async function assetData() {
     try {
       const response = await getAllTraceByAsset();
-      console.log("response", response);
+      // console.log("response", response);
       if (response.RESULT === "OK") {
         allTraceByAsset.set(Object.values(response.CODE));
       }
@@ -319,11 +319,11 @@
       }
     }
   }
-  $: console.log("parent", $selectedPlan);
+  // $: console.log("parent", $selectedPlan);
   /***********************************************************************/
   /****************ASSETTABLEDATA*****************************************/
   async function tableDataOfAsset(selectedAsset) {
-    console.log("selectedAsset:", selectedAsset);
+    // console.log("selectedAsset:", selectedAsset);
     try {
       const response = await getTraceByAsset(selectedAsset);
 
@@ -338,7 +338,7 @@
 
   /*********************************************************/
   async function tableDataOfAsset2(selectedAssetForfilter) {
-    console.log("selectedAsset:", selectedAssetForfilter);
+    // console.log("selectedAsset:", selectedAssetForfilter);
     try {
       const response = await getTraceByAsset(selectedAssetForfilter);
 
@@ -364,7 +364,7 @@
     }
     return [];
   });
-  $: console.log("allTraceByThird", $allTraceByThird);
+  // $: console.log("allTraceByThird", $allTraceByThird);
 
   $: if (selectedAssetForfilter) {
     tableDataOfAsset2(selectedAssetForfilter); // Pass the correct argument
@@ -398,13 +398,13 @@
       filteredTableDataForAsset.set(filtered);
     });
   }
-  $: console.log("filteredTableDataForAsset", $filteredTableDataForAsset);
+  // $: console.log("filteredTableDataForAsset", $filteredTableDataForAsset);
   /*****************************************************************************/
   /********************THIRDDATA*******************************************/
   async function thirdData() {
     try {
       const response = await getAllTraceByTarget();
-      console.log("response", response);
+      // console.log("response", response);
       if (response.RESULT === "OK") {
         allTraceByThird.set(Object.values(response.CODE));
       }
@@ -426,7 +426,7 @@
       throw err;
     }
   }
-  $: console.log("allTraceByPlan", $allTraceByPlan);
+  // $: console.log("allTraceByPlan", $allTraceByPlan);
   /********************MODAL DATA*******************************/
 
   let selectedTarget = "";
@@ -455,7 +455,7 @@
 
   $: ccc_index = relatedItemDetails.ccc_index || "";
   async function targetDataFilter(cct_index, ccc_index) {
-    console.log("function", cct_index, ccc_index);
+    // console.log("function", cct_index, ccc_index);
     try {
       const response = await traceByTarget(cct_index, ccc_index);
 
@@ -517,7 +517,7 @@
     },
   );
 
-  $: console.log("uniqueOperatorsTarget", $filteredDataTarget);
+  // $: console.log("uniqueOperatorsTarget", $filteredDataTarget);
 </script>
 
 <!-- {#if loading}

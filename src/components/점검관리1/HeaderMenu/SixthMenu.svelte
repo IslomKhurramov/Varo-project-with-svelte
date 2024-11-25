@@ -70,7 +70,7 @@
         limit,
       };
 
-      console.log("Fetching data with params:", params);
+      // console.log("Fetching data with params:", params);
 
       const response = await getProgramList(
         params.orderUsage || "",
@@ -272,14 +272,14 @@
   let targetListShow = false;
   async function fetchTargetList() {
     try {
-      console.log("Fetching target list for plan_index:", plan_index);
+      // console.log("Fetching target list for plan_index:", plan_index);
       const response = await getTargetList(plan_index);
 
       if (response) {
         targetList.set(response.CODE);
       }
 
-      console.log("fetched targetList", $targetList);
+      // console.log("fetched targetList", $targetList);
     } catch (err) {
       console.error(`Error fetching data: ${err.message}`);
     }
@@ -385,7 +385,6 @@
       cs_description: "클라이언트 프로그램 사용자 매뉴얼",
     });
   }
-  $: console.log("plan data", $targetList);
 </script>
 
 <article class="contentArea" style="background-color: #fff; height:100%">

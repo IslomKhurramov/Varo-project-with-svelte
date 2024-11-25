@@ -17,7 +17,7 @@
 
   export let selectPageMain;
   export let activeMenu;
-  export let plan_index;
+  let plan_index;
   export let dataRefetch;
   let projectData = {};
   let projectArray = [];

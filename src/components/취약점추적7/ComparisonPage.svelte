@@ -32,7 +32,7 @@
         comparisonPlan.set(response.CODE);
       } else {
       }
-      console.log("data clicked", $comparisonPlan.first_plan);
+      // console.log("data clicked", $comparisonPlan.first_plan);
     } catch (err) {
       alert(`Error getting asset details: ${err.message}`);
     }
@@ -54,7 +54,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
   }
@@ -66,7 +66,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProjectComparison = true;
     modalDataFunction(asset_name, chklist, target);
   }

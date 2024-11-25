@@ -14,7 +14,7 @@ export async function fetchChecklistData() {
 
   try {
     const allCheckList = await getAllCheckList();
-    console.log("all", allCheckList);
+    // console.log("all", allCheckList);
     if (allCheckList.RESULT === "ERROR") {
       throw new Error(allCheckList.CODE);
     }
@@ -24,7 +24,7 @@ export async function fetchChecklistData() {
       error: null,
     });
   } catch (error) {
-    console.log("error2 ", error);
+    // console.log("error2 ", error);
     throw error;
     checklistStore.set({
       loading: false,

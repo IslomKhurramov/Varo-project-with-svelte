@@ -25,7 +25,7 @@
       ccr_item_no__ccc_item_no: chklist,
       cct_index__cct_target: target,
     } = data;
-    console.log("modal<", asset_name, chklist, target);
+    // console.log("modal<", asset_name, chklist, target);
     showModalProject = true;
     modalDataFunction(asset_name, chklist, target);
   }
@@ -123,7 +123,7 @@
     6: "조치결과승은",
     7: "조치결과반려",
   };
-  $: console.log("FilterPage ", $filterData);
+  // $: console.log("FilterPage ", $filterData);
 </script>
 
 <div>

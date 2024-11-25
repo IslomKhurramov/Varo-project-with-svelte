@@ -21,6 +21,22 @@
   let menuWrapper;
   let swiperInstance;
 
+  // Reset scroll when slides change or category changes
+  const resetScroll = () => {
+    if (menuWrapper) {
+      scrollAmount = 0;
+      menuWrapper.style.transform = `translateX(0px)`; // Set the scroll to the start
+    }
+    if (swiperInstance) {
+      swiperInstance.slideTo(0, 0); // Slide to the first slide (index 0) with no animation
+    }
+  };
+
+  $: if (slides.length > 0) {
+    // Reset the scroll position when slides change
+    resetScroll();
+  }
+
   $: if (selectedItem && slides && Array.isArray(slides) && slides.length > 0) {
     activeAsset = slides.find(
       (slide) => slide.ccc_item_no === selectedItem.ccc_item_no,
@@ -76,7 +92,6 @@
       setTimeout(() => {
         menuItem.focus();
       }, 300);
-    } else {
     }
   }
 
@@ -89,7 +104,9 @@
       const maxScroll = menuWrapper.scrollWidth - menuWidth;
       if (scrollAmount > maxScroll) scrollAmount = maxScroll;
     }
-    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+    if (menuWrapper) {
+      menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+    }
   };
 
   // Update selectedItem and move to the next slide after the slides are updated

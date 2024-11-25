@@ -10,9 +10,10 @@
 
   export let plan_index;
   export let projectIndex;
-  let currentPage = null;
+  // let currentPage = null;
   export let tabMenu = null;
   export let dataRefetch;
+  export let currentPage = null;
 
   const selectPage = (page, menu) => {
     currentPage = page;

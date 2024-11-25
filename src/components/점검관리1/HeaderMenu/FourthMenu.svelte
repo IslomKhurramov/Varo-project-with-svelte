@@ -11,6 +11,8 @@
   import { errorAlert } from "../../../shared/sweetAlert";
 
   export let projectIndex;
+  export let plan_index = null;
+  export let dataRefetch = null;
 
   let projects;
   let searchFilters;

@@ -106,8 +106,6 @@
         assessment_command: inspectionInformation,
       };
 
-      console.log("submitNewPlan:", sendData);
-
       if (parseInt(selectedType) === 0)
         sendData.asset_group_index = parseInt(selectedCheckList);
 
@@ -210,8 +208,6 @@
           throw new Error("주기를 0 보다 큰 숫자를 입력해 주세요!");
         }
       }
-
-      console.log("submitNewSystemCommand:", assetInsertData);
 
       const response = await setNewSystemCommand(assetInsertData);
 

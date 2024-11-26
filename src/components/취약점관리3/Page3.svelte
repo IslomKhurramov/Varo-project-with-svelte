@@ -42,6 +42,7 @@
     step_vuln: "1",
     page_cnt: "1",
     list_cnt: "15",
+    search_opt: "취약",
   };
 
   // DATA
@@ -145,6 +146,7 @@
       plan_index: "",
       asset_target_uuid: "",
       step_vuln: search?.step_vuln ?? "1",
+      search_opt: "취약",
     };
     await getPlanDataSearch();
   };
@@ -247,6 +249,7 @@
                 plan_index: "",
                 asset_target_uuid: "",
                 step_vuln: "1",
+                search_opt: "취약",
               };
               plans = await getVulnsOfAsset(search);
               tableData = plans?.vulns;
@@ -284,6 +287,7 @@
                 plan_index: "",
                 asset_target_uuid: "",
                 step_vuln: "1",
+                search_opt: "취약",
               };
 
               selectedSendData = {

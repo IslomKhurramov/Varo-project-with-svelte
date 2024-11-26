@@ -377,16 +377,23 @@
                 class="btnImg"
                 on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
               >
-                <img src="./assets/images/icon/edit.svg" alt="Edit" />
+                <img
+                  class="btnImg"
+                  style="width: 17px; height:17px"
+                  src="./assets/images/icon/active.png"
+                  alt="Edit"
+                />
               </button>
-              <button
-                type="button"
-                title="비활성화하다"
-                class="btnImg"
-                on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
-              >
-                <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
+              <button type="button" title="그룹이동" class="btnImg">
+                <img
+                  class="btnImg"
+                  src="./assets/images/icon/deactive.png"
+                  alt="Reset"
+                  style="width: 17px; height:17px"
+                  on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
+                />
               </button>
+
               <button
                 type="button"
                 title="그룹이동"
@@ -397,6 +404,16 @@
                 }}
               >
                 <img src="./assets/images/icon/reset.svg" alt="Reset" />
+              </button>
+              <button type="button" title="비활성화하다" class="btnImg">
+                <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
+              </button>
+              <button type="button" title="그룹이동" class="btnImg">
+                <img
+                  style="width: 17px; height:17px"
+                  src="./assets/images/icon/copy.png"
+                  alt="Reset"
+                />
               </button>
             </div>
           </div>
@@ -476,8 +493,11 @@
                   <span>아이피주소 : </span>{asset.ast_ipaddr || "데이터 없음"}
                 </li>
                 <li>
-                  <span>점검대상 : </span>{asset.asset_point_history?.[0]
-                    ?.ast_uuid__ast_target__cct_target || "타겟 없음"}
+                  {#each asset.assessment_target_system as target}
+                    {#each Object.entries(target) as [key, value]}
+                      <span>점검대상 : </span>{key || "타겟 없음"}
+                    {/each}
+                  {/each}
                 </li>
                 <li>
                   <span>에이전트설치여부 : </span>{asset.ast_agent_installed

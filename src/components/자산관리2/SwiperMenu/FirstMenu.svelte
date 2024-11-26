@@ -65,7 +65,7 @@
               <th>모델</th>
               <td>{assetDetails.ast_model}</td>
               <th>점검대상</th>
-              <td>NETWORK</td>
+              <td>{assetDetails.ast_ostype}</td>
             </tr>
             <tr>
               <th>호스트명</th>

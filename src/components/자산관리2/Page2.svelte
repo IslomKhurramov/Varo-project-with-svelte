@@ -68,48 +68,72 @@
       loading = false;
     }
   }
+  let splitAssets = [];
+  // onMount to initialize assets
   onMount(async () => {
     await assetGroupList(); // Only fetch asset groups
-    // Don’t call filterAssets here, just populate with initial data
+    // Don't call filterAssets here, just populate with initial data
     if ($allAssetList && $allAssetList.length > 0) {
       filteredAssets = [...$allAssetList]; // Set initial assets if available
     }
   });
 
-  function closeSwiper() {
-    showSwiperComponent = false;
-  }
-  /*************************************************************/
-  function isNotFiltered(value, filter) {
-    return !filter || filter === "전체" || value === filter;
+  // Function to split assets by their target types
+  function splitAssetsByTarget(assets) {
+    // Ensure assets is a valid array
+    if (!Array.isArray(assets)) {
+      console.error("assets is not an array:", assets);
+      return [];
+    }
+
+    return assets.flatMap((asset) => {
+      // Ensure asset and its assessment_target_system exist
+      if (!asset || !Array.isArray(asset.assessment_target_system)) {
+        // console.warn(
+        //   "Invalid asset or missing assessment_target_system:",
+        //   asset,
+        // );
+        return []; // Skip invalid assets
+      }
+
+      // Split each target into its own object
+      return asset.assessment_target_system.map((target) => {
+        return {
+          ...asset, // Copy all other properties
+          assessment_target_system: [target], // Include only the current target
+        };
+      });
+    });
   }
 
+  // Filter assets based on selected criteria
   function filterAssets() {
+    // First, split all assets based on their assessment_target_system
+    let splitAssets = splitAssetsByTarget($allAssetList);
+
     if (
       selectedGroup === "전체" &&
       asset_ostype === "전체" &&
       assetTargetReg === "전체" &&
       assetAcitve === "전체"
     ) {
-      // If all criteria are "전체", return all assets
-      filteredAssets = [...$allAssetList];
+      // If all criteria are "전체", return all assets (splitAssets)
+      filteredAssets = splitAssets; // Assign splitAssets directly to filteredAssets
       return filteredAssets;
     }
 
-    // Otherwise, proceed with the filtering logic
-    filteredAssets = $allAssetList.filter((asset) => {
+    // Apply filtering logic to splitAssets
+    filteredAssets = splitAssets.filter((asset) => {
       const groupCondition =
         selectedGroup === "전체" ||
         (Array.isArray(asset.asset_group) &&
           asset.asset_group.some((group) => group.asg_index === selectedGroup));
 
       const ostypeCondition =
-        asset_ostype === "전체" ||
-        (Array.isArray(asset.assessment_target_system) &&
-          asset.assessment_target_system.some((system) =>
-            Object.keys(system).some(
-              (key) => key === asset_ostype && system[key] === true,
-            ),
+        asset_ostype === "전체" || // Allow all assets when "전체" is selected
+        (Array.isArray(asset.assessment_target_system) && // Ensure it's an array
+          asset.assessment_target_system.some(
+            (system) => Object.keys(system).some((key) => key === asset_ostype), // Check if the key matches asset_ostype
           ));
 
       const targetRegCondition =
@@ -133,9 +157,22 @@
     return filteredAssets;
   }
 
+  // Helper function to check if a value is not filtered
+  function isNotFiltered(value, filter) {
+    return !filter || filter === "전체" || value === filter;
+  }
+
+  // Function to update the filtered assets in the parent component or elsewhere
   function updateFilteredAssets(updatedAssets) {
     filteredAssets = updatedAssets;
   }
+
+  // Example: whenever assets are updated, ensure filteredAssets is always up-to-date
+  $: {
+    filteredAssets = filterAssets(); // Automatically filter and update filteredAssets
+  }
+  $: console.log("filteredAssets", filteredAssets);
+
   function handleFilter() {
     const results = filterAssets();
 
@@ -155,6 +192,10 @@
       activeMenu = group.asg_index; // Correctly set the active menu
       selectedGroup = group.asg_index; // Use group index for filtering
       selectedGroupName = group.asg_title;
+      assetHost = "전체";
+      asset_ostype = "전체";
+      assetTargetReg = "전체";
+      assetAcitve = "전체";
     }
     showSwiperComponent = false;
     filterAssets(); // Apply filtering
@@ -462,7 +503,9 @@
     }
   }
   /*******************************************************************/
-
+  function closeSwiper() {
+    showSwiperComponent = false;
+  }
   async function deleteSelectedAssetGroup() {
     try {
       // Ensure a group is selected
@@ -569,7 +612,7 @@
             <li class={activeMenu === group.asg_index ? "active" : ""}>
               <a
                 on:click={() => {
-                  activeMenu = group.asg_index; // Use `asg_index` for comparison
+                  activeMenu = group.asg_index;
                   selectPage(AssetCardsPage, group);
                 }}
                 title="{group.asg_title}({group.asg_count})"
@@ -582,15 +625,14 @@
                 <div
                   style="display: flex; flex-direction: row; align-items: center;"
                 >
-                  {#if group.asg_count === 0}
-                    <button
-                      class="asset_button"
-                      on:click|stopPropagation={() =>
-                        selectPage(AssetManagement, group)}
-                    >
-                      자산관리
-                    </button>
-                  {/if}
+                  <button
+                    class="asset_button"
+                    on:click|stopPropagation={() =>
+                      selectPage(AssetManagement, group)}
+                  >
+                    자산관리
+                  </button>
+
                   <span class="arrowIcon"></span>
                 </div>
               </a>
@@ -980,7 +1022,7 @@
     background-size: 8px;
   }
   .asset_button {
-    background-color: rgba(0, 103, 255, 0.05);
+    background-color: #fff;
     color: #0067ff;
     border-color: rgba(0, 103, 255, 0.1);
 
@@ -993,12 +1035,6 @@
     text-align: center;
   }
 
-  .asset_button:hover {
-    background-color: #fff;
-    color: #0067ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
   .assetandbutton {
     display: flex;
     flex-direction: row;

@@ -39,11 +39,13 @@
   export let selectedAsset;
   export let filteredAssets = [];
   export let filterAssets;
-  let activeAsset = null;
   export let updateFilteredAssets;
   export let assetGroupList;
   export let assetList;
-
+  let activeAsset = {
+    ass_uuid: "",
+    assessment_target_system_id: "",
+  };
   const selectPage = (page, menu) => {
     currentPage = page;
     activeMenu = menu;
@@ -162,32 +164,35 @@
     // Log approve status for debugging purposes
   }
   onMount(() => {
-    // Initialize Swiper instance only once
-    swiperInstance = new Swiper(swiperContainer, {
-      modules: [Navigation, Pagination],
-      loop: false, // Avoid layout issues caused by looping
-      slidesPerView: 4, // Adjust this value to suit your design
-      spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
+    if (swiperContainer) {
+      swiperInstance = new Swiper(swiperContainer, {
+        modules: [Navigation, Pagination],
+        loop: false,
+        slidesPerView: 4,
+        spaceBetween: 10,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
 
-    // Scroll to selected asset if it exists
-    if (selectedAsset) {
-      setTimeout(() => {
-        focusOnAsset(selectedAsset.ass_uuid);
-      }, 0);
+      if (selectedAsset) {
+        setTimeout(() => {
+          focusOnAsset(selectedAsset.ass_uuid);
+        }, 0);
+      }
     }
+
     menuWrapper = document.getElementById("menuWrapper");
+
     return () => {
       if (swiperInstance) {
         swiperInstance.destroy(true, true);
+        swiperInstance = null;
       }
     };
   });
@@ -423,18 +428,17 @@
       );
 
       // If the selected asset is still part of filteredAssets, update the Swiper
-      if (currentIndex !== -1) {
-        // Update Swiper
-        setTimeout(() => {
-          swiperInstance.update(); // Ensure Swiper knows the slides are updated
-          swiperInstance.slideTo(currentIndex, 500); // Smooth scroll to the updated slide
-        }, 0);
+      // if (currentIndex !== -1) {
+      //   // Update Swiper
+      //   setTimeout(() => {
+      //     // swiperInstance.update(); // Ensure Swiper knows the slides are updated
+      //     swiperInstance.slideTo(currentIndex, 500); // Smooth scroll to the updated slide
+      //   }, 0);
 
-        // Focus on the asset after Swiper has updated
-        setTimeout(() => {
-          focusOnAsset(selectedAsset.ass_uuid);
-        }, 500); // Wait for the slide transition to finish before focusing
-      }
+      // Focus on the asset after Swiper has updated
+      setTimeout(() => {
+        focusOnAsset(selectedAsset.ass_uuid);
+      }, 500); // Wait for the slide transition to finish before focusing
     }
   }
 
@@ -465,6 +469,8 @@
         <div class="menu-wrapper-container">
           <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
             {#each filteredAssets as asset}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
               <div
                 value={asset.ass_uuid}
                 name={asset}

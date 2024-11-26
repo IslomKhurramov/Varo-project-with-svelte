@@ -13,7 +13,7 @@
     setPasswordReset,
   } from "../../../services/login/loginService";
   import { userData } from "../../../stores/user.store";
-    export let tabMenu;
+  export let tabMenu;
 
   let userRoleTypeIndex = null;
 
@@ -50,33 +50,33 @@
   }
 
   async function handleStatusChange(userIndex, event) {
-    const originalValue = event.target.value;
+    // const originalValue = event.target.value;
     try {
       const newStatus = parseInt(event.target.value, 10);
 
-      if ([1, 9].includes(userIndex)) {
-        await errorAlert("관리자 또는 에이전트 계정은 변경할 수 없습니다.");
-        event.target.value = newStatus === 1 ? "0" : "1";
-        return;
-      }
+      // if ([1, 9].includes(userIndex)) {
+      //   await errorAlert("관리자 또는 에이전트 계정은 변경할 수 없습니다.");
+      //   event.target.value = newStatus === 1 ? "0" : "1";
+      //   return;
+      // }
 
       const response = await setUserActivate(userIndex, newStatus);
 
       if (response.RESULT === "OK") {
-        await successAlert(
-          newStatus === 1
-            ? "사용자가 활성화되었습니다."
-            : "사용자가 비활성화되었습니다.",
-        );
+        await successAlert(response.CODE);
 
+        await getUserListsData();
+      } else if (response.RESULT === "ERROR") {
+        await errorAlert(response.CODE);
+        
         await getUserListsData();
       }
     } catch (err) {
-      console.error("Error in handleStatusChange:", err);
-      event.target.value = originalValue;
+      // event.target.value = originalValue;
       await errorAlert(
         err.message || "사용자 상태를 변경하는 중 오류가 발생했습니다.",
       );
+      await getUserListsData();
     }
   }
 

@@ -259,6 +259,10 @@
   let menuWidth = 100;
   let activeAsset = null;
 
+  $: {
+    console.log("scrollAmount:", scrollAmount);
+  }
+
   $: if (targetData && data && Array.isArray(data) && data.length > 0) {
     activeAsset = data?.find(
       (slide) => slide.ccr_index === targetData.ccr_index,
@@ -295,22 +299,38 @@
   onMount(() => {
     // Initialize menu wrapper for scrolling
     menuWrapper = document.getElementById("menuWrapper");
+    // scrollAmount = data?.indexOf(activeAsset) * itemWidth;
+
+    // if (data && activeAsset) {
+    //   // Calculate initial scroll position based on active asset position
+    //   scrollAmount = data.indexOf(activeAsset) * itemWidth;
+
+    //   // Use negative value to move left
+    //   menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+    // }
   });
 
   const handleScroll = (direction) => {
-    menuWrapper = document.getElementById("menuWrapper");
-    if (!menuWrapper) return; // Ensure menuWrapper is initialized
-    const maxScroll = menuWrapper.scrollWidth - menuWidth;
+    const container = document.getElementById("menu-wrapper-container");
+    const wrapper = document.getElementById("menuWrapper");
+
+    if (!container || !wrapper) return;
+
+    const containerWidth = container.offsetWidth;
+    const wrapperWidth = wrapper.scrollWidth;
+    const maxScroll = wrapperWidth - containerWidth;
 
     if (direction === "prev") {
-      scrollAmount -= itemWidth;
-      if (scrollAmount < 0) scrollAmount = 0;
-    } else if (direction === "next") {
-      scrollAmount += itemWidth;
-      if (scrollAmount > maxScroll) scrollAmount = maxScroll;
+      scrollAmount = Math.max(0, scrollAmount - itemWidth);
+    } else {
+      scrollAmount = Math.min(maxScroll, scrollAmount + itemWidth);
     }
 
-    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`; // Template literal corrected
+    wrapper.style.transform = `translateX(-${scrollAmount}px)`;
+
+    // Update button states
+    document.getElementById("prevBtn").disabled = scrollAmount <= 0;
+    document.getElementById("nextBtn").disabled = scrollAmount >= maxScroll;
   };
 </script>
 
@@ -323,7 +343,7 @@
     >
       ◀
     </button>
-    <div class="menu-wrapper-container">
+    <div class="menu-wrapper-container" id="menu-wrapper-container">
       {#if data?.length !== 0}
         <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
           {#each data as item, index}

@@ -253,8 +253,6 @@
     }
   };
 
-  let swiperContainer;
-  let swiperInstance;
   let menuWrapper;
   let scrollAmount = 0;
   let itemWidth = 146;
@@ -295,32 +293,8 @@
   }
 
   onMount(() => {
-    // Ensure swiperContainer is bound
-    if (swiperContainer) {
-      swiperInstance = new Swiper(swiperContainer, {
-        modules: [Navigation, Pagination],
-        loop: false, // Avoid layout issues caused by looping
-        slidesPerView: 4, // Adjust this value to suit your design
-        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      });
-    }
-
     // Initialize menu wrapper for scrolling
     menuWrapper = document.getElementById("menuWrapper");
-
-    return () => {
-      if (swiperInstance) {
-        swiperInstance.destroy(true, true);
-      }
-    };
   });
 
   const handleScroll = (direction) => {
@@ -340,7 +314,7 @@
   };
 </script>
 
-<section class="topCon" bind:this={swiperContainer}>
+<section class="topCon">
   <div class="menu-container">
     <button
       class="arrow-btn"
@@ -1012,23 +986,7 @@
                   </div>
                 </div>
               </article>
-              <div class="flex flex-end btnActionWrap gap-12">
-                <!-- <button
-                type="button"
-                class="btn btnGray w140 h50 golist btnAction"
-                on:click={() => {
-                  currentView === "default";
-                  wholePage = false;
-                }}
-              >
-                목록으로
-              </button> -->
-                <!-- <button
-                type="button"
-                class="btn btnBlue btnSave w220 h50 btnAction"
-                >조치계획을 등록함</button
-              > -->
-              </div>
+              <div class="flex flex-end btnActionWrap gap-12"></div>
 
               <article>
                 <h3 class="title border">관련자산</h3>

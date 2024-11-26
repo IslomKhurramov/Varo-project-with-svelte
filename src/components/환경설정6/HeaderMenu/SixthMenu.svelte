@@ -1,6 +1,7 @@
 <script>
   import SixthMenuFirstDetail from "../SixthMenuFirstDetail.svelte";
   import SixthMenuSeconDetail from "../SixthMenuSeconDetail.svelte";
+  export let tabMenu;
 
   let setView = "plan";
   let currentPage = SixthMenuFirstDetail; // Avtomatik yuklanishi uchun boshlang'ich qiymat

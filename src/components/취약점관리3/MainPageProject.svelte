@@ -141,8 +141,9 @@
 
   const goToPage = async (pageNum) => {
     if (pageNum >= 1 && pageNum <= totalPages) {
+      tableData = [];
       currentPageNum = pageNum;
-      searchDataHandler();
+      await searchDataHandler();
     }
   };
 
@@ -164,8 +165,8 @@
     }
   };
 
-  const goToFirstPage = () => goToPage(1);
-  const goToLastPage = () => goToPage(totalPages);
+  const goToFirstPage = async () => await goToPage(1);
+  const goToLastPage = async () => await goToPage(totalPages);
 
   // const getRowNumber = (index) => {
   //   return totalRecords - ((currentPageNum - 1) * itemsPerPage + index);
@@ -323,288 +324,6 @@
             </a>
           {/if}
         </section>
-        <!-- {#if isAgenUser && selectedSendData?.plan_index && data?.length !== 0}
-          {#if setView == "plan_accept"}
-            <section class="flex btnWrap gap-4">
-              {#if selectedItems?.length !== 0}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    };
-                    fixApproveHandler(data);
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "0",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    };
-                    fixApproveHandler(data);
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목반려
-                </button>
-              {/if}
-
-              {#if selectedSendData?.plan_index}
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const items = data?.map((item) => item.ccr_index);
-                    const send_data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: items,
-                      approved_comment: "",
-                    };
-                    fixApproveHandler(send_data);
-                  }}
-                >
-                  일괄승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const items = data?.map((item) => item.ccr_index);
-                    const send_data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "0",
-                      approved_targets: items,
-                      approved_comment: "",
-                    };
-                    fixApproveHandler(send_data);
-                  }}
-                >
-                  일괄반려
-                </button>
-              {/if}
-            </section>
-          {/if}
-
-          {#if setView == "result_accept"}
-            <section class="flex btnWrap gap-4">
-              {#if selectedItems?.length !== 0}
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    };
-                    fixDoneApproveHandler(data);
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목승인
-                </button>
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "0",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    };
-                    fixDoneApproveHandler(data);
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목반려
-                </button>
-              {/if}
-
-              {#if selectedSendData?.plan_index}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const items = data?.map((item) => item.ccr_index);
-                    const send_data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: items,
-                      approved_comment: "",
-                    };
-                    fixDoneApproveHandler(send_data);
-                  }}
-                >
-                  일괄승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    const items = data?.map((item) => item.ccr_index);
-                    const send_data = {
-                      plan_index: selectedSendData?.plan_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "0",
-                      approved_targets: items,
-                      approved_comment: "",
-                    };
-                    fixDoneApproveHandler(send_data);
-                  }}
-                >
-                  일괄반려
-                </button>
-              {/if}
-            </section>
-          {/if}
-        {/if}
-
-        {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && data?.length !== 0}
-          {#if setView == "plan_accept"}
-            <section class="flex btnWrap gap-4">
-              {#if selectedItems?.length !== 0}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixApproveHandler({
-                      plan_index: data[0].ccp_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    });
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixApproveHandler({
-                      plan_index: data[0].ccp_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "0",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    });
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목반려
-                </button>
-              {/if}
-
-              {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixApproveAssetHandler(data, "1");
-                  }}
-                >
-                  일괄승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixApproveAssetHandler(data, "0");
-                  }}
-                >
-                  일괄반려
-                </button>
-              {/if}
-            </section>
-          {/if}
-
-          {#if setView == "result_accept"}
-            <section class="flex btnWrap gap-4">
-              {#if selectedItems?.length !== 0}
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveHandler({
-                      plan_index: data[0].ccp_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    });
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목승인
-                </button>
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveHandler({
-                      plan_index: data[0].ccp_index,
-                      asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "0",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    });
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목반려
-                </button>
-              {/if}
-
-              {#if !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveAssetHandler(data, "1");
-                  }}
-                >
-                  일괄승인
-                </button>
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveAssetHandler(data, "0");
-                  }}
-                >
-                  일괄반려
-                </button>
-              {/if}
-            </section>
-          {/if}
-        {/if} -->
-
         {#if isAgenUser}
           {#if setView == "plan_accept"}
             <section class="flex btnWrap gap-4">
@@ -648,6 +367,7 @@
               {#if (showProject && !selectedSendData?.plan_index) || (!showProject && !selectedSendData?.asset_target_uuid)}
                 <button
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixApproveHandler({
                       // plan_index: data[0].ccp_index,
@@ -663,6 +383,7 @@
                 <button
                   type="button"
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixApproveHandler({
                       // plan_index: data[0].ccp_index,
@@ -678,6 +399,7 @@
               {:else}
                 <button
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixApproveAssetHandler(data, "1");
                   }}
@@ -687,6 +409,7 @@
                 <button
                   type="button"
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixApproveAssetHandler(data, "0");
                   }}
@@ -738,6 +461,7 @@
                 <button
                   type="button"
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixApproveHandler({
                       // plan_index: data[0].ccp_index,
@@ -753,6 +477,7 @@
                 <button
                   type="button"
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixApproveHandler({
                       // plan_index: data[0].ccp_index,
@@ -769,6 +494,7 @@
                 <button
                   type="button"
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixDoneApproveAssetHandler(data, "1");
                   }}
@@ -778,6 +504,7 @@
                 <button
                   type="button"
                   class="btn btnBlue"
+                  disabled={data?.length == 0}
                   on:click={() => {
                     fixDoneApproveAssetHandler(data, "0");
                   }}
@@ -842,28 +569,6 @@
                   </th>
                 {/if}
 
-                <!-- {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && (setView == "plan_accept" || setView == "result_accept")}
-                  <th class="text-center">
-                    <div class="checkboxWrap">
-                      <label class="checkbox-label">
-                        <input
-                          type="checkbox"
-                          name="target"
-                          bind:checked={theadChecked}
-                          on:change={(e) => {
-                            if (e.target.checked)
-                              selectedItems = data?.map(
-                                (ele) => ele?.ccr_index,
-                              );
-                            else selectedItems = [];
-                          }}
-                        />
-                        <span></span>
-                      </label>
-                    </div>
-                  </th>
-                {/if} -->
-
                 <th class="text-center">순번</th>
                 <th class="text-center">자산명</th>
                 <th class="text-center">점검대상</th>
@@ -915,27 +620,6 @@
                         </div>
                       </td>
                     {/if}
-
-                    <!-- {#if isAgenUser && !selectedSendData?.plan_index && selectedSendData?.asset_target_uuid && (setView == "plan_accept" || setView == "result_accept")}
-
-                      <td
-                        class="text-center"
-                        on:click={(e) => e.stopPropagation()}
-                      >
-                        <div class="checkboxWrap">
-                          <label class="checkbox-label">
-                            <input
-                              type="checkbox"
-                              name="target"
-                              on:click={(e) => e.stopPropagation()}
-                              on:change={() => toggleSelection(item?.ccr_index)}
-                              checked={selectedItems.includes(item?.ccr_index)}
-                            />
-                            <span></span>
-                          </label>
-                        </div>
-                      </td>
-                    {/if} -->
 
                     <td class="text-center">{baseIndex - index}</td>
                     <td class="text-center">

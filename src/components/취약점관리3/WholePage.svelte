@@ -253,13 +253,15 @@
     }
   };
 
-  let swiperContainer;
-  let swiperInstance;
   let menuWrapper;
   let scrollAmount = 0;
   let itemWidth = 146;
   let menuWidth = 100;
   let activeAsset = null;
+
+  $: {
+    console.log("scrollAmount:", scrollAmount);
+  }
 
   $: if (targetData && data && Array.isArray(data) && data.length > 0) {
     activeAsset = data?.find(
@@ -295,52 +297,44 @@
   }
 
   onMount(() => {
-    // Ensure swiperContainer is bound
-    if (swiperContainer) {
-      swiperInstance = new Swiper(swiperContainer, {
-        modules: [Navigation, Pagination],
-        loop: false, // Avoid layout issues caused by looping
-        slidesPerView: 4, // Adjust this value to suit your design
-        spaceBetween: 10, // Fine-tune spacing to avoid layout shifts
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      });
-    }
-
     // Initialize menu wrapper for scrolling
     menuWrapper = document.getElementById("menuWrapper");
+    // scrollAmount = data?.indexOf(activeAsset) * itemWidth;
 
-    return () => {
-      if (swiperInstance) {
-        swiperInstance.destroy(true, true);
-      }
-    };
+    // if (data && activeAsset) {
+    //   // Calculate initial scroll position based on active asset position
+    //   scrollAmount = data.indexOf(activeAsset) * itemWidth;
+
+    //   // Use negative value to move left
+    //   menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
+    // }
   });
 
   const handleScroll = (direction) => {
-    menuWrapper = document.getElementById("menuWrapper");
-    if (!menuWrapper) return; // Ensure menuWrapper is initialized
-    const maxScroll = menuWrapper.scrollWidth - menuWidth;
+    const container = document.getElementById("menu-wrapper-container");
+    const wrapper = document.getElementById("menuWrapper");
+
+    if (!container || !wrapper) return;
+
+    const containerWidth = container.offsetWidth;
+    const wrapperWidth = wrapper.scrollWidth;
+    const maxScroll = wrapperWidth - containerWidth;
 
     if (direction === "prev") {
-      scrollAmount -= itemWidth;
-      if (scrollAmount < 0) scrollAmount = 0;
-    } else if (direction === "next") {
-      scrollAmount += itemWidth;
-      if (scrollAmount > maxScroll) scrollAmount = maxScroll;
+      scrollAmount = Math.max(0, scrollAmount - itemWidth);
+    } else {
+      scrollAmount = Math.min(maxScroll, scrollAmount + itemWidth);
     }
 
-    menuWrapper.style.transform = `translateX(-${scrollAmount}px)`; // Template literal corrected
+    wrapper.style.transform = `translateX(-${scrollAmount}px)`;
+
+    // Update button states
+    document.getElementById("prevBtn").disabled = scrollAmount <= 0;
+    document.getElementById("nextBtn").disabled = scrollAmount >= maxScroll;
   };
 </script>
 
-<section class="topCon" bind:this={swiperContainer}>
+<section class="topCon">
   <div class="menu-container">
     <button
       class="arrow-btn"
@@ -349,7 +343,7 @@
     >
       ◀
     </button>
-    <div class="menu-wrapper-container">
+    <div class="menu-wrapper-container" id="menu-wrapper-container">
       {#if data?.length !== 0}
         <div class="menu-wrapper" id="menuWrapper" bind:this={menuWrapper}>
           {#each data as item, index}
@@ -1012,23 +1006,7 @@
                   </div>
                 </div>
               </article>
-              <div class="flex flex-end btnActionWrap gap-12">
-                <!-- <button
-                type="button"
-                class="btn btnGray w140 h50 golist btnAction"
-                on:click={() => {
-                  currentView === "default";
-                  wholePage = false;
-                }}
-              >
-                목록으로
-              </button> -->
-                <!-- <button
-                type="button"
-                class="btn btnBlue btnSave w220 h50 btnAction"
-                >조치계획을 등록함</button
-              > -->
-              </div>
+              <div class="flex flex-end btnActionWrap gap-12"></div>
 
               <article>
                 <h3 class="title border">관련자산</h3>

@@ -1,6 +1,7 @@
 <script>
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { serverApi } from "../../lib/config";
+  export let dataArray = {};
 
   let displayedPages = [
     { hostname: "윈도우에이전트" },
@@ -19,8 +20,8 @@
   function handleFileSelect(event, hostname) {
     const file = event.target.files[0];
     if (file) {
-      selectedFiles[hostname] = file; 
-      fileNames[hostname] = file.name; 
+      selectedFiles[hostname] = file;
+      fileNames[hostname] = file.name;
     } else {
       fileNames[hostname] = "선택된 파일 없음";
     }

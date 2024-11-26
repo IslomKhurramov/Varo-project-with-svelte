@@ -4,10 +4,19 @@
     setUserDelete,
     setUserUpdate,
   } from "../../services/page6/serviceArticle";
-  export let selectedData;
-  export let getUserListsData;
   import { errorAlert, successAlert } from "../../shared/sweetAlert";
   import { createEventDispatcher } from "svelte";
+
+  export let projectArray = []; // Default bo‘sh massiv
+  export let projectIndex = null; // Default qiymat
+  export let selectedData = null;
+  export let getUserListsData = () => {}; // Default bo‘sh funksiya
+  function check() {
+    console.log(projectIndex);
+    console.log(selectedData);
+    console.log(getUserListsData);
+    console.log(projectArray);
+  }
 
   let find_user = "";
   let error = null;

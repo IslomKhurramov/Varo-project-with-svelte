@@ -42,6 +42,7 @@
     step_vuln: "1",
     page_cnt: "1",
     list_cnt: "15",
+    search_opt: "취약",
   };
 
   // DATA
@@ -64,7 +65,7 @@
   }
 
   function toggleAccordion(plan) {
-    activePlan = activePlan === plan ? null : plan;
+    activePlan = activePlan == plan ? null : plan;
   }
 
   onMount(async () => {
@@ -145,6 +146,9 @@
       plan_index: "",
       asset_target_uuid: "",
       step_vuln: search?.step_vuln ?? "1",
+      search_opt: "취약",
+      page_cnt: "1",
+      list_cnt: "15",
     };
     await getPlanDataSearch();
   };
@@ -160,9 +164,7 @@
       vulns[key].forEach((item) => {
         if (item.result) {
           const result = item?.result;
-          const statusMatch =
-            !vulnerabilityStatusValue ||
-            result.ccr_item_result === vulnerabilityStatusValue;
+
           let actionMatch;
           if (
             actionStatusValue == "5" ||
@@ -178,16 +180,9 @@
               result.cfi_fix_status__cvs_index == actionStatusValue;
           }
 
-          // const agentMatch = !filters.agentStatus || result.agent === filters.agentStatus;
-
-          // If all conditions match, assign the result to currentResult
-          if (statusMatch && actionMatch) {
+          if (actionMatch) {
             currentResult = result;
           }
-
-          //   if (planMatch && statusMatch && actionMatch && agentMatch) {
-          //   currentResult = result;
-          // }
         } else {
           if (item.fix_plan) {
             fixPlan = item.fix_plan;
@@ -247,6 +242,9 @@
                 plan_index: "",
                 asset_target_uuid: "",
                 step_vuln: "1",
+                page_cnt: "1",
+                list_cnt: "15",
+                search_opt: "취약",
               };
               plans = await getVulnsOfAsset(search);
               tableData = plans?.vulns;
@@ -284,6 +282,9 @@
                 plan_index: "",
                 asset_target_uuid: "",
                 step_vuln: "1",
+                page_cnt: "1",
+                list_cnt: "15",
+                search_opt: "취약",
               };
 
               selectedSendData = {
@@ -352,7 +353,7 @@
                 <div
                   class="menu"
                   style="position: relative;"
-                  on:click={() => {
+                  on:click={async () => {
                     setView = "plan";
                     search.step_vuln = "1";
                     currentPageNum = 1;
@@ -416,6 +417,7 @@
                                       ...search,
                                       plan_index: plan?.plan_index,
                                       asset_target_uuid: host?.ast_uuid,
+                                      page_cnt: 1,
                                     };
                                     assets = await getVulnsOfAsset(search);
                                     tableData = assets?.vulns;
@@ -530,30 +532,55 @@
         <section class="topCon">
           <section class="filterWrap">
             <div>
-              <select
-                bind:value={search["plan_index"]}
-                on:change={() => {
-                  search = { ...search, asset_target_uuid: "" };
-                  selectedSendData = null;
-                  getPlanDataSearch();
-                }}
-              >
-                <option value="" selected>프로젝트</option>
-                {#if plans && plans?.plans && plans?.plans?.length !== 0}
-                  {#each plans?.plans as plan, index}
-                    <option value={plan?.plan_index}>
-                      {plan?.plan_title}</option
-                    >
-                  {/each}
-                {/if}
-              </select>
+              {#if showProject}
+                <select
+                  bind:value={search["plan_index"]}
+                  on:change={async () => {
+                    search = { ...search, asset_target_uuid: "" };
+                    selectedSendData = null;
+                    await getPlanDataSearch();
+                  }}
+                >
+                  <option value="" selected>프로젝트</option>
+                  {#if plans && plans?.plans && plans?.plans?.length !== 0}
+                    {#each plans?.plans as plan, index}
+                      <option value={plan?.plan_index}>
+                        {plan?.plan_title}</option
+                      >
+                    {/each}
+                  {/if}
+                </select>
+              {:else}
+                <select
+                  bind:value={search["asset_target_uuid"]}
+                  on:change={async (e) => {
+                    // search = { ...search, asset_target_uuid: "" };
+                    activeMenu = e?.target?.value;
+                    selectedSendData = null;
+                    await getPlanDataSearch();
+                  }}
+                >
+                  <option value="" selected>자산</option>
+                  {#if assetsMenuData && assetsMenuData?.length !== 0}
+                    {#each assetsMenuData as asset, index}
+                      <option value={asset.ast_uuid}>
+                        {asset?.ast_uuid__ass_uuid__ast_hostname} ({asset?.ast_uuid__ast_target__cct_target})
+                      </option>
+                    {/each}
+                  {/if}
+                </select>
+              {/if}
               <select
                 name="asset_group"
                 id="asset_group"
                 class="select_input"
-                bind:value={vulnerabilityStatusValue}
+                bind:value={search["search_opt"]}
+                on:change={() => {
+                  // search = { ...search, asset_target_uuid: "" };
+                  // selectedSendData = null;
+                  getPlanDataSearch();
+                }}
               >
-                <option value="" selected>취약점현황</option>
                 <option value="양호">양호</option>
                 <option value="취약">취약</option>
                 <option value="수동점검">수동점검</option>
@@ -697,12 +724,11 @@
     cursor: pointer;
     width: 24px;
   }
-  .btn:hover {
-    color: #fff;
-    background-color: #0067ff;
-  }
   .btn:hover svg path {
     fill: white; /* Change SVG fill color to white on hover */
+  }
+  .btn:disabled {
+    background-color: #0067ff7d;
   }
   /* Tooltip styling */
   .tooltip {

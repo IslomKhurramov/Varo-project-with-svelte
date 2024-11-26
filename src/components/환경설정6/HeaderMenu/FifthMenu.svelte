@@ -2,6 +2,7 @@
   import FifthMenuFirst from "../FifthMenuFirst.svelte";
   import FifthMenuSecon from "../FifthMenuSecon.svelte";
   import FifthMenuThird from "../FifthMenuThird.svelte";
+  export let tabMenu;
 
   let setView = "plan";
   let currentPage = FifthMenuFirst;

@@ -6,9 +6,7 @@
   } from "../../../services/page6/serviceArticle";
   import { errorAlert, successAlert } from "../../../shared/sweetAlert";
   import { writable } from "svelte/store";
-  let textareaContent = "";
-  let inspectionInformation = null;
-  let error = null;
+  export let tabMenu;
   const license = writable({});
 
   async function handleFileUpload(event) {

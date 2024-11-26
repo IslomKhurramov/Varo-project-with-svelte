@@ -14,7 +14,8 @@
   import axios from "axios";
   import { programList } from "../../services/page7/trace.store";
 
-  export let projectIndex;
+  export let projectIndex = {};
+  export let dataArray = {};
   /*********VARIABLE FOR DATA FROM BACKEND********/
 
   const targetList = writable([]);
@@ -181,7 +182,6 @@
   let targetListShow = false;
   async function fetchTargetList() {
     try {
-      console.log("Fetching target list for plan_index:", plan_index);
       const response = await getTargetList(plan_index);
 
       if (response) {
@@ -282,20 +282,7 @@
       searchDataHandler();
     }
   }
-  let fakeData = [];
-  for (let i = 0; i <= 100; i++) {
-    fakeData.push({
-      cs_index: 6,
-      cs_category: "MANUAL",
-      cs_support_os: "",
-      cs_codetype: "MANUAL",
-      cs_filename: "varo_agent_manual_v1.0.docx",
-      cs_version: "0.8",
-      cs_provied_date: "2024-04-11",
-      cs_description: "클라이언트 프로그램 사용자 매뉴얼",
-    });
-  }
-  $: console.log("plan data", $targetList);
+  
 </script>
 
 <article class="contentArea" style="background-color: #fff; height:100%;">

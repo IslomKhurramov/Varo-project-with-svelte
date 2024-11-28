@@ -73,9 +73,9 @@
   onMount(async () => {
     await assetGroupList(); // Only fetch asset groups
     // Don't call filterAssets here, just populate with initial data
-    if ($allAssetList && $allAssetList.length > 0) {
-      filteredAssets = [...$allAssetList]; // Set initial assets if available
-    }
+    // if ($allAssetList && $allAssetList.length > 0) {
+    //   filteredAssets = [...$allAssetList]; // Set initial assets if available
+    // }
   });
 
   // Function to split assets by their target types
@@ -185,9 +185,13 @@
   let selectedGroupName = "";
   function selectPage(page, group) {
     currentPage = page;
-    if (group === "전체") {
+    if (group === "전체" && selectedGroup === "전체") {
       activeMenu = "전체";
       selectedGroup = "전체"; // Explicitly set "전체" for filtering and dropdown
+      assetHost = "전체";
+      asset_ostype = "전체";
+      assetTargetReg = "전체";
+      assetAcitve = "전체";
     } else {
       activeMenu = group.asg_index; // Correctly set the active menu
       selectedGroup = group.asg_index; // Use group index for filtering
@@ -508,13 +512,11 @@
   }
   async function deleteSelectedAssetGroup() {
     try {
-      // Ensure a group is selected
       if (!selectedGroup || selectedGroup === "전체") {
         errorAlert("삭제할 그룹이 선택되지 않았습니다.");
         return;
       }
 
-      // Find the selected group details from the asset group list
       const selectedGroupDetails = $allAssetGroupList.find(
         (group) => group.asg_index === selectedGroup,
       );
@@ -524,36 +526,30 @@
         return;
       }
 
-      // Confirm deletion
       const isConfirmed = await confirmDelete2(selectedGroupDetails.asg_title);
       if (!isConfirmed) return;
 
-      // Call the delete API
       const response = await setAssetGroupDelete(
         selectedGroupDetails.asg_index,
       );
 
       if (response.success) {
-        // Remove the group from the store using `update()`
-        allAssetGroupList.update((currentGroups) => {
-          return currentGroups.filter(
-            (group) => group.asg_index !== selectedGroupDetails.asg_index,
-          );
-        });
-
-        // Check if the selected group was deleted and reset `selectedGroup` if necessary
-        if (selectedGroup === selectedGroupDetails.asg_index) {
-          selectedGroup = "전체"; // Reset to "전체" if the current group was deleted
-          activeMenu = "전체"; // Set active menu to "전체"
-          selectPage = AssetCardsPage; // Reset current page view
-        }
-
-        // Force re-filtering of assets and trigger update of filtered assets
-        filteredAssets = filterAssets();
-
         successAlert(
           `그룹 "${selectedGroupDetails.asg_title}"이(가) 성공적으로 삭제되었습니다.`,
         );
+        allAssetGroupList.update((groups) =>
+          groups.filter(
+            (group) => group.asg_index !== selectedGroupDetails.asg_index,
+          ),
+        );
+
+        if (selectedGroup === selectedGroupDetails.asg_index) {
+          selectedGroup = "전체";
+          activeMenu = "전체";
+          currentPage = AssetCardsPage; // Correctly update the current page.
+        }
+
+        filteredAssets = filterAssets();
       } else {
         throw new Error("그룹 삭제에 실패했습니다.");
       }

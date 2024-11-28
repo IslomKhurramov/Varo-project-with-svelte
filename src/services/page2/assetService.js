@@ -129,19 +129,25 @@ export const getDetailInformationOfAsset = async (uuid) => {
   }
 };
 /******ASSET GROUP CHANGE***** */
-
 export const setAssetGroupChange = async (
-  uuid,
+  uuid, // Ensure this is an array of UUID strings
   current_group_index,
   next_group_index,
+  move_option,
 ) => {
+  console.log("uuid_asset", uuid); // Log the UUID array to check if it's being passed correctly
+  console.log("asset_group_index", current_group_index);
+  console.log("selectedGroupIndex", next_group_index);
+  console.log("moving_option", move_option);
+
   try {
     const response = await axios.post(
       `${serverApi}/api/setAssetGroupChange/`,
       {
-        ass_uuid: uuid,
+        ast_uuid: uuid, // Send ast_uuid as an array of UUIDs
         current_group_index: current_group_index,
         next_group_index: next_group_index,
+        move_option: move_option,
       },
       {
         withCredentials: true,
@@ -149,13 +155,16 @@ export const setAssetGroupChange = async (
     );
 
     if (response.data.RESULT === "OK") {
-      return { success: true }; // Return the data from the API
+      console.log("response", response);
+      return response; // Return the data from the API
     } else {
+      console.log("error", response);
       throw new Error(
         `Error Code on setAssetGroupChange: ${response.data.CODE}`,
       );
     }
   } catch (error) {
+    console.error("Error while changing asset group:", error);
     throw new Error(`Failed to fetch asset detail: ${error.message}`);
   }
 };
@@ -419,6 +428,31 @@ export const setAssetGroupDelete = async (asset_index) => {
     const response = await axios.post(
       `${serverApi}/api/setAssetGroupDelete/`,
       {
+        asset_group: asset_index,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return { success: true };
+    } else {
+      throw new Error(data.CODE); // Log the error code from the backend
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setAssetDelete = async (ast_uuid, asset_index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setAssetDelete/`,
+      {
+        ast_uuid: ast_uuid,
         asset_group: asset_index,
       },
       {

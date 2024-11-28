@@ -83,3 +83,15 @@ export async function errorAlert(message) {
     navigate("/login");
   }
 }
+
+export function warningAlert(message) {
+  return swal({
+    title: "Warning!",
+    text: message,
+    icon: "warning",
+    button: {
+      text: "OK",
+      className: "custom-warning-btn", // Optional: Add custom styling
+    },
+  });
+}

@@ -18,7 +18,11 @@
     setAssetInformationUpdate,
     setAssetRegisterChange,
   } from "../../services/page2/assetService";
-  import { errorAlert, successAlert } from "../../shared/sweetAlert";
+  import {
+    errorAlert,
+    successAlert,
+    warningAlert,
+  } from "../../shared/sweetAlert";
   import ModalEdit from "./SwiperMenu/ModalEdit.svelte";
 
   let showModalSecond = false;
@@ -28,13 +32,13 @@
   let activeMenu = "자산개요";
   let swiperInstance;
   let swiperContainer;
-  let uuid_asset = "";
+  let uuid_asset = null;
   let asset_group_index = "";
   let approve_status = "";
   let scrollAmount = 0;
   let itemWidth = 146;
   let menuWidth = 1260; // Total width of the menu
-
+  let moving_option = "";
   let menuWrapper;
   export let selectedAsset;
   export let filteredAssets = [];
@@ -42,9 +46,10 @@
   export let updateFilteredAssets;
   export let assetGroupList;
   export let assetList;
+
   let activeAsset = {
+    ast_uuid: null,
     ass_uuid: "",
-    assessment_target_system_id: "",
   };
   const selectPage = (page, menu) => {
     currentPage = page;
@@ -145,13 +150,31 @@
     focusOnAsset(selectedAsset.ass_uuid);
     handleAssetClick(selectedAsset.ass_uuid, selectedAsset);
   }
-
+  let astUUID = null;
+  let id = null;
   function handleAssetClick(uid, asset) {
+    astUUID = [
+      String(
+        asset?.assessment_target_system
+          ?.flatMap((system) => Object.values(system))
+          ?.flatMap((target) => target)
+          ?.find((target) => target.ast_uuid)?.ast_uuid,
+      ).trim() || "", // Ensure it's a valid string and trim any spaces
+    ];
+    id =
+      asset?.assessment_target_system
+        ?.flatMap((system) => Object.values(system))
+        ?.flatMap((target) => target)
+        ?.find((target) => target.ast_uuid)
+        ?.ast_uuid.trim() || "";
+
+    console.log("id", id);
     uuid_asset = uid;
     approve_status = asset.ast_approve_status;
-    activeAsset = asset;
+    activeAsset = id;
     // Scroll the selected asset into view
-    focusOnAsset(asset.ass_uuid);
+
+    focusOnAsset(uid);
 
     // Check if the asset belongs to any group
     if (asset.asset_group && asset.asset_group.length > 0) {
@@ -286,63 +309,67 @@
   /*****************************************************************/
   /******************************************************************/
   async function assetGroupChange() {
-    if (!asset_group_index) {
-      errorAlert("어느 그룹에서 변경할지 선택해주세요");
-      return;
-    }
-    // console.log("uuid_asset", uuid_asset);
-    // console.log("asset_group_index", asset_group_index);
-    // console.log("selectedGroupIndex", selectedGroupIndex);
     try {
       const response = await setAssetGroupChange(
-        uuid_asset,
+        astUUID,
         asset_group_index,
         selectedGroupIndex,
+        moving_option,
       );
 
-      if (response.success) {
+      if (response.data.RESULT === "OK") {
         showModal = false;
-        successAlert("그룹이 성공적으로 변경되었습니다!");
-        // window.location.reload();
-        const asset = $allAssetList.find(
-          (asset) => asset.ass_uuid === uuid_asset,
-        );
-        if (asset) {
-          asset.asset_group = [selectedGroupIndex]; // Modify the group to the new one
-
-          // Now make sure $allAssetList is updated (if it's a writable store)
-          // The assignment will trigger reactivity
-          $allAssetList = [...$allAssetList];
-        }
-        // Update the asset group in the allAssetList store
-        allAssetList.update((assets) => {
-          return assets.map((asset) => {
-            // If the asset UUID matches, update the asset's group
-            if (asset.ass_uuid === uuid_asset) {
-              // Create a new asset object with updated group information
-              return {
-                ...asset,
-                asset_group: asset.asset_group.map((group) =>
-                  group.asg_index === asset_group_index
-                    ? { ...group, asg_index: selectedGroupIndex }
-                    : group,
-                ),
-              };
-            }
-            return asset;
-          });
-        });
-
-        const updatedAssets = filteredAssets.map((asset) => {
-          if (asset.ass_uuid === uuid_asset) {
-            // Move the asset to the new group
-            return { ...asset, asset_group: selectedGroupIndex };
+        if (moving_option === "copy") {
+          if (
+            response.data.CODE === "해당 자산을 목표 그룹에 복사하였습니다."
+          ) {
+            successAlert(`해당 자산을 목표 그룹에 복사하였습니다.`);
+          } else {
+            warningAlert(`${response.data.CODE}`);
           }
-          return asset;
-        });
+        } else if (moving_option === "move") {
+          successAlert(`${response.data.CODE}`);
+        }
+        // window.location.reload();
+        // const asset = $allAssetList.find(
+        //   (asset) => asset.ass_uuid === uuid_asset,
+        // );
+        // if (asset) {
+        //   asset.asset_group = [selectedGroupIndex]; // Modify the group to the new one
 
-        // Update the parent with the new list of assets
-        updateFilteredAssets(updatedAssets);
+        //   // Now make sure $allAssetList is updated (if it's a writable store)
+        //   // The assignment will trigger reactivity
+        //   $allAssetList = [...$allAssetList];
+        // }
+        // // Update the asset group in the allAssetList store
+        // allAssetList.update((assets) => {
+        //   return assets.map((asset) => {
+        //     // If the asset UUID matches, update the asset's group
+        //     if (asset.ass_uuid === uuid_asset) {
+        //       // Create a new asset object with updated group information
+        //       return {
+        //         ...asset,
+        //         asset_group: asset.asset_group.map((group) =>
+        //           group.asg_index === asset_group_index
+        //             ? { ...group, asg_index: selectedGroupIndex }
+        //             : group,
+        //         ),
+        //       };
+        //     }
+        //     return asset;
+        //   });
+        // });
+
+        // const updatedAssets = filteredAssets.map((asset) => {
+        //   if (asset.ass_uuid === uuid_asset) {
+        //     // Move the asset to the new group
+        //     return { ...asset, asset_group: selectedGroupIndex };
+        //   }
+        //   return asset;
+        // });
+
+        // // Update the parent with the new list of assets
+        // updateFilteredAssets(updatedAssets);
         assetList();
         filterAssets();
       } else {
@@ -421,19 +448,18 @@
     menuWrapper.style.transform = `translateX(-${scrollAmount}px)`;
   };
   // Handle filtering and scrolling the correct slide into view
-  $: {
-    if (filteredAssets && filteredAssets.length > 0 && selectedAsset) {
-      const currentIndex = filteredAssets.findIndex(
-        (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
-      );
+  $: if (filteredAssets && filteredAssets.length > 0 && selectedAsset) {
+    const currentIndex = filteredAssets.findIndex(
+      (asset) => asset.ass_uuid === selectedAsset.ass_uuid,
+    );
 
-      // If the selected asset is still part of filteredAssets, update the Swiper
-      // if (currentIndex !== -1) {
-      //   // Update Swiper
-      //   setTimeout(() => {
-      //     // swiperInstance.update(); // Ensure Swiper knows the slides are updated
-      //     swiperInstance.slideTo(currentIndex, 500); // Smooth scroll to the updated slide
-      //   }, 0);
+    // If the selected asset is still part of filteredAssets, update the Swiper
+    if (currentIndex !== -1) {
+      // Update Swiper after the filtered list is updated
+      setTimeout(() => {
+        swiperInstance.update(); // Ensure Swiper knows the slides are updated
+        swiperInstance.slideTo(currentIndex, 500); // Smooth scroll to the updated slide
+      }, 0);
 
       // Focus on the asset after Swiper has updated
       setTimeout(() => {
@@ -441,7 +467,6 @@
       }, 500); // Wait for the slide transition to finish before focusing
     }
   }
-
   function closeModalEdit() {
     currentPage = FirstMenu; // This will unmount ModalEdit when called
   }
@@ -450,6 +475,15 @@
     setTimeout(() => {
       swiperInstance?.update();
     }, 0);
+  }
+
+  function determineActiveClass(asset) {
+    const isActive = asset.assessment_target_system
+      ?.flatMap((system) => Object.values(system))
+      ?.flat()
+      ?.some((target) => target.ast_uuid === activeAsset.ass_uuid);
+
+    return isActive ? "active" : "";
   }
 </script>
 
@@ -476,7 +510,12 @@
                 name={asset}
                 tabindex="0"
                 class="menu-item {activeAsset &&
-                activeAsset.ass_uuid === asset.ass_uuid
+                activeAsset ===
+                  asset?.assessment_target_system
+                    ?.flatMap((system) => Object.values(system))
+                    ?.flatMap((target) => target)
+                    ?.find((target) => target.ast_uuid)
+                    ?.ast_uuid.trim()
                   ? 'active'
                   : ''}"
                 on:click={() => handleAssetClick(asset.ass_uuid, asset)}
@@ -532,9 +571,12 @@
               <!-- Buttons go here -->
               <button
                 class="btn w140 btnBlue"
-                on:click={() => (showModal = true)}
+                on:click={() => {
+                  moving_option = "copy";
+                  showModal = true;
+                }}
               >
-                자산그룹이동
+                복사
               </button>
               <button
                 class="btn w140 btnBlue"

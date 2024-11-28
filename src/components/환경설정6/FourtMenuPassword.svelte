@@ -54,8 +54,8 @@
         selectedData = null;
         getUserListsData();
         handleList();
-      } else {
-        await errorAlert("삭제에 실패했습니다.");
+      } else if (response?.RESULT === "ERROR") {
+        await errorAlert(response.CODE);
       }
     } catch (err) {
       error = err.message;

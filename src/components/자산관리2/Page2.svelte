@@ -589,7 +589,7 @@
               on:click={() => {
                 activeMenu = "전체";
                 selectedGroup = "전체";
-
+                showSwiperComponent = false;
                 filterAssets();
                 allAssetList;
               }}

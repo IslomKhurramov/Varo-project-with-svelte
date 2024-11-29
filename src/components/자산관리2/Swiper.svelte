@@ -170,7 +170,7 @@
 
     console.log("id", id);
     uuid_asset = uid;
-    approve_status = asset.ast_approve_status;
+    approve_status = asset.ass_uuid__ast_approve_status;
     activeAsset = id;
     // Scroll the selected asset into view
 
@@ -257,12 +257,12 @@
       if (unActivating.success) {
         successAlert("자산이 성공적으로 활성화 해제되었습니다!");
 
-        assetDetails.ast_activate = false;
+        assetDetails.ass_uuid__ast_activate = false;
         // Update the asset's activation status directly in the store
         allAssetList.update((assets) => {
           return assets.map((a) => {
             if (a.ass_uuid === uuid_asset) {
-              return { ...a, ast_activate: false }; // Mark asset as unactivated
+              return { ...a, ass_uuid__ast_activate: false }; // Mark asset as unactivated
             }
             return a;
           });
@@ -290,12 +290,12 @@
       if (activating.success) {
         successAlert("자산이 성공적으로 활성화되었습니다!");
 
-        assetDetails.ast_activate = true;
+        assetDetails.ass_uuid__ast_activate = true;
         // Update the asset's activation status in the store
         allAssetList.update((assets) => {
           return assets.map((a) => {
             if (a.ass_uuid === uuid_asset) {
-              return { ...a, ast_activate: true }; // Mark asset as activated
+              return { ...a, ass_uuid__ast_activate: true }; // Mark asset as activated
             }
             return a;
           });
@@ -419,7 +419,7 @@
         allAssetList.update((assets) => {
           return assets.map((a) => {
             if (a.ass_uuid === uuid_asset) {
-              return { ...a, ast_approve_status: newApproveStatus }; // Update to new status
+              return { ...a, ass_uuid__ast_approve_status: newApproveStatus }; // Update to new status
             }
             return a; // Return unchanged asset
           });
@@ -427,7 +427,7 @@
 
         // Update local approval status to reflect the new status
         approve_status = newApproveStatus; // Update local status
-        assetDetails.ast_approve_status = newApproveStatus; // Also update assetDetails
+        assetDetails.ass_uuid__ast_approve_status = newApproveStatus; // Also update assetDetails
       } else {
         throw new Error("Failed to change asset register status");
       }
@@ -521,7 +521,7 @@
                 on:click={() => handleAssetClick(asset.ass_uuid, asset)}
                 style="min-width: {itemWidth}px;"
               >
-                {asset.ast_hostname}
+                {asset.ass_uuid__ast_hostname}
               </div>
             {/each}
           </div>
@@ -593,7 +593,7 @@
                   등록해제
                 </button>
               {/if}
-              {#if !assetDetails.ast_activate}
+              {#if !assetDetails.ass_uuid__ast_activate}
                 <button class="btn w140 btnBlue" on:click={activateAsset}>
                   사용함
                 </button>

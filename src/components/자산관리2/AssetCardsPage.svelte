@@ -128,7 +128,7 @@
     allAssetList.update((assets) => {
       return assets.map((asset) => {
         if (asset.ass_uuid === uuid) {
-          return { ...asset, ast_activate: isActive };
+          return { ...asset, ass_uuid__ast_activate: isActive };
         }
         return asset;
       });
@@ -137,7 +137,7 @@
     // Sync the filteredAssets if it's being used
     filteredAssets = filteredAssets.map((asset) => {
       if (asset.ass_uuid === uuid) {
-        return { ...asset, ast_activate: isActive };
+        return { ...asset, ass_uuid__ast_activate: isActive };
       }
       return asset;
     });
@@ -146,7 +146,7 @@
   // Activate an asset
   async function activateAsset(uuid) {
     const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
-    if (asset.ast_activate) {
+    if (asset.ass_uuid__ast_activate) {
       errorAlert("자산이 이미 활성화되었습니다.");
       return;
     }
@@ -164,7 +164,7 @@
   // Unactivate an asset
   async function unActivate(uuid) {
     const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
-    if (!asset.ast_activate) {
+    if (!asset.ass_uuid__ast_activate) {
       errorAlert("자산이 이미 활성화되지 않았습니다.");
       return;
     }
@@ -391,15 +391,17 @@
 
               <span
                 class="badge badgePrimary noneborder"
-                style="color: {asset.ast_lastconnect === 'YES'
+                style="color: {asset.ass_uuid__ast_lastconnect === 'YES'
                   ? 'blue'
                   : 'red'}"
               >
-                {asset.ast_lastconnect === "YES" ? "연결중" : "연결 안됨"}
+                {asset.ass_uuid__ast_lastconnect === "YES"
+                  ? "연결중"
+                  : "연결 안됨"}
               </span>
             </div>
             <div class="btnWrap">
-              {#if !asset.ast_activate}
+              {#if !asset.ass_uuid__ast_activate}
                 <button
                   type="button"
                   title="활성화하다"
@@ -475,7 +477,7 @@
               <div>
                 <div
                   class="circle"
-                  data-percent={asset.asset_point_history?.[0]
+                  data-percent={asset.ass_uuid__asset_point_history?.[0]
                     ?.ast_security_point || 0}
                   data-offset="440"
                 >
@@ -494,15 +496,16 @@
                       cy="75"
                       r="70"
                       stroke={getStrokeColor(
-                        asset.asset_point_history?.[0]?.ast_security_point || 0,
+                        asset.asset_point_history?.[0]
+                          ?.ass_uuid__ast_security_point || 0,
                       )}
                       stroke-width="10"
                       fill="none"
                       stroke-dasharray="440"
                       stroke-dashoffset={440 -
                         (440 *
-                          (asset.asset_point_history?.[0]?.ast_security_point ||
-                            0)) /
+                          (asset.asset_point_history?.[0]
+                            ?.ass_uuid__ast_security_point || 0)) /
                           100}
                       stroke-linecap="round"
                       transform="rotate(-90 75 75)"
@@ -513,11 +516,14 @@
                     <span
                       class="number pointColor"
                       style="color: {getStrokeColor(
-                        asset.asset_point_history?.[0]?.ast_security_point || 0,
+                        asset.asset_point_history?.[0]
+                          ?.ass_uuid__ast_security_point || 0,
                       )};"
                     >
-                      {asset.asset_point_history?.[0]?.ast_security_point > 0
-                        ? asset.asset_point_history?.[0]?.ast_security_point
+                      {asset.asset_point_history?.[0]
+                        ?.ass_uuid__ast_security_point > 0
+                        ? asset.asset_point_history?.[0]
+                            ?.ass_uuid__ast_security_point
                         : 0}%
                     </span>
                   </div>
@@ -531,19 +537,22 @@
                 {/if}
               </div>
               <span class="date">
-                {formatDate(asset.ast_cdate) || "데이터 없음"}
+                {formatDate(asset.ass_uuid__ast_cdate) || "데이터 없음"}
               </span>
             </div>
             <div class="text flex col justify-between">
               <ul>
                 <li>
-                  <span>운영체제 : </span>{asset.ast_os || "데이터 없음"}
+                  <span>운영체제 : </span>{asset.ass_uuid__ast_os ||
+                    "데이터 없음"}
                 </li>
                 <li>
-                  <span>자산명 : </span>{asset.ast_hostname || "데이터 없음"}
+                  <span>자산명 : </span>{asset.ass_uuid__ast_hostname ||
+                    "데이터 없음"}
                 </li>
                 <li>
-                  <span>아이피주소 : </span>{asset.ast_ipaddr || "데이터 없음"}
+                  <span>아이피주소 : </span>{asset.ass_uuid__ast_ipaddr ||
+                    "데이터 없음"}
                 </li>
                 <li>
                   {#each asset.assessment_target_system as target}
@@ -553,12 +562,17 @@
                   {/each}
                 </li>
                 <li>
-                  <span>에이전트설치여부 : </span>{asset.ast_agent_installed
+                  <span
+                    >에이전트설치여부 :
+                  </span>{asset.ass_uuid__ast_agent_installed
                     ? "설치됨"
                     : "설치 안됨"}
                 </li>
+
                 {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 1}
-                  <li style="line-height: 23px;">
+                  <li
+                    style="line-height: 23px; max-height:70px; overflow-y:70px;"
+                  >
                     <span>관련 그룹:</span>
 
                     {#if asset.asset_group.length > 1}

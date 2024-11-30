@@ -258,7 +258,7 @@
       searchFilters = await getPlanFilter();
       await searchDataHandler();
     } catch (err) {
-      await errorAlert(err?.message);
+      // await errorAlert(err?.message);
     } finally {
       loading = false;
     }
@@ -288,100 +288,94 @@
   }
 </script>
 
-{#if loading}
+<!-- {#if loading}
   <div class="loading-overlay">
     <div class="loading-spinner"></div>
   </div>
-{/if}
+{/if} -->
 
-<article class="contentArea" style="background-color: #fff; height:100%;">
-  <section
-    class="tableWrap"
-    style="max-height:58vh; overflow-y: auto; overflow-x:hidden "
-  >
-    <div class="tableListWrap">
-      <table class="tableList hdBorder">
-        <colgroup>
-          <col style="width:60px;" />
-          <col style="width:160px;" />
-          <col style="width:240px;" />
-          <col style="width:350px;" />
-          <col style="width:90px;" />
-          <col style="width:120px;" />
-          <col style="width:90px;" />
-          <col />
-        </colgroup>
-        <thead>
-          <tr>
-            <th class="text-center">순번</th>
-            <th class="text-center" on:click={() => toggleSort("order_usage")}>
-              프로그램 구분
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 576 512"
-                style="transform: rotate({sortField === 'order_usage' &&
-                sortAscending
-                  ? '0deg'
-                  : '180deg'});
+<article class="tableWrap_4">
+  <div class="tableListWrap">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col style="width:80px;" />
+        <col style="width:160px;" />
+        <col style="width:240px;" />
+        <col style="width:350px;" />
+        <col style="width:90px;" />
+        <col style="width:120px;" />
+        <col style="width:90px;" />
+        <col />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-center">순번</th>
+          <th class="text-center" on:click={() => toggleSort("order_usage")}>
+            프로그램 구분
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              style="transform: rotate({sortField === 'order_usage' &&
+              sortAscending
+                ? '0deg'
+                : '180deg'});
                         transition: transform 0.2s;"
-                width="16px"
-                height="16px"
-              >
-                <path
-                  d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
-                  fill={"#0067ff"}
-                />
-              </svg>
-            </th>
-            <th class="text-center">운영체제</th>
-            <th class="text-center">프로그램명</th>
-            <th
-              class="text-center"
-              on:click={() => toggleSort("order_version")}
+              width="16px"
+              height="16px"
             >
-              버전
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 576 512"
-                style="transform: rotate({sortField === 'order_version' &&
-                sortAscending
-                  ? '0deg'
-                  : '180deg'});
+              <path
+                d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                fill={"#0067ff"}
+              />
+            </svg>
+          </th>
+          <th class="text-center">운영체제</th>
+          <th class="text-center">프로그램명</th>
+          <th class="text-center" on:click={() => toggleSort("order_version")}>
+            버전
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              style="transform: rotate({sortField === 'order_version' &&
+              sortAscending
+                ? '0deg'
+                : '180deg'});
                         transition: transform 0.2s;"
-                width="16px"
-                height="16px"
-              >
-                <path
-                  d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
-                  fill={"#0067ff"}
-                />
-              </svg>
-            </th>
-            <th class="text-center" on:click={() => toggleSort("order_cdate")}>
-              배포날짜
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 576 512"
-                style="transform: rotate({sortField === 'order_cdate' &&
-                sortAscending
-                  ? '0deg'
-                  : '180deg'});
+              width="16px"
+              height="16px"
+            >
+              <path
+                d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                fill={"#0067ff"}
+              />
+            </svg>
+          </th>
+          <th class="text-center" on:click={() => toggleSort("order_cdate")}>
+            배포날짜
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              style="transform: rotate({sortField === 'order_cdate' &&
+              sortAscending
+                ? '0deg'
+                : '180deg'});
                         transition: transform 0.2s;"
-                width="16px"
-                height="16px"
-              >
-                <path
-                  d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
-                  fill={"#0067ff"}
-                />
-              </svg>
-            </th>
-            <th class="text-center">등록날짜</th>
-            <th class="text-center">지원범위</th>
-          </tr>
-        </thead>
+              width="16px"
+              height="16px"
+            >
+              <path
+                d="M151.6 42.4C145.5 35.8 137 32 128 32s-17.5 3.8-23.6 10.4l-88 96c-11.9 13-11.1 33.3 2 45.2s33.3 11.1 45.2-2L96 146.3 96 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-301.7 32.4 35.4c11.9 13 32.2 13.9 45.2 2s13.9-32.2 2-45.2l-88-96zM320 480l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32zm0-128l224 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32z"
+                fill={"#0067ff"}
+              />
+            </svg>
+          </th>
+          <th class="text-center">등록날짜</th>
+          <th class="text-center">지원범위</th>
+        </tr>
+      </thead>
 
-        <tbody>
+      <tbody>
+        {#if $programList.length > 0}
           {#each $programList.list as data, index}
             <tr on:click={() => autoDownload(data)}>
               <td class="text-center">
@@ -398,12 +392,16 @@
               <td>{data.cs_description}</td>
             </tr>
           {/each}
-        </tbody>
-      </table>
-    </div>
-  </section>
+        {:else}
+          <tr>
+            <td colspan="8" class="no-data-message"> 데이터가 없습니다 </td>
+          </tr>
+        {/if}
+      </tbody>
+    </table>
+  </div>
 
-  <section class="section-container">
+  <div class="section-container">
     <!-- First Div -->
     <div class="left-section"></div>
 
@@ -459,7 +457,7 @@
         <option value="전체">전체 보기</option>
       </select>
     </div>
-  </section>
+  </div>
 </article>
 
 <style>
@@ -498,12 +496,15 @@
       transform: rotate(360deg);
     }
   }
-  .pagination_box {
+
+  .tableWrap_4 {
+    background-color: #fff;
     display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
+    flex-flow: column;
+    justify-content: space-between;
+    height: 78vh;
+    border-radius: 5px;
+    margin-top: 10px;
   }
 
   thead {
@@ -524,14 +525,31 @@
     background-color: #f4f4f4;
     transition-duration: 0.3s;
   }
+
+  .no-data-message {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+    height: 50px;
+    line-height: 50px; /* Yozuvni vertikal markazlash uchun */
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
   .pagination {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    margin-top: 20px;
     padding: 10px 0;
     background-color: #fff;
-    /* box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); */
+    margin-bottom: 40px;
+    margin-left: 20px;
   }
 
   .pagination button {
@@ -558,11 +576,9 @@
   /* Section Container */
   .section-container {
     display: flex;
-    justify-content: space-between; /* Evenly distribute the three divs */
-    align-items: center; /* Center vertically */
-    margin-top: 20px;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
-    gap: 20px; /* Spacing between divs */
   }
 
   /* Left Section */
@@ -572,45 +588,11 @@
     gap: 10px; /* Space between the heading and content */
   }
 
-  /* Pagination Section (Centered) */
-  .pagination_box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .pagination {
-    display: flex;
-    gap: 5px;
-  }
-
-  .pagination button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .pagination button.selected {
-    background-color: #0067ff;
-    color: #fff;
-  }
-
-  .pagination button[disabled] {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  .pagination button:hover:not([disabled]) {
-    background-color: #f0f0f0;
-  }
-
   /* Right Section */
   .right-section {
     display: flex;
     align-items: center;
+    margin-bottom: 40px;
   }
 
   .list-dropdown {

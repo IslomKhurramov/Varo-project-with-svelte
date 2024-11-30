@@ -78,13 +78,13 @@
   });
 </script>
 
-{#if loading}
+<!-- {#if loading}
   <div class="loading-overlay">
     <div class="loading-spinner"></div>
   </div>
-{/if}
+{/if} -->
 
-<section class="tableWrap_4">
+<article class="tableWrap_4">
   <div class="tableListWrap">
     <table class="tableList hdBorder">
       <colgroup>
@@ -195,7 +195,7 @@
       </nav>
     </div>
   </div>
-</section>
+</article>
 
 <style>
   * {

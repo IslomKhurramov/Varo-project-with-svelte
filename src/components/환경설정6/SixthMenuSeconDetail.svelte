@@ -61,68 +61,66 @@
   }
 </script>
 
-<section style="background-color: #fff; padding: 20px">
-  <div class="tableWrap">
-    <div class="tableListWrap">
-      <table class="tableList hdBorder">
-        <colgroup>
-          <col />
-          <col />
-        </colgroup>
-        <thead>
+<section class="tableWrap_4">
+  <div class="tableListWrap">
+    <table class="tableList hdBorder">
+      <colgroup>
+        <col />
+        <col />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="text-center" style="font-size: 16px;">용도</th>
+          <th class="text-center" style="font-size: 16px;">업로드</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each displayedPages as data, index}
           <tr>
-            <th class="text-center" style="font-size: 16px;">용도</th>
-            <th class="text-center" style="font-size: 16px;">업로드</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each displayedPages as data, index}
-            <tr>
-              <td style="font-size: 16px;" class="text-center">
-                {data.hostname}
-              </td>
-              <td class="text-center">
-                <div
-                  style="width: 100%; display:flex; gap:10px; justify-content:center"
+            <td style="font-size: 16px;" class="text-center">
+              {data.hostname}
+            </td>
+            <td class="text-center">
+              <div
+                style="width: 100%; display:flex; gap:10px; justify-content:center"
+              >
+                <label
+                  class="btn btnPrimary"
+                  style="display: flex; flex-direction:row; gap:10px; width:170px;"
                 >
-                  <label
-                    class="btn btnPrimary"
-                    style="display: flex; flex-direction:row; gap:10px; width:170px;"
-                  >
-                    <input
-                      type="file"
-                      class="file-input"
-                      data-index={index}
-                      on:change={(event) =>
-                        handleFileSelect(event, data.hostname)}
-                    />
-                    <img
-                      src="./assets/images/icon/download.svg"
-                      class="excel-img"
-                    />
-                    <span>파일업로드</span>
-                  </label>
                   <input
-                    type="text"
-                    placeholder="선택된 파일 없음"
-                    value={fileNames[data.hostname] || "선택된 파일 없음"}
-                    readonly
-                    class="file-name-input"
+                    type="file"
+                    class="file-input"
+                    data-index={index}
+                    on:change={(event) =>
+                      handleFileSelect(event, data.hostname)}
                   />
-                  <button
-                    type="button"
-                    class="upload-btn"
-                    on:click={() => uploadFile(data.hostname)}
-                  >
-                    업로드
-                  </button>
-                </div>
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
+                  <img
+                    src="./assets/images/icon/download.svg"
+                    class="excel-img"
+                  />
+                  <span>파일업로드</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="선택된 파일 없음"
+                  value={fileNames[data.hostname] || "선택된 파일 없음"}
+                  readonly
+                  class="file-name-input"
+                />
+                <button
+                  type="button"
+                  class="upload-btn"
+                  on:click={() => uploadFile(data.hostname)}
+                >
+                  업로드
+                </button>
+              </div>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -141,10 +139,15 @@
     width: 85px;
     height: 40px;
   }
-  .tableWrap {
+
+  .tableWrap_4 {
     background-color: #fff;
-    max-height: 70vh;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    height: 70vh;
     border-radius: 5px;
+    margin-top: 10px;
     overflow-y: auto;
   }
 
@@ -160,10 +163,6 @@
     color: #0067ff;
     border-color: rgba(0, 103, 255, 0.1);
     height: 40px;
-  }
-
-  .tableWrap {
-    background-color: #fff;
   }
 
   thead {

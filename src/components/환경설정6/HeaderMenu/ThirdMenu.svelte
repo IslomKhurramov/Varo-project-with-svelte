@@ -16,10 +16,10 @@
   let userRoleTypeIndex = null;
 
   // ///////////////////////////////////////////////////////////////////////
-  // userData.subscribe((data) => {
-  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  // });
-  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  userData.subscribe((data) => {
+    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  });
+  let user_roletype_role_index = decryptData(userRoleTypeIndex);
 
   // ///////////////////////////////////////////////////////////////////////
 
@@ -120,7 +120,7 @@
     />
   {:else}
     <div>
-      <div class="tableWrap_2">
+      <article class="tableWrap_2">
         <div class="tableListWrap">
           <table class="tableList hdBorder">
             <colgroup>
@@ -133,7 +133,7 @@
             </colgroup>
             <thead>
               <tr>
-                <th class="text-center">번호</th>
+                <th class="text-center">순번</th>
                 <th class="text-center">제목</th>
                 <th class="text-center">작성자</th>
                 <th class="text-center">작성일</th>
@@ -183,7 +183,7 @@
         <div>
           <!-- Pagination -->
           <div class="pagination_box">
-            <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
+            {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
               <div class="buttonContainer">
                 <button
                   type="button"
@@ -195,7 +195,7 @@
                   게시물추가
                 </button>
               </div>
-            <!-- {/if} -->
+            {/if}
 
             <nav class="pagination">
               <!-- First Page Button -->
@@ -248,7 +248,7 @@
             <div class="buttonContainer1"></div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   {/if}
 </main>
@@ -261,9 +261,9 @@
     background-color: #ffffff;
     padding: 20px;
     margin: 10px 0;
-    /* width: 100%; */
     height: calc(100vh - 140px);
   }
+
   .tableWrap_2 {
     background-color: #fff;
     display: flex;
@@ -273,26 +273,29 @@
     border-radius: 5px;
     margin-top: 10px;
   }
-  th,
-  td {
-    font-size: 16px;
-  }
 
   .tableListWrap {
     overflow-y: auto;
     max-height: 65vh;
   }
 
-  thead {
+  .table-container,
+  .tableWrap_2,
+  .tableListWrap {
+    overflow: visible;
+    position: relative;
+  }
+
+  .tableListWrap thead {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 1000;
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
   tr:hover {
     cursor: pointer;
-    background-color: #f4f4f4;
+    /* background-color: #f4f4f4; */
     transition-duration: 0.3s;
   }
 

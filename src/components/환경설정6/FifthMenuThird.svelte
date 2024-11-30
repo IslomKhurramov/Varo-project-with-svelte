@@ -33,7 +33,6 @@
       logData = response.data.sort((a, b) => b.his_index - a.his_index);
       totalItems = response?.total_rec_cnt || 0;
       totalPages = Math.ceil(totalItems / itemsPerPage);
-
     } catch (err) {
       error = err.message;
     }
@@ -238,7 +237,7 @@
     display: flex;
     flex-flow: column;
     justify-content: space-between;
-    height: 78vh;
+    height: 75vh;
     border-radius: 5px;
     margin-top: 10px;
   }

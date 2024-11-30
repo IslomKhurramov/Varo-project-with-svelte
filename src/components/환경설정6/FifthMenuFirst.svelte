@@ -239,7 +239,7 @@
     display: flex;
     flex-flow: column;
     justify-content: space-between;
-    height: 78vh;
+    height: 75vh;
     border-radius: 5px;
     margin-top: 10px;
   }

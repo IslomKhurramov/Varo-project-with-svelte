@@ -133,7 +133,7 @@
             </colgroup>
             <thead>
               <tr>
-                <th class="text-center">번호</th>
+                <th class="text-center">순번</th>
                 <th class="text-center">제목</th>
                 <th class="text-center">작성자</th>
                 <th class="text-center">작성일</th>
@@ -283,10 +283,17 @@
     max-height: 65vh;
   }
 
-  thead {
+  .table-container,
+  .tableWrap_2,
+  .tableListWrap {
+    overflow: visible;
+    position: relative;
+  }
+
+  .tableListWrap thead {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 1000;
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 

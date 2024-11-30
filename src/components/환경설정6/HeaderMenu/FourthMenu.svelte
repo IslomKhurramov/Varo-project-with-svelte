@@ -12,15 +12,15 @@
     decryptData,
     setPasswordReset,
   } from "../../../services/login/loginService";
-  // import { userData } from "../../../stores/user.store";
+  import { userData } from "../../../stores/user.store";
   export let tabMenu;
 
-  // let userRoleTypeIndex = null;
+  let userRoleTypeIndex = null;
 
-  // userData.subscribe((data) => {
-  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  // });
-  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  userData.subscribe((data) => {
+    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  });
+  let user_roletype_role_index = decryptData(userRoleTypeIndex);
   // //////////////////////////////////////////////////////////////////////
 
   let error = null;
@@ -123,7 +123,7 @@
       <div class="tableListWrap">
         <table class="tableList hdBorder">
           <colgroup>
-            <col style="width:3%;" />
+            <col style="width:5%;" />
             <col style="width:14%;" />
             <col style="width:14%;" />
             <col style="width:14%;" />
@@ -176,20 +176,20 @@
 
                 <td class="text-center" style="font-size: 12px;">
                   <!-- {#if parseInt(user_roletype_role_index) === 0} -->
-                  <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9} -->
-                  <select
-                    bind:value={data.itemResult}
-                    on:change={(e) => handleStatusChange(data.user_index, e)}
-                    on:click={(e) => e.stopPropagation()}
-                    name="agent_status"
-                    id="agent_status"
-                  >
-                    <option value="1">활성</option>
-                    <option value="0">비활성</option>
-                  </select>
-                  <!-- {:else} -->
-                  <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
-                  <!-- {/if} -->
+                  {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9}
+                    <select
+                      bind:value={data.itemResult}
+                      on:change={(e) => handleStatusChange(data.user_index, e)}
+                      on:click={(e) => e.stopPropagation()}
+                      name="agent_status"
+                      id="agent_status"
+                    >
+                      <option value="1">활성</option>
+                      <option value="0">비활성</option>
+                    </select>
+                  {:else}
+                    <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
+                  {/if}
                 </td>
 
                 <td
@@ -260,6 +260,13 @@
   .tableListWrap {
     overflow-y: auto;
     max-height: 65vh;
+  }
+
+  .table-container,
+  .tableWrap_3,
+  .tableListWrap {
+    overflow: visible;
+    position: relative;
   }
 
   thead {

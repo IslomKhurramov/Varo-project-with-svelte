@@ -28,17 +28,12 @@
 
   const searchDataHandler = async () => {
     try {
-      // console.log("Fetching data for page:", search.page_cnt);
       const response = await getAuditNLog(search);
 
       logData = response.data.sort((a, b) => b.his_index - a.his_index);
 
       totalItems = response?.total_rec_cnt || 0;
       totalPages = Math.ceil(totalItems / itemsPerPage);
-
-      // console.log("Total Items:", totalItems);
-      // console.log("Items Per Page:", itemsPerPage);
-      // console.log("Total Pages (Calculated):", totalPages);
 
       if (currentPage > totalPages) {
         currentPage = totalPages > 0 ? totalPages : 1;
@@ -69,17 +64,12 @@
   // Pagination navigation
   const goToFirstPage = () => goToPage(1);
   const goToLastPage = () => {
-    // console.log("Navigating to last page...");
-    // console.log("Total Pages:", totalPages);
-    // console.log("Current Page (Before):", currentPage);
     if (totalPages > 0) {
-      goToPage(totalPages); // Oxirgi sahifaga o'tish
+      goToPage(totalPages);
     }
   };
 
   const goToPage = (page) => {
-    // console.log("Navigating to page:", page);
-    // console.log("Total Pages:", totalPages);
     if (page >= 1 && page <= totalPages) {
       currentPage = page;
       search.page_cnt = currentPage;
@@ -260,7 +250,7 @@
     display: flex;
     flex-flow: column;
     justify-content: space-between;
-    height: 78vh;
+    height: 75vh;
     border-radius: 5px;
     margin-top: 10px;
   }

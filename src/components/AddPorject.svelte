@@ -353,7 +353,7 @@
                   bind:value={startDate}
                 />
               </div>
-              <img src="./assets/images/icon/dash.svg" />
+              <img src="./assets/images/dash.svg" />
               <div class="date">
                 <input
                   style="font-size: 16px;"
@@ -451,7 +451,7 @@
                   bind:value={actionStartDate}
                 />
               </div>
-              <img src="./assets/images/icon/dash.svg" />
+              <img src="./assets/images/dash.svg" />
               <div class="date">
                 <input
                   style="font-size: 16px;"
@@ -478,7 +478,7 @@
                 style="font-size: 16px;"
               >
                 <!-- svelte-ignore a11y-missing-attribute -->
-                샘플다운로드 <img src="./assets/images/icon/download.svg" />
+                샘플다운로드 <img src="./assets/images/download.svg" />
               </a>
             </label>
             <div class="upload-section">
@@ -808,7 +808,7 @@
                     bind:value={assetInsertData.start_date}
                   />
                 </div>
-                <img src="./assets/images/icon/dash.svg" />
+                <img src="./assets/images/dash.svg" />
                 <div class="date">
                   <input
                     style="font-size: 16px;"

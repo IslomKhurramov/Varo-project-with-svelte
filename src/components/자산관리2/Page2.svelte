@@ -171,7 +171,7 @@
   $: {
     filteredAssets = filterAssets(); // Automatically filter and update filteredAssets
   }
-  $: console.log("filteredAssets", filteredAssets);
+  // $: console.log("filteredAssets", filteredAssets);
 
   function handleFilter() {
     const results = filterAssets();
@@ -236,7 +236,7 @@
           asg_title: newGroupName,
         };
 
-        console.log("response", response);
+        // console.log("response", response);
         // Force a reactivity update by using `update` and add the new group
         allAssetGroupList.update((currentGroups) => {
           return [...currentGroups, newGroup]; // Reassign with a new array
@@ -254,13 +254,13 @@
 
           // Optionally, call `selectPage` or any method to show the new group in the UI
           selectPage(AssetCardsPage, lastCreatedGroup);
-          console.log("lastCreatedGroup:", lastCreatedGroup); // Check if it's set properly
+          // console.log("lastCreatedGroup:", lastCreatedGroup); // Check if it's set properly
         }
         // Clear the new group name and hide the input
         newGroupName = "";
         isAddingNewGroup = false;
 
-        console.log("selectedGroup from function", selectedGroup);
+        // console.log("selectedGroup from function", selectedGroup);
       } else {
         throw new Error("Failed to save group.");
       }
@@ -567,14 +567,14 @@
         <!-- svelte-ignore a11y-missing-attribute -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <a on:click={showNewGroupInput} class="btn btnPrimary"
-          ><img src="./assets/images/icon/add.svg" />그룹추가</a
+          ><img src="./assets/images/add.svg" />그룹추가</a
         >
         <button
           on:click={deleteSelectedAssetGroup}
           type="button"
           class="btn btnRed"
           ><img
-            src="./assets/images/icon/delete.svg"
+            src="./assets/images/delete.svg"
             alt="createGroup"
           />그룹삭제</button
         >
@@ -756,7 +756,7 @@
                 on:click={saveAssetToExcel}
                 class="btn btnPrimary padding_button"
                 ><img
-                  src="./assets/images/icon/download.svg"
+                  src="./assets/images/download.svg"
                   class="excel-img"
                   alt="download"
                 />엑셀저장</button

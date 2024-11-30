@@ -54,7 +54,7 @@
           on:change={searchDataHandler}
         />
       </div>
-      <img src="./assets/images/icon/dash.svg" />
+      <img src="./assets/images/dash.svg" />
       <div class="date">
         <input
           type="date"
@@ -66,7 +66,7 @@
       </div>
     </div>
     <!-- <button type="button" class="btn btnPrimary"
-      ><img src="./assets/images/icon/search.svg" />조회</button
+      ><img src="./assets/images/search.svg" />조회</button
     > -->
   </div>
 </section>

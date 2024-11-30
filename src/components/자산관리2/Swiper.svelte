@@ -168,7 +168,7 @@
         ?.find((target) => target.ast_uuid)
         ?.ast_uuid.trim() || "";
 
-    console.log("id", id);
+    // console.log("id", id);
     uuid_asset = uid;
     approve_status = asset.ass_uuid__ast_approve_status;
     activeAsset = id;
@@ -412,7 +412,7 @@
       );
 
       if (response.RESULT === "OK") {
-        console.log(response);
+        // console.log(response);
         successAlert("자산이 등록 승인 처리되었습니다");
 
         // Update the asset's approval status in the store

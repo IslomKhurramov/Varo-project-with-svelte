@@ -284,10 +284,7 @@
                     ? 'visible'
                     : 'hidden'}"
                 >
-                  <img
-                    src="./assets/images/icon/delete.svg"
-                    alt="createGroup"
-                  />삭제
+                  <img src="./assets/images/delete.svg" alt="createGroup" />삭제
                 </button>
               </td>
             </tr>

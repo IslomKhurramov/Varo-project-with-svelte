@@ -62,7 +62,7 @@
     </Link>
   </h1>
   <button type="button" class="menuIsOpenBtn" on:click={toggleNav}
-    ><img src="./assets/images/icon/arrow_side.svg" /></button
+    ><img src="./assets/images/arrow_side.svg" /></button
   >
   <nav class="menuWrap">
     <ul>

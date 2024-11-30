@@ -147,7 +147,7 @@
       <div class="flex head justify-between">
         <h3 class="title">등록현황</h3>
         <button type="button" class="btnImg" on:click={closeModal}
-          ><img src="./assets/images/icon/close.svg" /></button
+          ><img src="./assets/images/close.svg" /></button
         >
       </div>
       <div class="containerModal">

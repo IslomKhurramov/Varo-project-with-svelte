@@ -440,10 +440,10 @@
   <article class="sideMenu" style=" height: calc(100vh - 141px);">
     <div class="btnWrap">
       <a class="btn btnPrimary" on:click={generalcopy}>
-        <img src="./assets/images/icon/add.svg" />그룹추가
+        <img src="./assets/images/add.svg" />그룹추가
       </a>
       <a class="btn btnRed" on:click={deleteProject}>
-        <img src="./assets/images/icon/delete.svg" alt="createGroup" />그룹삭제
+        <img src="./assets/images/delete.svg" alt="createGroup" />그룹삭제
       </a>
     </div>
 

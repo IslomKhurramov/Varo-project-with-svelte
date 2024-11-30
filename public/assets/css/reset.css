@@ -156,8 +156,7 @@ select::-ms-expand {
 }
 
 select {
-  background: url("../assets/images/icon/select.svg") no-repeat right 14px
-    center;
+  background: url("../assets/images/select.svg") no-repeat right 14px center;
 }
 
 /* style.css 

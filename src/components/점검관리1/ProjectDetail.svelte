@@ -573,7 +573,7 @@
                 </div>
                 {#if updateInfo?.recheck === 1}
                   <!-- svelte-ignore a11y-missing-attribute -->
-                  <img src="./assets/images/icon/dash.svg" />
+                  <img src="./assets/images/dash.svg" />
                   <div class="date">
                     <select
                       bind:value={updateInfo["recheck_pno"]}
@@ -627,7 +627,7 @@
                   />
                 </div>
                 <!-- svelte-ignore a11y-missing-attribute -->
-                <img src="./assets/images/icon/dash.svg" />
+                <img src="./assets/images/dash.svg" />
                 <div class="date">
                   <input
                     style="width: 434.5px;"
@@ -673,7 +673,7 @@
                   />
                 </div>
                 <!-- svelte-ignore a11y-missing-attribute -->
-                <img src="./assets/images/icon/dash.svg" />
+                <img src="./assets/images/dash.svg" />
                 <div class="date">
                   <input
                     style="width: 434.5px;"
@@ -847,7 +847,7 @@
               </svg>
               <div class="percent">
                 <!-- svelte-ignore a11y-missing-attribute -->
-                <span><img src="./assets/images/icon/guard.svg" /></span>
+                <span><img src="./assets/images/guard.svg" /></span>
               </div>
             </div>
           </div>
@@ -1033,7 +1033,7 @@
           }}
         >
           <!-- svelte-ignore a11y-missing-attribute -->
-          <img src="./assets/images/icon/close.svg" />
+          <img src="./assets/images/close.svg" />
         </button>
       </div>
       <div class="msg">변경저장할 경우 이전 정보가 모두 초기화됩니다.</div>
@@ -1075,7 +1075,7 @@
             }}
           >
             <!-- svelte-ignore a11y-missing-attribute -->
-            <img src="./assets/images/icon/close.svg" />
+            <img src="./assets/images/close.svg" />
           </button>
         </div>
         <div class="content">

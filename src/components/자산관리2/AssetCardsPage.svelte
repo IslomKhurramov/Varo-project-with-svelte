@@ -238,10 +238,10 @@
     ];
   }
 
-  $: console.log("uuid_asset", uuid_asset);
-  $: console.log("asset_group_index", asset_group_index);
-  $: console.log("selectedGroupIndex", selectedGroupIndex);
-  $: console.log("moving_option", moving_option);
+  // $: console.log("uuid_asset", uuid_asset);
+  // $: console.log("asset_group_index", asset_group_index);
+  // $: console.log("selectedGroupIndex", selectedGroupIndex);
+  // $: console.log("moving_option", moving_option);
   let selectedGroupIndex = "";
   async function assetGroupChange() {
     try {
@@ -358,7 +358,7 @@
       errorAlert(error.message || "그룹 삭제 중 오류가 발생했습니다.");
     }
   }
-  $: console.log("selectedGroup", selectedGroup);
+  // $: console.log("selectedGroup", selectedGroup);
 </script>
 
 {#if !showSwiperComponent}
@@ -411,7 +411,7 @@
                   <img
                     class="btnImg"
                     style="width: 17px; height:17px"
-                    src="./assets/images/icon/active.png"
+                    src="./assets/images/active.png"
                     alt="Edit"
                   />
                 </button>
@@ -419,7 +419,7 @@
                 <button type="button" title="비활성화하다" class="btnImg">
                   <img
                     class="btnImg"
-                    src="./assets/images/icon/deactive.png"
+                    src="./assets/images/deactive.png"
                     alt="Reset"
                     style="width: 17px; height:17px"
                     on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
@@ -440,7 +440,7 @@
               >
                 <img
                   style="width: 17px; height:17px"
-                  src="./assets/images/icon/copy.png"
+                  src="./assets/images/copy.png"
                   alt="Copy"
                 />
               </button>
@@ -451,10 +451,7 @@
                   title="삭제"
                   class="btnImg"
                 >
-                  <img
-                    src="./assets/images/icon/delete_gray.svg"
-                    alt="Delete"
-                  />
+                  <img src="./assets/images/delete_gray.svg" alt="Delete" />
                 </button>
               {/if}
               <button
@@ -468,7 +465,7 @@
                   handleAssetUuid(asset); // Call the asset handling function
                 }}
               >
-                <img src="./assets/images/icon/reset.svg" alt="Reset" />
+                <img src="./assets/images/reset.svg" alt="Reset" />
               </button>
             </div>
           </div>

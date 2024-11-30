@@ -7,6 +7,7 @@
   } from "../../services/page2/assetService";
   import { allAssetList } from "../../services/page2/asset.store";
   import { successAlert } from "../../shared/sweetAlert";
+  import { serverApi } from "../../lib/config";
   /*************************/
   export let baseIndex;
   export let totalPages;
@@ -284,7 +285,7 @@
                       {/if}
                     </p>
                     <a
-                      href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
+                      href={`${serverApi}/api/getAssetListSampleExcel/`}
                       style="color: black;">샘플다운로드</a
                     >
                   </div>

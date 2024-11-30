@@ -417,7 +417,7 @@
               초기화
             </button>
             <button type="button" class="btn btnPrimary" on:click={downloadCSV}>
-              <img src="./assets/images/icon/download.svg" class="excel-img" />
+              <img src="./assets/images/download.svg" class="excel-img" />
               엑셀 다운로드
             </button>
           </div>
@@ -627,7 +627,7 @@
                             toggleTooltip(e);
                           }}
                         >
-                          <img src="./assets/images/icon/options.svg" />
+                          <img src="./assets/images/options.svg" />
                         </button>
                         <div
                           class="tooltip-modal"

@@ -88,8 +88,6 @@
                   class="btn btnPrimary"
                   style="display: flex; flex-direction:row; gap:10px; width:170px;"
                 >
-<<<<<<< HEAD
-=======
                   <label
                     class="btn btnPrimary"
                     style="display: flex; flex-direction:row; gap:10px; width:170px;"
@@ -104,7 +102,6 @@
                     <img src="./assets/images/download.svg" class="excel-img" />
                     <span>파일업로드</span>
                   </label>
->>>>>>> 0a7cdc30eb5840695e501b65cb183c6ed3108af4
                   <input
                     type="file"
                     class="file-input"

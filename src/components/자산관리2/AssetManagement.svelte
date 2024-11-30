@@ -7,6 +7,7 @@
   } from "../../services/page2/assetService";
   import { allAssetList } from "../../services/page2/asset.store";
   import { successAlert } from "../../shared/sweetAlert";
+  import { serverApi } from "../../lib/config";
   /*************************/
   export let baseIndex;
   export let totalPages;
@@ -85,11 +86,11 @@
 
       // Check if the asset matches the selected hostname
       const hostCondition =
-        assetHost === "전체" || asset.ast_hostname === assetHost;
+        assetHost === "전체" || asset.ass_uuid__ast_hostname === assetHost;
 
       // Check if the asset matches the selected OSType
       const ostypeCondition =
-        asset_ostype === "전체" || asset.ast_ostype === asset_ostype;
+        asset_ostype === "전체" || asset.ass_uuid__ast_ostype === asset_ostype;
 
       return groupCondition && hostCondition && ostypeCondition;
     });
@@ -284,7 +285,7 @@
                       {/if}
                     </p>
                     <a
-                      href="https://119.65.247.158:9001/api/getAssetListSampleExcel/"
+                      href={`${serverApi}/api/getAssetListSampleExcel/`}
                       style="color: black;">샘플다운로드</a
                     >
                   </div>
@@ -321,8 +322,8 @@
               >
                 <option value="전체" selected>전체</option>
                 {#each $allAssetList as asset}
-                  <option value={asset.ast_hostname}>
-                    {asset.ast_hostname}
+                  <option value={asset.ass_uuid__ast_hostname}>
+                    {asset.ass_uuid__ast_hostname}
                   </option>
                 {/each}
               </select>
@@ -331,9 +332,9 @@
               <select bind:value={asset_ostype} on:change={handleFilter2}>
                 <option value="전체" selected>전체</option>
                 {#each $allAssetList as asset}
-                  {#if asset.ast_ostype !== ""}
-                    <option value={asset.ast_ostype}>
-                      {asset.ast_ostype}
+                  {#if asset.ass_uuid__ast_ostype !== ""}
+                    <option value={asset.ass_uuid__ast_ostype}>
+                      {asset.ass_uuid__ast_ostype}
                     </option>
                   {/if}
                 {/each}
@@ -389,8 +390,14 @@
                       </div>
                       <div class="content">
                         <ul>
-                          <li><span>이름:</span> {asset.ast_hostname}</li>
-                          <li><span>아피:</span> {asset.ast_ipaddr}</li>
+                          <li>
+                            <span>이름:</span>
+                            {asset.ass_uuid__ast_hostname}
+                          </li>
+                          <li>
+                            <span>아피:</span>
+                            {asset.ass_uuid__ast_ipaddr}
+                          </li>
                         </ul>
                       </div>
                     </article>
@@ -415,6 +422,13 @@
   }
   .cardWrap {
     height: 100%;
+  }
+  .cardWrap .card {
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 12px;
+    position: relative;
+    max-height: 149px;
   }
   .maxheight {
     padding-bottom: 20px;

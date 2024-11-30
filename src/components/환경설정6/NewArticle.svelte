@@ -89,7 +89,7 @@
           on:change={handleFileSelect}
         />
         <label for="fileInput" class="btn1 btn-primary1">
-          <img src="./assets/images/icon/download.svg" class="excel-img" />
+          <img src="./assets/images/download.svg" class="excel-img" />
           <span>업로드</span>
         </label>
         <input

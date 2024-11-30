@@ -187,7 +187,7 @@
         <div class="upload-section">
           <label for="file-upload" class="file-label">
             <span>라이센스 업데이트</span>
-            <img src="./assets/images/icon/download.svg" alt="Download icon" />
+            <img src="./assets/images/download.svg" alt="Download icon" />
           </label>
 
           <!-- Hidden file input to capture file -->

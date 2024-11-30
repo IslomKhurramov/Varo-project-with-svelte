@@ -617,10 +617,8 @@
                   on:click={downloadCSV}
                 >
                   <!-- svelte-ignore a11y-missing-attribute -->
-                  <img
-                    src="./assets/images/icon/download.svg"
-                    class="excel-img"
-                  /> 엑셀 다운로드
+                  <img src="./assets/images/download.svg" class="excel-img" /> 엑셀
+                  다운로드
                 </button>
               {/if}
 

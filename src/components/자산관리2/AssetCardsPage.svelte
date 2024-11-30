@@ -11,8 +11,14 @@
     getAllAssetLists,
     getTargetSystemLists,
     setAssetGroupChange,
+    setAssetDelete,
   } from "../../services/page2/assetService";
-  import { successAlert, errorAlert } from "../../shared/sweetAlert";
+  import {
+    successAlert,
+    errorAlert,
+    confirmDelete,
+    warningAlert,
+  } from "../../shared/sweetAlert";
   import { onMount } from "svelte";
   import axios from "axios";
   import { serverApi } from "../../lib/config";
@@ -56,6 +62,7 @@
   export let selectedUUID = [];
   let selectedAsset = null;
   let asset_group_index = "";
+  let moving_option = "";
   export let filteredAssets = [];
   export let filterAssets;
   export let updateFilteredAssets;
@@ -121,7 +128,7 @@
     allAssetList.update((assets) => {
       return assets.map((asset) => {
         if (asset.ass_uuid === uuid) {
-          return { ...asset, ast_activate: isActive };
+          return { ...asset, ass_uuid__ast_activate: isActive };
         }
         return asset;
       });
@@ -130,7 +137,7 @@
     // Sync the filteredAssets if it's being used
     filteredAssets = filteredAssets.map((asset) => {
       if (asset.ass_uuid === uuid) {
-        return { ...asset, ast_activate: isActive };
+        return { ...asset, ass_uuid__ast_activate: isActive };
       }
       return asset;
     });
@@ -139,7 +146,7 @@
   // Activate an asset
   async function activateAsset(uuid) {
     const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
-    if (asset.ast_activate) {
+    if (asset.ass_uuid__ast_activate) {
       errorAlert("자산이 이미 활성화되었습니다.");
       return;
     }
@@ -157,7 +164,7 @@
   // Unactivate an asset
   async function unActivate(uuid) {
     const asset = $allAssetList.find((a) => a.ass_uuid === uuid);
-    if (!asset.ast_activate) {
+    if (!asset.ass_uuid__ast_activate) {
       errorAlert("자산이 이미 활성화되지 않았습니다.");
       return;
     }
@@ -196,7 +203,6 @@
   }
 
   /**************************************************************/
-  let uuid_asset = "";
   // Function to compute stroke color based on the score
   function getStrokeColor(score) {
     if (score > 60)
@@ -210,78 +216,69 @@
     showSwiperComponent = true; // This should set the showSwiperComponent to true
     // Check if the asset belongs to any group
   }
+  let uuid_asset = null;
   function handleAssetUuid(asset) {
-    if (asset.asset_group && asset.asset_group.length > 0) {
-      asset_group_index = filteredAssets[0].asset_group.find(
+    if (Array.isArray(asset.asset_group) && asset.asset_group.length > 0) {
+      const group = filteredAssets[0]?.asset_group?.find(
         (group) => group.asg_index === selectedGroup,
-      )?.asg_index;
+      );
+      asset_group_index = group?.asg_index || null; // Assign the found index or null if not found
+    } else if (asset.asset_group === "NO_ASSESSMENT") {
+      console.warn("No assessment groups found.");
+      asset_group_index = "";
     }
-    uuid_asset = asset.ass_uuid;
+
+    uuid_asset = [
+      String(
+        asset?.assessment_target_system
+          ?.flatMap((system) => Object.values(system))
+          ?.flatMap((target) => target)
+          ?.find((target) => target.ast_uuid)?.ast_uuid,
+      ).trim() || "", // Ensure it's a valid string and trim any spaces
+    ];
   }
 
+  // $: console.log("uuid_asset", uuid_asset);
+  // $: console.log("asset_group_index", asset_group_index);
+  // $: console.log("selectedGroupIndex", selectedGroupIndex);
+  // $: console.log("moving_option", moving_option);
   let selectedGroupIndex = "";
   async function assetGroupChange() {
-    if (!asset_group_index) {
-      errorAlert("어느 그룹에서 변경할지 선택해주세요");
-      return;
-    }
     try {
       const response = await setAssetGroupChange(
         uuid_asset,
         asset_group_index,
         selectedGroupIndex,
+        moving_option,
       );
 
-      if (response.success) {
+      if (response.data.RESULT === "OK") {
         showModalChange = false;
-        successAlert("그룹이 성공적으로 변경되었습니다!");
-        const asset = $allAssetList.find(
-          (asset) => asset.ass_uuid === uuid_asset,
-        );
-        if (asset) {
-          asset.asset_group = [selectedGroupIndex]; // Modify the group to the new one
-
-          // Now make sure $allAssetList is updated (if it's a writable store)
-          // The assignment will trigger reactivity
-          $allAssetList = [...$allAssetList];
-        }
-        // Update the asset group in the allAssetList store
-        allAssetList.update((assets) => {
-          return assets.map((asset) => {
-            // If the asset UUID matches, update the asset's group
-            if (asset.ass_uuid === uuid_asset) {
-              // Create a new asset object with updated group information
-              return {
-                ...asset,
-                asset_group: asset.asset_group.map((group) =>
-                  group.asg_index === asset_group_index
-                    ? { ...group, asg_index: selectedGroupIndex }
-                    : group,
-                ),
-              };
-            }
-            return asset;
-          });
-        });
-
-        const updatedAssets = filteredAssets.map((asset) => {
-          if (asset.ass_uuid === uuid_asset) {
-            // Move the asset to the new group
-            return { ...asset, asset_group: selectedGroupIndex };
+        if (moving_option === "copy") {
+          if (
+            response.data.CODE === "해당 자산을 목표 그룹에 복사하였습니다."
+          ) {
+            successAlert(`해당 자산을 목표 그룹에 복사하였습니다.`);
+          } else {
+            warningAlert(`${response.data.CODE}`);
           }
-          return asset;
-        });
+        } else if (moving_option === "move") {
+          successAlert(`${response.data.CODE}`);
+        }
 
-        // Update the parent with the new list of assets
-        updateFilteredAssets(updatedAssets);
-
+        // Refresh asset list and apply filters
         assetList();
         filterAssets();
       } else {
         errorAlert("자산을 선택해주세요!");
       }
-    } catch (err) {}
+    } catch (err) {
+      // Optional: Add a console log to trace errors during development
+      console.error("Error during asset group change:", err);
+      throw err; // Rethrow the error for further handling if needed
+    }
   }
+
   $: {
     // Only apply filtering when $allAssetList is available
     if ($allAssetList && $allAssetList.length > 0) {
@@ -331,6 +328,37 @@
   $: if ($allAssetList && $allAssetList.length > 0) {
     filteredAssets = filterAssets(); // This will re-run the filter whenever $allAssetList or filters change
   }
+  /**********************************************************/
+  async function deleteSelectedAsset(asset) {
+    let astUUID =
+      String(
+        asset?.assessment_target_system
+          ?.flatMap((system) => Object.values(system))
+          ?.flatMap((target) => target)
+          ?.find((target) => target.ast_uuid)?.ast_uuid,
+      ).trim() || "";
+    try {
+      // Confirm deletion
+      const isConfirmed = await confirmDelete();
+      if (!isConfirmed) return;
+
+      // Call the delete API
+      const response = await setAssetDelete(astUUID, selectedGroup);
+
+      if (response.success) {
+        // Force re-filtering of assets and trigger update of filtered assets
+        successAlert(` 성공적으로 삭제되었습니다.`);
+
+        assetList();
+        filterAssets();
+      } else {
+        throw new Error("그룹 삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      errorAlert(error.message || "그룹 삭제 중 오류가 발생했습니다.");
+    }
+  }
+  // $: console.log("selectedGroup", selectedGroup);
 </script>
 
 {#if !showSwiperComponent}
@@ -363,57 +391,81 @@
 
               <span
                 class="badge badgePrimary noneborder"
-                style="color: {asset.ast_lastconnect === 'YES'
+                style="color: {asset.ass_uuid__ast_lastconnect === 'YES'
                   ? 'blue'
                   : 'red'}"
               >
-                {asset.ast_lastconnect === "YES" ? "연결중" : "연결 안됨"}
+                {asset.ass_uuid__ast_lastconnect === "YES"
+                  ? "연결중"
+                  : "연결 안됨"}
               </span>
             </div>
             <div class="btnWrap">
+              {#if !asset.ass_uuid__ast_activate}
+                <button
+                  type="button"
+                  title="활성화하다"
+                  class="btnImg"
+                  on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
+                >
+                  <img
+                    class="btnImg"
+                    style="width: 17px; height:17px"
+                    src="./assets/images/active.png"
+                    alt="Edit"
+                  />
+                </button>
+              {:else}
+                <button type="button" title="비활성화하다" class="btnImg">
+                  <img
+                    class="btnImg"
+                    src="./assets/images/deactive.png"
+                    alt="Reset"
+                    style="width: 17px; height:17px"
+                    on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
+                  />
+                </button>
+              {/if}
+
               <button
                 type="button"
-                title="활성화하다"
+                title="복사"
                 class="btnImg"
-                on:click|stopPropagation={() => activateAsset(asset.ass_uuid)}
+                on:click|stopPropagation={() => {
+                  moving_option = "copy"; // Update moving_option to "copy"
+                  console.log("Moving Option:", moving_option);
+                  showModalChange = true;
+                  handleAssetUuid(asset);
+                }}
               >
                 <img
-                  class="btnImg"
                   style="width: 17px; height:17px"
-                  src="./assets/images/icon/active.png"
-                  alt="Edit"
+                  src="./assets/images/copy.png"
+                  alt="Copy"
                 />
               </button>
-              <button type="button" title="그룹이동" class="btnImg">
-                <img
+              {#if selectedGroup !== "전체"}
+                <button
+                  on:click|stopPropagation={() => deleteSelectedAsset(asset)}
+                  type="button"
+                  title="삭제"
                   class="btnImg"
-                  src="./assets/images/icon/deactive.png"
-                  alt="Reset"
-                  style="width: 17px; height:17px"
-                  on:click|stopPropagation={() => unActivate(asset.ass_uuid)}
-                />
-              </button>
-
+                >
+                  <img src="./assets/images/delete_gray.svg" alt="Delete" />
+                </button>
+              {/if}
               <button
                 type="button"
                 title="그룹이동"
                 class="btnImg"
                 on:click|stopPropagation={() => {
+                  moving_option = "move"; // Update moving_option to "move"
+                  console.log("Moving Option:", moving_option);
                   showModalChange = true;
-                  handleAssetUuid(asset);
+                  handleAssetUuid(asset); // Call the asset handling function
                 }}
               >
-                <img src="./assets/images/icon/reset.svg" alt="Reset" />
-              </button>
-              <button type="button" title="비활성화하다" class="btnImg">
-                <img src="./assets/images/icon/delete_gray.svg" alt="Delete" />
-              </button>
-              <button type="button" title="그룹이동" class="btnImg">
-                <img
-                  style="width: 17px; height:17px"
-                  src="./assets/images/icon/copy.png"
-                  alt="Reset"
-                />
+                <img src="./assets/images/reset.svg" alt="Reset" />
               </button>
             </div>
           </div>
@@ -422,7 +474,7 @@
               <div>
                 <div
                   class="circle"
-                  data-percent={asset.asset_point_history?.[0]
+                  data-percent={asset.ass_uuid__asset_point_history?.[0]
                     ?.ast_security_point || 0}
                   data-offset="440"
                 >
@@ -441,15 +493,16 @@
                       cy="75"
                       r="70"
                       stroke={getStrokeColor(
-                        asset.asset_point_history?.[0]?.ast_security_point || 0,
+                        asset.asset_point_history?.[0]
+                          ?.ass_uuid__ast_security_point || 0,
                       )}
                       stroke-width="10"
                       fill="none"
                       stroke-dasharray="440"
                       stroke-dashoffset={440 -
                         (440 *
-                          (asset.asset_point_history?.[0]?.ast_security_point ||
-                            0)) /
+                          (asset.asset_point_history?.[0]
+                            ?.ass_uuid__ast_security_point || 0)) /
                           100}
                       stroke-linecap="round"
                       transform="rotate(-90 75 75)"
@@ -460,11 +513,14 @@
                     <span
                       class="number pointColor"
                       style="color: {getStrokeColor(
-                        asset.asset_point_history?.[0]?.ast_security_point || 0,
+                        asset.asset_point_history?.[0]
+                          ?.ass_uuid__ast_security_point || 0,
                       )};"
                     >
-                      {asset.asset_point_history?.[0]?.ast_security_point > 0
-                        ? asset.asset_point_history?.[0]?.ast_security_point
+                      {asset.asset_point_history?.[0]
+                        ?.ass_uuid__ast_security_point > 0
+                        ? asset.asset_point_history?.[0]
+                            ?.ass_uuid__ast_security_point
                         : 0}%
                     </span>
                   </div>
@@ -478,19 +534,22 @@
                 {/if}
               </div>
               <span class="date">
-                {formatDate(asset.ast_cdate) || "데이터 없음"}
+                {formatDate(asset.ass_uuid__ast_cdate) || "데이터 없음"}
               </span>
             </div>
             <div class="text flex col justify-between">
               <ul>
                 <li>
-                  <span>운영체제 : </span>{asset.ast_os || "데이터 없음"}
+                  <span>운영체제 : </span>{asset.ass_uuid__ast_os ||
+                    "데이터 없음"}
                 </li>
                 <li>
-                  <span>자산명 : </span>{asset.ast_hostname || "데이터 없음"}
+                  <span>자산명 : </span>{asset.ass_uuid__ast_hostname ||
+                    "데이터 없음"}
                 </li>
                 <li>
-                  <span>아이피주소 : </span>{asset.ast_ipaddr || "데이터 없음"}
+                  <span>아이피주소 : </span>{asset.ass_uuid__ast_ipaddr ||
+                    "데이터 없음"}
                 </li>
                 <li>
                   {#each asset.assessment_target_system as target}
@@ -500,12 +559,17 @@
                   {/each}
                 </li>
                 <li>
-                  <span>에이전트설치여부 : </span>{asset.ast_agent_installed
+                  <span
+                    >에이전트설치여부 :
+                  </span>{asset.ass_uuid__ast_agent_installed
                     ? "설치됨"
                     : "설치 안됨"}
                 </li>
+
                 {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 1}
-                  <li style="line-height: 23px;">
+                  <li
+                    style="line-height: 23px; max-height:70px; overflow-y:70px;"
+                  >
                     <span>관련 그룹:</span>
 
                     {#if asset.asset_group.length > 1}

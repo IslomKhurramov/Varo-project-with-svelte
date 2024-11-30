@@ -169,7 +169,7 @@
                 <div class="alarmWrap">
                   <button type="button" class="alarm on notification">
                     <!-- svelte-ignore a11y-missing-attribute -->
-                    <img src="./assets/images/icon/alarm.svg" />
+                    <img src="./assets/images/alarm.svg" />
                   </button>
                   <div class="tooltip-modal">
                     <h3 class="title">알림</h3>
@@ -193,7 +193,7 @@
                 </div>
                 <article class="user-box-menu">
                   <!-- svelte-ignore a11y-missing-attribute -->
-                  <img src="./assets/images/icon/person.svg" />
+                  <img src="./assets/images/person.svg" />
                   <div class="user" style="min-width: 60px;font-size: 16px;">
                     <span style="font-size: 16px;"
                       >{decryptData($userData?.userInfo?.user_name)}

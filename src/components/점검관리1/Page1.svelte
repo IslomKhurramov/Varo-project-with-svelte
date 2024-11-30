@@ -94,7 +94,7 @@
         on:click={() => selectPage(AddPorject, "add")}
       >
         <!-- svelte-ignore a11y-missing-attribute -->
-        <img src="./assets/images/icon/add.svg" />
+        <img src="./assets/images/add.svg" />
         신규점검
       </a>
       <button
@@ -103,7 +103,7 @@
         on:click={deleteProject}
         disabled={!selectedProjectIndex}
       >
-        <img src="./assets/images/icon/delete.svg" />
+        <img src="./assets/images/delete.svg" />
         점검삭제
       </button>
     </div>

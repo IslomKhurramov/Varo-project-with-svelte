@@ -63,7 +63,7 @@
           <p class="sort-img">
             호스트명
             <img
-              src="./assets/images/icon/sort.svg"
+              src="./assets/images/sort.svg"
               class={sortHost !== "ASC" ? "rotate" : ""}
             />
           </p>
@@ -81,7 +81,7 @@
           <p class="sort-img">
             보안점수
             <img
-              src="./assets/images/icon/sort.svg"
+              src="./assets/images/sort.svg"
               class={sortPoint !== "ASC" ? "rotate" : ""}
             />
           </p>

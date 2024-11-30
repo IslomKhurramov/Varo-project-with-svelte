@@ -2276,7 +2276,7 @@ label.file-label {
   transform: translateY(-50%);
   border-radius: 3px;
   background-color: #0067ff;
-  background-image: url(../assets/images/icon/checked.svg);
+  background-image: url(../assets/images/checked.svg);
   background-repeat: no-repeat;
   background-size: 12px;
   background-position: center;
@@ -2294,7 +2294,7 @@ label.file-label {
   width: 20px;
   height: 20px;
   background-color: #fff;
-  background-image: url(../assets/images/icon/checked_default.svg);
+  background-image: url(../assets/images/checked_default.svg);
   border: 1px solid #e8e8e8;
 }
 

@@ -422,7 +422,7 @@
                               bind:value={sendFixDone["fixed_start_date"]}
                             />
                           </div>
-                          <img src="./assets/images/icon/dash.svg" />
+                          <img src="./assets/images/dash.svg" />
                           <div class="date">
                             <input
                               style="font-size: 16px;"
@@ -504,7 +504,7 @@
                                 ?.cfr_fix_startdate}
                             />
                           </div>
-                          <img src="./assets/images/icon/dash.svg" />
+                          <img src="./assets/images/dash.svg" />
                           <div class="date">
                             <input
                               style="font-size: 16px;"
@@ -612,7 +612,7 @@
                                 ?.cfr_fix_startdate}
                             />
                           </div>
-                          <img src="./assets/images/icon/dash.svg" />
+                          <img src="./assets/images/dash.svg" />
                           <div class="date">
                             <input
                               style="font-size: 16px;"
@@ -718,9 +718,9 @@
                               value={targetData?.fix_plan?.[0]
                                 ?.cfi_fix_startdate ?? ""}
                             />
-                            <img src="./assets/images/icon/date.svg" />
+                            <img src="./assets/images/date.svg" />
                           </div>
-                          <img src="./assets/images/icon/dash.svg" />
+                          <img src="./assets/images/dash.svg" />
                           <div class="date">
                             <input
                               style="font-size: 16px;"
@@ -731,7 +731,7 @@
                               value={targetData?.fix_plan?.[0]
                                 ?.cfi_fix_enddate ?? ""}
                             />
-                            <img src="./assets/images/icon/date.svg" />
+                            <img src="./assets/images/date.svg" />
                           </div>
                         </div>
                       </td>
@@ -834,7 +834,7 @@
                               ]}
                             />
                           </div>
-                          <img src="./assets/images/icon/dash.svg" />
+                          <img src="./assets/images/dash.svg" />
                           <div class="date">
                             <input
                               style="font-size: 16px;"

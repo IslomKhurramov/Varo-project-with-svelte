@@ -149,7 +149,7 @@
             }}
           />
         </div>
-        <img src="./assets/images/icon/dash.svg" />
+        <img src="./assets/images/dash.svg" />
         <div class="date">
           <input
             type="date"

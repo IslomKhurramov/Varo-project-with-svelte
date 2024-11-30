@@ -68,7 +68,7 @@
             hostname
             <!-- svelte-ignore a11y-missing-attribute -->
             <img
-              src="./assets/images/icon/sort.svg"
+              src="./assets/images/sort.svg"
               class={sortHost !== "ASC" ? "rotate" : ""}
             />
           </p>
@@ -89,7 +89,7 @@
             Result
             <!-- svelte-ignore a11y-missing-attribute -->
             <img
-              src="./assets/images/icon/sort.svg"
+              src="./assets/images/sort.svg"
               class={sortPoint !== "ASC" ? "rotate" : ""}
             />
           </p>

@@ -12,15 +12,15 @@
     decryptData,
     setPasswordReset,
   } from "../../../services/login/loginService";
-  import { userData } from "../../../stores/user.store";
+  // import { userData } from "../../../stores/user.store";
   export let tabMenu;
 
-  let userRoleTypeIndex = null;
+  // let userRoleTypeIndex = null;
 
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
   // //////////////////////////////////////////////////////////////////////
 
   let error = null;
@@ -68,7 +68,7 @@
         await getUserListsData();
       } else if (response.RESULT === "ERROR") {
         await errorAlert(response.CODE);
-        
+
         await getUserListsData();
       }
     } catch (err) {
@@ -176,20 +176,20 @@
 
                 <td class="text-center" style="font-size: 12px;">
                   <!-- {#if parseInt(user_roletype_role_index) === 0} -->
-                  {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9}
-                    <select
-                      bind:value={data.itemResult}
-                      on:change={(e) => handleStatusChange(data.user_index, e)}
-                      on:click={(e) => e.stopPropagation()}
-                      name="agent_status"
-                      id="agent_status"
-                    >
-                      <option value="1">활성</option>
-                      <option value="0">비활성</option>
-                    </select>
-                  {:else}
-                    <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
-                  {/if}
+                  <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 9} -->
+                  <select
+                    bind:value={data.itemResult}
+                    on:change={(e) => handleStatusChange(data.user_index, e)}
+                    on:click={(e) => e.stopPropagation()}
+                    name="agent_status"
+                    id="agent_status"
+                  >
+                    <option value="1">활성</option>
+                    <option value="0">비활성</option>
+                  </select>
+                  <!-- {:else} -->
+                  <span>{data.itemResult === "1" ? "활성" : "비활성"}</span>
+                  <!-- {/if} -->
                 </td>
 
                 <td
@@ -217,16 +217,20 @@
         </table>
       </div>
 
-      <div class="buttonContainer formControl">
-        <button
-          type="button"
-          class="btn btnBlue btnSave"
-          on:click={() => {
-            showNewMember = true;
-          }}
-        >
-          사용자추가
-        </button>
+      <div class="pagination_box">
+        <div class="buttonContainer">
+          <button
+            type="button"
+            class="btn btnBlue btnSave"
+            on:click={() => {
+              showNewMember = true;
+            }}
+          >
+            사용자추가
+          </button>
+        </div>
+        <div></div>
+        <div></div>
       </div>
     </section>
   {/if}
@@ -240,15 +244,15 @@
     background-color: #ffffff;
     padding: 20px;
     margin: 10px 0;
-    height: calc(100vh - 134px);
+    height: calc(100vh - 140px);
   }
   .tableWrap_3 {
     background-color: #fff;
     display: flex;
     flex-flow: column;
     justify-content: space-between;
-    gap: 20px;
-    height: 75vh;
+    /* gap: 20px; */
+    height: 80vh;
     border-radius: 5px;
     margin-top: 10px;
   }
@@ -304,7 +308,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-bottom: 49px;
   }
 
   .btnSave {
@@ -322,6 +327,14 @@
   .btnSave:hover {
     color: #fff;
     background-color: #4989ff;
+  }
+
+  .pagination_box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
   }
 
   /***************************/

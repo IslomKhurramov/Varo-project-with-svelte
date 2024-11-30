@@ -16,10 +16,10 @@
   let userRoleTypeIndex = null;
 
   // ///////////////////////////////////////////////////////////////////////
-  userData.subscribe((data) => {
-    userRoleTypeIndex = data.userInfo.user_roletype_role_index;
-  });
-  let user_roletype_role_index = decryptData(userRoleTypeIndex);
+  // userData.subscribe((data) => {
+  //   userRoleTypeIndex = data.userInfo.user_roletype_role_index;
+  // });
+  // let user_roletype_role_index = decryptData(userRoleTypeIndex);
 
   // ///////////////////////////////////////////////////////////////////////
 
@@ -183,7 +183,7 @@
         <div>
           <!-- Pagination -->
           <div class="pagination_box">
-            {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3}
+            <!-- {#if parseInt(user_roletype_role_index) >= 1 && parseInt(user_roletype_role_index) <= 3} -->
               <div class="buttonContainer">
                 <button
                   type="button"
@@ -195,7 +195,7 @@
                   게시물추가
                 </button>
               </div>
-            {/if}
+            <!-- {/if} -->
 
             <nav class="pagination">
               <!-- First Page Button -->

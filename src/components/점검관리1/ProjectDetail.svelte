@@ -209,6 +209,22 @@
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
+
+  const calculatePercentage = (projectDetails) => {
+    if (!projectDetails?.target_securitypoint?.length) return 0;
+    const percentage = Math.min(
+      (projectDetails.target_securitypoint.length / 6) * 100,
+      100,
+    );
+    return Math.round(percentage);
+  };
+
+  // Get color based on percentage
+  const getColor = (percentage) => {
+    if (percentage <= 33) return "#FF1500";
+    if (percentage <= 66) return "#4AC93F";
+    return "#0067FF";
+  };
 </script>
 
 <div class="scroll-div">
@@ -294,10 +310,10 @@
               cx="75"
               cy="75"
               r="55"
-              stroke={projectDetails?.ccp_security_point > 0
-                ? projectDetails?.ccp_security_point <= 33
+              stroke={calculatePercentage(projectDetails) > 0
+                ? calculatePercentage(projectDetails) <= 33
                   ? "#FF1500"
-                  : projectDetails?.ccp_security_point <= 66
+                  : calculatePercentage(projectDetails) <= 66
                     ? "#4AC93F"
                     : "#0067FF"
                 : "#0067FF"}
@@ -307,10 +323,10 @@
               stroke-linecap="round"
               transform="rotate(-90 75 75)"
               style={`stroke: ${
-                projectDetails?.ccp_security_point > 0
-                  ? projectDetails?.ccp_security_point <= 33
+                calculatePercentage(projectDetails) > 0
+                  ? calculatePercentage(projectDetails) <= 33
                     ? "#FF1500"
-                    : projectDetails?.ccp_security_point <= 66
+                    : calculatePercentage(projectDetails) <= 66
                       ? "#4AC93F"
                       : "#0067FF"
                   : "#0067FF"
@@ -318,8 +334,8 @@
                 345 -
                 (345 *
                   parseInt(
-                    projectDetails?.ccp_security_point > 0
-                      ? projectDetails?.ccp_security_point
+                    calculatePercentage(projectDetails) > 0
+                      ? calculatePercentage(projectDetails)
                       : 0,
                   )) /
                   100
@@ -327,11 +343,7 @@
             />
           </svg>
           <div class="percent">
-            <span>
-              {projectDetails?.ccp_security_point > 0
-                ? projectDetails?.ccp_security_point
-                : 0}%</span
-            >
+            <span> {calculatePercentage(projectDetails)}%</span>
           </div>
         </div>
         <div
@@ -342,132 +354,30 @@
                 -webkit-overflow-scrolling: touch;"
         >
           <ul class="progressbarWrap result">
-            {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele?.label === "UNIX")[0]?.["y"]}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <li
-                on:click={() => {
-                  showModal = true;
-                  modalData = assetsInfo["assets_info"].filter(
-                    (asset) =>
-                      asset.ast_uuid__ast_target__cct_target === "UNIX",
-                  );
-                }}
-              >
-                <div class="progress-info">
-                  <h4 style="font-size: 16px;">UNIX</h4>
-                  <span
-                    >{projectDetails.target_securitypoint.filter(
-                      (ele) => ele.label === "UNIX",
-                    )[0]?.["y"]}%</span
-                  >
-                </div>
-                <div class="progress light">
-                  <div
-                    class="progress-bar orange"
-                    style={`width: ${
-                      projectDetails.target_securitypoint.filter(
-                        (ele) => ele.label === "UNIX",
-                      )[0]?.["y"]
-                    }%; font-size: 16px;`}
-                  ></div>
-                </div>
-              </li>
-            {/if}
-
-            {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "NETWORK")[0]?.["y"]}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <li
-                on:click={() => {
-                  showModal = true;
-                  modalData = assetsInfo["assets_info"].filter(
-                    (asset) =>
-                      asset.ast_uuid__ast_target__cct_target === "NETWORK",
-                  );
-                }}
-              >
-                <div class="progress-info">
-                  <h4 style="font-size: 16px;">NETWORK</h4>
-                  <span
-                    >{projectDetails.target_securitypoint.filter(
-                      (ele) => ele.label === "NETWORK",
-                    )[0]?.["y"]}%</span
-                  >
-                </div>
-                <div class="progress light">
-                  <div
-                    class="progress-bar orange"
-                    style={`width: ${
-                      projectDetails.target_securitypoint.filter(
-                        (ele) => ele.label === "NETWORK",
-                      )[0]?.["y"]
-                    }%;`}
-                  ></div>
-                </div>
-              </li>
-            {/if}
-
-            {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "DBMS")[0]?.["y"]}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <li
-                on:click={() => {
-                  showModal = true;
-                  modalData = assetsInfo["assets_info"].filter(
-                    (asset) =>
-                      asset.ast_uuid__ast_target__cct_target === "DBMS",
-                  );
-                }}
-              >
-                <div class="progress-info">
-                  <h4 style="font-size: 16px;">DBMS</h4>
-                  <span
-                    >{projectDetails.target_securitypoint.filter(
-                      (ele) => ele.label === "DBMS",
-                    )[0]?.["y"]}%</span
-                  >
-                </div>
-                <div class="progress light">
-                  <div
-                    class="progress-bar orange"
-                    style={`width: ${
-                      projectDetails.target_securitypoint.filter(
-                        (ele) => ele.label === "DBMS",
-                      )[0]?.["y"]
-                    }%;`}
-                  ></div>
-                </div>
-              </li>
-            {/if}
-
-            {#if projectDetails && projectDetails?.target_securitypoint?.filter((ele) => ele.label === "SECURITY")[0]?.["y"]}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <li
-                on:click={() => {
-                  showModal = true;
-                  modalData = assetsInfo["assets_info"].filter(
-                    (asset) =>
-                      asset.ast_uuid__ast_target__cct_target === "SECURITY",
-                  );
-                }}
-              >
-                <div class="progress-info">
-                  <h4 style="font-size: 16px;">SECURITY</h4>
-                  <span
-                    >{projectDetails.target_securitypoint.filter(
-                      (ele) => ele.label === "SECURITY",
-                    )[0]?.["y"]}%</span
-                  >
-                </div>
-                <div class="progress light">
-                  <div
-                    class="progress-bar orange"
-                    style={`width: ${
-                      projectDetails.target_securitypoint.filter(
-                        (ele) => ele.label === "SECURITY",
-                      )[0]?.["y"]
-                    }%;`}
-                  ></div>
-                </div>
-              </li>
+            {#if projectDetails && projectDetails?.target_securitypoint && projectDetails?.target_securitypoint?.length != 0}
+              {#each projectDetails?.target_securitypoint as data}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <li
+                  on:click={() => {
+                    showModal = true;
+                    modalData = assetsInfo["assets_info"].filter(
+                      (asset) =>
+                        asset.ast_uuid__ast_target__cct_target === data?.label,
+                    );
+                  }}
+                >
+                  <div class="progress-info">
+                    <h4 style="font-size: 16px;">{data?.label}</h4>
+                    <span>{data?.y}%</span>
+                  </div>
+                  <div class="progress light">
+                    <div
+                      class="progress-bar orange"
+                      style={`width: ${data?.y}%; font-size: 16px;`}
+                    ></div>
+                  </div>
+                </li>
+              {/each}
             {/if}
           </ul>
           <!-- <div class="slidePager">
@@ -995,7 +905,7 @@
                   }}
                 >
                   <td class="text-center" style="font-size: 16px;"
-                    >{index + 1}</td
+                    >{projectDetails?.vuln_list.length - index}</td
                   >
                   <td class="text-center" style="font-size: 16px;"
                     >{vuln?.cct_index__cct_target}</td
@@ -1110,7 +1020,7 @@
                   {#each modalData as data, index}
                     <tr>
                       <td class="text-center" style="font-size: 16px;"
-                        >{index + 1}</td
+                        >{modalData?.length - index}</td
                       >
                       <td class="text-center" style="font-size: 16px;"
                         >{data?.ast_uuid__ass_uuid__ast_hostname}</td

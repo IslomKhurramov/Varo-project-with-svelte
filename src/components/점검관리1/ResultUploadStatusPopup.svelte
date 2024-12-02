@@ -59,7 +59,7 @@
     </colgroup>
     <thead style="position: sticky;top: -16px;font-size: 16px;">
       <tr>
-        <th class="text-center">넘버</th>
+        <th class="text-center">순번</th>
         <th
           on:click={() =>
             sortData("hostname", sortHost, (newSort) => (sortHost = newSort))}
@@ -99,7 +99,9 @@
     <tbody>
       {#each uploadStatusModalData?.uploaded_status && uploadStatusModalData?.uploaded_status?.length !== 0 && uploadStatusModalData?.uploaded_status as data, index}
         <tr>
-          <td class="text-center">{index + 1}</td>
+          <td class="text-center"
+            >{uploadStatusModalData?.uploaded_status?.length - index}</td
+          >
           <td class="text-center">{data?.hostname}</td>
           <td class="text-center">{data?.ipaddr}</td>
           <td class="text-center">{data?.target}</td>

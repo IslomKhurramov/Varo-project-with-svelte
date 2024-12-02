@@ -65,7 +65,15 @@
 
       const response = await setUploadPlanResult(formData);
 
-      await successAlert(response.CODE);
+      await successAlert(response);
+
+      resultStatus = await getCCEResultUploadStatus(selectedPlan);
+      resultErrors = await getUploadedResultErrors(selectedPlan);
+      uploadStatus = await getResultUploadStatus(selectedPlan);
+
+      jsonFiles = [];
+      txtFiles = [];
+      excelFiles = [];
 
       // navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {

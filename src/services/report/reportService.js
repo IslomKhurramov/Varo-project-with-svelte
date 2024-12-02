@@ -23,6 +23,8 @@ export const getPlanReportLists = async (plan_index) => {
 
 export const setMakeExcelWordFullReport = async (data) => {
   try {
+    if (data.plan_index) data.plan_index = String(data.plan_index);
+
     const response = await axios.post(
       `${serverApi}/api/setMakeExcelWordFullReport/`,
       data,
@@ -59,6 +61,49 @@ export const setPlanSummaryReportCreate = async (plan_index) => {
     document.body.appendChild(a);
     a.click();
     a.remove();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getDownloadReport = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getDownloadReport/`,
+      data,
+      {
+        responseType: "blob", // Important for file downloads
+        withCredentials: true, // If you're using session cookies
+      },
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = data["filename"];
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setDeleteReport = async (data) => {
+  try {
+    if (data.plan_index) data.plan_index = String(data.plan_index);
+
+    const response = await axios.post(
+      `${serverApi}/api/setDeleteReport/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
   } catch (error) {
     throw error;
   }

@@ -51,7 +51,7 @@
     </colgroup>
     <thead style="position: sticky;top: -16px;">
       <tr>
-        <th>넘버</th>
+        <th>순번</th>
         <th
           on:click={() =>
             sortData(
@@ -91,7 +91,7 @@
     <tbody>
       {#each modalData as data, index}
         <tr>
-          <td>{index + 1}</td>
+          <td>{modalData?.length - index}</td>
           <td>{data?.ast_uuid__ass_uuid__ast_hostname}</td>
           <td>{data?.ast_uuid__ass_uuid__ast_ipaddr}</td>
           <td>{data?.ast_uuid__ast_target__cct_target}</td>

@@ -229,7 +229,7 @@
         <div class="formControl">
           <label>자산명</label>
           <div class="input-like">
-            <p>{selectedAsset.ast_hostname}</p>
+            <p>{selectedAsset.ass_uuid__ast_hostname}</p>
           </div>
         </div>
       </div>
@@ -237,7 +237,7 @@
         <div class="formControl">
           <label>아이피주소</label>
           <div class="input-like">
-            <p>{selectedAsset.ast_ipaddr}</p>
+            <p>{selectedAsset.ass_uuid__ast_ipaddr}</p>
           </div>
         </div>
       </div>
@@ -245,7 +245,7 @@
         <div class="formControl">
           <label>승인여부</label>
           <div class="input-like">
-            {#if selectedAsset.ast_approve_status === 1}
+            {#if selectedAsset.ass_uuid__ast_approve_status === 1}
               <p>승인</p>
             {:else}
               <p>미승인</p>

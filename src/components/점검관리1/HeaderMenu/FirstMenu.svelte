@@ -67,6 +67,10 @@
 
       await successAlert(response.CODE);
 
+      resultStatus = await getCCEResultUploadStatus(selectedPlan);
+      resultErrors = await getUploadedResultErrors(selectedPlan);
+      uploadStatus = await getResultUploadStatus(selectedPlan);
+
       // navigate(window.location?.pathname == "/" ? "/page1" : "/");
     } catch (error) {
       errorAlert(error?.message);

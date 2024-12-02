@@ -23,7 +23,6 @@ export const getPlanReportLists = async (plan_index) => {
 
 export const setMakeExcelWordFullReport = async (data) => {
   try {
-    console.log("data:", data);
     if (data.plan_index) data.plan_index = String(data.plan_index);
 
     const response = await axios.post(
@@ -85,6 +84,26 @@ export const getDownloadReport = async (data) => {
     document.body.appendChild(a);
     a.click();
     a.remove();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setDeleteReport = async (data) => {
+  try {
+    if (data.plan_index) data.plan_index = String(data.plan_index);
+
+    const response = await axios.post(
+      `${serverApi}/api/setDeleteReport/`,
+      data,
+      {
+        withCredentials: true,
+      },
+    );
+
+    if (response?.data?.RESULT == "ERROR") throw new Error(response.data?.CODE);
+
+    return response.data?.CODE;
   } catch (error) {
     throw error;
   }

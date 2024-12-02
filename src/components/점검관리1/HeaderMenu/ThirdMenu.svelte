@@ -2,6 +2,7 @@
   import {
     getDownloadReport,
     getPlanReportLists,
+    setDeleteReport,
     setMakeExcelWordFullReport,
     setPlanSummaryReportCreate,
   } from "./../../../services/report/reportService.js";
@@ -49,6 +50,18 @@
       await successAlert("보고서가 생성되었습니다!");
     } catch (error) {
       loading = false;
+      errorAlert(error?.message);
+    }
+  };
+
+  const deleteReport = async (data) => {
+    try {
+      const response = await setDeleteReport(data);
+
+      await getReportData();
+
+      await successAlert(response);
+    } catch (error) {
       errorAlert(error?.message);
     }
   };
@@ -188,8 +201,17 @@
               <button
                 type="button"
                 class="btn btnGray w140"
-                disabled={!selectedPlan}>보고서삭제</button
+                disabled={!selectedPlan ||
+                  !planReports?.summary ||
+                  planReports?.summary?.length == 0}
+                on:click={() =>
+                  deleteReport({
+                    plan_index: selectedPlan,
+                    report_type: "summary",
+                  })}
               >
+                보고서삭제
+              </button>
             </div>
           </td>
         </tr>
@@ -262,7 +284,12 @@
               <button
                 type="button"
                 class="btn btnGray w140"
-                disabled={!selectedPlan}
+                disabled={!selectedPlan || planReports?.v_excel?.length == 0}
+                on:click={() =>
+                  deleteReport({
+                    plan_index: selectedPlan,
+                    report_type: "v_excel",
+                  })}
               >
                 보고서삭제
               </button>
@@ -312,7 +339,12 @@
               <button
                 type="button"
                 class="btn btnGray w140"
-                disabled={!selectedPlan}
+                disabled={!selectedPlan || planReports?.v_word?.length == 0}
+                on:click={() =>
+                  deleteReport({
+                    plan_index: selectedPlan,
+                    report_type: "v_word",
+                  })}
               >
                 보고서삭제
               </button>

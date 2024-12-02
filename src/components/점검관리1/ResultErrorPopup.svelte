@@ -18,7 +18,7 @@
     style="position: sticky;top: -16px;font-size: 16px;"
   >
     <tr>
-      <th>넘버</th>
+      <th>순번</th>
       <th>target</th>
       <th>hostname</th>
       <th>ip address</th>
@@ -29,7 +29,7 @@
   <tbody>
     {#each modalErrorData as data, index}
       <tr>
-        <td>{index + 1}</td>
+        <td>{modalErrorData?.length - index}</td>
         <td>{data?.clf_target}</td>
         <td>{data?.clf_hostname ?? "-"}</td>
         <td>{data?.clf_ipaddr ?? "-"}</td>

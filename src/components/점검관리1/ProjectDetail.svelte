@@ -905,7 +905,7 @@
                   }}
                 >
                   <td class="text-center" style="font-size: 16px;"
-                    >{index + 1}</td
+                    >{projectDetails?.vuln_list.length - index}</td
                   >
                   <td class="text-center" style="font-size: 16px;"
                     >{vuln?.cct_index__cct_target}</td
@@ -1020,7 +1020,7 @@
                   {#each modalData as data, index}
                     <tr>
                       <td class="text-center" style="font-size: 16px;"
-                        >{index + 1}</td
+                        >{modalData?.length - index}</td
                       >
                       <td class="text-center" style="font-size: 16px;"
                         >{data?.ast_uuid__ass_uuid__ast_hostname}</td

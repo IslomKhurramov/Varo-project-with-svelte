@@ -552,7 +552,9 @@
               class="clickLine"
               class:active-row={index === currentModalIndex}
             >
-              <td class="text-center line-height">{index + 1}</td>
+              <td class="text-center line-height"
+                >{$comparedTableData1.length - index}</td
+              >
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
               >
@@ -613,7 +615,9 @@
               class="clickLine"
               class:active-row={index === currentModalIndex}
             >
-              <td class="text-center line-height">{index + 1}</td>
+              <td class="text-center line-height"
+                >{$comparedTableData2.length - index}</td
+              >
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
               >

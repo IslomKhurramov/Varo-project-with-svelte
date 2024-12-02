@@ -278,7 +278,9 @@
               class="clickLine"
               class:active-row={index === currentModalIndex}
             >
-              <td class="text-center">{index + 1}</td>
+              <td class="text-center"
+                >{$filteredTableDataForTarget.length - index}</td
+              >
               <td class="text-center line-height"
                 >{vuln.ast_uuid__ass_uuid__ast_hostname}</td
               >

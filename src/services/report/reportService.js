@@ -23,6 +23,9 @@ export const getPlanReportLists = async (plan_index) => {
 
 export const setMakeExcelWordFullReport = async (data) => {
   try {
+    console.log("data:", data);
+    if (data.plan_index) data.plan_index = String(data.plan_index);
+
     const response = await axios.post(
       `${serverApi}/api/setMakeExcelWordFullReport/`,
       data,

@@ -66,3 +66,26 @@ export const setPlanSummaryReportCreate = async (plan_index) => {
     throw error;
   }
 };
+
+export const getDownloadReport = async (data) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/getDownloadReport/`,
+      data,
+      {
+        responseType: "blob", // Important for file downloads
+        withCredentials: true, // If you're using session cookies
+      },
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = data["filename"];
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (error) {
+    throw error;
+  }
+};

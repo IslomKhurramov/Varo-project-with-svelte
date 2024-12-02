@@ -1,5 +1,6 @@
 <script>
   import {
+    getDownloadReport,
     getPlanReportLists,
     setMakeExcelWordFullReport,
     setPlanSummaryReportCreate,
@@ -60,6 +61,14 @@
       selectedTargets = selectedPlanData ? selectedPlanData.targets : [];
     } else {
       selectedTargets = [];
+    }
+  };
+
+  const downloadReport = async (data) => {
+    try {
+      await getDownloadReport(data);
+    } catch (err) {
+      errorAlert(err?.message);
     }
   };
 
@@ -142,7 +151,15 @@
             <div class="flex excel">
               {#if planReports?.summary && planReports?.summary?.length !== 0}
                 {#each planReports?.summary as report}
-                  <a>
+                  <a
+                    href="javascript:void(0);"
+                    on:click={() =>
+                      downloadReport({
+                        plan_index: selectedPlan,
+                        report_type: "summary",
+                        filename: report,
+                      })}
+                  >
                     {report}
                   </a>
                 {/each}
@@ -208,7 +225,15 @@
             <div class="flex excel">
               {#if planReports?.v_excel && planReports?.v_excel?.length !== 0}
                 {#each planReports?.v_excel as report}
-                  <a href="javascript:void(0);">
+                  <a
+                    href="javascript:void(0);"
+                    on:click={() =>
+                      downloadReport({
+                        plan_index: selectedPlan,
+                        report_type: "v_excel",
+                        filename: report,
+                      })}
+                  >
                     {report}
                   </a>
                 {/each}
@@ -252,7 +277,15 @@
             <div class="flex excel">
               {#if planReports?.v_word && planReports?.v_word?.length !== 0}
                 {#each planReports?.v_word as report}
-                  <a>{report}</a>
+                  <a
+                    href="javascript:void(0);"
+                    on:click={() =>
+                      downloadReport({
+                        plan_index: selectedPlan,
+                        report_type: "v_word",
+                        filename: report,
+                      })}>{report}</a
+                  >
                 {/each}
               {/if}
             </div>

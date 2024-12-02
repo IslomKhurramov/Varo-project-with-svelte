@@ -423,22 +423,25 @@
           {#if setView == "result_accept" || setView == "조치완료"}
             <section class="flex btnWrap gap-4">
               {#if selectedItems?.length !== 0}
-                <button
-                  class="btn btnBlue"
-                  on:click={() => {
-                    fixDoneApproveHandler({
-                      // plan_index: data[0].ccp_index,
-                      // asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: selectedItems,
-                      approved_comment: "",
-                    });
-                    selectedItems = [];
-                    theadChecked = false;
-                  }}
-                >
-                  선택항목승인
-                </button>
+                {#if setView != "조치완료"}
+                  <button
+                    class="btn btnBlue"
+                    on:click={() => {
+                      fixDoneApproveHandler({
+                        // plan_index: data[0].ccp_index,
+                        // asset_target_uuid: selectedSendData?.asset_target_uuid,
+                        approved: "1",
+                        approved_targets: selectedItems,
+                        approved_comment: "",
+                      });
+                      selectedItems = [];
+                      theadChecked = false;
+                    }}
+                  >
+                    선택항목승인
+                  </button>
+                {/if}
+
                 <button
                   class="btn btnBlue"
                   on:click={() => {
@@ -458,22 +461,24 @@
               {/if}
 
               {#if (showProject && !selectedSendData?.plan_index) || (!showProject && !selectedSendData?.asset_target_uuid)}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  disabled={data?.length == 0}
-                  on:click={() => {
-                    fixApproveHandler({
-                      // plan_index: data[0].ccp_index,
-                      // asset_target_uuid: selectedSendData?.asset_target_uuid,
-                      approved: "1",
-                      approved_targets: "ALL",
-                      approved_comment: "",
-                    });
-                  }}
-                >
-                  일괄승인
-                </button>
+                {#if setView != "조치완료"}
+                  <button
+                    type="button"
+                    class="btn btnBlue"
+                    disabled={data?.length == 0}
+                    on:click={() => {
+                      fixApproveHandler({
+                        // plan_index: data[0].ccp_index,
+                        // asset_target_uuid: selectedSendData?.asset_target_uuid,
+                        approved: "1",
+                        approved_targets: "ALL",
+                        approved_comment: "",
+                      });
+                    }}
+                  >
+                    일괄승인
+                  </button>{/if}
+
                 <button
                   type="button"
                   class="btn btnBlue"
@@ -491,16 +496,19 @@
                   일괄반려
                 </button>
               {:else}
-                <button
-                  type="button"
-                  class="btn btnBlue"
-                  disabled={data?.length == 0}
-                  on:click={() => {
-                    fixDoneApproveAssetHandler(data, "1");
-                  }}
-                >
-                  일괄승인
-                </button>
+                {#if setView != "조치완료"}
+                  <button
+                    type="button"
+                    class="btn btnBlue"
+                    disabled={data?.length == 0}
+                    on:click={() => {
+                      fixDoneApproveAssetHandler(data, "1");
+                    }}
+                  >
+                    일괄승인
+                  </button>
+                {/if}
+
                 <button
                   type="button"
                   class="btn btnBlue"
@@ -696,17 +704,20 @@
                                 item?.cfr_fix_status__cvs_index != 4}
                           >
                           </option>
-                          <option
-                            value="승인"
-                            selected={setView == "plan" ||
-                            setView == "plan_accept"
-                              ? item?.cfi_fix_status__cvs_index == 3 ||
-                                item?.cfi_fix_status__cvs_index == 4
-                              : item?.cfr_fix_status__cvs_index == 3 ||
-                                item?.cfr_fix_status__cvs_index == 4}
-                          >
-                            승인
-                          </option>
+                          {#if setView != "조치완료"}
+                            <option
+                              value="승인"
+                              selected={setView == "plan" ||
+                              setView == "plan_accept"
+                                ? item?.cfi_fix_status__cvs_index == 3 ||
+                                  item?.cfi_fix_status__cvs_index == 4
+                                : item?.cfr_fix_status__cvs_index == 3 ||
+                                  item?.cfr_fix_status__cvs_index == 4}
+                            >
+                              승인
+                            </option>
+                          {/if}
+
                           <option
                             value="반려"
                             selected={setView == "plan" ||

@@ -284,7 +284,9 @@
               <button
                 type="button"
                 class="btn btnGray w140"
-                disabled={!selectedPlan || planReports?.v_excel?.length == 0}
+                disabled={!selectedPlan ||
+                  !planReports?.v_excel ||
+                  planReports?.v_excel?.length == 0}
                 on:click={() =>
                   deleteReport({
                     plan_index: selectedPlan,
@@ -339,7 +341,9 @@
               <button
                 type="button"
                 class="btn btnGray w140"
-                disabled={!selectedPlan || planReports?.v_word?.length == 0}
+                disabled={!selectedPlan ||
+                  !planReports?.v_word ||
+                  planReports?.v_word?.length == 0}
                 on:click={() =>
                   deleteReport({
                     plan_index: selectedPlan,

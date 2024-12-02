@@ -118,7 +118,7 @@
         modalData = resultStatus?.assets_info;
       }}
     >
-      등록현황조회
+      등록현황조회 ({resultStatus?.assets_info?.length})
     </button>
     <button
       type="button"
@@ -129,7 +129,7 @@
         modalErrorData = resultErrors;
       }}
     >
-      에러내역확인
+      에러내역확인 ({resultErrors?.length})
     </button>
   </div>
 </article>

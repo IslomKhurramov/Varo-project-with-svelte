@@ -413,8 +413,15 @@
 
       if (response.RESULT === "OK") {
         // console.log(response);
-        successAlert("자산이 등록 승인 처리되었습니다");
 
+        let successMessage = "";
+        if (newApproveStatus === 1) {
+          successMessage = "자산이 등록 승인 처리되었습니다"; // Approved
+        } else {
+          successMessage = "자산 등록 승인이 거부되었습니다"; // Rejected
+        }
+
+        successAlert(successMessage);
         // Update the asset's approval status in the store
         allAssetList.update((assets) => {
           return assets.map((a) => {

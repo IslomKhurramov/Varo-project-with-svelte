@@ -27,6 +27,7 @@
   import axios from "axios";
   import { derived } from "svelte/store";
   import { serverApi } from "../../lib/config";
+  import { filter } from "d3";
 
   let currentView = "default";
   let currentPage = null;
@@ -43,7 +44,8 @@
   let searchedResult = [];
   let showSearchResult = false;
   let showGetPlanHeader = false;
-  let assetOs = "";
+  let hostName = "";
+  let ipAdress = "";
   let assetHost = "전체";
   let showSwiperComponent = false;
   let selectedUUID = [];
@@ -68,72 +70,73 @@
       loading = false;
     }
   }
-  let splitAssets = [];
+
   // onMount to initialize assets
   onMount(async () => {
     await assetGroupList(); // Only fetch asset groups
     // Don't call filterAssets here, just populate with initial data
-    // if ($allAssetList && $allAssetList.length > 0) {
-    //   filteredAssets = [...$allAssetList]; // Set initial assets if available
-    // }
+    if ($allAssetList && $allAssetList.length > 0) {
+      filteredAssets = [...$allAssetList]; // Set initial assets if available
+    }
   });
 
-  // Function to split assets by their target types
-  function splitAssetsByTarget(assets) {
-    // Ensure assets is a valid array
-    if (!Array.isArray(assets)) {
-      console.error("assets is not an array:", assets);
-      return [];
-    }
+  // // Function to split assets by their target types
+  // function splitAssetsByTarget(assets) {
+  //   // Ensure assets is a valid array
+  //   if (!Array.isArray(assets)) {
+  //     console.error("assets is not an array:", assets);
+  //     return [];
+  //   }
 
-    return assets.flatMap((asset) => {
-      // Ensure asset and its assessment_target_system exist
-      if (!asset || !Array.isArray(asset.assessment_target_system)) {
-        // console.warn(
-        //   "Invalid asset or missing assessment_target_system:",
-        //   asset,
-        // );
-        return []; // Skip invalid assets
-      }
+  //   return assets.flatMap((asset) => {
+  //     // Ensure asset and its assessment_target_system exist
+  //     if (!asset || !Array.isArray(asset.assessment_target_system)) {
+  //       // console.warn(
+  //       //   "Invalid asset or missing assessment_target_system:",
+  //       //   asset,
+  //       // );
+  //       return []; // Skip invalid assets
+  //     }
 
-      // Split each target into its own object
-      return asset.assessment_target_system.map((target) => {
-        return {
-          ...asset, // Copy all other properties
-          assessment_target_system: [target], // Include only the current target
-        };
-      });
-    });
-  }
+  //     // Split each target into its own object
+  //     return asset.assessment_target_system.map((target) => {
+  //       return {
+  //         ...asset, // Copy all other properties
+  //         assessment_target_system: [target], // Include only the current target
+  //       };
+  //     });
+  //   });
+  // }
 
   // Filter assets based on selected criteria
   function filterAssets() {
-    // First, split all assets based on their assessment_target_system
-    let splitAssets = splitAssetsByTarget($allAssetList);
-
-    if (
+    // Check if all criteria are "전체" and hostName/ipAdress are empty
+    const isDefaultCriteria =
       selectedGroup === "전체" &&
       asset_ostype === "전체" &&
       assetTargetReg === "전체" &&
-      assetAcitve === "전체"
-    ) {
-      // If all criteria are "전체", return all assets (splitAssets)
-      filteredAssets = splitAssets; // Assign splitAssets directly to filteredAssets
+      assetAcitve === "전체" &&
+      (!hostName || !hostName.trim()) &&
+      (!ipAdress || !ipAdress.trim());
+
+    // If all criteria are "전체" and no inputs, show all assets
+    if (isDefaultCriteria) {
+      filteredAssets = $allAssetList; // Reset to all assets
       return filteredAssets;
     }
 
-    // Apply filtering logic to splitAssets
-    filteredAssets = splitAssets.filter((asset) => {
+    // Apply the filtering logic when criteria are set
+    filteredAssets = $allAssetList.filter((asset) => {
       const groupCondition =
         selectedGroup === "전체" ||
         (Array.isArray(asset.asset_group) &&
           asset.asset_group.some((group) => group.asg_index === selectedGroup));
 
       const ostypeCondition =
-        asset_ostype === "전체" || // Allow all assets when "전체" is selected
-        (Array.isArray(asset.assessment_target_system) && // Ensure it's an array
-          asset.assessment_target_system.some(
-            (system) => Object.keys(system).some((key) => key === asset_ostype), // Check if the key matches asset_ostype
+        asset_ostype === "전체" ||
+        (Array.isArray(asset.assessment_target_system) &&
+          asset.assessment_target_system.some((system) =>
+            Object.keys(system).some((key) => key === asset_ostype),
           ));
 
       const targetRegCondition =
@@ -141,27 +144,51 @@
         asset.asset_target_registered === assetTargetReg;
 
       const activeCondition =
-        assetAcitve === "전체" || asset.ast_activate === !!Number(assetAcitve);
+        assetAcitve === "전체" ||
+        asset.ass_uuid__ast_activate === !!Number(assetAcitve);
 
-      const hostCondition = isNotFiltered(asset.ast_hostname, assetHost);
+      // Conditions for hostName and ipAdress filtering
+      const hostNameCondition =
+        !hostName.trim() ||
+        (asset.ass_uuid__ast_hostname &&
+          asset.ass_uuid__ast_hostname
+            .toLowerCase()
+            .includes(hostName.toLowerCase().trim()));
+
+      const ipAdressCondition =
+        !ipAdress.trim() ||
+        (asset.ass_uuid__ast_ipaddr &&
+          asset.ass_uuid__ast_ipaddr.startsWith(ipAdress.trim()));
 
       return (
         groupCondition &&
         ostypeCondition &&
         targetRegCondition &&
         activeCondition &&
-        hostCondition
+        hostNameCondition &&
+        ipAdressCondition
       );
     });
 
     return filteredAssets;
   }
+  let debounceTimeout;
+  function filterAssetsWithDebounce() {
+    clearTimeout(debounceTimeout);
 
+    debounceTimeout = setTimeout(() => {
+      filterAssets();
+    }, 300); // Delay the filter by 300ms after typing stops
+  }
+
+  $: console.log("Filtered Assets:", filteredAssets);
+
+  $: console.log("ip", ipAdress, hostName);
   // Helper function to check if a value is not filtered
   function isNotFiltered(value, filter) {
     return !filter || filter === "전체" || value === filter;
   }
-
+  $: filterAssets();
   // Function to update the filtered assets in the parent component or elsewhere
   function updateFilteredAssets(updatedAssets) {
     filteredAssets = updatedAssets;
@@ -203,6 +230,9 @@
     }
     showSwiperComponent = false;
     filterAssets(); // Apply filtering
+  }
+  function closeAssetManagement() {
+    currentPage = null;
   }
   function resetFilters() {
     // Reset filters to their default values
@@ -728,6 +758,20 @@
                 <option value="1">활동적인</option>
                 <option value="0">비활성</option>
               </select>
+              <input
+                on:input={filterAssetsWithDebounce}
+                type="text"
+                bind:value={hostName}
+                placeholder="호스트명..."
+                class="custom-placeholder"
+              />
+              <input
+                on:input={filterAssetsWithDebounce}
+                type="text"
+                bind:value={ipAdress}
+                placeholder="아이피 주소..."
+                class="custom-placeholder"
+              />
             {:else}
               <GetLogHeader
                 {searchFilters}
@@ -787,6 +831,13 @@
                 class="btn btnPrimary padding_button"
                 on:click={closeSwiper}>돌아가기</button
               >
+            {:else if currentPage === AssetManagement}
+              <button
+                class="btn btnPrimary padding_button"
+                on:click={closeAssetManagement}
+              >
+                돌아가기
+              </button>
             {/if}
           </div>
         </section>
@@ -859,6 +910,9 @@
 <style>
   .sideMenu .btnWrap .btn:hover img {
     filter: brightness(0) invert(1);
+  }
+  .custom-placeholder::placeholder {
+    color: #888888; /* Change this to the color you want */
   }
   .modal-open-wrap {
     display: block;

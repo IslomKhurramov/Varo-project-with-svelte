@@ -90,7 +90,11 @@
 
       // Check if the asset matches the selected OSType
       const ostypeCondition =
-        asset_ostype === "전체" || asset.ass_uuid__ast_ostype === asset_ostype;
+        asset_ostype === "전체" || // Allow all assets when "전체" is selected
+        (Array.isArray(asset.assessment_target_system) && // Ensure it's an array
+          asset.assessment_target_system.some(
+            (system) => Object.keys(system).some((key) => key === asset_ostype), // Check if the key matches asset_ostype
+          ));
 
       return groupCondition && hostCondition && ostypeCondition;
     });
@@ -329,15 +333,23 @@
               </select>
 
               <!-- Select for ast_ostype -->
-              <select bind:value={asset_ostype} on:change={handleFilter2}>
-                <option value="전체" selected>전체</option>
-                {#each $allAssetList as asset}
-                  {#if asset.ass_uuid__ast_ostype !== ""}
-                    <option value={asset.ass_uuid__ast_ostype}>
-                      {asset.ass_uuid__ast_ostype}
-                    </option>
-                  {/if}
-                {/each}
+              <select
+                name="asset_group"
+                id="asset_group"
+                bind:value={asset_ostype}
+                on:change={handleFilter2}
+              >
+                <option value="전체" selected>전체 </option>
+
+                <option value="UNIX">UNIX</option>
+                <option value="WINDOWS">WINDOWS</option>
+                <option value="PC">PC</option>
+                <option value="NETWORK">NETWORK</option>
+                <option value="DBMS">DBMS</option>
+                <option value="WEB">WEB</option>
+                <option value="WAS">WAS</option>
+                <option value="CLOUD">CLOUD</option>
+                <option value="SECURITY">SECURITY</option>
               </select>
 
               <button

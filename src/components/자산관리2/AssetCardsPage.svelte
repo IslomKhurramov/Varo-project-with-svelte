@@ -247,7 +247,7 @@
     try {
       const response = await setAssetGroupChange(
         uuid_asset,
-        asset_group_index,
+        asset_group_index || "",
         selectedGroupIndex,
         moving_option,
       );
@@ -474,7 +474,7 @@
               <div>
                 <div
                   class="circle"
-                  data-percent={asset.ass_uuid__asset_point_history?.[0]
+                  data-percent={asset.asset_point_history?.[0]
                     ?.ast_security_point || 0}
                   data-offset="440"
                 >
@@ -493,16 +493,15 @@
                       cy="75"
                       r="70"
                       stroke={getStrokeColor(
-                        asset.asset_point_history?.[0]
-                          ?.ass_uuid__ast_security_point || 0,
+                        asset.asset_point_history?.[0]?.ast_security_point || 0,
                       )}
                       stroke-width="10"
                       fill="none"
                       stroke-dasharray="440"
                       stroke-dashoffset={440 -
                         (440 *
-                          (asset.asset_point_history?.[0]
-                            ?.ass_uuid__ast_security_point || 0)) /
+                          (asset.asset_point_history?.[0]?.ast_security_point ||
+                            0)) /
                           100}
                       stroke-linecap="round"
                       transform="rotate(-90 75 75)"
@@ -513,18 +512,18 @@
                     <span
                       class="number pointColor"
                       style="color: {getStrokeColor(
-                        asset.asset_point_history?.[0]
-                          ?.ass_uuid__ast_security_point || 0,
+                        asset.asset_point_history?.[0]?.ast_security_point || 0,
                       )};"
                     >
-                      {asset.asset_point_history?.[0]
-                        ?.ass_uuid__ast_security_point > 0
-                        ? asset.asset_point_history?.[0]
-                            ?.ass_uuid__ast_security_point
+                      {asset.asset_point_history?.[0]?.ast_security_point > 0
+                        ? asset.asset_point_history?.[0]?.ast_security_point
                         : 0}%
                     </span>
                   </div>
                 </div>
+                <!-- <div class="pop-up">
+                  {}
+                </div> -->
                 {#if selectedGroupName}
                   <h4 class="name">
                     {selectedGroupName}
@@ -565,38 +564,39 @@
                     ? "설치됨"
                     : "설치 안됨"}
                 </li>
+                <div>
+                  {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 1}
+                    <li
+                      style="line-height: 23px; max-height:70px; overflow-y:auto;"
+                    >
+                      <span>관련 그룹:</span>
 
-                {#if Array.isArray(asset.asset_group) && asset.asset_group.length > 1}
-                  <li
-                    style="line-height: 23px; max-height:70px; overflow-y:70px;"
-                  >
-                    <span>관련 그룹:</span>
+                      {#if asset.asset_group.length > 1}
+                        {#each asset.asset_group as group, groupIndex}
+                          <!-- Exclude the selected group from the remaining groups -->
+                          {#if group.asg_index !== selectedGroup}
+                            {group.asg_index__asg_title || "제목 없음"}
 
-                    {#if asset.asset_group.length > 1}
-                      {#each asset.asset_group as group, groupIndex}
-                        <!-- Exclude the selected group from the remaining groups -->
-                        {#if group.asg_index !== selectedGroup}
-                          {group.asg_index__asg_title || "제목 없음"}
-
-                          <!-- Add a comma between titles except for the last one -->
-                          {#if groupIndex < asset.asset_group.length - 1}
-                            ,
+                            <!-- Add a comma between titles except for the last one -->
+                            {#if groupIndex < asset.asset_group.length - 1}
+                              ,
+                            {/if}
                           {/if}
-                        {/if}
-                      {/each}
-                    {/if}
-                  </li>
-                {:else if asset.asset_group === "NO_ASSESSMENT"}
-                  <li>
-                    <span>관련 그룹:</span>
-                    그룹에 등록되지 않았습니다
-                  </li>
-                {:else if Array.isArray(asset.asset_group) && asset.asset_group.length === 1}
-                  <li>
-                    <span>관련 그룹:</span>
-                    없음
-                  </li>
-                {/if}
+                        {/each}
+                      {/if}
+                    </li>
+                  {:else if asset.asset_group === "NO_ASSESSMENT"}
+                    <li>
+                      <span>관련 그룹:</span>
+                      그룹에 등록되지 않았습니다
+                    </li>
+                  {:else if Array.isArray(asset.asset_group) && asset.asset_group.length === 1}
+                    <li>
+                      <span>관련 그룹:</span>
+                      없음
+                    </li>
+                  {/if}
+                </div>
               </ul>
             </div>
             {#if asset.asset_target_registered === "YES"}
@@ -794,6 +794,18 @@
     align-items: center;
     position: relative;
     width: 107px;
+    position: relative;
+  }
+  .pop-up {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    overflow-y: auto;
+    border-radius: 5px;
+    background-color: #fff;
+    margin-top: -160px;
+    margin-left: 95px;
+    border: 1px solid;
   }
   .dialog2 {
     width: 100%;

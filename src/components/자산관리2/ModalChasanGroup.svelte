@@ -14,6 +14,7 @@
       const response = await getAssetRegisterStatus(current_day);
 
       if (response.RESULT === "OK") {
+        console.log("response", response);
         assetRegisterStatus.set(response.CODE); // Save the entire CODE object
       }
     } catch (err) {}
@@ -27,7 +28,7 @@
   });
   /**************************************************************************/
   function check() {}
-
+  $: console.log("current_day", current_day);
   const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
   // Draw the bar chart

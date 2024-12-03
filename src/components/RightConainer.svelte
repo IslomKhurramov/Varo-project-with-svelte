@@ -598,11 +598,35 @@
                       <td class="text-center">
                         {project.plan_planer_info__user_name}
                       </td>
-                      <td class="text-center">
-                        <span class="badge badgePrimary">
+                      <td class="text-center" style="position: relative;">
+                        <span
+                          class="badge badgePrimary"
+                          style="width: 47px;"
+                          on:click={(e) => {
+                            e.stopPropagation();
+                            toggleTooltip(e);
+                          }}
+                        >
                           {project?.ccp_b_finalized ? "완료" : "진행 중"}
                         </span>
-                        <!-- <div class="tableSummary">(18/28대, 78% 결과 수집)</div> -->
+                        <div
+                          class="tooltip-modal"
+                          style="display: none; margin-top: 5px; width: 78px; border: none; background: none;box-shadow: none;"
+                          on:click={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <span
+                            class="badge badgePrimary"
+                            style="width: 47px;"
+                            on:click={(e) => {
+                              e.stopPropagation();
+                              clickSecyurityPoint(project.ccp_index);
+                            }}
+                          >
+                            {project?.ccp_b_finalized ? "진행 중" : "완료"}
+                          </span>
+                        </div>
                       </td>
                       <td class="text-center">
                         {moment(project?.plan_start_date).format("YYYY MM DD")} ~

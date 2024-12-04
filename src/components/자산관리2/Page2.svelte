@@ -743,8 +743,8 @@
                 on:change={handleFilter}
               >
                 <option value="전체" selected>전체</option>
-                <option value="YES">등록승인</option>
-                <option value="NO">등록 해제</option>
+                <option value="YES">사용함</option>
+                <option value="NO">사용안함</option>
               </select>
 
               <!-- Activation Status Filter -->

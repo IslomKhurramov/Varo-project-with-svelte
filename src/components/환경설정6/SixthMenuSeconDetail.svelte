@@ -109,10 +109,7 @@
                     on:change={(event) =>
                       handleFileSelect(event, data.hostname)}
                   />
-                  <img
-                    src="./assets/images/icon/download.svg"
-                    class="excel-img"
-                  />
+                  <img src="./assets/images/download.svg" class="excel-img" />
                   <span>파일업로드</span>
                 </label>
                 <input

@@ -359,6 +359,22 @@
     }
   }
   // $: console.log("selectedGroup", selectedGroup);
+  let hoveredIndex = null; // Tracks which index is currently hovered
+  let hideTimeout = null;
+  // Show the pop-up for a specific index
+  function setHovered(index) {
+    clearTimeout(hideTimeout); // Cancel any scheduled hiding
+    hoveredIndex = index; // Set the hovered index
+  }
+
+  // Schedule the pop-up to hide after a short delay
+  function clearHovered(index) {
+    hideTimeout = setTimeout(() => {
+      if (hoveredIndex === index) {
+        hoveredIndex = null;
+      }
+    }, 200); // Delay in milliseconds
+  }
 </script>
 
 {#if !showSwiperComponent}
@@ -507,7 +523,11 @@
                       transform="rotate(-90 75 75)"
                     />
                   </svg>
-                  <div class="percent">
+                  <div
+                    class="percent"
+                    on:mouseenter={() => setHovered(index)}
+                    on:mouseleave={() => clearHovered(index)}
+                  >
                     <div class="title">보안점수</div>
                     <span
                       class="number pointColor"
@@ -520,10 +540,44 @@
                         : 0}%
                     </span>
                   </div>
+                  {#if hoveredIndex === index}
+                    <div
+                      class="pop-up"
+                      on:click|stopPropagation
+                      on:mouseenter={() => setHovered(index)}
+                      on:mouseleave={() => clearHovered(index)}
+                    >
+                      <p>보안점수기록</p>
+                      {#if asset.asset_point_history && Array.isArray(asset.asset_point_history)}
+                        {#if asset.asset_point_history.length > 0}
+                          {#each asset.asset_point_history as point, index}
+                            {#if index !== 0}
+                              <!-- Skip the 0th index -->
+                              <div class="security-record">
+                                <div class="security-info">
+                                  <span class="security-index">
+                                    {asset.asset_point_history.length - index}.
+                                  </span>
+                                  <span class="security-point">
+                                    보안점수:
+                                    {#if point.ast_security_point < 0}
+                                      0%
+                                    {:else}
+                                      {point.ast_security_point}%
+                                    {/if}
+                                  </span>
+                                </div>
+                              </div>
+                            {/if}
+                          {/each}
+                        {:else}
+                          <div>보안 점수 기록이 없습니다.</div>
+                        {/if}
+                      {/if}
+                    </div>
+                  {/if}
                 </div>
-                <!-- <div class="pop-up">
-                  {}
-                </div> -->
+
                 {#if selectedGroupName}
                   <h4 class="name">
                     {selectedGroupName}
@@ -796,17 +850,66 @@
     width: 107px;
     position: relative;
   }
+
   .pop-up {
-    position: absolute;
-    width: 130px;
-    height: 130px;
-    overflow-y: auto;
-    border-radius: 5px;
     background-color: #fff;
-    margin-top: -160px;
-    margin-left: 95px;
-    border: 1px solid;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    margin: 20px auto;
+    font-family: "Arial", sans-serif;
+    color: #333;
+    margin-top: -172px;
+    margin-left: 262px;
+    position: absolute;
+    max-height: 120px;
+    overflow-y: auto;
+    text-align: center;
   }
+  .pop-up p {
+    margin-bottom: 5px;
+  }
+  .security-record {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+  }
+
+  .security-record:hover {
+    background-color: #f0f0f0;
+  }
+
+  .security-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .security-index {
+    font-weight: bold;
+    color: #2a3d66;
+  }
+
+  .security-point {
+    font-weight: normal;
+    color: #2a313a;
+    font-weight: bold;
+  }
+
+  .remaining-score {
+    font-size: 14px;
+    color: #ff5722; /* Highlight remaining points with a red color */
+    font-weight: bold;
+    margin-top: 5px;
+  }
+
   .dialog2 {
     width: 100%;
     height: auto;

@@ -206,6 +206,9 @@
   const toggleCardsVisibility = () => {
     showCards = !showCards;
   };
+  let uniqueHostnames = Array.from(
+    new Set($allAssetList.map((asset) => asset.ass_uuid__ast_hostname)),
+  );
 </script>
 
 <form
@@ -325,10 +328,8 @@
                 on:change={handleFilter2}
               >
                 <option value="전체" selected>전체</option>
-                {#each $allAssetList as asset}
-                  <option value={asset.ass_uuid__ast_hostname}>
-                    {asset.ass_uuid__ast_hostname}
-                  </option>
+                {#each uniqueHostnames as asset}
+                  <option value={asset}>{asset}</option>
                 {/each}
               </select>
 
@@ -425,6 +426,20 @@
 </form>
 
 <style>
+  label.file-label {
+    background-color: #f2f2f2; /* Primary blue */
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    /* font-weight: bold; */
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+     */
+    border: 1px solid rgba(0, 0, 0, 0.25);
+  }
   .secondLine {
     display: flex;
     flex-direction: row;

@@ -218,6 +218,10 @@
       errorAlert(error?.message);
     }
   };
+
+  $: {
+    console.log("endData:", endDate);
+  }
 </script>
 
 <div class="contentsWrap">
@@ -360,6 +364,12 @@
                   type="datetime-local"
                   class="datepicker"
                   placeholder="종료일시"
+                  on:change={(e) => {
+                    if (new Date(e.target.value) < new Date(startDate)) {
+                      errorAlert("종료 일자가 시작 일자보다 빠릅니다");
+                      endDate = "";
+                    }
+                  }}
                   bind:value={endDate}
                 />
               </div>
@@ -458,6 +468,12 @@
                   type="date"
                   class="datepicker"
                   placeholder="종료일시"
+                  on:change={(e) => {
+                    if (new Date(e.target.value) < new Date(actionStartDate)) {
+                      errorAlert("종료 일자가 시작 일자보다 빠릅니다");
+                      actionEndDate = "";
+                    }
+                  }}
                   bind:value={actionEndDate}
                 />
               </div>
@@ -815,6 +831,15 @@
                     type="datetime-local"
                     class="datepicker"
                     placeholder="종료일시"
+                    on:change={(e) => {
+                      if (
+                        new Date(e.target.value) <
+                        new Date(assetInsertData.start_date)
+                      ) {
+                        errorAlert("종료 일자가 시작 일자보다 빠릅니다");
+                        assetInsertData.end_date = "";
+                      }
+                    }}
                     bind:value={assetInsertData.end_date}
                   />
                 </div>

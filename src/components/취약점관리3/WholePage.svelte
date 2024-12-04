@@ -429,6 +429,17 @@
                               type="date"
                               class="datepicker"
                               placeholder="종료일시"
+                              on:change={(e) => {
+                                if (
+                                  new Date(e.target.value) <
+                                  new Date(sendFixDone["fixed_start_date"])
+                                ) {
+                                  errorAlert(
+                                    "종료 일자가 시작 일자보다 빠릅니다",
+                                  );
+                                  sendFixDone["fixed_end_date"] = "";
+                                }
+                              }}
                               bind:value={sendFixDone["fixed_end_date"]}
                             />
                           </div>
@@ -841,6 +852,19 @@
                               type="date"
                               class="datepicker"
                               placeholder="종료일시"
+                              on:change={(e) => {
+                                if (
+                                  new Date(e.target.value) <
+                                  new Date(
+                                    sendPlanRegisterData["fix_start_date"],
+                                  )
+                                ) {
+                                  errorAlert(
+                                    "종료 일자가 시작 일자보다 빠릅니다",
+                                  );
+                                  sendPlanRegisterData["fix_end_date"] = "";
+                                }
+                              }}
                               bind:value={sendPlanRegisterData["fix_end_date"]}
                             />
                           </div>

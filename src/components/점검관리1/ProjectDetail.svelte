@@ -211,9 +211,11 @@
   });
 
   const calculatePercentage = (projectDetails) => {
-    if (!projectDetails?.target_securitypoint?.length) return 0;
+    // if (!projectDetails?.uploaded_status?.length) return 0;
     const percentage = Math.min(
-      (projectDetails.target_securitypoint.length / 6) * 100,
+      (projectDetails?.uploaded_status?.uploaded_asset_count /
+        projectDetails?.uploaded_status?.total_asset_count) *
+        100,
       100,
     );
     return Math.round(percentage);

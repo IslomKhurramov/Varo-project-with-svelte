@@ -97,7 +97,7 @@
         recheck_pno: projectDetails?.recheck_pno,
         ccp_ruleset: projectDetails?.ccp_ruleset,
         asg_index: projectDetails?.asg_index,
-        plan_planer_info: projectDetails?.plan_creator_user_index_id,
+        plan_planer_info: projectDetails?.plan_planer_info_id,
         plan_start_date: toInputDateTime(projectDetails?.plan_start_date),
         plan_end_date: toInputDateTime(projectDetails?.plan_end_date),
         plan_execution_type: projectDetails?.plan_execution_type ? 1 : 0,

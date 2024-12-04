@@ -97,7 +97,7 @@
         recheck_pno: projectDetails?.recheck_pno,
         ccp_ruleset: projectDetails?.ccp_ruleset,
         asg_index: projectDetails?.asg_index,
-        plan_planer_info: projectDetails?.plan_creator_user_index_id,
+        plan_planer_info: projectDetails?.plan_planer_info_id,
         plan_start_date: toInputDateTime(projectDetails?.plan_start_date),
         plan_end_date: toInputDateTime(projectDetails?.plan_end_date),
         plan_execution_type: projectDetails?.plan_execution_type ? 1 : 0,
@@ -211,9 +211,11 @@
   });
 
   const calculatePercentage = (projectDetails) => {
-    if (!projectDetails?.target_securitypoint?.length) return 0;
+    // if (!projectDetails?.uploaded_status?.length) return 0;
     const percentage = Math.min(
-      (projectDetails.target_securitypoint.length / 6) * 100,
+      (projectDetails?.uploaded_status?.uploaded_asset_count /
+        projectDetails?.uploaded_status?.total_asset_count) *
+        100,
       100,
     );
     return Math.round(percentage);
@@ -946,7 +948,7 @@
           <img src="./assets/images/close.svg" />
         </button>
       </div>
-      <div class="msg">변경저장할 경우 이전 정보가 모두 초기화됩니다.</div>
+      <div class="msg">변경저장 하시겠습니까?</div>
       <div class="flex bottom-buttons normal">
         <button
           type="button"

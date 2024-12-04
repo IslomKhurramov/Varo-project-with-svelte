@@ -246,7 +246,7 @@
         on:change={refetchDataHandler}
       >
         <option value="" selected>점검결과</option>
-        {#each ["양호", "취약", "수동점검", "예외처리", "해당없음"] as result}
+        {#each ["양호", "취약", "수동점검", "인터뷰", "예외처리", "해당없음"] as result}
           <option value={result}>{result}</option>
         {/each}
       </select>
@@ -339,7 +339,16 @@
                   {@html data.ccr_item_status}</td
                 >
                 <td class="text-center" style="font-size: 16px;">
-                  <span class="badge badgePrimary">
+                  <span
+                    class={`badge badgePrimary 
+                    ${data.ccr_item_result == "양호" ? "good" : ""} 
+                    ${data.ccr_item_result == "취약" ? "vulnerable" : ""} 
+                    ${data.ccr_item_result == "인터뷰" ? "interview" : ""} 
+                    ${data.ccr_item_result == "수동점검" ? "manual" : ""} 
+                    ${data.ccr_item_result == "해당없음" ? "not" : ""} 
+                    ${data.ccr_item_result == "예외처리" ? "exception" : ""} 
+                    `}
+                  >
                     {data.ccr_item_result}
                   </span>
                 </td>
@@ -387,6 +396,13 @@
                         selected={data?.ccr_item_result === "수동점검"}
                       >
                         수동점검
+                      </option>
+                      <option
+                        style="font-size: 16px;"
+                        value="인터뷰"
+                        selected={data?.ccr_item_result === "인터뷰"}
+                      >
+                        인터뷰
                       </option>
                       <option
                         style="font-size: 16px;"
@@ -512,5 +528,36 @@
   }
   .line-height {
     line-height: 23px;
+  }
+
+  .good {
+    color: #2ecc71;
+    background: none;
+    border-color: #2ecc71;
+  }
+  .vulnerable {
+    color: #e74c3c;
+    background: none;
+    border-color: #e74c3c;
+  }
+  .interview {
+    color: #f1c40f;
+    background: none;
+    border-color: #f1c40f;
+  }
+  .manual {
+    color: #e67e22;
+    background: none;
+    border-color: #e67e22;
+  }
+  .not {
+    color: #95a5a6;
+    background: none;
+    border-color: #95a5a6;
+  }
+  .exception {
+    color: #3498db;
+    background: none;
+    border-color: #3498db;
   }
 </style>

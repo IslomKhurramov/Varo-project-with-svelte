@@ -948,7 +948,7 @@
           <img src="./assets/images/close.svg" />
         </button>
       </div>
-      <div class="msg">변경저장할 경우 이전 정보가 모두 초기화됩니다.</div>
+      <div class="msg">변경저장 하시겠습니까?</div>
       <div class="flex bottom-buttons normal">
         <button
           type="button"

@@ -137,7 +137,9 @@
 
   <div class="graphCardWrap col3" style="width:100%;">
     {#if $traceByThird && $traceByThird.plans && $traceByThird.plans.length > 0}
-      {#each $traceByThird.plans as target, index}
+      {#each $traceByThird.plans
+        .slice()
+        .sort((a, b) => new Date(a.plan_start_date || 0) - new Date(b.plan_start_date || 0)) as target, index}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="iconCard">
           <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -283,9 +285,7 @@
               <td class="text-center line-height"
                 >{vuln.ccr_item_no__ccc_item_group}</td
               >
-              <td class="text-center line-height"
-                >{vuln.ccr_item_no__ccc_item_title}</td
-              >
+              <td class=" line-height">{vuln.ccr_item_no__ccc_item_title}</td>
               <td class="text-center line-height"
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >
@@ -566,8 +566,7 @@
   }
   .status-container {
     max-height: 120px; /* Set the maximum height for the content */
-    overflow-y: auto;
-    overflow-x: hidden; /* Allow scrolling only if content exceeds the height */
+
     padding: 0;
     margin: 0;
   }

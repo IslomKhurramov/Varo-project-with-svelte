@@ -25,7 +25,9 @@
     <p class="header_title">{asset.asg_title}</p>
     <div class="graphCardWrap col3" style="width:100%;">
       {#if asset.plans && Array.isArray(asset.plans) && asset.plans.length > 0}
-        {#each asset.plans as plan, index (plan.ccp_index)}
+        {#each asset.plans
+          .slice()
+          .sort((a, b) => new Date(a.plan_start_date || 0) - new Date(b.plan_start_date || 0)) as plan, index (plan.ccp_index)}
           <div class="iconCard">
             <article class="graphCard hoverCard" style="height: 400px;">
               <div class="contents">

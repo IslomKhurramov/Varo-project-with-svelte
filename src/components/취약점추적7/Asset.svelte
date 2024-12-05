@@ -139,7 +139,9 @@
   <p class="header_title">자산 : 자산3와 관련된 취약점 추적</p>
   <div class="graphCardWrap col3" style="width:100%;">
     {#if $selectedPlan.length > 0}
-      {#each $selectedPlan as plan, index}
+      {#each $selectedPlan
+        .slice()
+        .sort((a, b) => new Date(a.plan_start_date || 0) - new Date(b.plan_start_date || 0)) as plan, index}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="iconCard">
           <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -283,9 +285,7 @@
               <td class="text-center line-height"
                 >{vuln.ccr_item_no__ccc_item_group}</td
               >
-              <td class="text-center line-height"
-                >{vuln.ccr_item_no__ccc_item_title}</td
-              >
+              <td class="line-height">{vuln.ccr_item_no__ccc_item_title}</td>
               <td class="text-center line-height"
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >

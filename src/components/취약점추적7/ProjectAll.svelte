@@ -23,7 +23,10 @@
 
 <div class="containerAsset">
   <div class="graphCardWrap col3" style="width:100%;">
-    {#each $allTraceByPlan as asset, index}
+    {#each $allTraceByPlan
+      .slice()
+      .sort((a, b) => new Date(a.plan_start_date || 0) - new Date(b.plan_start_date || 0))
+      .slice(0, 5) as asset, index}
       <div class="iconCard">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <article class="graphCard hoverCard" style="min-height: 628px;">

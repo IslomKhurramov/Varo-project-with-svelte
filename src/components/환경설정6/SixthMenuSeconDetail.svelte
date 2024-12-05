@@ -88,20 +88,6 @@
                   class="btn btnPrimary"
                   style="display: flex; flex-direction:row; gap:10px; width:170px;"
                 >
-                  <label
-                    class="btn btnPrimary"
-                    style="display: flex; flex-direction:row; gap:10px; width:170px;"
-                  >
-                    <input
-                      type="file"
-                      class="file-input"
-                      data-index={index}
-                      on:change={(event) =>
-                        handleFileSelect(event, data.hostname)}
-                    />
-                    <img src="./assets/images/download.svg" class="excel-img" />
-                    <span>파일업로드</span>
-                  </label>
                   <input
                     type="file"
                     class="file-input"

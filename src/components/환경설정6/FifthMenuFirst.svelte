@@ -78,11 +78,11 @@
   });
 </script>
 
-<!-- {#if loading}
+{#if loading}
   <div class="loading-overlay">
     <div class="loading-spinner"></div>
   </div>
-{/if} -->
+{/if}
 
 <article class="tableWrap_4">
   <div class="tableListWrap">

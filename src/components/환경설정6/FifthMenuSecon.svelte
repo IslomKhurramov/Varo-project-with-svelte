@@ -267,6 +267,11 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
+  table tbody tr:hover td {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+
   .no-data-message {
     text-align: center;
     font-size: 18px;

@@ -33,7 +33,6 @@
       logData = response.data.sort((a, b) => b.his_index - a.his_index);
       totalItems = response?.total_rec_cnt || 0;
       totalPages = Math.ceil(totalItems / itemsPerPage);
-
     } catch (err) {
       error = err.message;
     }
@@ -144,7 +143,6 @@
   </div>
 
   <div>
-
     <div class="pagination_box">
       <nav class="pagination">
         <!-- First Page Button -->
@@ -256,6 +254,11 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   }
 
+  table tbody tr:hover td {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+
   .no-data-message {
     text-align: center;
     font-size: 18px;
@@ -263,7 +266,6 @@
     height: 50px;
     line-height: 50px; /* Yozuvni vertikal markazlash uchun */
   }
-
 
   .pagination_box {
     display: flex;

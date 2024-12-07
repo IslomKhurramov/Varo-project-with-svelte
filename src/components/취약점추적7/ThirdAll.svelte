@@ -70,7 +70,9 @@
 </script>
 
 <div class="containerAsset">
-  {#each $allTraceByThird as asset}
+  {#each $allTraceByThird
+    .slice()
+    .sort((a, b) => new Date(a.plan_start_date || 0) - new Date(b.plan_start_date || 0)) as asset}
     <p class="header_title">{asset.cct_target}</p>
     <div class="graphCardWrap col3" style="width:100%;">
       {#if asset.plans && Array.isArray(asset.plans) && asset.plans.length > 0}

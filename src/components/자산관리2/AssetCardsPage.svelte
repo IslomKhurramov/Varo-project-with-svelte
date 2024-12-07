@@ -23,6 +23,7 @@
   import axios from "axios";
   import { serverApi } from "../../lib/config";
   import Swiper from "./Swiper.svelte";
+  import moment from "moment";
 
   /*************************/
   export let baseIndex;
@@ -375,6 +376,17 @@
       }
     }, 200); // Delay in milliseconds
   }
+  function formatKoreanDateTime(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const day = String(d.getDate()).padStart(2, "0");
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const seconds = String(d.getSeconds()).padStart(2, "0");
+
+    return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+  }
 </script>
 
 {#if !showSwiperComponent}
@@ -551,24 +563,24 @@
                       {#if asset.asset_point_history && Array.isArray(asset.asset_point_history)}
                         {#if asset.asset_point_history.length > 0}
                           {#each asset.asset_point_history as point, index}
-                            {#if index !== 0}
-                              <!-- Skip the 0th index -->
-                              <div class="security-record">
-                                <div class="security-info">
-                                  <span class="security-index">
-                                    {asset.asset_point_history.length - index}.
-                                  </span>
-                                  <span class="security-point">
-                                    보안점수:
-                                    {#if point.ast_security_point < 0}
-                                      0%
-                                    {:else}
-                                      {point.ast_security_point}%
-                                    {/if}
-                                  </span>
-                                </div>
+                            <!-- Skip the 0th index -->
+                            <div class="security-record">
+                              <div class="security-info">
+                                <span class="security-index">
+                                  {asset.asset_point_history.length - index}.
+                                </span>
+                                <span class="security-point">
+                                  보안점수:
+                                  {#if point.ast_security_point < 0}
+                                    0%( {formatKoreanDateTime(point.ast_cdate)})
+                                  {:else}
+                                    {point.ast_security_point}%({formatKoreanDateTime(
+                                      point.ast_cdate,
+                                    )})
+                                  {/if}
+                                </span>
                               </div>
-                            {/if}
+                            </div>
                           {/each}
                         {:else}
                           <div>보안 점수 기록이 없습니다.</div>
@@ -665,6 +677,7 @@
                 <button
                   type="button"
                   class="btn w140 btnGray hoverbtn"
+                  style="margin-left: 5px;"
                   on:click|stopPropagation={() => {
                     showModal = true;
                     selectedAsset = asset;
@@ -856,7 +869,7 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 150px;
+    width: 350px;
     margin: 20px auto;
     font-family: "Arial", sans-serif;
     color: #333;
@@ -887,9 +900,10 @@
 
   .security-info {
     display: flex;
-    justify-content: space-between;
     font-size: 16px;
+    flex-direction: row;
     margin-bottom: 8px;
+    justify-content: flex-start;
   }
 
   .security-index {

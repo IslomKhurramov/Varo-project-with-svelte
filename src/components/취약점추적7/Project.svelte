@@ -136,7 +136,10 @@
   <p class="header_title">점검플랜 : 프로젝트3과 관련된 취약점 추적</p>
   <div class="graphCardWrap col3" style="width:100%;">
     {#if $traceByPlan.plans && $traceByPlan.plans.length > 0}
-      {#each $traceByPlan.plans as asset, index}
+      {#each $traceByPlan.plans
+        .slice()
+        .sort((a, b) => new Date(a.plan_start_date || 0) - new Date(b.plan_start_date || 0))
+        .slice(0, 5) as asset, index}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="iconCard">
           <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -284,9 +287,7 @@
               <td class="text-center line-height"
                 >{vuln.ccr_item_no__ccc_item_group}</td
               >
-              <td class="text-center line-height"
-                >{vuln.ccr_item_no__ccc_item_title}</td
-              >
+              <td class=" line-height">{vuln.ccr_item_no__ccc_item_title}</td>
               <td class="text-center line-height"
                 >{vuln.ccr_item_no__ccc_item_level}</td
               >

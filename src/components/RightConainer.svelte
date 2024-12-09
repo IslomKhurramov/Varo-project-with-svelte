@@ -601,7 +601,7 @@
                       <td class="text-center" style="position: relative;">
                         <span
                           class="badge badgePrimary"
-                          style="width: 47px;"
+                          style="width: 63px;"
                           on:click={(e) => {
                             e.stopPropagation();
                             toggleTooltip(e);
@@ -618,7 +618,7 @@
                         >
                           <span
                             class="badge badgePrimary"
-                            style="width: 47px;"
+                            style="width: 63px;"
                             on:click={(e) => {
                               e.stopPropagation();
                               clickSecyurityPoint(project.ccp_index);

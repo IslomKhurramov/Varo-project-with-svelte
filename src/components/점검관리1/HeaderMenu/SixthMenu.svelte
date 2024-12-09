@@ -93,101 +93,99 @@
   }
   /********************MANUAL DOWNLOAD***********************************/
   async function manualDownload() {
+    // Ensure $targetList exists and has items
     if ($targetList && $targetList.length > 0) {
-      // Validate $targetList
+      // Validate $targetList structure
       if (
         !$targetList ||
         !Array.isArray($targetList) ||
         $targetList.length === 0
       ) {
-        errorAlert("대상 목록이 비어 있거나 제대로 로드되지 않았습니다..");
+        errorAlert("대상 목록이 비어 있거나 제대로 로드되지 않았습니다.");
         return;
       }
 
-      // Validate target
+      // Ensure target is selected
       if (!target) {
         errorAlert("타겟이 선택되지 않았습니다.");
         return;
       }
+
       try {
+        // Send the request to the server with plan_index and target
         const response = await axios.post(
           `${serverApi}/api/getDownloadManualProgram/`,
-          { target: target },
-          { ccp_index: plan_index },
-          { responseType: "blob" },
+          { plan_index: plan_index, target: target }, // Ensure both values are passed together
+          { responseType: "blob", withCredentials: true }, // Expect binary data (e.g., XLSX, PDF)
         );
 
-        const contentType = response.headers["content-type"];
-        let fileExtension = "bin"; // Default extension for binary files
+        // Log the entire headers object for debugging
+        console.log("Response Headers:", response);
 
-        // Check content type and determine the appropriate file extension
-        if (contentType.includes("pdf")) {
-          fileExtension = "pdf";
-        } else if (
-          contentType.includes("excel") ||
-          contentType.includes("spreadsheetml")
-        ) {
-          fileExtension = "xlsx";
-        } else if (
-          contentType.includes("word") ||
-          contentType.includes("msword")
-        ) {
-          fileExtension = "docx";
-        } else if (contentType.includes("csv")) {
-          fileExtension = "csv";
-        } else if (contentType.includes("image")) {
-          if (contentType.includes("jpeg") || contentType.includes("jpg")) {
-            fileExtension = "jpg";
-          } else if (contentType.includes("png")) {
-            fileExtension = "png";
-          } else if (contentType.includes("gif")) {
-            fileExtension = "gif";
+        // If filename extraction is missing, generate a default filename
+        let originalFileName = `${target}_plan_${plan_index}.xlsx`; // Custom filename based on target and plan_index
+
+        // If Content-Disposition header is provided, extract filename
+        const contentDisposition = response.headers["content-disposition"];
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="([^"]+)"/);
+          if (fileNameMatch && fileNameMatch[1]) {
+            originalFileName = fileNameMatch[1]; // Extract filename from header
           }
-        } else if (contentType.includes("text")) {
-          fileExtension = "txt";
-        } else if (contentType.includes("zip")) {
-          fileExtension = "zip";
-        } else {
-          fileExtension = "bin"; // For unknown or unsupported formats, use a generic binary file
         }
 
+        console.log("Filename for download:", originalFileName);
+
+        // Create a Blob from the response data (binary data)
+        const contentType = response.headers["content-type"];
         const blob = new Blob([response.data], {
           type: contentType || "application/octet-stream",
         });
 
-        // Create a download link
+        // Prompt the user for a custom filename (defaults to the original filename)
+        const userFileName = prompt(
+          "Enter a file name (including extension):",
+          originalFileName,
+        );
+
+        // Use the user-provided filename or fallback to the original
+        const fileName = userFileName?.trim() || originalFileName;
+
+        // Create a URL for the blob
         const url = window.URL.createObjectURL(blob);
+
+        // Create an invisible anchor element to trigger the download
         const a = document.createElement("a");
         a.href = url;
+        a.download = fileName; // Set the filename for download
 
-        // Set the filename with the appropriate extension
-        const fileName = `report.${fileExtension}`;
-        a.download = fileName;
-
-        // Simulate a click to trigger the download
+        // Append the anchor to the body, trigger the click event, and remove the anchor
         document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
 
-        // Cleanup
-        a.remove();
+        // Cleanup the object URL
         window.URL.revokeObjectURL(url);
-        target = "";
+
+        // Reset the target
+        target = ""; // Clear target to avoid errors in future requests
       } catch (error) {
-        alert("An error occurred while downloading the report.");
+        console.error("Error during download:", error);
+        alert("An error occurred while downloading the file.");
         throw error;
       }
     } else {
-      errorAlert("Please select a atrget");
+      errorAlert("Please select a target");
     }
   }
+
   /*********************AUTO DOWNLOAD**************************************/
   async function autoDownload(data) {
     try {
       const response = await axios.post(
         `${serverApi}/api/getDownloadAutoProgram/`,
-        { cs_index: data.cs_index },
-        { ccp_index: plan_index },
-        { responseType: "blob" },
+        { plan_index: plan_index, cs_index: data.cs_index }, // Ensure proper payload structure
+        { responseType: "blob", withCredentials: true }, // Expect binary response
       );
 
       const contentType = response.headers["content-type"];
@@ -213,8 +211,6 @@
           fileExtension = "jpg";
         } else if (contentType.includes("png")) {
           fileExtension = "png";
-        } else if (contentType.includes("exe")) {
-          fileExtension = "exe";
         }
       } else if (contentType.includes("text")) {
         fileExtension = "txt";
@@ -224,6 +220,13 @@
         fileExtension = "bin"; // For unknown or unsupported formats, use a generic binary file
       }
 
+      // Ensure the filename includes the correct extension
+      let fileName = data.cs_filename;
+      if (!fileName.endsWith(`.${fileExtension}`)) {
+        fileName = `${fileName}.${fileExtension}`; // Add the file extension if it's missing
+      }
+
+      // Create a Blob from the response data (binary data)
       const blob = new Blob([response.data], {
         type: contentType || "application/octet-stream",
       });
@@ -232,10 +235,7 @@
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-
-      // Set the filename with the appropriate extension
-      const fileName = data.cs_filename;
-      a.download = fileName;
+      a.download = fileName; // Set the filename for download
 
       // Simulate a click to trigger the download
       document.body.appendChild(a);
@@ -247,9 +247,11 @@
       target = "";
     } catch (error) {
       alert("An error occurred while downloading the report.");
+      console.error(error); // Log the error for further troubleshooting
       throw error;
     }
   }
+
   // Ensure reactivity on listCount change
   $: listCount, fetchProgramList(); // Re-fetch data when listCount changes
 

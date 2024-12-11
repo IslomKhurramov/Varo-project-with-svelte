@@ -120,17 +120,14 @@
         );
 
         // Log the entire headers object for debugging
-        console.log("Response Headers:", response);
-
-        // If filename extraction is missing, generate a default filename
-        let originalFileName = `${target}_plan_${plan_index}.xlsx`; // Custom filename based on target and plan_index
-
+        console.log("Response :", response);
+        let originalFileName;
         // If Content-Disposition header is provided, extract filename
         const contentDisposition = response.headers["content-disposition"];
         if (contentDisposition) {
           const fileNameMatch = contentDisposition.match(/filename="([^"]+)"/);
           if (fileNameMatch && fileNameMatch[1]) {
-            originalFileName = fileNameMatch[1]; // Extract filename from header
+            originalFileName = decodeURIComponent(fileNameMatch[1]); // Use server-provided filename
           }
         }
 
@@ -184,8 +181,9 @@
     try {
       const response = await axios.post(
         `${serverApi}/api/getDownloadAutoProgram/`,
-        { plan_index: plan_index, cs_index: data.cs_index }, // Ensure proper payload structure
-        { responseType: "blob", withCredentials: true }, // Expect binary response
+        { cs_index: data.cs_index },
+        { plan_index: plan_index },
+        { responseType: "blob" },
       );
 
       const contentType = response.headers["content-type"];
@@ -211,6 +209,8 @@
           fileExtension = "jpg";
         } else if (contentType.includes("png")) {
           fileExtension = "png";
+        } else if (contentType.includes("exe")) {
+          fileExtension = "exe";
         }
       } else if (contentType.includes("text")) {
         fileExtension = "txt";
@@ -220,13 +220,6 @@
         fileExtension = "bin"; // For unknown or unsupported formats, use a generic binary file
       }
 
-      // Ensure the filename includes the correct extension
-      let fileName = data.cs_filename;
-      if (!fileName.endsWith(`.${fileExtension}`)) {
-        fileName = `${fileName}.${fileExtension}`; // Add the file extension if it's missing
-      }
-
-      // Create a Blob from the response data (binary data)
       const blob = new Blob([response.data], {
         type: contentType || "application/octet-stream",
       });
@@ -235,7 +228,10 @@
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = fileName; // Set the filename for download
+
+      // Set the filename with the appropriate extension
+      const fileName = data.cs_filename;
+      a.download = fileName;
 
       // Simulate a click to trigger the download
       document.body.appendChild(a);
@@ -247,7 +243,6 @@
       target = "";
     } catch (error) {
       alert("An error occurred while downloading the report.");
-      console.error(error); // Log the error for further troubleshooting
       throw error;
     }
   }

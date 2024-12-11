@@ -8,11 +8,12 @@
   import SecondMenu from "./HeaderMenu/SecondMenu.svelte";
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
+  import NinethMenu from "./HeaderMenu/ninethMenu.svelte";
 
   let currentView = "default";
   let currentPage = FirstMenu;
   let activeMenu = null;
-  let selectedProjectIndex = null; 
+  let selectedProjectIndex = null;
   let tabMenu = "시스템기본설정";
   let tab = null;
 
@@ -86,12 +87,21 @@
           로그분석
         </a>
       </li>
+
       <li class={tabMenu == "프로그램관리" && "active"}>
         <a
           href="javascript:void(0);"
           on:click={() => selectPage(SixthMenu, "프로그램관리")}
         >
           프로그램관리
+        </a>
+      </li>
+      <li class={tabMenu == "점검항목등록하기" && "active"}>
+        <a
+          href="javascript:void(0);"
+          on:click={() => selectPage(NinethMenu, "점검항목등록하기")}
+        >
+          점검항목등록하기
         </a>
       </li>
       <li class={tabMenu == "라이센스관리" && "active"}>

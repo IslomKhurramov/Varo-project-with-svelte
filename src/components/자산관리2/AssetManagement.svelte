@@ -137,9 +137,9 @@
   // Handle selection of individual assets and track their UUIDs
   function handleAssetSelection(asset, event) {
     if (event.target.checked) {
-      selectedAssets = [...selectedAssets, asset.ass_uuid];
+      selectedAssets = [...selectedAssets, asset.ast_uuid];
     } else {
-      selectedAssets = selectedAssets.filter((uuid) => uuid !== asset.ass_uuid);
+      selectedAssets = selectedAssets.filter((uuid) => uuid !== asset.ast_uuid);
     }
   }
 

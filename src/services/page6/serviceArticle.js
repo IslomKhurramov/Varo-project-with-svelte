@@ -402,3 +402,80 @@ export const getProgramList = async (params) => {
     throw error;
   }
 };
+/***************************************************** */
+
+export const getChecklistTargets = async () => {
+  try {
+    const response = await axios.get(`${serverApi}/api/getChecklistTargets/`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setChecklistTargetsAdd = async (keyword, fullname) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setChecklistTargetsAdd/`,
+      { keyword: keyword, fullname: fullname },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+export const setChecklistTargetsDelete = async (index) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setChecklistTargetsDelete/`,
+      { index: index },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setChecklistTargetsUpdate = async (index, keyword, fullname) => {
+  try {
+    const response = await axios.post(
+      `${serverApi}/api/setChecklistTargetsUpdate/`,
+      { index: index, keyword: keyword, fullname: fullname },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const data = response.data;
+
+    if (data.RESULT !== "ERROR") {
+      return data;
+    } else {
+      throw new Error(data.CODE);
+    }
+  } catch (error) {
+    throw error;
+  }
+};

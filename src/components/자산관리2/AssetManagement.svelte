@@ -175,7 +175,6 @@
         }
         filterAssets();
       } else {
-        console.log(response);
         throw new Error("Failed to register asset");
       }
     } catch (error) {

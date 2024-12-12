@@ -38,7 +38,6 @@
   onMount(() => {
     checkListTargetsFunction();
   });
-  $: console.log("targets", $checkListTargets);
   function closeModal() {
     showModal = false;
   }

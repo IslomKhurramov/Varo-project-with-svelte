@@ -120,7 +120,6 @@
         );
 
         // Log the entire headers object for debugging
-        console.log("Response :", response);
         let originalFileName;
         // If Content-Disposition header is provided, extract filename
         const contentDisposition = response.headers["content-disposition"];
@@ -130,8 +129,6 @@
             originalFileName = decodeURIComponent(fileNameMatch[1]); // Use server-provided filename
           }
         }
-
-        console.log("Filename for download:", originalFileName);
 
         // Create a Blob from the response data (binary data)
         const contentType = response.headers["content-type"];
@@ -262,7 +259,6 @@
     }
     if (page < 1 || page > totalPages) return; // Prevent out-of-bound navigation
     currentPage = page;
-    console.log(`Navigating to page: ${page}`);
     // Add additional logic to fetch data for the selected page
   }
 

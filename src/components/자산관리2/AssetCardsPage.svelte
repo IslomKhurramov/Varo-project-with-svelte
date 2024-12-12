@@ -461,7 +461,6 @@
                 class="btnImg"
                 on:click|stopPropagation={() => {
                   moving_option = "copy"; // Update moving_option to "copy"
-                  console.log("Moving Option:", moving_option);
                   showModalChange = true;
                   handleAssetUuid(asset);
                 }}
@@ -488,7 +487,6 @@
                 class="btnImg"
                 on:click|stopPropagation={() => {
                   moving_option = "move"; // Update moving_option to "move"
-                  console.log("Moving Option:", moving_option);
                   showModalChange = true;
                   handleAssetUuid(asset); // Call the asset handling function
                 }}
